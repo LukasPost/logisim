@@ -164,7 +164,7 @@ public class Attributes {
 		}
 
 		@Override
-		public Component getListCellRendererComponent(JList list,
+		public Component getListCellRendererComponent(JList<?> list,
 				Object value, int index, boolean isSelected,
 				boolean cellHasFocus) {
 			Component ret = super.getListCellRendererComponent(list,
@@ -208,7 +208,7 @@ public class Attributes {
 
 		@Override
 		public java.awt.Component getCellEditor(Object value) {
-			JComboBox combo = new JComboBox(vals);
+			JComboBox<V> combo = new JComboBox<V>(vals);
 			combo.setRenderer(new OptionComboRenderer<V>(this));
 			if (value == null) combo.setSelectedIndex(-1);
 			else combo.setSelectedItem(value);
@@ -320,7 +320,7 @@ public class Attributes {
 						options[i - start] = Integer.valueOf(i);
 					}
 				}
-				JComboBox combo = new JComboBox(options);
+				JComboBox<Integer> combo = new JComboBox<Integer>(options);
 				if (value == null) combo.setSelectedIndex(-1);
 				else combo.setSelectedItem(value);
 				return combo;

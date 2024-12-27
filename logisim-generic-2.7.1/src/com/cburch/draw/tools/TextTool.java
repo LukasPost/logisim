@@ -9,6 +9,7 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.List;
 
@@ -141,7 +142,7 @@ public class TextTool extends AbstractTool {
 		double zoom = canvas.getZoomFactor();
 		fieldLoc.x = (int) Math.round(mx * zoom - fieldLoc.x);
 		fieldLoc.y = (int) Math.round(my * zoom - fieldLoc.y);
-		int caret = field.viewToModel(fieldLoc);
+		int caret = field.viewToModel2D(fieldLoc);
 		if (caret >= 0) {
 			field.setCaretPosition(caret);
 		}

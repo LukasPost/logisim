@@ -351,9 +351,7 @@ class ExpressionView extends JPanel {
 				g.drawString(line, x, y + lineY[i] + fm.getAscent());
 				
 				ArrayList<NotData> nots = lineNots.get(i);
-				int j = -1;
 				for (NotData nd : nots) {
-					j++;
 					int notY = y + lineY[i] - nd.depth * NOT_SEP;
 					int startX = x + fm.stringWidth(line.substring(0, nd.startIndex));
 					int stopX = x + fm.stringWidth(line.substring(0, nd.stopIndex));

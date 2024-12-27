@@ -45,7 +45,7 @@ class BuildCircuitButton extends JButton {
 	
 	private class DialogPanel extends JPanel {
 		private JLabel projectLabel = new JLabel();
-		private JComboBox project;
+		private JComboBox<Object> project;
 		private JLabel nameLabel = new JLabel();
 		private JTextField name = new JTextField(10);
 		private JCheckBox twoInputs = new JCheckBox();
@@ -62,7 +62,7 @@ class BuildCircuitButton extends JButton {
 					initialSelection = options[i];
 				}
 			}
-			project = new JComboBox(options);
+			project = new JComboBox<Object>(options);
 			if (options.length == 1) {
 				project.setSelectedItem(options[0]);
 				project.setEnabled(false);
