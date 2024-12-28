@@ -13,12 +13,12 @@ import javax.swing.ImageIcon;
 import com.cburch.logisim.data.Direction;
 
 public class Icons {
-	private static final String path = "resources/logisim/icons";
+	private static final String path = "logisim.icons";
 
 	private Icons() { }
 
 	public static Icon getIcon(String name) {
-		java.net.URL url = Icons.class.getClassLoader().getResource(path + "/" + name);
+		java.net.URL url = Icons.class.getClassLoader().getResource(path + "." + name);
 		if (url == null) return null;
 		return new ImageIcon(url);
 	}

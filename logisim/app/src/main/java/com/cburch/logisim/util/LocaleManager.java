@@ -135,13 +135,13 @@ public class LocaleManager {
 	}
 
 	// instance members
-	private String dir_name;
+	private static String dir_name = "logisim";
 	private String file_start;
 	private ResourceBundle settings = null;
 	private ResourceBundle locale = null;
 	private ResourceBundle dflt_locale = null;
 
-	public LocaleManager(String dir_name, String file_start) {
+	public LocaleManager(String file_start) {
 		this.dir_name = dir_name;
 		this.file_start = file_start;
 		loadDefault();
@@ -151,7 +151,7 @@ public class LocaleManager {
 	private void loadDefault() {
 		if (settings == null) {
 			try {
-				settings = ResourceBundle.getBundle(dir_name + "/" + SETTINGS_NAME);
+				settings = ResourceBundle.getBundle(dir_name + "." + SETTINGS_NAME);
 			} catch (java.util.MissingResourceException e) { }
 		}
 
@@ -170,8 +170,8 @@ public class LocaleManager {
 	}
 
 	private void loadLocale(Locale loc) {
-		String bundleName = dir_name + "/" + loc.getLanguage() + "/" + file_start;
-		locale = ResourceBundle.getBundle(bundleName, loc);
+		String bundleName = dir_name + "." + loc.getLanguage() + "." + file_start;
+		locale = ResourceBundle.getBundle(bundleName);
 	}
 
 	public String get(String key) {
@@ -182,7 +182,7 @@ public class LocaleManager {
 			ResourceBundle backup = dflt_locale;
 			if (backup == null) {
 				Locale backup_loc = Locale.US;
-				backup = ResourceBundle.getBundle(dir_name + "/en/" + file_start, backup_loc);
+				backup = ResourceBundle.getBundle(dir_name + ".en." + file_start, backup_loc);
 				dflt_locale = backup;
 			}
 			try {

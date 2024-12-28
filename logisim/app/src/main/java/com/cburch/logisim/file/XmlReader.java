@@ -469,6 +469,9 @@ class XmlReader {
 				}
 			} catch (NumberFormatException e) { }
 		}
+
+		if(lastLibElt == null)
+			return;
 		
 		Element wiringElt;
 		String wiringLabel;
