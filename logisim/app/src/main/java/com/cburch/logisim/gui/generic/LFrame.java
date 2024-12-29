@@ -17,7 +17,7 @@ import javax.swing.JFrame;
 import com.cburch.logisim.util.WindowClosable;
 
 public class LFrame extends JFrame implements WindowClosable {
-	private static final String PATH = "logisim.img.logisim-icon-";
+	private static final String PATH = "logisim/img/logisim-icon-";
 	private static final int[] SIZES = { 16, 20, 24, 48, 64, 128 };
 	private static List<Image> ICONS = null;
 	private static final int DEFAULT_SIZE = 48;
@@ -28,7 +28,7 @@ public class LFrame extends JFrame implements WindowClosable {
 			List<Image> loadedIcons = new ArrayList<Image>();
 			ClassLoader loader = LFrame.class.getClassLoader();
 			for (int size : SIZES) {
-				URL url = loader.getResource(PATH + size);
+				URL url = loader.getResource(PATH + size + ".png");
 				if (url != null) {
 					ImageIcon icon = new ImageIcon(url);
 					loadedIcons.add(icon.getImage());
