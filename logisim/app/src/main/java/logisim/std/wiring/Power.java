@@ -32,7 +32,7 @@ public class Power extends InstanceFactory {
 		super("Power", Strings.getter("powerComponent"));
 		setIconName("power.gif");
 		setAttributes(new Attribute[] { StdAttr.FACING, StdAttr.WIDTH },
-				new Object[] { Direction.NORTH, BitWidth.ONE });
+				new Object[] { Direction.North, BitWidth.ONE });
 		setFacingAttribute(StdAttr.FACING);
 		setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
 		setPorts(new Port[] { new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH) });
@@ -52,8 +52,7 @@ public class Power extends InstanceFactory {
 
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrs) {
-		return Bounds.create(0, -8, 15, 16)
-			.rotate(Direction.EAST, attrs.getValue(StdAttr.FACING), 0, 0);
+		return Bounds.create(0, -8, 15, 16).rotate(Direction.East, attrs.getValue(StdAttr.FACING), 0, 0);
 	}
 
 	@Override
@@ -79,7 +78,7 @@ public class Power extends InstanceFactory {
 		g.translate(loc.getX(), loc.getY());
 
 		Direction from = painter.getAttributeValue(StdAttr.FACING);
-		int degrees = Direction.EAST.toDegrees() - from.toDegrees();
+		int degrees = Direction.East.toDegrees() - from.toDegrees();
 		double radians = Math.toRadians((degrees + 360) % 360);
 		g.rotate(radians);
 

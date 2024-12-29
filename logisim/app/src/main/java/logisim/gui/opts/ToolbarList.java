@@ -26,7 +26,7 @@ import logisim.tools.Tool;
 class ToolbarList extends JList {
 	private static class ToolIcon implements Icon {
 		private Tool tool;
-		
+
 		ToolIcon(Tool tool) {
 			this.tool = tool;
 		}
@@ -45,25 +45,22 @@ class ToolbarList extends JList {
 			return 20;
 		}
 	}
-	
+
 	private static class ListRenderer extends DefaultListCellRenderer {
 		@Override
-		public Component getListCellRendererComponent(JList list, Object value,
-				int index, boolean isSelected, boolean cellHasFocus) {
+		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+				boolean cellHasFocus) {
 			Component ret;
 			Icon icon;
 			if (value instanceof Tool) {
 				Tool t = (Tool) value;
-				ret = super.getListCellRendererComponent(list, t.getDisplayName(),
-						index, isSelected, cellHasFocus);
+				ret = super.getListCellRendererComponent(list, t.getDisplayName(), index, isSelected, cellHasFocus);
 				icon = new ToolIcon(t);
 			} else if (value == null) {
-				ret = super.getListCellRendererComponent(list, "---",
-						index, isSelected, cellHasFocus);
+				ret = super.getListCellRendererComponent(list, "---", index, isSelected, cellHasFocus);
 				icon = null;
 			} else {
-				ret = super.getListCellRendererComponent(list, value.toString(),
-						index, isSelected, cellHasFocus);
+				ret = super.getListCellRendererComponent(list, value.toString(), index, isSelected, cellHasFocus);
 				icon = null;
 			}
 			if (ret instanceof JLabel) {
@@ -72,7 +69,7 @@ class ToolbarList extends JList {
 			return ret;
 		}
 	}
-	
+
 	private class Model extends AbstractListModel
 			implements ToolbarListener, AttributeListener, PropertyChangeListener {
 		public int getSize() {
@@ -87,11 +84,13 @@ class ToolbarList extends JList {
 			fireContentsChanged(this, 0, getSize());
 		}
 
-		public void attributeListChanged(AttributeEvent e) { }
+		public void attributeListChanged(AttributeEvent e) {
+		}
+
 		public void attributeValueChanged(AttributeEvent e) {
 			repaint();
 		}
-		
+
 		public void propertyChange(PropertyChangeEvent event) {
 			if (AppPreferences.GATE_SHAPE.isSource(event)) {
 				repaint();
@@ -101,7 +100,7 @@ class ToolbarList extends JList {
 
 	private ToolbarData base;
 	private Model model;
-	
+
 	public ToolbarList(ToolbarData base) {
 		this.base = base;
 		this.model = new Model();
@@ -109,12 +108,12 @@ class ToolbarList extends JList {
 		setModel(model);
 		setCellRenderer(new ListRenderer());
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
+
 		AppPreferences.GATE_SHAPE.addPropertyChangeListener(model);
 		base.addToolbarListener(model);
 		base.addToolAttributeListener(model);
 	}
-	
+
 	public void localeChanged() {
 		model.toolbarChanged();
 	}

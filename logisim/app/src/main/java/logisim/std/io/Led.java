@@ -24,17 +24,11 @@ import logisim.util.GraphicsUtil;
 public class Led extends InstanceFactory {
 	public Led() {
 		super("LED", Strings.getter("ledComponent"));
-		setAttributes(new Attribute[] {
-				StdAttr.FACING, Io.ATTR_ON_COLOR, Io.ATTR_OFF_COLOR,
-				Io.ATTR_ACTIVE,
-				StdAttr.LABEL, Io.ATTR_LABEL_LOC,
-				StdAttr.LABEL_FONT, Io.ATTR_LABEL_COLOR
-			}, new Object[] {
-				Direction.WEST, new Color(240, 0, 0), Color.DARK_GRAY,
-				Boolean.TRUE,
-				"", Io.LABEL_CENTER,
-				StdAttr.DEFAULT_LABEL_FONT, Color.BLACK
-			});
+		setAttributes(
+				new Attribute[] { StdAttr.FACING, Io.ATTR_ON_COLOR, Io.ATTR_OFF_COLOR, Io.ATTR_ACTIVE, StdAttr.LABEL,
+						Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, Io.ATTR_LABEL_COLOR },
+				new Object[] { Direction.West, new Color(240, 0, 0), Color.DARK_GRAY, Boolean.TRUE, "", Io.LABEL_CENTER,
+						StdAttr.DEFAULT_LABEL_FONT, Color.BLACK });
 		setFacingAttribute(StdAttr.FACING);
 		setIconName("led.gif");
 		setPorts(new Port[] { new Port(0, 0, Port.INPUT, 1) });
@@ -44,7 +38,7 @@ public class Led extends InstanceFactory {
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrs) {
 		Direction facing = attrs.getValue(StdAttr.FACING);
-		return Bounds.create(0, -10, 20, 20).rotate(Direction.WEST, facing, 0, 0);
+		return Bounds.create(0, -10, 20, 20).rotate(Direction.West, facing, 0, 0);
 	}
 
 	@Override
@@ -72,21 +66,21 @@ public class Led extends InstanceFactory {
 		int y = bds.getY() + bds.getHeight() / 2;
 		int halign = GraphicsUtil.H_CENTER;
 		int valign = GraphicsUtil.V_CENTER;
-		if (labelLoc == Direction.NORTH) {
+		if (labelLoc == Direction.North) {
 			y = bds.getY() - 2;
 			valign = GraphicsUtil.V_BOTTOM;
-		} else if (labelLoc == Direction.SOUTH) {
+		} else if (labelLoc == Direction.South) {
 			y = bds.getY() + bds.getHeight() + 2;
 			valign = GraphicsUtil.V_TOP;
-		} else if (labelLoc == Direction.EAST) {
+		} else if (labelLoc == Direction.East) {
 			x = bds.getX() + bds.getWidth() + 2;
 			halign = GraphicsUtil.H_LEFT;
-		} else if (labelLoc == Direction.WEST) {
+		} else if (labelLoc == Direction.West) {
 			x = bds.getX() - 2;
 			halign = GraphicsUtil.H_RIGHT;
 		}
 		if (labelLoc == facing) {
-			if (labelLoc == Direction.NORTH || labelLoc == Direction.SOUTH) {
+			if (labelLoc == Direction.North || labelLoc == Direction.South) {
 				x += 2;
 				halign = GraphicsUtil.H_LEFT;
 			} else {
@@ -95,8 +89,7 @@ public class Led extends InstanceFactory {
 			}
 		}
 
-		instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT,
-				x, y, halign, valign);
+		instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, x, y, halign, valign);
 	}
 
 	@Override
@@ -109,14 +102,13 @@ public class Led extends InstanceFactory {
 			data.setValue(val);
 		}
 	}
-	
+
 	@Override
 	public void paintGhost(InstancePainter painter) {
 		Graphics g = painter.getGraphics();
 		Bounds bds = painter.getBounds();
 		GraphicsUtil.switchToWidth(g, 2);
-		g.drawOval(bds.getX() + 1, bds.getY() + 1,
-				bds.getWidth() - 2, bds.getHeight() - 2);
+		g.drawOval(bds.getX() + 1, bds.getY() + 1, bds.getWidth() - 2, bds.getHeight() - 2);
 	}
 
 	@Override
@@ -148,12 +140,13 @@ public class Led extends InstanceFactory {
 		public String getLogName(InstanceState state, Object option) {
 			return state.getAttributeValue(StdAttr.LABEL);
 		}
-	
+
 		@Override
 		public Value getLogValue(InstanceState state, Object option) {
 			InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
-			if (data == null) return Value.FALSE;
-			return data.getValue() == Value.TRUE ? Value.TRUE : Value.FALSE; 
+			if (data == null)
+				return Value.FALSE;
+			return data.getValue() == Value.TRUE ? Value.TRUE : Value.FALSE;
 		}
 	}
 }

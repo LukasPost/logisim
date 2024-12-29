@@ -26,7 +26,8 @@ class WireBundle {
 	}
 
 	void setWidth(BitWidth width, Location det) {
-		if (width == BitWidth.UNKNOWN) return;
+		if (width == BitWidth.UNKNOWN)
+			return;
 		if (incompatibilityData != null) {
 			incompatibilityData.add(det, width);
 			return;
@@ -34,7 +35,7 @@ class WireBundle {
 		if (this.width != BitWidth.UNKNOWN) {
 			if (width.equals(this.width)) {
 				return; // the widths match, and the bundle is already set; nothing to do
-			} else {    // the widths are broken: Create incompatibilityData holding this info
+			} else { // the widths are broken: Create incompatibilityData holding this info
 				incompatibilityData = new WidthIncompatibilityData();
 				incompatibilityData.add(widthDeterminant, this.width);
 				incompatibilityData.add(det, width);
@@ -76,22 +77,25 @@ class WireBundle {
 	void unite(WireBundle other) {
 		WireBundle group = this.find();
 		WireBundle group2 = other.find();
-		if (group != group2) group.parent = group2;
+		if (group != group2)
+			group.parent = group2;
 	}
 
 	WireBundle find() {
 		WireBundle ret = this;
 		if (ret.parent != ret) {
-			do ret = ret.parent; while (ret.parent != ret);
+			do
+				ret = ret.parent;
+			while (ret.parent != ret);
 			this.parent = ret;
 		}
 		return ret;
 	}
-	
+
 	void addPullValue(Value val) {
 		pullValue = pullValue.combine(val);
 	}
-	
+
 	Value getPullValue() {
 		return pullValue;
 	}

@@ -27,7 +27,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.DefaultListModel;
@@ -42,27 +41,25 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 /**
- * Provides a pane of controls designed to allow a user to
- * select a <code>Font</code>.
+ * Provides a pane of controls designed to allow a user to select a <code>Font</code>.
  * 
  * @author Christos Bohoris
  * @see java.awt.Font
  */
 public class JFontChooser extends JPanel {
-	static final String SANS_SERIF = "SansSerif";
-	private static final long serialVersionUID = 5157499702004637097L;
-	private static final HashMap<Locale,ResourceBundle> bundles
-		= new HashMap<Locale,ResourceBundle>();
-	
-	private static ResourceBundle getBundle() {
-		Locale loc = Locale.getDefault();
-		ResourceBundle ret = bundles.get(loc);
-		if (ret == null) {
-			ret = ResourceBundle.getBundle("resources/connectina/JFontChooser");
-			bundles.put(loc, ret);
-		}
-		return ret;
-	}
+    static final String SANS_SERIF = "SansSerif";
+    private static final long serialVersionUID = 5157499702004637097L;
+    private static final HashMap<Locale, ResourceBundle> bundles = new HashMap<Locale, ResourceBundle>();
+
+    private static ResourceBundle getBundle() {
+        Locale loc = Locale.getDefault();
+        ResourceBundle ret = bundles.get(loc);
+        if (ret == null) {
+            ret = ResourceBundle.getBundle("connectina/JFontChooser");
+            bundles.put(loc, ret);
+        }
+        return ret;
+    }
 
     private FontSelectionModel selectionModel;
     /**
@@ -71,8 +68,7 @@ public class JFontChooser extends JPanel {
     public static final String SELECTION_MODEL_PROPERTY = "selectionModel";
 
     /**
-     * Creates a FontChooser pane with an initial default Font
-     * (Sans Serif, Plain, 12).
+     * Creates a FontChooser pane with an initial default Font (Sans Serif, Plain, 12).
      */
     public JFontChooser() {
         this(new Font(SANS_SERIF, Font.PLAIN, 12));
@@ -88,8 +84,7 @@ public class JFontChooser extends JPanel {
     }
 
     /**
-     * Creates a FontChooser pane with the specified
-     * <code>FontSelectionModel</code>.
+     * Creates a FontChooser pane with the specified <code>FontSelectionModel</code>.
      *
      * @param model the <code>FontSelectionModel</code> to be used
      */
@@ -101,8 +96,7 @@ public class JFontChooser extends JPanel {
     }
 
     /**
-     * Gets the current Font value from the FontChooser.
-     * By default, this delegates to the model.
+     * Gets the current Font value from the FontChooser. By default, this delegates to the model.
      *
      * @return the current Font value of the FontChooser
      */
@@ -111,8 +105,9 @@ public class JFontChooser extends JPanel {
     }
 
     /**
-     * Sets the current Font of the FontChooser to the specified Font.
-     * The <code>FontSelectionModel</code> will fire a <code>ChangeEvent</code>
+     * Sets the current Font of the FontChooser to the specified Font. The <code>FontSelectionModel</code> will fire a
+     * <code>ChangeEvent</code>
+     * 
      * @param Font the Font to be set in the Font chooser
      * @see JComponent#addPropertyChangeListener
      */
@@ -141,22 +136,20 @@ public class JFontChooser extends JPanel {
     }
 
     /**
-     * Shows a modal FontChooser dialog and blocks until the
-     * dialog is hidden.  If the user presses the "OK" button, then
-     * this method hides/disposes the dialog and returns the selected Font.
-     * If the user presses the "Cancel" button or closes the dialog without
-     * pressing "OK", then this method hides/disposes the dialog and returns
+     * Shows a modal FontChooser dialog and blocks until the dialog is hidden. If the user presses the "OK" button, then
+     * this method hides/disposes the dialog and returns the selected Font. If the user presses the "Cancel" button or
+     * closes the dialog without pressing "OK", then this method hides/disposes the dialog and returns
      * <code>null</code>.
      *
-     * @param parent the parent <code>JFrame</code> for the dialog
+     * @param parent      the parent <code>JFrame</code> for the dialog
      * @param initialFont the initial Font set when the FontChooser is shown
      * @return the selected Font or <code>null</code> if the user opted out
-     * @exception HeadlessException if GraphicsEnvironment.isHeadless()
-     * returns true.
+     * @exception HeadlessException if GraphicsEnvironment.isHeadless() returns true.
      * @see java.awt.GraphicsEnvironment#isHeadless
      */
     public static Font showDialog(Window parent, Font initialFont) throws HeadlessException {
-        final JFontChooser pane = new JFontChooser(initialFont != null ? initialFont : new Font(SANS_SERIF, Font.PLAIN, 12));
+        final JFontChooser pane = new JFontChooser(
+                initialFont != null ? initialFont : new Font(SANS_SERIF, Font.PLAIN, 12));
 
         FontSelectionActionListener selectionListener = new FontSelectionActionListener(pane);
         JDialog dialog = createDialog(parent, true, pane, selectionListener);
@@ -168,19 +161,16 @@ public class JFontChooser extends JPanel {
     }
 
     /**
-     * Shows a modal FontChooser dialog and blocks until the
-     * dialog is hidden.  If the user presses the "OK" button, then
-     * this method hides/disposes the dialog and returns the selected Font.
-     * If the user presses the "Cancel" button or closes the dialog without
-     * pressing "OK", then this method hides/disposes the dialog and returns
+     * Shows a modal FontChooser dialog and blocks until the dialog is hidden. If the user presses the "OK" button, then
+     * this method hides/disposes the dialog and returns the selected Font. If the user presses the "Cancel" button or
+     * closes the dialog without pressing "OK", then this method hides/disposes the dialog and returns
      * <code>null</code>.
      *
-     * @param parent the parent <code>JFrame</code> for the dialog
+     * @param parent      the parent <code>JFrame</code> for the dialog
      * @param fontChooser the FontChooser to be use in this dialog
      * @param initialFont the initial Font set when the FontChooser is shown
      * @return the selected Font or <code>null</code> if the user opted out
-     * @exception HeadlessException if GraphicsEnvironment.isHeadless()
-     * returns true.
+     * @exception HeadlessException if GraphicsEnvironment.isHeadless() returns true.
      * @see java.awt.GraphicsEnvironment#isHeadless
      */
     public static Font showDialog(Window parent, JFontChooser fontChooser, Font initialFont) throws HeadlessException {
@@ -196,31 +186,26 @@ public class JFontChooser extends JPanel {
     }
 
     /**
-     * Creates and returns a new dialog containing the specified
-     * <code>FontChooser</code> pane along with "OK" and "Cancel"
-     * buttons. If the "OK" or "Cancel" buttons are pressed, the dialog is
-     * automatically hidden (but not disposed).
+     * Creates and returns a new dialog containing the specified <code>FontChooser</code> pane along with "OK" and
+     * "Cancel" buttons. If the "OK" or "Cancel" buttons are pressed, the dialog is automatically hidden (but not
+     * disposed).
      *
-     * @param parent the parent component for the dialog
-     * @param modal a boolean. When true, the remainder of the program
-     *        is inactive until the dialog is closed.
+     * @param parent      the parent component for the dialog
+     * @param modal       a boolean. When true, the remainder of the program is inactive until the dialog is closed.
      * @param chooserPane the Font-chooser to be placed inside the dialog
      * @param okListener  the ActionListener invoked when "OK" is pressed
      * @return a new dialog containing the FontChooser pane
-     * @exception HeadlessException if GraphicsEnvironment.isHeadless()
-     *            returns true.
+     * @exception HeadlessException if GraphicsEnvironment.isHeadless() returns true.
      * @see java.awt.GraphicsEnvironment#isHeadless
      */
-    public static JDialog createDialog(Window parent, boolean modal,
-            JFontChooser chooserPane, ActionListener okListener) throws HeadlessException {
+    public static JDialog createDialog(Window parent, boolean modal, JFontChooser chooserPane,
+            ActionListener okListener) throws HeadlessException {
         if (parent instanceof JDialog) {
-            return new FontChooserDialog((JDialog) parent, modal, chooserPane,
-                    okListener);
+            return new FontChooserDialog((JDialog) parent, modal, chooserPane, okListener);
         } else if (parent instanceof JFrame) {
-            return new FontChooserDialog((JFrame) parent, modal, chooserPane,
-                    okListener);
+            return new FontChooserDialog((JFrame) parent, modal, chooserPane, okListener);
         } else {
-        	throw new IllegalArgumentException("JFrame or JDialog parent is required.");
+            throw new IllegalArgumentException("JFrame or JDialog parent is required.");
         }
     }
 
@@ -235,6 +220,7 @@ public class JFontChooser extends JPanel {
 
     /**
      * Removes a <code>ChangeListener</code> from the model.
+     * 
      * @param l the <code>ChangeListener</code> to be removed
      */
     public void removeChangeListener(ChangeListener l) {
@@ -243,35 +229,34 @@ public class JFontChooser extends JPanel {
 
     private void initPanel(ResourceBundle bundle) {
         // Set the font family names
-        DefaultListModel listModel = new DefaultListModel();
-        for(Iterator it = selectionModel.getAvailableFontNames().iterator();
-        		it.hasNext(); ) {
-        	listModel.addElement(it.next());
+        DefaultListModel<String> fontFamilyNameModel = new DefaultListModel<>();
+        for (String s : selectionModel.getAvailableFontNames()) {
+            fontFamilyNameModel.addElement(s);
         }
-        familyList.setModel(listModel);
+        familyList.setModel(fontFamilyNameModel);
         familyList.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         familyList.setSelectedValue(selectionModel.getSelectedFont().getName(), true);
         familyList.addListSelectionListener(new FamilyListSelectionListener());
 
         // Set the font styles
-        listModel = new DefaultListModel();
+        DefaultListModel<String> fontStyleModel = new DefaultListModel<>();
 
-        listModel.addElement(getFontStyleName(Font.PLAIN, bundle));
-        listModel.addElement(getFontStyleName(Font.BOLD, bundle));
-        listModel.addElement(getFontStyleName(Font.ITALIC, bundle));
-        listModel.addElement(getFontStyleName(Font.BOLD + Font.ITALIC, bundle));
-        styleList.setModel(listModel);
+        fontStyleModel.addElement(getFontStyleName(Font.PLAIN, bundle));
+        fontStyleModel.addElement(getFontStyleName(Font.BOLD, bundle));
+        fontStyleModel.addElement(getFontStyleName(Font.ITALIC, bundle));
+        fontStyleModel.addElement(getFontStyleName(Font.BOLD + Font.ITALIC, bundle));
+        styleList.setModel(fontStyleModel);
         styleList.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         styleList.setSelectedIndex(selectionModel.getSelectedFont().getStyle());
         styleList.addListSelectionListener(new StyleListSelectionListener());
 
         // Set the font sizes
-        listModel = new DefaultListModel();
+        DefaultListModel<Integer> fontSizeModel = new DefaultListModel<>();
         int size = 6;
         int step = 1;
         int ceil = 14;
         do {
-            listModel.addElement(Integer.valueOf(size));
+            fontSizeModel.addElement(size);
             if (size == ceil) {
                 ceil += ceil;
                 step += step;
@@ -279,10 +264,10 @@ public class JFontChooser extends JPanel {
             size = size + step;
         } while (size <= 128);
 
-        sizeList.setModel(listModel);
+        sizeList.setModel(fontSizeModel);
         sizeList.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         Integer selectedSize = Integer.valueOf(selectionModel.getSelectedFont().getSize());
-        if (listModel.contains(selectedSize)) {
+        if (fontSizeModel.contains(selectedSize)) {
             sizeList.setSelectedValue(selectedSize, true);
         }
         sizeList.addListSelectionListener(new SizeListSelectionListener());
@@ -295,20 +280,20 @@ public class JFontChooser extends JPanel {
     private String getFontStyleName(int index, ResourceBundle bundle) {
         String result = null;
         switch (index) {
-            case 0:
-                result = bundle.getString("style.plain");
-                break;
-            case 1:
-                result = bundle.getString("style.bold");
-                break;
-            case 2:
-                result = bundle.getString("style.italic");
-                break;
-            case 3:
-                result = bundle.getString("style.bolditalic");
-                break;
-            default:
-                result = bundle.getString("style.plain");
+        case 0:
+            result = bundle.getString("style.plain");
+            break;
+        case 1:
+            result = bundle.getString("style.bold");
+            break;
+        case 2:
+            result = bundle.getString("style.italic");
+            break;
+        case 3:
+            result = bundle.getString("style.bolditalic");
+            break;
+        default:
+            result = bundle.getString("style.plain");
         }
 
         return result;
@@ -318,9 +303,8 @@ public class JFontChooser extends JPanel {
 
         public void valueChanged(ListSelectionEvent e) {
             if (!e.getValueIsAdjusting()) {
-                Font sel = new Font(familyList.getSelectedValue().toString(),
-                		styleList.getSelectedIndex(),
-                		Integer.parseInt(sizeSpinner.getValue().toString()));
+                Font sel = new Font(familyList.getSelectedValue().toString(), styleList.getSelectedIndex(),
+                        Integer.parseInt(sizeSpinner.getValue().toString()));
                 selectionModel.setSelectedFont(sel);
                 previewAreaLabel.setFont(selectionModel.getSelectedFont());
             }
@@ -331,7 +315,8 @@ public class JFontChooser extends JPanel {
 
         public void valueChanged(ListSelectionEvent e) {
             if (!e.getValueIsAdjusting()) {
-                selectionModel.setSelectedFont(selectionModel.getSelectedFont().deriveFont(styleList.getSelectedIndex()));
+                selectionModel
+                        .setSelectedFont(selectionModel.getSelectedFont().deriveFont(styleList.getSelectedIndex()));
 
                 previewAreaLabel.setFont(selectionModel.getSelectedFont());
             }
@@ -342,7 +327,7 @@ public class JFontChooser extends JPanel {
 
         public void valueChanged(ListSelectionEvent e) {
             if (!e.getValueIsAdjusting()) {
-                int index = ((DefaultListModel) sizeList.getModel()).indexOf(sizeList.getSelectedValue());
+                int index = ((DefaultListModel<Integer>) sizeList.getModel()).indexOf(sizeList.getSelectedValue());
                 if (index > -1) {
                     sizeSpinner.setValue((Integer) sizeList.getSelectedValue());
                 }
@@ -359,7 +344,7 @@ public class JFontChooser extends JPanel {
 
         public void stateChanged(ChangeEvent e) {
             Integer value = (Integer) sizeSpinner.getValue();
-            int index = ((DefaultListModel) sizeList.getModel()).indexOf(value);
+            int index = ((DefaultListModel<Integer>) sizeList.getModel()).indexOf(value);
             if (index > -1) {
                 sizeList.setSelectedValue(value, true);
             } else {
@@ -370,8 +355,8 @@ public class JFontChooser extends JPanel {
 
     private static class FontSelectionActionListener implements ActionListener, Serializable {
 
-		private static final long serialVersionUID = 8141913945783951693L;
-		private JFontChooser chooser;
+        private static final long serialVersionUID = 8141913945783951693L;
+        private JFontChooser chooser;
         private Font font;
 
         public FontSelectionActionListener(JFontChooser c) {
@@ -387,13 +372,13 @@ public class JFontChooser extends JPanel {
         }
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The
+     * content of this method is always regenerated by the Form Editor.
      */
-    //Java5 @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // Java5 @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents(ResourceBundle bundle) {
         java.awt.GridBagConstraints gridBagConstraints;
 
@@ -402,14 +387,14 @@ public class JFontChooser extends JPanel {
         styleLabel = new javax.swing.JLabel();
         sizeLabel = new javax.swing.JLabel();
         familyScrollPane = new javax.swing.JScrollPane();
-        familyList = new javax.swing.JList();
+        familyList = new javax.swing.JList<>();
         styleScrollPane = new javax.swing.JScrollPane();
-        styleList = new javax.swing.JList();
+        styleList = new javax.swing.JList<>();
         sizeSpinner = new javax.swing.JSpinner();
-        int spinnerHeight = (int)sizeSpinner.getPreferredSize().getHeight();
+        int spinnerHeight = (int) sizeSpinner.getPreferredSize().getHeight();
         sizeSpinner.setPreferredSize(new Dimension(60, spinnerHeight));
         sizeScrollPane = new javax.swing.JScrollPane();
-        sizeList = new javax.swing.JList();
+        sizeList = new javax.swing.JList<>();
         previewPanel = new javax.swing.JPanel();
         previewLabel = new javax.swing.JLabel();
         previewAreaPanel = new javax.swing.JPanel();
@@ -517,9 +502,10 @@ public class JFontChooser extends JPanel {
 
         add(previewPanel, java.awt.BorderLayout.SOUTH);
     }// </editor-fold>//GEN-END:initComponents
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+     // Variables declaration - do not modify//GEN-BEGIN:variables
+
     private javax.swing.JLabel familyLabel;
-    private javax.swing.JList familyList;
+    private javax.swing.JList<String> familyList;
     private javax.swing.JScrollPane familyScrollPane;
     private javax.swing.JPanel fontPanel;
     private javax.swing.JLabel previewAreaLabel;
@@ -527,11 +513,11 @@ public class JFontChooser extends JPanel {
     private javax.swing.JLabel previewLabel;
     private javax.swing.JPanel previewPanel;
     private javax.swing.JLabel sizeLabel;
-    private javax.swing.JList sizeList;
+    private javax.swing.JList<Integer> sizeList;
     private javax.swing.JScrollPane sizeScrollPane;
     private javax.swing.JSpinner sizeSpinner;
     private javax.swing.JLabel styleLabel;
-    private javax.swing.JList styleList;
+    private javax.swing.JList<String> styleList;
     private javax.swing.JScrollPane styleScrollPane;
     // End of variables declaration//GEN-END:variables
 }

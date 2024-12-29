@@ -6,7 +6,6 @@ package logisim.comp;
 import logisim.circuit.CircuitState;
 import logisim.gui.main.Canvas;
 
-
 public class ComponentUserEvent {
 	private Canvas canvas;
 	private int x = 0;

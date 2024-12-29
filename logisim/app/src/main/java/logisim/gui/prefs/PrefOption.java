@@ -9,22 +9,22 @@ import logisim.util.StringGetter;
 
 class PrefOption {
 	private Object value;
-	private StringGetter getter;
-	
-	PrefOption(String value, StringGetter getter) {
+	private String displayString;
+
+	PrefOption(String value, String displayString) {
 		this.value = value;
-		this.getter = getter;
+		this.displayString = displayString;
 	}
-	
+
 	@Override
 	public String toString() {
-		return getter.get();
+		return displayString;
 	}
-	
+
 	public Object getValue() {
 		return value;
 	}
-	
+
 	static void setSelected(JComboBox combo, Object value) {
 		for (int i = combo.getItemCount() - 1; i >= 0; i--) {
 			PrefOption opt = (PrefOption) combo.getItemAt(i);

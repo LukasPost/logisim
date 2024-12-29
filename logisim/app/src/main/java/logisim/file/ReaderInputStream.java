@@ -21,8 +21,7 @@ import java.io.InputStream;
 import java.io.Reader;
 
 /**
- * Adapts a <code>Reader</code> as an <code>InputStream</code>.
- * Adapted from <CODE>StringInputStream</CODE>.
+ * Adapts a <code>Reader</code> as an <code>InputStream</code>. Adapted from <CODE>StringInputStream</CODE>.
  *
  */
 public class ReaderInputStream extends InputStream {
@@ -37,22 +36,19 @@ public class ReaderInputStream extends InputStream {
 	private int begin;
 
 	/**
-	 * Construct a <CODE>ReaderInputStream</CODE>
-	 * for the specified <CODE>Reader</CODE>.
+	 * Construct a <CODE>ReaderInputStream</CODE> for the specified <CODE>Reader</CODE>.
 	 *
-	 * @param reader   <CODE>Reader</CODE>.  Must not be <code>null</code>.
+	 * @param reader <CODE>Reader</CODE>. Must not be <code>null</code>.
 	 */
 	public ReaderInputStream(Reader reader) {
 		in = reader;
 	}
 
 	/**
-	 * Construct a <CODE>ReaderInputStream</CODE>
-	 * for the specified <CODE>Reader</CODE>,
-	 * with the specified encoding.
+	 * Construct a <CODE>ReaderInputStream</CODE> for the specified <CODE>Reader</CODE>, with the specified encoding.
 	 *
-	 * @param reader     non-null <CODE>Reader</CODE>.
-	 * @param encoding   non-null <CODE>String</CODE> encoding.
+	 * @param reader   non-null <CODE>Reader</CODE>.
+	 * @param encoding non-null <CODE>String</CODE> encoding.
 	 */
 	public ReaderInputStream(Reader reader, String encoding) {
 		this(reader);
@@ -100,16 +96,14 @@ public class ReaderInputStream extends InputStream {
 	/**
 	 * Reads from the <code>Reader</code> into a byte array
 	 *
-	 * @param b  the byte array to read into
+	 * @param b   the byte array to read into
 	 * @param off the offset in the byte array
 	 * @param len the length in the byte array to fill
-	 * @return the actual number read into the byte array, -1 at
-	 *         the end of the stream
+	 * @return the actual number read into the byte array, -1 at the end of the stream
 	 * @exception IOException if an error occurs
 	 */
 	@Override
-	public synchronized int read(byte[] b, int off, int len)
-		throws IOException {
+	public synchronized int read(byte[] b, int off, int len) throws IOException {
 		if (in == null) {
 			throw new IOException("Stream Closed");
 		}
@@ -142,21 +136,20 @@ public class ReaderInputStream extends InputStream {
 	/**
 	 * Marks the read limit of the StringReader.
 	 *
-	 * @param limit the maximum limit of bytes that can be read before the
-	 *              mark position becomes invalid
+	 * @param limit the maximum limit of bytes that can be read before the mark position becomes invalid
 	 */
 	@Override
 	public synchronized void mark(final int limit) {
 		try {
 			in.mark(limit);
-		} catch (IOException ioe) {
+		}
+		catch (IOException ioe) {
 			throw new RuntimeException(ioe.getMessage());
 		}
 	}
 
-
 	/**
-	 * @return   the current number of bytes ready for reading
+	 * @return the current number of bytes ready for reading
 	 * @exception IOException if an error occurs
 	 */
 	@Override
@@ -178,8 +171,8 @@ public class ReaderInputStream extends InputStream {
 	 * @return false - mark is not supported
 	 */
 	@Override
-	public boolean markSupported () {
-		return false;   // would be imprecise
+	public boolean markSupported() {
+		return false; // would be imprecise
 	}
 
 	/**

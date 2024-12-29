@@ -10,14 +10,11 @@ import logisim.data.Direction;
 import logisim.instance.StdAttr;
 
 class GateAttributeList extends AbstractList<Attribute<?>> {
-	private static final Attribute<?>[] BASE_ATTRIBUTES = {
-			StdAttr.FACING, StdAttr.WIDTH,
-			GateAttributes.ATTR_SIZE, GateAttributes.ATTR_INPUTS,
-			GateAttributes.ATTR_OUTPUT, StdAttr.LABEL, StdAttr.LABEL_FONT,
-	};
+	private static final Attribute<?>[] BASE_ATTRIBUTES = { StdAttr.FACING, StdAttr.WIDTH, GateAttributes.ATTR_SIZE,
+			GateAttributes.ATTR_INPUTS, GateAttributes.ATTR_OUTPUT, StdAttr.LABEL, StdAttr.LABEL_FONT, };
 
 	private GateAttributes attrs;
-	
+
 	public GateAttributeList(GateAttributes attrs) {
 		this.attrs = attrs;
 	}
@@ -31,21 +28,22 @@ class GateAttributeList extends AbstractList<Attribute<?>> {
 		index -= len;
 		if (attrs.xorBehave != null) {
 			index--;
-			if (index < 0) return GateAttributes.ATTR_XOR;
+			if (index < 0)
+				return GateAttributes.ATTR_XOR;
 		}
 		Direction facing = attrs.facing;
 		int inputs = attrs.inputs;
 		if (index == 0) {
-			if (facing == Direction.EAST || facing == Direction.WEST) {
-				return new NegateAttribute(index, Direction.NORTH);
+			if (facing == Direction.East || facing == Direction.West) {
+				return new NegateAttribute(index, Direction.North);
 			} else {
-				return new NegateAttribute(index, Direction.WEST);
+				return new NegateAttribute(index, Direction.West);
 			}
 		} else if (index == inputs - 1) {
-			if (facing == Direction.EAST || facing == Direction.WEST) {
-				return new NegateAttribute(index, Direction.SOUTH);
+			if (facing == Direction.East || facing == Direction.West) {
+				return new NegateAttribute(index, Direction.South);
 			} else {
-				return new NegateAttribute(index, Direction.EAST);
+				return new NegateAttribute(index, Direction.East);
 			}
 		} else if (index < inputs) {
 			return new NegateAttribute(index, null);
@@ -56,7 +54,8 @@ class GateAttributeList extends AbstractList<Attribute<?>> {
 	@Override
 	public int size() {
 		int ret = BASE_ATTRIBUTES.length;
-		if (attrs.xorBehave != null) ret++;
+		if (attrs.xorBehave != null)
+			ret++;
 		ret += attrs.inputs;
 		return ret;
 	}

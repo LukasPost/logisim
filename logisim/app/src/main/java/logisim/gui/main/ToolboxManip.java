@@ -28,19 +28,17 @@ import logisim.tools.Library;
 import logisim.tools.Tool;
 
 class ToolboxManip implements ProjectExplorer.Listener {
-	private class MyListener
-			implements ProjectListener, LibraryListener, AttributeListener {
+	private class MyListener implements ProjectListener, LibraryListener, AttributeListener {
 		private LogisimFile curFile = null;
-		
+
 		public void projectChanged(ProjectEvent event) {
 			int action = event.getAction();
 			if (action == ProjectEvent.ACTION_SET_FILE) {
-				setFile((LogisimFile) event.getOldData(),
-						(LogisimFile) event.getData());
+				setFile((LogisimFile) event.getOldData(), (LogisimFile) event.getData());
 				explorer.repaint();
 			}
 		}
-		
+
 		private void setFile(LogisimFile oldFile, LogisimFile newFile) {
 			if (oldFile != null) {
 				removeLibrary(oldFile);
@@ -70,49 +68,53 @@ class ToolboxManip implements ProjectExplorer.Listener {
 			} else if (action == LibraryEvent.ADD_TOOL) {
 				Tool tool = (Tool) event.getData();
 				AttributeSet attrs = tool.getAttributeSet();
-				if (attrs != null) attrs.addAttributeListener(this);
+				if (attrs != null)
+					attrs.addAttributeListener(this);
 			} else if (action == LibraryEvent.REMOVE_TOOL) {
 				Tool tool = (Tool) event.getData();
 				AttributeSet attrs = tool.getAttributeSet();
-				if (attrs != null) attrs.removeAttributeListener(this);
+				if (attrs != null)
+					attrs.removeAttributeListener(this);
 			}
 			explorer.repaint();
 		}
-		
+
 		private void addLibrary(Library lib) {
 			if (lib instanceof LibraryEventSource) {
 				((LibraryEventSource) lib).addLibraryListener(this);
 			}
 			for (Tool tool : lib.getTools()) {
 				AttributeSet attrs = tool.getAttributeSet();
-				if (attrs != null) attrs.addAttributeListener(this);
+				if (attrs != null)
+					attrs.addAttributeListener(this);
 			}
 		}
-		
+
 		private void removeLibrary(Library lib) {
 			if (lib instanceof LibraryEventSource) {
 				((LibraryEventSource) lib).removeLibraryListener(this);
 			}
 			for (Tool tool : lib.getTools()) {
 				AttributeSet attrs = tool.getAttributeSet();
-				if (attrs != null) attrs.removeAttributeListener(this);
+				if (attrs != null)
+					attrs.removeAttributeListener(this);
 			}
 		}
 
-
-		public void attributeListChanged(AttributeEvent e) { }
+		public void attributeListChanged(AttributeEvent e) {
+		}
 
 		public void attributeValueChanged(AttributeEvent e) {
 			explorer.repaint();
 		}
-		
+
 	}
-	
+
 	private Project proj;
 	private ProjectExplorer explorer;
 	private MyListener myListener = new MyListener();
 	private Tool lastSelected = null;
-	
+
 	ToolboxManip(Project proj, ProjectExplorer explorer) {
 		this.proj = proj;
 		this.explorer = explorer;
@@ -136,7 +138,7 @@ class ToolboxManip implements ProjectExplorer.Listener {
 					}
 				}
 			}
-			
+
 			lastSelected = proj.getTool();
 			Tool tool = (Tool) selected;
 			proj.setTool(tool);
@@ -153,19 +155,21 @@ class ToolboxManip implements ProjectExplorer.Listener {
 				SubcircuitFactory circFact = (SubcircuitFactory) source;
 				proj.setCurrentCircuit(circFact.getSubcircuit());
 				proj.getFrame().setEditorView(Frame.EDIT_LAYOUT);
-				if (lastSelected != null) proj.setTool(lastSelected);
+				if (lastSelected != null)
+					proj.setTool(lastSelected);
 			}
 		}
 	}
-	
+
 	public void moveRequested(ProjectExplorer.Event event, AddTool dragged, AddTool target) {
 		LogisimFile file = proj.getLogisimFile();
 		int draggedIndex = file.getTools().indexOf(dragged);
 		int targetIndex = file.getTools().indexOf(target);
-		if (targetIndex > draggedIndex) targetIndex++;
+		if (targetIndex > draggedIndex)
+			targetIndex++;
 		proj.doAction(LogisimFileActions.moveCircuit(dragged, targetIndex));
 	}
-	
+
 	public void deleteRequested(ProjectExplorer.Event event) {
 		Object request = event.getTarget();
 		if (request instanceof Library) {

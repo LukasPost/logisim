@@ -10,14 +10,13 @@ import draw.toolbar.ToolbarItem;
 import logisim.gui.menu.LogisimMenuBar;
 import logisim.util.UnmodifiableList;
 
-class ToolboxToolbarModel extends AbstractToolbarModel
-		implements MenuListener.EnabledListener {
+class ToolboxToolbarModel extends AbstractToolbarModel implements MenuListener.EnabledListener {
 	private LogisimToolbarItem itemAdd;
 	private LogisimToolbarItem itemUp;
 	private LogisimToolbarItem itemDown;
 	private LogisimToolbarItem itemDelete;
 	private List<ToolbarItem> items;
-	
+
 	public ToolboxToolbarModel(MenuListener menu) {
 		itemAdd = new LogisimToolbarItem(menu, "projadd.gif", LogisimMenuBar.ADD_CIRCUIT,
 				Strings.getter("projectAddCircuitTip"));
@@ -27,14 +26,9 @@ class ToolboxToolbarModel extends AbstractToolbarModel
 				Strings.getter("projectMoveCircuitDownTip"));
 		itemDelete = new LogisimToolbarItem(menu, "projdel.gif", LogisimMenuBar.REMOVE_CIRCUIT,
 				Strings.getter("projectRemoveCircuitTip"));
-		
-		items = UnmodifiableList.create(new ToolbarItem[] {
-				itemAdd,
-				itemUp,
-				itemDown,
-				itemDelete,
-			});
-		
+
+		items = UnmodifiableList.create(new ToolbarItem[] { itemAdd, itemUp, itemDown, itemDelete, });
+
 		menu.addEnabledListener(this);
 	}
 
@@ -42,7 +36,7 @@ class ToolboxToolbarModel extends AbstractToolbarModel
 	public List<ToolbarItem> getItems() {
 		return items;
 	}
-	
+
 	@Override
 	public boolean isSelected(ToolbarItem item) {
 		return false;

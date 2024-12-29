@@ -9,7 +9,6 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,13 +51,13 @@ public class TextTool extends AbstractTool {
 			attributeListChanged(e);
 		}
 	}
-	
+
 	private class CancelListener extends AbstractAction {
 		public void actionPerformed(ActionEvent e) {
 			cancelText(curCanvas);
 		}
 	}
-	
+
 	private DrawingAttributeSet attrs;
 	private EditableLabelField field;
 	private FieldListener fieldListener;
@@ -66,24 +65,22 @@ public class TextTool extends AbstractTool {
 	private Text curText;
 	private Canvas curCanvas;
 	private boolean isTextNew;
-	
+
 	public TextTool(DrawingAttributeSet attrs) {
 		this.attrs = attrs;
 		curText = null;
 		isTextNew = false;
 		field = new EditableLabelField();
-		
+
 		fieldListener = new FieldListener();
 		InputMap fieldInput = field.getInputMap();
-		fieldInput.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
-				"commit");
-		fieldInput.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				"cancel");
+		fieldInput.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "commit");
+		fieldInput.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "cancel");
 		ActionMap fieldAction = field.getActionMap();
 		fieldAction.put("commit", fieldListener);
 		fieldAction.put("cancel", new CancelListener());
 	}
-	
+
 	@Override
 	public Icon getIcon() {
 		return Icons.getIcon("text.gif");
@@ -93,22 +90,22 @@ public class TextTool extends AbstractTool {
 	public Cursor getCursor(Canvas canvas) {
 		return Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
 	}
-	
+
 	@Override
 	public List<Attribute<?>> getAttributes() {
 		return DrawAttr.ATTRS_TEXT_TOOL;
 	}
-	
+
 	@Override
 	public void toolSelected(Canvas canvas) {
 		cancelText(canvas);
 	}
-	
+
 	@Override
 	public void toolDeselected(Canvas canvas) {
 		commitText(canvas);
 	}
-	
+
 	@Override
 	public void mousePressed(Canvas canvas, MouseEvent e) {
 		if (curText != null) {
@@ -121,13 +118,12 @@ public class TextTool extends AbstractTool {
 		int my = e.getY();
 		Location mloc = Location.create(mx, my);
 		for (CanvasObject o : canvas.getModel().getObjectsFromTop()) {
-			if (o instanceof Text && o.contains(mloc, true)) {
-				clicked = (Text) o;
-				found = true;
+			if (o instanceof Text text && o.contains(mloc, true)) {
+				clicked = text;
 				break;
 			}
 		}
-		if (!found) {
+		if (clicked == null) {
 			clicked = attrs.applyTo(new Text(mx, my, ""));
 		}
 
@@ -147,13 +143,13 @@ public class TextTool extends AbstractTool {
 			field.setCaretPosition(caret);
 		}
 		field.requestFocus();
-		
+
 		canvas.getSelection().setSelected(clicked, true);
 		canvas.getSelection().setHidden(Collections.singleton(clicked), true);
 		clicked.addAttributeListener(fieldListener);
 		canvas.repaint();
 	}
-	
+
 	@Override
 	public void zoomFactorChanged(Canvas canvas) {
 		Text t = curText;
@@ -161,7 +157,7 @@ public class TextTool extends AbstractTool {
 			t.getLabel().configureTextField(field, canvas.getZoomFactor());
 		}
 	}
-	
+
 	@Override
 	public void draw(Canvas canvas, Graphics g) {
 		; // actually, there's nothing to do here - it's handled by the field
@@ -197,8 +193,7 @@ public class TextTool extends AbstractTool {
 			if (newText.equals("")) {
 				canvas.doAction(new ModelRemoveAction(canvas.getModel(), cur));
 			} else if (!oldText.equals(newText)) {
-				canvas.doAction(new ModelEditTextAction(canvas.getModel(), cur,
-						newText));
+				canvas.doAction(new ModelEditTextAction(canvas.getModel(), cur, newText));
 			}
 		}
 	}

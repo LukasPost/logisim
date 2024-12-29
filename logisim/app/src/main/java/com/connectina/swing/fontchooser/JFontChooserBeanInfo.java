@@ -29,15 +29,15 @@ import java.beans.*;
  * @see JFontChooser
  */
 public class JFontChooserBeanInfo extends SimpleBeanInfo {
-    
+
     /* 16x16 color icon. */
-    private final Image iconColor16 = loadImage("resources/connectina/FontChooser16Color.png");
+    private final Image iconColor16 = loadImage("connectina/FontChooser16Color.png");
     /* 32x32 color icon. */
-    private final Image iconColor32 = loadImage("resources/connectina/FontChooser32Color.png");
+    private final Image iconColor32 = loadImage("connectina/FontChooser32Color.png");
     /* 16x16 mono icon. */
-    private final Image iconMono16 = loadImage("resources/connectina/FontChooser16Mono.png");
+    private final Image iconMono16 = loadImage("connectina/FontChooser16Mono.png");
     /* 32x32 mono icon. */
-    private final Image iconMono32 = loadImage("resources/connectina/FontChooser32Mono.png");
+    private final Image iconMono32 = loadImage("connectina/FontChooser32Mono.png");
     /* The bean descriptor. */
     private JFontChooserBeanDescriptor descriptor = new JFontChooserBeanDescriptor();
 
@@ -46,7 +46,7 @@ public class JFontChooserBeanInfo extends SimpleBeanInfo {
      *
      * @return the bean descriptor
      */
-    //Java5 @Override
+    // Java5 @Override
     public BeanDescriptor getBeanDescriptor() {
         return descriptor;
     }
@@ -57,17 +57,17 @@ public class JFontChooserBeanInfo extends SimpleBeanInfo {
      * @param iconKind the icon kind
      * @return the image
      */
-    //Java5 @Override
+    // Java5 @Override
     public Image getIcon(int iconKind) {
         switch (iconKind) {
-            case ICON_COLOR_16x16:
-                return iconColor16;
-            case ICON_COLOR_32x32:
-                return iconColor32;
-            case ICON_MONO_16x16:
-                return iconMono16;
-            case ICON_MONO_32x32:
-                return iconMono32;
+        case ICON_COLOR_16x16:
+            return iconColor16;
+        case ICON_COLOR_32x32:
+            return iconColor32;
+        case ICON_MONO_16x16:
+            return iconMono16;
+        case ICON_MONO_32x32:
+            return iconMono32;
         }
 
         return null;

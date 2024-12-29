@@ -33,28 +33,22 @@ import logisim.util.GraphicsUtil;
 import logisim.util.Icons;
 
 public class Transistor extends InstanceFactory {
-	static final AttributeOption TYPE_P
-		= new AttributeOption("p", Strings.getter("transistorTypeP"));
-	static final AttributeOption TYPE_N
-		= new AttributeOption("n", Strings.getter("transistorTypeN"));
-	static final Attribute<AttributeOption> ATTR_TYPE
-		= Attributes.forOption("type", Strings.getter("transistorTypeAttr"),
-				new AttributeOption[] { TYPE_P, TYPE_N });
-	
+	static final AttributeOption TYPE_P = new AttributeOption("p", Strings.getter("transistorTypeP"));
+	static final AttributeOption TYPE_N = new AttributeOption("n", Strings.getter("transistorTypeN"));
+	static final Attribute<AttributeOption> ATTR_TYPE = Attributes.forOption("type",
+			Strings.getter("transistorTypeAttr"), new AttributeOption[] { TYPE_P, TYPE_N });
+
 	static final int OUTPUT = 0;
 	static final int INPUT = 1;
 	static final int GATE = 2;
-	
+
 	private static final Icon ICON_N = Icons.getIcon("trans1.gif");
 	private static final Icon ICON_P = Icons.getIcon("trans0.gif");
 
 	public Transistor() {
 		super("Transistor", Strings.getter("transistorComponent"));
-		setAttributes(
-				new Attribute[] { ATTR_TYPE, StdAttr.FACING,
-						Wiring.ATTR_GATE, StdAttr.WIDTH },
-				new Object[] { TYPE_P, Direction.EAST,
-						Wiring.GATE_TOP_LEFT, BitWidth.ONE });
+		setAttributes(new Attribute[] { ATTR_TYPE, StdAttr.FACING, Wiring.ATTR_GATE, StdAttr.WIDTH },
+				new Object[] { TYPE_P, Direction.East, Wiring.GATE_TOP_LEFT, BitWidth.ONE });
 		setFacingAttribute(StdAttr.FACING);
 		setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
 	}
@@ -81,19 +75,18 @@ public class Transistor extends InstanceFactory {
 		Direction facing = instance.getAttributeValue(StdAttr.FACING);
 		int dx = 0;
 		int dy = 0;
-		if (facing == Direction.NORTH) {
+		if (facing == Direction.North) {
 			dy = 1;
-		} else if (facing == Direction.EAST) {
+		} else if (facing == Direction.East) {
 			dx = -1;
-		} else if (facing == Direction.SOUTH) {
+		} else if (facing == Direction.South) {
 			dy = -1;
-		} else if (facing == Direction.WEST) {
+		} else if (facing == Direction.West) {
 			dx = 1;
 		}
 
 		Object powerLoc = instance.getAttributeValue(Wiring.ATTR_GATE);
-		boolean flip = (facing == Direction.SOUTH || facing == Direction.WEST)
-			== (powerLoc == Wiring.GATE_TOP_LEFT);
+		boolean flip = (facing == Direction.South || facing == Direction.West) == (powerLoc == Wiring.GATE_TOP_LEFT);
 
 		Port[] ports = new Port[3];
 		ports[OUTPUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
@@ -111,17 +104,17 @@ public class Transistor extends InstanceFactory {
 		Direction facing = attrs.getValue(StdAttr.FACING);
 		Object gateLoc = attrs.getValue(Wiring.ATTR_GATE);
 		int delta = gateLoc == Wiring.GATE_TOP_LEFT ? -20 : 0;
-		if (facing == Direction.NORTH) {
+		if (facing == Direction.North) {
 			return Bounds.create(delta, 0, 20, 40);
-		} else if (facing == Direction.SOUTH) {
+		} else if (facing == Direction.South) {
 			return Bounds.create(delta, -40, 20, 40);
-		} else if (facing == Direction.WEST) {
+		} else if (facing == Direction.West) {
 			return Bounds.create(0, delta, 40, 20);
 		} else { // facing == Direction.EAST
 			return Bounds.create(-40, delta, 40, 20);
 		}
 	}
-	
+
 	@Override
 	public boolean contains(Location loc, AttributeSet attrs) {
 		if (super.contains(loc, attrs)) {
@@ -137,13 +130,12 @@ public class Transistor extends InstanceFactory {
 	public void propagate(InstanceState state) {
 		state.setPort(OUTPUT, computeOutput(state), 1);
 	}
-	
+
 	private Value computeOutput(InstanceState state) {
 		BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
 		Value gate = state.getPort(GATE);
 		Value input = state.getPort(INPUT);
-		Value desired = state.getAttributeValue(ATTR_TYPE) == TYPE_P
-			? Value.FALSE : Value.TRUE;
+		Value desired = state.getAttributeValue(ATTR_TYPE) == TYPE_P ? Value.FALSE : Value.TRUE;
 
 		if (!gate.isFullyDefined()) {
 			if (input.isFullyDefined()) {
@@ -163,7 +155,7 @@ public class Transistor extends InstanceFactory {
 			return input;
 		}
 	}
-	
+
 	@Override
 	public void paintIcon(InstancePainter painter) {
 		Object type = painter.getAttributeValue(ATTR_TYPE);
@@ -187,10 +179,9 @@ public class Transistor extends InstanceFactory {
 		Object powerLoc = painter.getAttributeValue(Wiring.ATTR_GATE);
 		Direction from = painter.getAttributeValue(StdAttr.FACING);
 		Direction facing = painter.getAttributeValue(StdAttr.FACING);
-		boolean flip = (facing == Direction.SOUTH || facing == Direction.WEST)
-			== (powerLoc == Wiring.GATE_TOP_LEFT);
+		boolean flip = (facing == Direction.South || facing == Direction.West) == (powerLoc == Wiring.GATE_TOP_LEFT);
 
-		int degrees = Direction.EAST.toDegrees() - from.toDegrees();
+		int degrees = Direction.East.toDegrees() - from.toDegrees();
 		double radians = Math.toRadians((degrees + 360) % 360);
 		int m = flip ? 1 : -1;
 
@@ -216,7 +207,7 @@ public class Transistor extends InstanceFactory {
 			output = base;
 			platform = base;
 		}
-		
+
 		// input and output lines
 		GraphicsUtil.switchToWidth(g, Wire.WIDTH);
 		g.setColor(output);
@@ -237,7 +228,7 @@ public class Transistor extends InstanceFactory {
 			g.drawLine(-20, m * 20, -20, m * 11);
 			GraphicsUtil.switchToWidth(g, 1);
 		}
-		
+
 		// draw platforms
 		g.drawLine(-10, m * 10, -30, m * 10); // gate platform
 		g.setColor(platform);

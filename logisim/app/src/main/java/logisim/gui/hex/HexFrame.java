@@ -32,27 +32,25 @@ import logisim.util.LocaleManager;
 import logisim.util.WindowMenuItemManager;
 
 public class HexFrame extends LFrame {
-	private class WindowMenuManager extends WindowMenuItemManager
-			implements LocaleListener {
+	private class WindowMenuManager extends WindowMenuItemManager implements LocaleListener {
 		WindowMenuManager() {
 			super(Strings.get("hexFrameMenuItem"), false);
 			LocaleManager.addLocaleListener(this);
 		}
-		
+
 		@Override
 		public JFrame getJFrame(boolean create) {
 			return HexFrame.this;
 		}
-		
+
 		public void localeChanged() {
 			setText(Strings.get("hexFrameMenuItem"));
 		}
 	}
 
-	private class MyListener
-			implements ActionListener, LocaleListener {
+	private class MyListener implements ActionListener, LocaleListener {
 		private File lastFile = null;
-		
+
 		public void actionPerformed(ActionEvent event) {
 			Object src = event.getSource();
 			if (src == open) {
@@ -64,9 +62,10 @@ public class HexFrame extends LFrame {
 					try {
 						HexFile.open(model, f);
 						lastFile = f;
-					} catch (IOException e) {
-						JOptionPane.showMessageDialog(HexFrame.this, e.getMessage(),
-								Strings.get("hexOpenErrorTitle"), JOptionPane.ERROR_MESSAGE);
+					}
+					catch (IOException e) {
+						JOptionPane.showMessageDialog(HexFrame.this, e.getMessage(), Strings.get("hexOpenErrorTitle"),
+								JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			} else if (src == save) {
@@ -78,18 +77,18 @@ public class HexFrame extends LFrame {
 					try {
 						HexFile.save(f, model);
 						lastFile = f;
-					} catch (IOException e) {
-						JOptionPane.showMessageDialog(HexFrame.this, e.getMessage(),
-							Strings.get("hexSaveErrorTitle"), JOptionPane.ERROR_MESSAGE);
+					}
+					catch (IOException e) {
+						JOptionPane.showMessageDialog(HexFrame.this, e.getMessage(), Strings.get("hexSaveErrorTitle"),
+								JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			} else if (src == close) {
-				WindowEvent e = new WindowEvent(HexFrame.this,
-						WindowEvent.WINDOW_CLOSING);
+				WindowEvent e = new WindowEvent(HexFrame.this, WindowEvent.WINDOW_CLOSING);
 				HexFrame.this.processWindowEvent(e);
 			}
 		}
-		
+
 		public void localeChanged() {
 			setTitle(Strings.get("hexFrameTitle"));
 			open.setText(Strings.get("openButton"));
@@ -97,15 +96,16 @@ public class HexFrame extends LFrame {
 			close.setText(Strings.get("closeButton"));
 		}
 	}
-	
+
 	private class EditListener implements ActionListener, ChangeListener {
 		private Clip clip = null;
-		
+
 		private Clip getClip() {
-			if (clip == null) clip = new Clip(editor);
+			if (clip == null)
+				clip = new Clip(editor);
 			return clip;
 		}
-		
+
 		private void register(LogisimMenuBar menubar) {
 			menubar.addActionListener(LogisimMenuBar.CUT, this);
 			menubar.addActionListener(LogisimMenuBar.COPY, this);
@@ -114,7 +114,7 @@ public class HexFrame extends LFrame {
 			menubar.addActionListener(LogisimMenuBar.SELECT_ALL, this);
 			enableItems(menubar);
 		}
-		
+
 		public void actionPerformed(ActionEvent e) {
 			Object src = e.getSource();
 			if (src == LogisimMenuBar.CUT) {
@@ -130,10 +130,10 @@ public class HexFrame extends LFrame {
 				editor.selectAll();
 			}
 		}
-		
+
 		private void enableItems(LogisimMenuBar menubar) {
 			boolean sel = editor.selectionExists();
-			boolean clip = true; //TODO editor.clipboardExists();
+			boolean clip = true; // TODO editor.clipboardExists();
 			menubar.setEnabled(LogisimMenuBar.CUT, sel);
 			menubar.setEnabled(LogisimMenuBar.COPY, sel);
 			menubar.setEnabled(LogisimMenuBar.PASTE, clip);
@@ -160,7 +160,7 @@ public class HexFrame extends LFrame {
 
 		LogisimMenuBar menubar = new LogisimMenuBar(this, proj);
 		setJMenuBar(menubar);
-		
+
 		this.model = model;
 		this.editor = new HexEditor(model);
 
@@ -171,10 +171,9 @@ public class HexFrame extends LFrame {
 		open.addActionListener(myListener);
 		save.addActionListener(myListener);
 		close.addActionListener(myListener);
-		
+
 		Dimension pref = editor.getPreferredSize();
-		JScrollPane scroll = new JScrollPane(editor,
-				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+		JScrollPane scroll = new JScrollPane(editor, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		pref.height = Math.min(pref.height, pref.width * 3 / 2);
 		scroll.setPreferredSize(pref);
@@ -187,7 +186,7 @@ public class HexFrame extends LFrame {
 		LocaleManager.addLocaleListener(myListener);
 		myListener.localeChanged();
 		pack();
-		
+
 		Dimension size = getSize();
 		Dimension screen = getToolkit().getScreenSize();
 		if (size.width > screen.width || size.height > screen.height) {
@@ -200,7 +199,7 @@ public class HexFrame extends LFrame {
 		editor.getCaret().setDot(0, false);
 		editListener.register(menubar);
 	}
-	
+
 	@Override
 	public void setVisible(boolean value) {
 		if (value && !isVisible()) {

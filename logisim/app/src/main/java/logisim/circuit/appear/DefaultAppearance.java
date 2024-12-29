@@ -23,16 +23,17 @@ import logisim.instance.StdAttr;
 
 class DefaultAppearance {
 	private static final int OFFS = 50;
-	
-	private DefaultAppearance() { }
-	
+
+	private DefaultAppearance() {
+	}
+
 	private static class CompareLocations implements Comparator<Instance> {
 		private boolean byX;
-		
+
 		CompareLocations(boolean byX) {
 			this.byX = byX;
 		}
-		
+
 		public int compare(Instance a, Instance b) {
 			Location aloc = a.getLocation();
 			Location bloc = b.getLocation();
@@ -54,7 +55,7 @@ class DefaultAppearance {
 	}
 
 	static void sortPinList(List<Instance> pins, Direction facing) {
-		if (facing == Direction.NORTH || facing == Direction.SOUTH) {
+		if (facing == Direction.North || facing == Direction.South) {
 			Comparator<Instance> sortHorizontal = new CompareLocations(true);
 			Collections.sort(pins, sortHorizontal);
 		} else {
@@ -63,29 +64,28 @@ class DefaultAppearance {
 		}
 	}
 
-	
 	public static List<CanvasObject> build(Collection<Instance> pins) {
-		Map<Direction,List<Instance>> edge;
-		edge = new HashMap<Direction,List<Instance>>();
-		edge.put(Direction.NORTH, new ArrayList<Instance>());
-		edge.put(Direction.SOUTH, new ArrayList<Instance>());
-		edge.put(Direction.EAST, new ArrayList<Instance>());
-		edge.put(Direction.WEST, new ArrayList<Instance>());
+		Map<Direction, List<Instance>> edge;
+		edge = new HashMap<Direction, List<Instance>>();
+		edge.put(Direction.North, new ArrayList<Instance>());
+		edge.put(Direction.South, new ArrayList<Instance>());
+		edge.put(Direction.East, new ArrayList<Instance>());
+		edge.put(Direction.West, new ArrayList<Instance>());
 		for (Instance pin : pins) {
 			Direction pinFacing = pin.getAttributeValue(StdAttr.FACING);
 			Direction pinEdge = pinFacing.reverse();
 			List<Instance> e = edge.get(pinEdge);
 			e.add(pin);
 		}
-		
+
 		for (Map.Entry<Direction, List<Instance>> entry : edge.entrySet()) {
 			sortPinList(entry.getValue(), entry.getKey());
 		}
 
-		int numNorth = edge.get(Direction.NORTH).size();
-		int numSouth = edge.get(Direction.SOUTH).size();
-		int numEast = edge.get(Direction.EAST).size();
-		int numWest = edge.get(Direction.WEST).size();
+		int numNorth = edge.get(Direction.North).size();
+		int numSouth = edge.get(Direction.South).size();
+		int numEast = edge.get(Direction.East).size();
+		int numWest = edge.get(Direction.West).size();
 		int maxVert = Math.max(numNorth, numSouth);
 		int maxHorz = Math.max(numEast, numWest);
 
@@ -93,7 +93,7 @@ class DefaultAppearance {
 		int offsSouth = computeOffset(numSouth, numNorth, maxHorz);
 		int offsEast = computeOffset(numEast, numWest, maxVert);
 		int offsWest = computeOffset(numWest, numEast, maxVert);
-		
+
 		int width = computeDimension(maxVert, maxHorz);
 		int height = computeDimension(maxHorz, maxVert);
 
@@ -116,11 +116,11 @@ class DefaultAppearance {
 			ax = 0;
 			ay = 0;
 		}
-		
+
 		// place rectangle so anchor is on the grid
 		int rx = OFFS + (9 - (ax + 9) % 10);
 		int ry = OFFS + (9 - (ay + 9) % 10);
-		
+
 		Location e0 = Location.create(rx + (width - 8) / 2, ry + 1);
 		Location e1 = Location.create(rx + (width + 8) / 2, ry + 1);
 		Location ct = Location.create(rx + width / 2, ry + 11);
@@ -133,18 +133,14 @@ class DefaultAppearance {
 		List<CanvasObject> ret = new ArrayList<CanvasObject>();
 		ret.add(notch);
 		ret.add(rect);
-		placePins(ret, edge.get(Direction.WEST),
-				rx,             ry + offsWest,  0, 10);
-		placePins(ret, edge.get(Direction.EAST),
-				rx + width,     ry + offsEast,  0, 10);
-		placePins(ret, edge.get(Direction.NORTH),
-				rx + offsNorth, ry,            10,  0);
-		placePins(ret, edge.get(Direction.SOUTH),
-				rx + offsSouth, ry + height,   10,  0);
+		placePins(ret, edge.get(Direction.West), rx, ry + offsWest, 0, 10);
+		placePins(ret, edge.get(Direction.East), rx + width, ry + offsEast, 0, 10);
+		placePins(ret, edge.get(Direction.North), rx + offsNorth, ry, 10, 0);
+		placePins(ret, edge.get(Direction.South), rx + offsSouth, ry + height, 10, 0);
 		ret.add(new AppearanceAnchor(Location.create(rx + ax, ry + ay)));
 		return ret;
 	}
-	
+
 	private static int computeDimension(int maxThis, int maxOthers) {
 		if (maxThis < 3) {
 			return 30;
@@ -171,9 +167,8 @@ class DefaultAppearance {
 		}
 		return maxOffs + 10 * ((maxThis - numFacing) / 2);
 	}
-	
-	private static void placePins(List<CanvasObject> dest, List<Instance> pins,
-			int x, int y, int dx, int dy) {
+
+	private static void placePins(List<CanvasObject> dest, List<Instance> pins, int x, int y, int dx, int dy) {
 		for (Instance pin : pins) {
 			dest.add(new AppearancePort(Location.create(x, y), pin));
 			x += dx;

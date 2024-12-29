@@ -36,9 +36,8 @@ import javax.swing.event.EventListenerList;
 public class DefaultFontSelectionModel implements FontSelectionModel {
 
     /**
-     * Only one <code>ChangeEvent</code> is needed per model instance
-     * since the event's only (read-only) state is the source property.
-     * The source of events generated here is always "this".
+     * Only one <code>ChangeEvent</code> is needed per model instance since the event's only (read-only) state is the
+     * source property. The source of events generated here is always "this".
      */
     protected transient ChangeEvent changeEvent = null;
 
@@ -49,11 +48,11 @@ public class DefaultFontSelectionModel implements FontSelectionModel {
 
     private Font selectedFont;
 
-    private List availableFontNames = new ArrayList();
+    private List<String> availableFontNames = new ArrayList<>();
 
     /**
-     * Creates a <code>DefaultFontSelectionModel</code> with the
-     * current font set to <code>new Font(Font.SANS_SERIF, Font.PLAIN, 12)
+     * Creates a <code>DefaultFontSelectionModel</code> with the current font set to
+     * <code>new Font(Font.SANS_SERIF, Font.PLAIN, 12)
      * </code>. This is the default constructor.
      */
     public DefaultFontSelectionModel() {
@@ -61,10 +60,8 @@ public class DefaultFontSelectionModel implements FontSelectionModel {
     }
 
     /**
-     * Creates a <code>DefaultFontSelectionModel</code> with the
-     * current font set to <code>font</code>, which should be
-     * non-<code>null</code>. Note that setting the font to
-     * <code>null</code> is undefined and may have unpredictable
+     * Creates a <code>DefaultFontSelectionModel</code> with the current font set to <code>font</code>, which should be
+     * non-<code>null</code>. Note that setting the font to <code>null</code> is undefined and may have unpredictable
      * results.
      *
      * @param font the new <code>Font</code>
@@ -73,14 +70,13 @@ public class DefaultFontSelectionModel implements FontSelectionModel {
         selectedFont = font;
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         String[] families = ge.getAvailableFontFamilyNames();
-        for(int i = 0; i < families.length; i++) {
-        	availableFontNames.add(families[i]);
+        for (int i = 0; i < families.length; i++) {
+            availableFontNames.add(families[i]);
         }
     }
 
     /**
-     * Returns the selected <code>Font</code> which should be
-     * non-<code>null</code>.
+     * Returns the selected <code>Font</code> which should be non-<code>null</code>.
      *
      * @return the selected <code>Font</code>
      */
@@ -89,13 +85,9 @@ public class DefaultFontSelectionModel implements FontSelectionModel {
     }
 
     /**
-     * Sets the selected font to <code>font</code>.
-     * Note that setting the font to <code>null</code>
-     * is undefined and may have unpredictable results.
-     * This method fires a state changed event if it sets the
-     * current font to a new non-<code>null</code> font;
-     * if the new font is the same as the current font,
-     * no event is fired.
+     * Sets the selected font to <code>font</code>. Note that setting the font to <code>null</code> is undefined and may
+     * have unpredictable results. This method fires a state changed event if it sets the current font to a new
+     * non-<code>null</code> font; if the new font is the same as the current font, no event is fired.
      *
      * @param font the new <code>Font</code>
      */
@@ -107,16 +99,14 @@ public class DefaultFontSelectionModel implements FontSelectionModel {
     }
 
     /**
-     * Gets the available font names.
-     * Returns a list containing the names of all font families in this
-     * <code>GraphicsEnvironment</code> localized for the default locale,
-     * as returned by <code>Locale.getDefault()</code>.
+     * Gets the available font names. Returns a list containing the names of all font families in this
+     * <code>GraphicsEnvironment</code> localized for the default locale, as returned by
+     * <code>Locale.getDefault()</code>.
      *
-     * @return a list of String containing font family names localized for the
-     *         default locale, or a suitable alternative name if no name exists
-     *         for this locale
+     * @return a list of String containing font family names localized for the default locale, or a suitable alternative
+     *         name if no name exists for this locale
      */
-    public List getAvailableFontNames() {
+    public List<String> getAvailableFontNames() {
         return availableFontNames;
     }
 
@@ -131,6 +121,7 @@ public class DefaultFontSelectionModel implements FontSelectionModel {
 
     /**
      * Removes a <code>ChangeListener</code> from the model.
+     * 
      * @param l the <code>ChangeListener</code> to be removed
      */
     public void removeChangeListener(ChangeListener l) {
@@ -138,21 +129,17 @@ public class DefaultFontSelectionModel implements FontSelectionModel {
     }
 
     /**
-     * Returns an array of all the <code>ChangeListener</code>s added
-     * to this <code>DefaultFontSelectionModel</code> with
-     * <code>addChangeListener</code>.
+     * Returns an array of all the <code>ChangeListener</code>s added to this <code>DefaultFontSelectionModel</code>
+     * with <code>addChangeListener</code>.
      *
-     * @return all of the <code>ChangeListener</code>s added, or an empty
-     *         array if no listeners have been added
+     * @return all of the <code>ChangeListener</code>s added, or an empty array if no listeners have been added
      */
     public ChangeListener[] getChangeListeners() {
-        return (ChangeListener[]) listenerList.getListeners(
-                ChangeListener.class);
+        return (ChangeListener[]) listenerList.getListeners(ChangeListener.class);
     }
 
     /**
-     * Runs each <code>ChangeListener</code>'s
-     * <code>stateChanged</code> method.
+     * Runs each <code>ChangeListener</code>'s <code>stateChanged</code> method.
      */
     protected void fireStateChanged() {
         Object[] listeners = listenerList.getListenerList();
@@ -165,5 +152,5 @@ public class DefaultFontSelectionModel implements FontSelectionModel {
             }
         }
     }
-    
+
 }

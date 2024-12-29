@@ -22,7 +22,7 @@ class ComponentIcon implements Icon {
 	ComponentIcon(Component comp) {
 		this.comp = comp;
 	}
-	
+
 	public void setTriangleState(int value) {
 		triangleState = value;
 	}
@@ -35,14 +35,13 @@ class ComponentIcon implements Icon {
 		return 20;
 	}
 
-	public void paintIcon(java.awt.Component c, Graphics g,
-			int x, int y) {
+	public void paintIcon(java.awt.Component c, Graphics g, int x, int y) {
 		// draw tool icon
 		Graphics gIcon = g.create();
 		ComponentDrawContext context = new ComponentDrawContext(c, null, null, g, gIcon);
 		comp.getFactory().paintIcon(context, x, y, comp.getAttributeSet());
 		gIcon.dispose();
-		
+
 		if (triangleState != TRIANGLE_NONE) {
 			int[] xp;
 			int[] yp;

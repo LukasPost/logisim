@@ -14,21 +14,20 @@ import logisim.data.AttributeEvent;
 import logisim.data.AttributeListener;
 import logisim.data.AttributeSet;
 
-public abstract class AttributeSetTableModel
-		implements AttrTableModel, AttributeListener {
+public abstract class AttributeSetTableModel implements AttrTableModel, AttributeListener {
 	private class AttrRow implements AttrTableModelRow {
 		private Attribute<Object> attr;
-		
+
 		AttrRow(Attribute<?> attr) {
 			@SuppressWarnings("unchecked")
 			Attribute<Object> objAttr = (Attribute<Object>) attr;
 			this.attr = objAttr;
 		}
-		
+
 		public String getLabel() {
 			return attr.getDisplayName();
 		}
-		
+
 		public String getValue() {
 			Object value = attrs.getValue(attr);
 			if (value == null) {
@@ -36,49 +35,53 @@ public abstract class AttributeSetTableModel
 			} else {
 				try {
 					return attr.toDisplayString(value);
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 					return "???";
 				}
 			}
 		}
-		
+
 		public boolean isValueEditable() {
 			return !attrs.isReadOnly(attr);
 		}
-		
+
 		public Component getEditor(Window parent) {
 			Object value = attrs.getValue(attr);
 			return attr.getCellEditor(parent, value);
 		}
-		
+
 		public void setValue(Object value) throws AttrTableSetException {
 			Attribute<Object> attr = this.attr;
-			if (attr == null || value == null) return;
-			
+			if (attr == null || value == null)
+				return;
+
 			try {
 				if (value instanceof String) {
 					value = attr.parse((String) value);
 				}
 				setValueRequested(attr, value);
-			} catch (ClassCastException e) {
-				String msg = Strings.get("attributeChangeInvalidError")
-					+ ": " + e;
+			}
+			catch (ClassCastException e) {
+				String msg = Strings.get("attributeChangeInvalidError") + ": " + e;
 				throw new AttrTableSetException(msg);
-			} catch (NumberFormatException e) {
+			}
+			catch (NumberFormatException e) {
 				String msg = Strings.get("attributeChangeInvalidError");
 				String emsg = e.getMessage();
-				if (emsg != null && emsg.length() > 0) msg += ": " + emsg;
+				if (emsg != null && emsg.length() > 0)
+					msg += ": " + emsg;
 				msg += ".";
 				throw new AttrTableSetException(msg);
 			}
 		}
 	}
-	
+
 	private ArrayList<AttrTableModelListener> listeners;
 	private AttributeSet attrs;
 	private HashMap<Attribute<?>, AttrRow> rowMap;
 	private ArrayList<AttrRow> rows;
-	
+
 	public AttributeSetTableModel(AttributeSet attrs) {
 		this.attrs = attrs;
 		this.listeners = new ArrayList<AttrTableModelListener>();
@@ -92,13 +95,13 @@ public abstract class AttributeSetTableModel
 			}
 		}
 	}
-	
+
 	public abstract String getTitle();
-	
+
 	public AttributeSet getAttributeSet() {
 		return attrs;
 	}
-	
+
 	public void setAttributeSet(AttributeSet value) {
 		if (attrs != value) {
 			if (!listeners.isEmpty()) {
@@ -125,21 +128,21 @@ public abstract class AttributeSetTableModel
 			attrs.removeAttributeListener(this);
 		}
 	}
-	
+
 	protected void fireTitleChanged() {
 		AttrTableModelEvent event = new AttrTableModelEvent(this);
 		for (AttrTableModelListener l : listeners) {
 			l.attrTitleChanged(event);
 		}
 	}
-	
+
 	protected void fireStructureChanged() {
 		AttrTableModelEvent event = new AttrTableModelEvent(this);
 		for (AttrTableModelListener l : listeners) {
 			l.attrStructureChanged(event);
 		}
 	}
-	
+
 	protected void fireValueChanged(int index) {
 		AttrTableModelEvent event = new AttrTableModelEvent(this, index);
 		for (AttrTableModelListener l : listeners) {
@@ -155,9 +158,8 @@ public abstract class AttributeSetTableModel
 		return rows.get(rowIndex);
 	}
 
-	protected abstract void setValueRequested(Attribute<Object> attr, Object value)
-		throws AttrTableSetException;
-	
+	protected abstract void setValueRequested(Attribute<Object> attr, Object value) throws AttrTableSetException;
+
 	//
 	// AttributeListener methods
 	//
@@ -173,8 +175,9 @@ public abstract class AttributeSetTableModel
 			}
 			index++;
 		}
-		if (match && index == rows.size()) return;
-		
+		if (match && index == rows.size())
+			return;
+
 		// compute the new list of rows, possible adding into hash map
 		ArrayList<AttrRow> newRows = new ArrayList<AttrRow>();
 		HashSet<Attribute<?>> missing = new HashSet<Attribute<?>>(rowMap.keySet());

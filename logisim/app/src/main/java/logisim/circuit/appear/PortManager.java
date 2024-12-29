@@ -22,18 +22,18 @@ import logisim.instance.StdAttr;
 class PortManager {
 	private CircuitAppearance appearance;
 	private boolean doingUpdate;
-	
+
 	PortManager(CircuitAppearance appearance) {
 		this.appearance = appearance;
 		this.doingUpdate = false;
 	}
-	
+
 	void updatePorts() {
 		appearance.recomputePorts();
 	}
-	
-	void updatePorts(Set<Instance> adds, Set<Instance> removes,
-			Map<Instance, Instance> replaces, Collection<Instance> allPins) {
+
+	void updatePorts(Set<Instance> adds, Set<Instance> removes, Map<Instance, Instance> replaces,
+			Collection<Instance> allPins) {
 		if (appearance.isDefaultAppearance()) {
 			appearance.recomputePorts();
 		} else if (!doingUpdate) {
@@ -47,9 +47,9 @@ class PortManager {
 			}
 		}
 	}
-	
-	private void performUpdate(Set<Instance> adds, Set<Instance> removes,
-			Map<Instance, Instance> replaces, Collection<Instance> allPins) {
+
+	private void performUpdate(Set<Instance> adds, Set<Instance> removes, Map<Instance, Instance> replaces,
+			Collection<Instance> allPins) {
 		// Find the current objects corresponding to pins
 		Map<Instance, AppearancePort> oldObjects;
 		oldObjects = new HashMap<Instance, AppearancePort>();
@@ -59,10 +59,10 @@ class PortManager {
 				AppearancePort port = (AppearancePort) o;
 				oldObjects.put(port.getPin(), port);
 			} else if (o instanceof AppearanceAnchor) {
-				anchor = (AppearanceAnchor) o; 
+				anchor = (AppearanceAnchor) o;
 			}
 		}
-		
+
 		// ensure we have the anchor in the circuit
 		if (anchor == null) {
 			for (CanvasObject o : DefaultAppearance.build(allPins)) {
@@ -82,7 +82,7 @@ class PortManager {
 		portRemoves = new ArrayList<AppearancePort>(removes.size());
 		ArrayList<AppearancePort> portAdds;
 		portAdds = new ArrayList<AppearancePort>(adds.size());
-		
+
 		// handle removals
 		for (Instance pin : removes) {
 			AppearancePort port = oldObjects.remove(pin);
@@ -102,9 +102,9 @@ class PortManager {
 			}
 		}
 		// handle additions
-		DefaultAppearance.sortPinList(addsCopy, Direction.EAST);
-			// They're probably not really all facing east.
-			// I'm just sorting them so it works predictably.
+		DefaultAppearance.sortPinList(addsCopy, Direction.East);
+		// They're probably not really all facing east.
+		// I'm just sorting them so it works predictably.
 		for (Instance pin : addsCopy) {
 			if (!oldObjects.containsKey(pin)) {
 				Location loc = computeDefaultLocation(appearance, pin, oldObjects);
@@ -117,9 +117,9 @@ class PortManager {
 		// Now update the appearance
 		appearance.replaceAutomatically(portRemoves, portAdds);
 	}
-	
-	private static Location computeDefaultLocation(CircuitAppearance appear,
-			Instance pin, Map<Instance, AppearancePort> others) {
+
+	private static Location computeDefaultLocation(CircuitAppearance appear, Instance pin,
+			Map<Instance, AppearancePort> others) {
 		// Determine which locations are being used in canvas, and look for
 		// which instances facing the same way in layout
 		Set<Location> usedLocs = new HashSet<Location>();
@@ -133,12 +133,12 @@ class PortManager {
 				sameWay.add(pin2);
 			}
 		}
-		
+
 		// if at least one faces the same way, place pin relative to that
 		if (sameWay.size() > 0) {
 			sameWay.add(pin);
 			DefaultAppearance.sortPinList(sameWay, facing);
-			boolean isFirst = false; 
+			boolean isFirst = false;
 			Instance neighbor = null; // (preferably previous in map)
 			for (Instance p : sameWay) {
 				if (p == pin) {
@@ -152,9 +152,9 @@ class PortManager {
 			}
 			int dx;
 			int dy;
-			if (facing == Direction.EAST || facing == Direction.WEST) {
+			if (facing == Direction.East || facing == Direction.West) {
 				dx = 0;
-				dy = isFirst? -10 : 10;
+				dy = isFirst ? -10 : 10;
 			} else {
 				dx = isFirst ? -10 : 10;
 				dy = 0;
@@ -171,22 +171,22 @@ class PortManager {
 			} while (usedLocs.contains(loc));
 			return loc;
 		}
-		
+
 		// otherwise place it on the boundary of the bounding rectangle
 		Bounds bds = appear.getAbsoluteBounds();
 		int x;
 		int y;
 		int dx = 0;
 		int dy = 0;
-		if (facing == Direction.EAST) { // on west side by default
+		if (facing == Direction.East) { // on west side by default
 			x = bds.getX() - 7;
 			y = bds.getY() + 5;
 			dy = 10;
-		} else if (facing == Direction.WEST) { // on east side by default
+		} else if (facing == Direction.West) { // on east side by default
 			x = bds.getX() + bds.getWidth() - 3;
 			y = bds.getY() + 5;
 			dy = 10;
-		} else if (facing == Direction.SOUTH) { // on north side by default
+		} else if (facing == Direction.South) { // on north side by default
 			x = bds.getX() + 5;
 			y = bds.getY() - 7;
 			dx = 10;

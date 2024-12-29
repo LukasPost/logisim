@@ -16,12 +16,17 @@ import javax.swing.JPanel;
 
 public class VerticalSplitPane extends JPanel {
 	private class MyLayout implements LayoutManager {
-		public void addLayoutComponent(String name, Component comp) { }
-		public void removeLayoutComponent(Component comp) { }
+		public void addLayoutComponent(String name, Component comp) {
+		}
+
+		public void removeLayoutComponent(Component comp) {
+		}
 
 		public Dimension preferredLayoutSize(Container parent) {
-			if (fraction <= 0.0) return comp1.getPreferredSize();
-			if (fraction >= 1.0) return comp0.getPreferredSize();
+			if (fraction <= 0.0)
+				return comp1.getPreferredSize();
+			if (fraction >= 1.0)
+				return comp0.getPreferredSize();
 			Insets in = parent.getInsets();
 			Dimension d0 = comp0.getPreferredSize();
 			Dimension d1 = comp1.getPreferredSize();
@@ -30,8 +35,10 @@ public class VerticalSplitPane extends JPanel {
 		}
 
 		public Dimension minimumLayoutSize(Container parent) {
-			if (fraction <= 0.0) return comp1.getMinimumSize();
-			if (fraction >= 1.0) return comp0.getMinimumSize();
+			if (fraction <= 0.0)
+				return comp1.getMinimumSize();
+			if (fraction >= 1.0)
+				return comp0.getMinimumSize();
 			Insets in = parent.getInsets();
 			Dimension d0 = comp0.getMinimumSize();
 			Dimension d1 = comp1.getMinimumSize();
@@ -54,25 +61,23 @@ public class VerticalSplitPane extends JPanel {
 				split = Math.max(split, comp0.getMinimumSize().width);
 			}
 
-			comp0.setBounds(in.left, in.top,
-					split, maxHeight);
-			comp1.setBounds(in.left + split, in.top,
-					maxWidth - split, maxHeight);
+			comp0.setBounds(in.left, in.top, split, maxHeight);
+			comp1.setBounds(in.left + split, in.top, maxWidth - split, maxHeight);
 			dragbar.setBounds(in.left + split - HorizontalSplitPane.DRAG_TOLERANCE, in.top,
 					2 * HorizontalSplitPane.DRAG_TOLERANCE, maxHeight);
 		}
 	}
-	
+
 	private class MyDragbar extends HorizontalSplitPane.Dragbar {
 		MyDragbar() {
 			setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
 		}
-		
+
 		@Override
 		int getDragValue(MouseEvent e) {
 			return getX() + e.getX() - VerticalSplitPane.this.getInsets().left;
 		}
-	
+
 		@Override
 		void setDragValue(int value) {
 			Insets in = VerticalSplitPane.this.getInsets();
@@ -85,13 +90,12 @@ public class VerticalSplitPane extends JPanel {
 	private JComponent comp1;
 	private MyDragbar dragbar;
 	private double fraction;
-	
+
 	public VerticalSplitPane(JComponent comp0, JComponent comp1) {
 		this(comp0, comp1, 0.5);
 	}
-	
-	public VerticalSplitPane(JComponent comp0, JComponent comp1,
-			double fraction) {
+
+	public VerticalSplitPane(JComponent comp0, JComponent comp1, double fraction) {
 		this.comp0 = comp0;
 		this.comp1 = comp1;
 		this.dragbar = new MyDragbar(); // above the other components
@@ -102,14 +106,16 @@ public class VerticalSplitPane extends JPanel {
 		add(comp0);
 		add(comp1);
 	}
-	
+
 	public double getFraction() {
 		return fraction;
 	}
-	
+
 	public void setFraction(double value) {
-		if (value < 0.0) value = 0.0;
-		if (value > 1.0) value = 1.0;
+		if (value < 0.0)
+			value = 0.0;
+		if (value > 1.0)
+			value = 1.0;
 		if (fraction != value) {
 			fraction = value;
 			revalidate();

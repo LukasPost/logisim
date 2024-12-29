@@ -11,13 +11,12 @@ import logisim.prefs.PrefMonitor;
 
 public class BasicZoomModel implements ZoomModel {
 	private double[] zoomOptions;
-	
+
 	private PropertyChangeSupport support;
 	private double zoomFactor;
 	private boolean showGrid;
-	
-	public BasicZoomModel(PrefMonitor<Boolean> gridPref,
-			PrefMonitor<Double> zoomPref, double[] zoomOpts) {
+
+	public BasicZoomModel(PrefMonitor<Boolean> gridPref, PrefMonitor<Double> zoomPref, double[] zoomOpts) {
 		zoomOptions = zoomOpts;
 		support = new PropertyChangeSupport(this);
 		zoomFactor = 1.0;
@@ -31,8 +30,7 @@ public class BasicZoomModel implements ZoomModel {
 		support.addPropertyChangeListener(prop, l);
 	}
 
-	public void removePropertyChangeListener(String prop,
-			PropertyChangeListener l) {
+	public void removePropertyChangeListener(String prop, PropertyChangeListener l) {
 		support.removePropertyChangeListener(prop, l);
 	}
 
@@ -59,8 +57,7 @@ public class BasicZoomModel implements ZoomModel {
 		double oldValue = zoomFactor;
 		if (value != oldValue) {
 			zoomFactor = value;
-			support.firePropertyChange(ZoomModel.ZOOM, Double.valueOf(oldValue),
-					Double.valueOf(value));
+			support.firePropertyChange(ZoomModel.ZOOM, Double.valueOf(oldValue), Double.valueOf(value));
 		}
 	}
 }

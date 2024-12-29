@@ -22,41 +22,41 @@ import logisim.proj.ProjectActions;
 
 class OpenRecent extends JMenu implements PropertyChangeListener {
 	private static final int MAX_ITEM_LENGTH = 50;
-	
+
 	private class RecentItem extends JMenuItem implements ActionListener {
 		private File file;
-		
+
 		RecentItem(File file) {
 			super(getFileText(file));
 			this.file = file;
 			setEnabled(file != null);
 			addActionListener(this);
 		}
-		
+
 		public void actionPerformed(ActionEvent event) {
 			Project proj = menubar.getProject();
 			Component par = proj == null ? null : proj.getFrame().getCanvas();
 			ProjectActions.doOpen(par, proj, file);
 		}
 	}
-	
+
 	private LogisimMenuBar menubar;
 	private List<RecentItem> recentItems;
-	
+
 	OpenRecent(LogisimMenuBar menubar) {
 		this.menubar = menubar;
 		this.recentItems = new ArrayList<RecentItem>();
 		AppPreferences.addPropertyChangeListener(AppPreferences.RECENT_PROJECTS, this);
 		renewItems();
 	}
-	
+
 	private void renewItems() {
 		for (int index = recentItems.size() - 1; index >= 0; index--) {
 			RecentItem item = recentItems.get(index);
 			remove(item);
 		}
 		recentItems.clear();
-		
+
 		List<File> files = AppPreferences.getRecentFiles();
 		if (files.isEmpty()) {
 			recentItems.add(new RecentItem(null));
@@ -65,12 +65,12 @@ class OpenRecent extends JMenu implements PropertyChangeListener {
 				recentItems.add(new RecentItem(file));
 			}
 		}
-		
+
 		for (RecentItem item : recentItems) {
 			add(item);
 		}
 	}
-	
+
 	private static String getFileText(File file) {
 		if (file == null) {
 			return Strings.get("fileOpenRecentNoChoices");
@@ -78,7 +78,8 @@ class OpenRecent extends JMenu implements PropertyChangeListener {
 			String ret;
 			try {
 				ret = file.getCanonicalPath();
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				ret = file.toString();
 			}
 			if (ret.length() <= MAX_ITEM_LENGTH) {
@@ -93,7 +94,7 @@ class OpenRecent extends JMenu implements PropertyChangeListener {
 			}
 		}
 	}
-	
+
 	void localeChanged() {
 		setText(Strings.get("fileOpenRecentItem"));
 		for (RecentItem item : recentItems) {

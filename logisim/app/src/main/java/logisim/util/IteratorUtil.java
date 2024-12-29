@@ -12,11 +12,19 @@ public class IteratorUtil {
 	public static <E> Iterator<E> emptyIterator() {
 		return new EmptyIterator<E>();
 	}
-	
+
 	private static class EmptyIterator<E> implements Iterator<E> {
-		private EmptyIterator() { }
-		public E next() { throw new NoSuchElementException(); }
-		public boolean hasNext() { return false; }
+		private EmptyIterator() {
+		}
+
+		public E next() {
+			throw new NoSuchElementException();
+		}
+
+		public boolean hasNext() {
+			return false;
+		}
+
 		public void remove() {
 			throw new UnsupportedOperationException("EmptyIterator.remove");
 		}
@@ -26,10 +34,13 @@ public class IteratorUtil {
 		private E data;
 		private boolean taken = false;
 
-		private UnitIterator(E data) { this.data = data; }
+		private UnitIterator(E data) {
+			this.data = data;
+		}
 
 		public E next() {
-			if (taken) throw new NoSuchElementException();
+			if (taken)
+				throw new NoSuchElementException();
 			taken = true;
 			return data;
 		}
@@ -47,10 +58,13 @@ public class IteratorUtil {
 		private E[] data;
 		private int i = -1;
 
-		private ArrayIterator(E[] data) { this.data = data; }
+		private ArrayIterator(E[] data) {
+			this.data = data;
+		}
 
 		public E next() {
-			if (!hasNext()) throw new NoSuchElementException();
+			if (!hasNext())
+				throw new NoSuchElementException();
 			i++;
 			return data[i];
 		}
@@ -75,9 +89,11 @@ public class IteratorUtil {
 
 		public E next() {
 			if (!cur.hasNext()) {
-				if (next == null) throw new NoSuchElementException();
+				if (next == null)
+					throw new NoSuchElementException();
 				cur = next;
-				if (!cur.hasNext()) throw new NoSuchElementException();
+				if (!cur.hasNext())
+					throw new NoSuchElementException();
 			}
 			return cur.next();
 		}
@@ -99,8 +115,7 @@ public class IteratorUtil {
 		return new ArrayIterator<E>(data);
 	}
 
-	public static <E> Iterator<E> createJoinedIterator(Iterator<? extends E> i0,
-			Iterator<? extends E> i1) {
+	public static <E> Iterator<E> createJoinedIterator(Iterator<? extends E> i0, Iterator<? extends E> i1) {
 		if (!i0.hasNext()) {
 			@SuppressWarnings("unchecked")
 			Iterator<E> ret = (Iterator<E>) i1;

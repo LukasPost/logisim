@@ -25,14 +25,16 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-/** This wraps a <code>ColorPicker</code> in a simple dialog with "OK" and "Cancel" options.
- * <P>(This object is used by the static calls in <code>ColorPicker</code> to show a dialog.)
+/**
+ * This wraps a <code>ColorPicker</code> in a simple dialog with "OK" and "Cancel" options.
+ * <P>
+ * (This object is used by the static calls in <code>ColorPicker</code> to show a dialog.)
  *
  */
 class ColorPickerDialog extends JDialog {
-    
+
 	private static final long serialVersionUID = 1L;
-	
+
 	ColorPicker cp;
 	int alpha;
 	JButton ok = new JButton(ColorPicker.strings.getObject("OK").toString());
@@ -41,57 +43,63 @@ class ColorPickerDialog extends JDialog {
 	ActionListener buttonListener = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			Object src = e.getSource();
-			if(src==ok) {
+			if (src == ok) {
 				returnValue = cp.getColor();
 			}
 			setVisible(false);
 		}
 	};
-	
-	public ColorPickerDialog(Frame owner, Color color,boolean includeOpacity) {
+
+	public ColorPickerDialog(Frame owner, Color color, boolean includeOpacity) {
 		super(owner);
-		initialize(owner,color,includeOpacity);
+		initialize(owner, color, includeOpacity);
 	}
 
-	public ColorPickerDialog(Dialog owner, Color color,boolean includeOpacity) {
+	public ColorPickerDialog(Dialog owner, Color color, boolean includeOpacity) {
 		super(owner);
-		initialize(owner,color,includeOpacity);
+		initialize(owner, color, includeOpacity);
 	}
-	
-	private void initialize(Component owner,Color color,boolean includeOpacity) {
-		cp = new ColorPicker(true,includeOpacity);
+
+	private void initialize(Component owner, Color color, boolean includeOpacity) {
+		cp = new ColorPicker(true, includeOpacity);
 		setModal(true);
 		setResizable(false);
 		getContentPane().setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		c.gridx = 0; c.gridy = 0;
-		c.weightx = 1; c.weighty = 1; c.fill = GridBagConstraints.BOTH;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weightx = 1;
+		c.weighty = 1;
+		c.fill = GridBagConstraints.BOTH;
 		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.insets = new Insets(10,10,10,10);
-		getContentPane().add(cp,c);
-		c.gridy++; c.gridwidth = 1;
-		getContentPane().add(new JPanel(),c);
-		c.gridx++; c.weightx = 0;
-		getContentPane().add(cancel,c);
-		c.gridx++; c.weightx = 0;
-		getContentPane().add(ok,c);
+		c.insets = new Insets(10, 10, 10, 10);
+		getContentPane().add(cp, c);
+		c.gridy++;
+		c.gridwidth = 1;
+		getContentPane().add(new JPanel(), c);
+		c.gridx++;
+		c.weightx = 0;
+		getContentPane().add(cancel, c);
+		c.gridx++;
+		c.weightx = 0;
+		getContentPane().add(ok, c);
 		cp.setRGB(color.getRed(), color.getGreen(), color.getBlue());
-		cp.setOpacity( ((float)color.getAlpha())/255f );
+		cp.setOpacity(((float) color.getAlpha()) / 255f);
 		alpha = color.getAlpha();
 		pack();
-        setLocationRelativeTo(owner);
-		
+		setLocationRelativeTo(owner);
+
 		ok.addActionListener(buttonListener);
 		cancel.addActionListener(buttonListener);
-		
+
 		getRootPane().setDefaultButton(ok);
 	}
-	
-	/** @return the color committed when the user clicked 'OK'.  Note this returns <code>null</code>
-	 * if the user canceled this dialog, or exited via the close decoration.
+
+	/**
+	 * @return the color committed when the user clicked 'OK'. Note this returns <code>null</code> if the user canceled
+	 *         this dialog, or exited via the close decoration.
 	 */
 	public Color getColor() {
 		return returnValue;
 	}
 }
-

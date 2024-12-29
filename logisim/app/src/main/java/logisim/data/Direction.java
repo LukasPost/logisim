@@ -3,104 +3,68 @@
 
 package logisim.data;
 
-import logisim.util.StringGetter;
+public enum Direction implements AttributeOptionInterface {
 
-public class Direction implements AttributeOptionInterface {
-	public static final Direction EAST
-		= new Direction("east", Strings.getter("directionEastOption"),
-				Strings.getter("directionEastVertical"), 0);
-	public static final Direction WEST
-		= new Direction("west", Strings.getter("directionWestOption"),
-				Strings.getter("directionWestVertical"), 1);
-	public static final Direction NORTH
-		= new Direction("north", Strings.getter("directionNorthOption"),
-				Strings.getter("directionNorthVertical"), 2);
-	public static final Direction SOUTH
-		= new Direction("south", Strings.getter("directionSouthOption"),
-				Strings.getter("directionSouthVertical"), 3);
-	public static final Direction[] cardinals
-		= { NORTH, EAST, SOUTH, WEST };
+	East(0), North(1), West(2), South(3);
 
-	public static Direction parse(String str) {
-		if (str.equals(EAST.name))  return EAST;
-		if (str.equals(WEST.name))  return WEST;
-		if (str.equals(NORTH.name)) return NORTH;
-		if (str.equals(SOUTH.name)) return SOUTH;
-		throw new NumberFormatException("illegal direction '" + str + "'");
-	}
-
-	private String name;
-	private StringGetter disp;
-	private StringGetter vert;
 	private int id;
 
-	private Direction(String name, StringGetter disp, StringGetter vert, int id) {
-		this.name = name;
-		this.disp = disp;
-		this.vert = vert;
+	private Direction(int id) {
 		this.id = id;
 	}
 
-	@Override
-	public String toString() {
-		return name;
+	/**
+	 * @deprecated Please use valueOf instead
+	 */
+	@Deprecated
+	public static Direction parse(String str) {
+		String cap = str.substring(0, 1).toUpperCase() + str.substring(1);
+		return Direction.valueOf(cap);
 	}
+
+	public static final Direction[] cardinals = { East, North, West, South };
+
+	public static Direction[] getCardinals() {
+		return cardinals;
+	}
+
+	public static Direction fromInt(int x) {
+		return cardinals[x];
+	}
+
+	private static String[] displayStrings = { Strings.get("directionEastOption"), Strings.get("directionNorthOption"),
+			Strings.get("directionWestOption"), Strings.get("directionSouthOption") };
 
 	public String toDisplayString() {
-		return disp.get();
-	}
-	
-	public StringGetter getDisplayGetter() {
-		return disp;
-	}
-	
-	public String toVerticalDisplayString() {
-		return vert.get();
+		return displayStrings[id];
 	}
 
-	@Override
-	public int hashCode() {
-		return id;
+	private static String[] displayStringsVertical = { Strings.get("directionEastVertical"),
+			Strings.get("directionNorthVertical"), Strings.get("directionWestVertical"),
+			Strings.get("directionSouthVertical") };
+
+	public String toVerticalDisplayString() {
+		return displayStringsVertical[id];
 	}
-	
+
 	public double toRadians() {
-		if (this == Direction.EAST) return 0.0;
-		if (this == Direction.WEST) return Math.PI;
-		if (this == Direction.NORTH) return Math.PI / 2.0;
-		if (this == Direction.SOUTH) return -Math.PI / 2.0;
-		return 0.0;
+		return id * Math.PI / 2.0;
 	}
-	
+
 	public int toDegrees() {
-		if (this == Direction.EAST) return 0;
-		if (this == Direction.WEST) return 180;
-		if (this == Direction.NORTH) return 90;
-		if (this == Direction.SOUTH) return 270;
-		return 0;
+		return id * 90;
 	}
-	
+
 	public Direction reverse() {
-		if (this == Direction.EAST) return Direction.WEST;
-		if (this == Direction.WEST) return Direction.EAST;
-		if (this == Direction.NORTH) return Direction.SOUTH;
-		if (this == Direction.SOUTH) return Direction.NORTH;
-		return Direction.WEST;
+		return fromInt((id + 2) & 3);
 	}
-	
-	public Direction getRight() {
-		if (this == Direction.EAST) return Direction.SOUTH;
-		if (this == Direction.WEST) return Direction.NORTH;
-		if (this == Direction.NORTH) return Direction.EAST;
-		if (this == Direction.SOUTH) return Direction.WEST;
-		return Direction.WEST;
+
+	public Direction rotateCW() {
+		return fromInt((id - 1) & 3);
 	}
-	
-	public Direction getLeft() {
-		if (this == Direction.EAST) return Direction.NORTH;
-		if (this == Direction.WEST) return Direction.SOUTH;
-		if (this == Direction.NORTH) return Direction.WEST;
-		if (this == Direction.SOUTH) return Direction.EAST;
-		return Direction.WEST;
+
+	public Direction rotateCCW() {
+		return fromInt((id + 1) & 3);
 	}
 
 	// for AttributeOptionInterface

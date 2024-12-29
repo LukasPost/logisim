@@ -21,24 +21,23 @@ import java.io.IOException;
 
 class ImageTransferable implements Transferable {
 	Image img;
-	
+
 	public ImageTransferable(Image i) {
 		img = i;
 	}
 
-	public Object getTransferData(DataFlavor f)
-			throws UnsupportedFlavorException, IOException {
-		if(f.equals(DataFlavor.imageFlavor)==false)
+	public Object getTransferData(DataFlavor f) throws UnsupportedFlavorException, IOException {
+		if (f.equals(DataFlavor.imageFlavor) == false)
 			throw new UnsupportedFlavorException(f);
 		return img;
 	}
 
 	public DataFlavor[] getTransferDataFlavors() {
-		return new DataFlavor[] {DataFlavor.imageFlavor};
+		return new DataFlavor[] { DataFlavor.imageFlavor };
 	}
 
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
-		return(flavor.equals(DataFlavor.imageFlavor));
+		return (flavor.equals(DataFlavor.imageFlavor));
 	}
-	
+
 }

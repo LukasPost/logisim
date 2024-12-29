@@ -18,25 +18,16 @@ import logisim.instance.Port;
 public class SevenSegment extends InstanceFactory {
 	static Bounds[] SEGMENTS = null;
 	static Color DEFAULT_OFF = new Color(220, 220, 220);
-	
+
 	public SevenSegment() {
 		super("7-Segment Display", Strings.getter("sevenSegmentComponent"));
-		setAttributes(new Attribute[] { Io.ATTR_ON_COLOR, Io.ATTR_OFF_COLOR,
-					Io.ATTR_BACKGROUND, Io.ATTR_ACTIVE },
-				new Object[] { new Color(240, 0, 0), DEFAULT_OFF,
-					Io.DEFAULT_BACKGROUND, Boolean.TRUE });
+		setAttributes(new Attribute[] { Io.ATTR_ON_COLOR, Io.ATTR_OFF_COLOR, Io.ATTR_BACKGROUND, Io.ATTR_ACTIVE },
+				new Object[] { new Color(240, 0, 0), DEFAULT_OFF, Io.DEFAULT_BACKGROUND, Boolean.TRUE });
 		setOffsetBounds(Bounds.create(-5, 0, 40, 60));
 		setIconName("7seg.gif");
-		setPorts(new Port[] {
-				new Port(20,  0, Port.INPUT, 1),
-				new Port(30,  0, Port.INPUT, 1),
-				new Port(20, 60, Port.INPUT, 1),
-				new Port(10, 60, Port.INPUT, 1),
-				new Port( 0, 60, Port.INPUT, 1),
-				new Port(10,  0, Port.INPUT, 1),
-				new Port( 0,  0, Port.INPUT, 1),
-				new Port(30, 60, Port.INPUT, 1),
-			});
+		setPorts(new Port[] { new Port(20, 0, Port.INPUT, 1), new Port(30, 0, Port.INPUT, 1),
+				new Port(20, 60, Port.INPUT, 1), new Port(10, 60, Port.INPUT, 1), new Port(0, 60, Port.INPUT, 1),
+				new Port(10, 0, Port.INPUT, 1), new Port(0, 0, Port.INPUT, 1), new Port(30, 60, Port.INPUT, 1), });
 	}
 
 	@Override
@@ -44,7 +35,8 @@ public class SevenSegment extends InstanceFactory {
 		int summary = 0;
 		for (int i = 0; i < 8; i++) {
 			Value val = state.getPort(i);
-			if (val == Value.TRUE) summary |= 1 << i;
+			if (val == Value.TRUE)
+				summary |= 1 << i;
 		}
 		Object value = Integer.valueOf(summary);
 		InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
@@ -54,19 +46,19 @@ public class SevenSegment extends InstanceFactory {
 			data.setValue(value);
 		}
 	}
-	
+
 	@Override
 	public void paintInstance(InstancePainter painter) {
 		drawBase(painter);
 	}
-	
+
 	static void drawBase(InstancePainter painter) {
 		ensureSegments();
 		InstanceDataSingleton data = (InstanceDataSingleton) painter.getData();
 		int summ = (data == null ? 0 : ((Integer) data.getValue()).intValue());
 		Boolean active = painter.getAttributeValue(Io.ATTR_ACTIVE);
 		int desired = active == null || active.booleanValue() ? 1 : 0;
-		
+
 		Bounds bds = painter.getBounds();
 		int x = bds.getX() + 5;
 		int y = bds.getY();
@@ -95,18 +87,12 @@ public class SevenSegment extends InstanceFactory {
 		}
 		painter.drawPorts();
 	}
-	
+
 	static void ensureSegments() {
 		if (SEGMENTS == null) {
-			SEGMENTS = new Bounds[] {
-					Bounds.create( 3,  8, 19,  4),
-					Bounds.create(23, 10,  4, 19),
-					Bounds.create(23, 30,  4, 19),
-					Bounds.create( 3, 47, 19,  4),
-					Bounds.create(-2, 30,  4, 19),
-					Bounds.create(-2, 10,  4, 19),
-					Bounds.create( 3, 28, 19,  4)
-			};
+			SEGMENTS = new Bounds[] { Bounds.create(3, 8, 19, 4), Bounds.create(23, 10, 4, 19),
+					Bounds.create(23, 30, 4, 19), Bounds.create(3, 47, 19, 4), Bounds.create(-2, 30, 4, 19),
+					Bounds.create(-2, 10, 4, 19), Bounds.create(3, 28, 19, 4) };
 		}
 	}
 }

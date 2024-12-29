@@ -16,8 +16,7 @@ import logisim.tools.AddTool;
 import logisim.util.Dag;
 
 public class Dependencies {
-	private class MyListener
-			implements LibraryListener, CircuitListener {
+	private class MyListener implements LibraryListener, CircuitListener {
 		public void libraryChanged(LibraryEvent e) {
 			switch (e.getAction()) {
 			case LibraryEvent.ADD_TOOL:
@@ -58,13 +57,14 @@ public class Dependencies {
 				if (comp.getFactory() instanceof SubcircuitFactory) {
 					SubcircuitFactory factory = (SubcircuitFactory) comp.getFactory();
 					boolean found = false;
-					for (Component o : e.getCircuit().getNonWires()) { 
+					for (Component o : e.getCircuit().getNonWires()) {
 						if (o.getFactory() == factory) {
 							found = true;
 							break;
 						}
 					}
-					if (!found) depends.removeEdge(e.getCircuit(), factory.getSubcircuit());
+					if (!found)
+						depends.removeEdge(e.getCircuit(), factory.getSubcircuit());
 				}
 				break;
 			case CircuitEvent.ACTION_CLEAR:

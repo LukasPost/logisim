@@ -22,25 +22,24 @@ public class MoveGesture {
 	private MoveRequestListener listener;
 	private Circuit circuit;
 	private HashSet<Component> selected;
-	
+
 	private transient Set<ConnectionData> connections;
 	private transient AvoidanceMap initAvoid;
-	private HashMap<MoveRequest,MoveResult> cachedResults;
-	
-	public MoveGesture(MoveRequestListener listener, Circuit circuit,
-			Collection<Component> selected) {
+	private HashMap<MoveRequest, MoveResult> cachedResults;
+
+	public MoveGesture(MoveRequestListener listener, Circuit circuit, Collection<Component> selected) {
 		this.listener = listener;
 		this.circuit = circuit;
 		this.selected = new HashSet<Component>(selected);
 		this.connections = null;
 		this.initAvoid = null;
-		this.cachedResults = new HashMap<MoveRequest,MoveResult>();
+		this.cachedResults = new HashMap<MoveRequest, MoveResult>();
 	}
-	
+
 	HashSet<Component> getSelected() {
 		return selected;
 	}
-	
+
 	AvoidanceMap getFixedAvoidanceMap() {
 		AvoidanceMap ret = initAvoid;
 		if (ret == null) {
@@ -52,7 +51,7 @@ public class MoveGesture {
 		}
 		return ret;
 	}
-	
+
 	Set<ConnectionData> getConnections() {
 		Set<ConnectionData> ret = connections;
 		if (ret == null) {
@@ -61,7 +60,7 @@ public class MoveGesture {
 		}
 		return ret;
 	}
-	
+
 	public MoveResult findResult(int dx, int dy) {
 		MoveRequest request = new MoveRequest(this, dx, dy);
 		synchronized (cachedResults) {
@@ -81,7 +80,7 @@ public class MoveGesture {
 			}
 		}
 	}
-	
+
 	public MoveResult forceRequest(int dx, int dy) {
 		MoveRequest request = new MoveRequest(this, dx, dy);
 		ConnectorThread.enqueueRequest(request, true);
@@ -90,7 +89,8 @@ public class MoveGesture {
 			while (result == null) {
 				try {
 					cachedResults.wait();
-				} catch (InterruptedException e) {
+				}
+				catch (InterruptedException e) {
 					Thread.currentThread().interrupt();
 					return null;
 				}
@@ -99,7 +99,7 @@ public class MoveGesture {
 			return (MoveResult) result;
 		}
 	}
-	
+
 	void notifyResult(MoveRequest request, MoveResult result) {
 		synchronized (cachedResults) {
 			cachedResults.put(request, result);
@@ -110,9 +110,9 @@ public class MoveGesture {
 		}
 	}
 
-	private static Set<ConnectionData> computeConnections(Circuit circuit,
-			Set<Component> selected) {
-		if (selected == null || selected.isEmpty()) return Collections.emptySet();
+	private static Set<ConnectionData> computeConnections(Circuit circuit, Set<Component> selected) {
+		if (selected == null || selected.isEmpty())
+			return Collections.emptySet();
 
 		// first identify locations that might be connected
 		Set<Location> locs = new HashSet<Location>();
@@ -142,24 +142,23 @@ public class MoveGesture {
 				} else {
 					wirePath = new ArrayList<Wire>();
 					Location cur = loc;
-					for (Wire w = lastOnPath; w != null;
-							w = findWire(circuit, cur, selected, w)) {
+					for (Wire w = lastOnPath; w != null; w = findWire(circuit, cur, selected, w)) {
 						wirePath.add(w);
 						cur = w.getOtherEnd(cur);
 					}
 					Collections.reverse(wirePath);
 					wirePathStart = cur;
 				}
-				
+
 				Direction dir = null;
 				if (lastOnPath != null) {
 					Location other = lastOnPath.getOtherEnd(loc);
 					int dx = loc.getX() - other.getX();
 					int dy = loc.getY() - other.getY();
 					if (Math.abs(dx) > Math.abs(dy)) {
-						dir = dx > 0 ? Direction.EAST : Direction.WEST;
+						dir = dx > 0 ? Direction.East : Direction.West;
 					} else {
-						dir = dy > 0 ? Direction.SOUTH : Direction.NORTH;
+						dir = dy > 0 ? Direction.South : Direction.North;
 					}
 				}
 				conns.add(new ConnectionData(loc, dir, wirePath, wirePathStart));
@@ -168,8 +167,7 @@ public class MoveGesture {
 		return conns;
 	}
 
-	private static Wire findWire(Circuit circ, Location loc,
-			Set<Component> ignore, Wire ignoreW) {
+	private static Wire findWire(Circuit circ, Location loc, Set<Component> ignore, Wire ignoreW) {
 		Wire ret = null;
 		for (Component comp : circ.getComponents(loc)) {
 			if (!ignore.contains(comp) && comp != ignoreW) {

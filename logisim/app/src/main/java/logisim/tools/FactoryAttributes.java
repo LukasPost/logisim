@@ -19,16 +19,15 @@ class FactoryAttributes implements AttributeSet, AttributeListener, Cloneable {
 	private ComponentFactory factory;
 	private AttributeSet baseAttrs;
 	private ArrayList<AttributeListener> listeners;
-	
-	public FactoryAttributes(Class<? extends Library> descBase,
-			FactoryDescription desc) {
+
+	public FactoryAttributes(Class<? extends Library> descBase, FactoryDescription desc) {
 		this.descBase = descBase;
 		this.desc = desc;
 		this.factory = null;
 		this.baseAttrs = null;
 		this.listeners = new ArrayList<AttributeListener>();
 	}
-	
+
 	public FactoryAttributes(ComponentFactory factory) {
 		this.descBase = null;
 		this.desc = null;
@@ -36,11 +35,11 @@ class FactoryAttributes implements AttributeSet, AttributeListener, Cloneable {
 		this.baseAttrs = null;
 		this.listeners = new ArrayList<AttributeListener>();
 	}
-	
+
 	boolean isFactoryInstantiated() {
 		return baseAttrs != null;
 	}
-	
+
 	AttributeSet getBase() {
 		AttributeSet ret = baseAttrs;
 		if (ret == null) {
@@ -67,7 +66,7 @@ class FactoryAttributes implements AttributeSet, AttributeListener, Cloneable {
 	public void removeAttributeListener(AttributeListener l) {
 		listeners.remove(l);
 	}
-	
+
 	@Override
 	public AttributeSet clone() {
 		return (AttributeSet) getBase().clone();
@@ -92,7 +91,7 @@ class FactoryAttributes implements AttributeSet, AttributeListener, Cloneable {
 	public boolean isReadOnly(Attribute<?> attr) {
 		return getBase().isReadOnly(attr);
 	}
-	
+
 	public boolean isToSave(Attribute<?> attr) {
 		return getBase().isToSave(attr);
 	}
@@ -109,8 +108,7 @@ class FactoryAttributes implements AttributeSet, AttributeListener, Cloneable {
 		AttributeEvent e = null;
 		for (AttributeListener l : listeners) {
 			if (e == null) {
-				e = new AttributeEvent(this, baseEvent.getAttribute(),
-						baseEvent.getValue());
+				e = new AttributeEvent(this, baseEvent.getAttribute(), baseEvent.getValue());
 			}
 			l.attributeListChanged(e);
 		}
@@ -120,8 +118,7 @@ class FactoryAttributes implements AttributeSet, AttributeListener, Cloneable {
 		AttributeEvent e = null;
 		for (AttributeListener l : listeners) {
 			if (e == null) {
-				e = new AttributeEvent(this, baseEvent.getAttribute(),
-						baseEvent.getValue());
+				e = new AttributeEvent(this, baseEvent.getAttribute(), baseEvent.getValue());
 			}
 			l.attributeValueChanged(e);
 		}

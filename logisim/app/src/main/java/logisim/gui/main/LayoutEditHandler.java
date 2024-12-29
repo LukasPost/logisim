@@ -18,10 +18,9 @@ import logisim.std.base.Base;
 import logisim.tools.Library;
 import logisim.tools.Tool;
 
-public class LayoutEditHandler extends EditHandler
-		implements ProjectListener, LibraryListener, PropertyChangeListener {
+public class LayoutEditHandler extends EditHandler implements ProjectListener, LibraryListener, PropertyChangeListener {
 	private Frame frame;
-	
+
 	LayoutEditHandler(Frame frame) {
 		this.frame = frame;
 
@@ -37,16 +36,16 @@ public class LayoutEditHandler extends EditHandler
 		Selection sel = proj == null ? null : proj.getSelection();
 		boolean selEmpty = (sel == null ? true : sel.isEmpty());
 		boolean canChange = proj != null && proj.getLogisimFile().contains(proj.getCurrentCircuit());
-		
+
 		boolean selectAvailable = false;
 		for (Library lib : proj.getLogisimFile().getLibraries()) {
-			if (lib instanceof Base) selectAvailable = true;
+			if (lib instanceof Base)
+				selectAvailable = true;
 		}
 
 		setEnabled(LogisimMenuBar.CUT, !selEmpty && selectAvailable && canChange);
 		setEnabled(LogisimMenuBar.COPY, !selEmpty && selectAvailable);
-		setEnabled(LogisimMenuBar.PASTE, selectAvailable && canChange
-			&& !Clipboard.isEmpty());
+		setEnabled(LogisimMenuBar.PASTE, selectAvailable && canChange && !Clipboard.isEmpty());
 		setEnabled(LogisimMenuBar.DELETE, !selEmpty && selectAvailable && canChange);
 		setEnabled(LogisimMenuBar.DUPLICATE, !selEmpty && selectAvailable && canChange);
 		setEnabled(LogisimMenuBar.SELECT_ALL, selectAvailable);
@@ -57,21 +56,21 @@ public class LayoutEditHandler extends EditHandler
 		setEnabled(LogisimMenuBar.ADD_CONTROL, false);
 		setEnabled(LogisimMenuBar.REMOVE_CONTROL, false);
 	}
-	
+
 	@Override
 	public void cut() {
 		Project proj = frame.getProject();
 		Selection sel = frame.getCanvas().getSelection();
 		proj.doAction(SelectionActions.cut(sel));
 	}
-	
+
 	@Override
 	public void copy() {
 		Project proj = frame.getProject();
 		Selection sel = frame.getCanvas().getSelection();
 		proj.doAction(SelectionActions.copy(sel));
 	}
-	
+
 	@Override
 	public void paste() {
 		Project proj = frame.getProject();
@@ -82,14 +81,14 @@ public class LayoutEditHandler extends EditHandler
 			proj.doAction(action);
 		}
 	}
-	
+
 	@Override
 	public void delete() {
 		Project proj = frame.getProject();
 		Selection sel = frame.getCanvas().getSelection();
 		proj.doAction(SelectionActions.clear(sel));
 	}
-	
+
 	@Override
 	public void duplicate() {
 		Project proj = frame.getProject();
@@ -107,22 +106,22 @@ public class LayoutEditHandler extends EditHandler
 		sel.addAll(circ.getNonWires());
 		proj.repaintCanvas();
 	}
-	
+
 	@Override
 	public void raise() {
 		; // not yet supported in layout mode
 	}
-	
+
 	@Override
 	public void lower() {
 		; // not yet supported in layout mode
 	}
-	
+
 	@Override
 	public void raiseTop() {
 		; // not yet supported in layout mode
 	}
-	
+
 	@Override
 	public void lowerBottom() {
 		; // not yet supported in layout mode
@@ -132,18 +131,19 @@ public class LayoutEditHandler extends EditHandler
 	public void addControlPoint() {
 		; // not yet supported in layout mode
 	}
-	
+
 	@Override
 	public void removeControlPoint() {
 		; // not yet supported in layout mode
 	}
-	
+
 	private void selectSelectTool(Project proj) {
 		for (Library sub : proj.getLogisimFile().getLibraries()) {
 			if (sub instanceof Base) {
 				Base base = (Base) sub;
 				Tool tool = base.getTool("Edit Tool");
-				if (tool != null) proj.setTool(tool);
+				if (tool != null)
+					proj.setTool(tool);
 			}
 		}
 	}

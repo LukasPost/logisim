@@ -15,8 +15,7 @@ import logisim.data.Location;
 import logisim.util.EventSourceWeakSupport;
 
 public abstract class ManagedComponent extends AbstractComponent {
-	private EventSourceWeakSupport<ComponentListener> listeners
-		= new EventSourceWeakSupport<ComponentListener>();
+	private EventSourceWeakSupport<ComponentListener> listeners = new EventSourceWeakSupport<ComponentListener>();
 	private Location loc;
 	private AttributeSet attrs;
 	private ArrayList<EndData> ends;
@@ -48,8 +47,7 @@ public abstract class ManagedComponent extends AbstractComponent {
 		ComponentEvent copy = null;
 		for (ComponentListener l : listeners) {
 			if (copy == null) {
-				copy = new ComponentEvent(e.getSource(),
-						Collections.singletonList(e.getOldData()),
+				copy = new ComponentEvent(e.getSource(), Collections.singletonList(e.getOldData()),
 						Collections.singletonList(e.getData()));
 			}
 			l.endChanged(copy);
@@ -59,7 +57,8 @@ public abstract class ManagedComponent extends AbstractComponent {
 	protected void fireEndsChanged(List<EndData> oldEnds, List<EndData> newEnds) {
 		ComponentEvent e = null;
 		for (ComponentListener l : listeners) {
-			if (e == null) e = new ComponentEvent(this, oldEnds, newEnds);
+			if (e == null)
+				e = new ComponentEvent(this, oldEnds, newEnds);
 			l.endChanged(e);
 		}
 	}
@@ -88,7 +87,7 @@ public abstract class ManagedComponent extends AbstractComponent {
 		}
 		return bounds;
 	}
-	
+
 	protected void recomputeBounds() {
 		bounds = null;
 	}
@@ -97,7 +96,7 @@ public abstract class ManagedComponent extends AbstractComponent {
 	public List<EndData> getEnds() {
 		return endsView;
 	}
-	
+
 	public int getEndCount() {
 		return ends.size();
 	}
@@ -119,11 +118,11 @@ public abstract class ManagedComponent extends AbstractComponent {
 	public void setBounds(Bounds bounds) {
 		this.bounds = bounds;
 	}
-	
+
 	public void setAttributeSet(AttributeSet value) {
 		attrs = value;
 	}
-	
+
 	public void removeEnd(int index) {
 		ends.remove(index);
 	}
@@ -148,7 +147,7 @@ public abstract class ManagedComponent extends AbstractComponent {
 	public void setEnd(int i, Location end, BitWidth width, int type, boolean exclusive) {
 		setEnd(i, new EndData(end, width, type, exclusive));
 	}
-	
+
 	public void setEnds(EndData[] newEnds) {
 		List<EndData> oldEnds = ends;
 		int minLen = Math.min(oldEnds.size(), newEnds.length);
@@ -185,11 +184,10 @@ public abstract class ManagedComponent extends AbstractComponent {
 		Bounds bounds = getBounds();
 		java.awt.Component dest = context.getDestination();
 		if (bounds != null) {
-			dest.repaint(bounds.getX() - 5, bounds.getY() - 5,
-				bounds.getWidth() + 10, bounds.getHeight() + 10);
+			dest.repaint(bounds.getX() - 5, bounds.getY() - 5, bounds.getWidth() + 10, bounds.getHeight() + 10);
 		}
 	}
-	
+
 	public Object getFeature(Object key) {
 		return null;
 	}

@@ -22,11 +22,11 @@ class SplitterParameters {
 	private int valign;
 
 	SplitterParameters(SplitterAttributes attrs) {
-		
+
 		Object appear = attrs.appear;
 		int fanout = attrs.fanout;
 		Direction facing = attrs.facing;
-		
+
 		int justify;
 		if (appear == SplitterAttributes.APPEAR_CENTER || appear == SplitterAttributes.APPEAR_LEGACY) {
 			justify = 0;
@@ -38,8 +38,8 @@ class SplitterParameters {
 		int width = 20;
 
 		int offs = 6;
-		if (facing == Direction.NORTH || facing == Direction.SOUTH) { // ^ or V
-			int m = facing == Direction.NORTH ? 1 : -1;
+		if (facing == Direction.North || facing == Direction.South) { // ^ or V
+			int m = facing == Direction.North ? 1 : -1;
 			dxEnd0 = justify == 0 ? 10 * ((fanout + 1) / 2 - 1) : m * justify < 0 ? -10 : 10 * fanout;
 			dyEnd0 = -m * width;
 			ddxEnd = -10;
@@ -54,7 +54,7 @@ class SplitterParameters {
 			halign = m > 0 ? GraphicsUtil.H_RIGHT : GraphicsUtil.H_LEFT;
 			valign = m * justify <= 0 ? GraphicsUtil.V_BASELINE : GraphicsUtil.V_TOP;
 		} else { // > or <
-			int m = facing == Direction.WEST ? -1 : 1;
+			int m = facing == Direction.West ? -1 : 1;
 			dxEnd0 = m * width;
 			dyEnd0 = justify == 0 ? -10 * (fanout / 2) : m * justify > 0 ? 10 : -10 * fanout;
 			ddxEnd = 0;
@@ -70,55 +70,55 @@ class SplitterParameters {
 			valign = m * justify < 0 ? GraphicsUtil.V_TOP : GraphicsUtil.V_BASELINE;
 		}
 	}
-	
+
 	public int getEnd0X() {
 		return dxEnd0;
 	}
-	
+
 	public int getEnd0Y() {
 		return dyEnd0;
 	}
-	
+
 	public int getEndToEndDeltaX() {
 		return ddxEnd;
 	}
-	
+
 	public int getEndToEndDeltaY() {
 		return ddyEnd;
 	}
-	
+
 	public int getEndToSpineDeltaX() {
 		return dxEndSpine;
 	}
-	
-	public int getEndToSpineDeltaY() { 
+
+	public int getEndToSpineDeltaY() {
 		return dyEndSpine;
 	}
-	
+
 	public int getSpine0X() {
 		return dxSpine0;
 	}
-	
+
 	public int getSpine0Y() {
 		return dySpine0;
 	}
-	
+
 	public int getSpine1X() {
 		return dxSpine1;
 	}
-	
+
 	public int getSpine1Y() {
 		return dySpine1;
 	}
-	
+
 	public int getTextAngle() {
 		return textAngle;
 	}
-	
+
 	public int getTextHorzAlign() {
 		return halign;
 	}
-	
+
 	public int getTextVertAlign() {
 		return valign;
 	}

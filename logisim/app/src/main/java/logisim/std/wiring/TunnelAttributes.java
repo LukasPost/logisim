@@ -16,10 +16,8 @@ import logisim.data.Direction;
 import logisim.instance.StdAttr;
 
 class TunnelAttributes extends AbstractAttributeSet {
-	private static final List<Attribute<?>> ATTRIBUTES
-		= Arrays.asList(new Attribute<?>[] {
-			StdAttr.FACING, StdAttr.WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT
-		});
+	private static final List<Attribute<?>> ATTRIBUTES = Arrays
+			.asList(new Attribute<?>[] { StdAttr.FACING, StdAttr.WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT });
 
 	private Direction facing;
 	private BitWidth width;
@@ -30,9 +28,9 @@ class TunnelAttributes extends AbstractAttributeSet {
 	private int labelY;
 	private int labelHAlign;
 	private int labelVAlign;
-	
+
 	public TunnelAttributes() {
-		facing = Direction.WEST;
+		facing = Direction.West;
 		width = BitWidth.ONE;
 		label = "";
 		labelFont = StdAttr.DEFAULT_LABEL_FONT;
@@ -43,24 +41,35 @@ class TunnelAttributes extends AbstractAttributeSet {
 	Direction getFacing() {
 		return facing;
 	}
-	
+
 	String getLabel() {
 		return label;
 	}
-	
+
 	Font getFont() {
 		return labelFont;
 	}
-	
+
 	Bounds getOffsetBounds() {
 		return offsetBounds;
 	}
-	
-	int getLabelX() { return labelX; }
-	int getLabelY() { return labelY; }
-	int getLabelHAlign() { return labelHAlign; }
-	int getLabelVAlign() { return labelVAlign; }
-	
+
+	int getLabelX() {
+		return labelX;
+	}
+
+	int getLabelY() {
+		return labelY;
+	}
+
+	int getLabelHAlign() {
+		return labelHAlign;
+	}
+
+	int getLabelVAlign() {
+		return labelVAlign;
+	}
+
 	boolean setOffsetBounds(Bounds value) {
 		Bounds old = offsetBounds;
 		boolean same = old == null ? value == null : old.equals(value);
@@ -83,10 +92,14 @@ class TunnelAttributes extends AbstractAttributeSet {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <V> V getValue(Attribute<V> attr) {
-		if (attr == StdAttr.FACING) return (V) facing;
-		if (attr == StdAttr.WIDTH) return (V) width;
-		if (attr == StdAttr.LABEL) return (V) label;
-		if (attr == StdAttr.LABEL_FONT) return (V) labelFont;
+		if (attr == StdAttr.FACING)
+			return (V) facing;
+		if (attr == StdAttr.WIDTH)
+			return (V) width;
+		if (attr == StdAttr.LABEL)
+			return (V) label;
+		if (attr == StdAttr.LABEL_FONT)
+			return (V) labelFont;
 		return null;
 	}
 
@@ -115,17 +128,17 @@ class TunnelAttributes extends AbstractAttributeSet {
 		int halign;
 		int valign;
 		int margin = Tunnel.ARROW_MARGIN;
-		if (facing == Direction.NORTH) {
+		if (facing == Direction.North) {
 			x = 0;
 			y = margin;
 			halign = TextField.H_CENTER;
 			valign = TextField.V_TOP;
-		} else if (facing == Direction.SOUTH) {
+		} else if (facing == Direction.South) {
 			x = 0;
 			y = -margin;
 			halign = TextField.H_CENTER;
 			valign = TextField.V_BOTTOM;
-		} else if (facing == Direction.EAST) {
+		} else if (facing == Direction.East) {
 			x = -margin;
 			y = 0;
 			halign = TextField.H_RIGHT;

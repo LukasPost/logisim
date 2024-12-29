@@ -15,20 +15,20 @@ import draw.toolbar.ToolbarItem;
 public class ToolbarToolItem implements ToolbarItem {
 	private AbstractTool tool;
 	private Icon icon;
-	
+
 	public ToolbarToolItem(AbstractTool tool) {
 		this.tool = tool;
 		this.icon = tool.getIcon();
 	}
-	
+
 	public AbstractTool getTool() {
 		return tool;
 	}
-	
+
 	public boolean isSelectable() {
 		return true;
 	}
-	
+
 	public void paintIcon(Component destination, Graphics g) {
 		if (icon == null) {
 			g.setColor(new Color(255, 128, 128));
@@ -41,11 +41,11 @@ public class ToolbarToolItem implements ToolbarItem {
 			icon.paintIcon(destination, g, 4, 4);
 		}
 	}
-	
+
 	public String getToolTip() {
 		return tool.getDescription();
 	}
-	
+
 	public Dimension getDimension(Object orientation) {
 		if (icon == null) {
 			return new Dimension(16, 16);

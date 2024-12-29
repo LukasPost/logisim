@@ -19,16 +19,15 @@ import logisim.data.AttributeSet;
 import logisim.gui.generic.AttrTableSetException;
 import logisim.gui.generic.AttributeSetTableModel;
 
-class AttrTableSelectionModel extends AttributeSetTableModel
-		implements SelectionListener {
+class AttrTableSelectionModel extends AttributeSetTableModel implements SelectionListener {
 	private Canvas canvas;
-	
+
 	public AttrTableSelectionModel(Canvas canvas) {
 		super(new SelectionAttributes(canvas.getSelection()));
 		this.canvas = canvas;
 		canvas.getSelection().addSelectionListener(this);
 	}
-	
+
 	@Override
 	public String getTitle() {
 		Selection sel = canvas.getSelection();
@@ -48,7 +47,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel
 			}
 			totalCount++;
 		}
-		
+
 		if (firstObject == null) {
 			return null;
 		} else if (commonClass == null) {
@@ -56,14 +55,12 @@ class AttrTableSelectionModel extends AttributeSetTableModel
 		} else if (commonCount == 1) {
 			return Strings.get("selectionOne", firstObject.getDisplayName());
 		} else {
-			return Strings.get("selectionMultiple", firstObject.getDisplayName(),
-					"" + commonCount);
+			return Strings.get("selectionMultiple", firstObject.getDisplayName(), "" + commonCount);
 		}
 	}
 
 	@Override
-	public void setValueRequested(Attribute<Object> attr, Object value)
-			throws AttrTableSetException {
+	public void setValueRequested(Attribute<Object> attr, Object value) throws AttrTableSetException {
 		SelectionAttributes attrs = (SelectionAttributes) getAttributeSet();
 		HashMap<AttributeMapKey, Object> oldVals;
 		oldVals = new HashMap<AttributeMapKey, Object>();

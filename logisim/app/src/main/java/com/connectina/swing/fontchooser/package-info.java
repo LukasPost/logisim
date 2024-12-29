@@ -1,5 +1,6 @@
 /**
- * <pre> Provides a Swing font chooser JavaBean component.
+ * <pre>
+ *  Provides a Swing font chooser JavaBean component.
  * 
  * Copyright (C) 2009 Dr Christos Bohoris
  *
@@ -16,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  *
- * swing@connectina.com</pre>
+ * swing@connectina.com
+ * </pre>
  */
 package com.connectina.swing.fontchooser;
-

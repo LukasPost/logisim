@@ -5,5 +5,6 @@ package logisim.data;
 
 public interface AttributeListener {
 	public void attributeListChanged(AttributeEvent e);
+
 	public void attributeValueChanged(AttributeEvent e);
 }
