@@ -3,8 +3,8 @@
  */
 package logisim;
 
-import com.cburch.logisim.LogisimVersion;
-import com.cburch.logisim.gui.start.Startup;
+import logisim.LogisimVersion;
+import logisim.gui.start.Startup;
 
 public class App {
     public static final LogisimVersion VERSION = LogisimVersion.get(2, 7, 1);

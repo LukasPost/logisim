@@ -8,15 +8,8 @@
             "type": "java",
             "name": "Main",
             "request": "launch",
-            "mainClass": "com.cburch.logisim.Main",
+            "mainClass": "logisim.Main",
             "projectName": "app"
         },
-        {
-            "type": "java",
-            "name": "App",
-            "request": "launch",
-            "mainClass": "logisim.App",
-            "projectName": "app"
-        }
     ]
 }
