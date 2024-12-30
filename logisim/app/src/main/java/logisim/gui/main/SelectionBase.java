@@ -322,7 +322,7 @@ class SelectionBase {
 				newX = Canvas.snapXToGrid(newX);
 				newY = Canvas.snapYToGrid(newY);
 			}
-			Location newLoc = Location.create(newX, newY);
+			Location newLoc = new Location(newX, newY);
 
 			Component copy = comp.getFactory().createComponent(newLoc, attrs);
 			ret.put(comp, copy);

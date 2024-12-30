@@ -5,8 +5,6 @@ package logisim.circuit;
 
 import javax.swing.JPopupMenu;
 
-import logisim.circuit.CircuitState;
-import logisim.circuit.CircuitWires;
 import logisim.comp.ComponentEvent;
 import logisim.comp.ComponentFactory;
 import logisim.comp.ComponentDrawContext;
@@ -98,7 +96,7 @@ public class Splitter extends ManagedComponent implements WireRepair, ToolTipMak
 		EndData[] ends = new EndData[fanout + 1];
 		ends[0] = new EndData(origin, BitWidth.create(bit_end.length), EndData.INPUT_OUTPUT);
 		for (int i = 0; i < fanout; i++) {
-			ends[i + 1] = new EndData(Location.create(x, y), BitWidth.create(end_width[i + 1]), EndData.INPUT_OUTPUT);
+			ends[i + 1] = new EndData(new Location(x, y), BitWidth.create(end_width[i + 1]), EndData.INPUT_OUTPUT);
 			x += dx;
 			y += dy;
 		}

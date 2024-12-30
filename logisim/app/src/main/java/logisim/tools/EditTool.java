@@ -36,7 +36,7 @@ import logisim.util.GraphicsUtil;
 
 public class EditTool extends Tool {
 	private static final int CACHE_MAX_SIZE = 32;
-	private static final Location NULL_LOCATION = Location.create(Integer.MIN_VALUE, Integer.MIN_VALUE);
+	private static final Location NULL_LOCATION = new Location(Integer.MIN_VALUE, Integer.MIN_VALUE);
 
 	private class Listener implements CircuitListener, Selection.Listener {
 		public void circuitChanged(CircuitEvent event) {
@@ -288,7 +288,7 @@ public class EditTool extends Tool {
 		if (lastX == snapx && lastY == snapy && modsSame) { // already computed
 			return wireLoc != NULL_LOCATION;
 		} else {
-			Location snap = Location.create(snapx, snapy);
+			Location snap = new Location(snapx, snapy);
 			if (modsSame) {
 				Object o = cache.get(snap);
 				if (o != null) {

@@ -62,14 +62,14 @@ public class CircuitBuilder {
 			Location output;
 			int height;
 			if (layout == null) {
-				output = Location.create(outputX, y + 20);
+				output = new Location(outputX, y + 20);
 				height = 40;
 			} else {
 				int dy = 0;
 				if (layout.outputY < 20)
 					dy = 20 - layout.outputY;
 				height = Math.max(dy + layout.height, 40);
-				output = Location.create(outputX, y + dy + layout.outputY);
+				output = new Location(outputX, y + dy + layout.outputY);
 				placeComponents(result, layouts[i], x, y + dy, inputData, output);
 			}
 			placeOutput(result, output, outputName);
@@ -317,13 +317,13 @@ public class CircuitBuilder {
 			Location output) {
 		if (layout.inputName != null) {
 			int inputX = inputData.getSpineX(layout.inputName);
-			Location input = Location.create(inputX, output.getY());
+			Location input = new Location(inputX, output.getY());
 			inputData.registerConnection(layout.inputName, input);
 			result.add(Wire.create(input, output));
 			return;
 		}
 
-		Location compOutput = Location.create(x + layout.width, output.getY());
+		Location compOutput = new Location(x + layout.width, output.getY());
 		Component parent = layout.factory.createComponent(compOutput, layout.attrs);
 		result.add(parent);
 		if (!compOutput.equals(output)) {
@@ -339,9 +339,9 @@ public class CircuitBuilder {
 			Location input1 = parent.getEnd(2).getLocation();
 
 			int midX = input0.getX() - 20;
-			Location subOutput = Location.create(midX, output.getY());
-			Location midInput0 = Location.create(midX, input0.getY());
-			Location midInput1 = Location.create(midX, input1.getY());
+			Location subOutput = new Location(midX, output.getY());
+			Location midInput0 = new Location(midX, input0.getY());
+			Location midInput1 = new Location(midX, input1.getY());
 			result.add(Wire.create(subOutput, midInput0));
 			result.add(Wire.create(midInput0, input0));
 			result.add(Wire.create(subOutput, midInput1));
@@ -399,8 +399,8 @@ public class CircuitBuilder {
 					}
 				}
 				int subOutputX = subDest.getX() - 20 - 10 * back;
-				subOutput = Location.create(subOutputX, subOutputY);
-				Location mid = Location.create(subOutputX, subDest.getY());
+				subOutput = new Location(subOutputX, subOutputY);
+				Location mid = new Location(subOutputX, subDest.getY());
 				result.add(Wire.create(subOutput, mid));
 				result.add(Wire.create(mid, subDest));
 			}
@@ -438,7 +438,7 @@ public class CircuitBuilder {
 
 			// determine point where we can intersect with spine
 			int spineX = singleInput.spineX;
-			Location spineLoc = Location.create(spineX, curY);
+			Location spineLoc = new Location(spineX, curY);
 			if (singleInput.ys.size() > 0) {
 				// search for a Y that won't intersect with others
 				// (we needn't bother if the pin doesn't connect
@@ -446,11 +446,11 @@ public class CircuitBuilder {
 				Collections.sort(forbiddenYs, compareYs);
 				while (Collections.binarySearch(forbiddenYs, spineLoc, compareYs) >= 0) {
 					curY += 10;
-					spineLoc = Location.create(spineX, curY);
+					spineLoc = new Location(spineX, curY);
 				}
 				singleInput.ys.add(spineLoc);
 			}
-			Location loc = Location.create(curX, curY);
+			Location loc = new Location(curX, curY);
 
 			// now create the pin
 			ComponentFactory factory = Pin.FACTORY;

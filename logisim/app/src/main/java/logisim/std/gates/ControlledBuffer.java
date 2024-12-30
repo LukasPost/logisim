@@ -199,7 +199,7 @@ class ControlledBuffer extends InstanceFactory {
 		Direction facing = instance.getAttributeValue(StdAttr.FACING);
 		Bounds bds = getOffsetBounds(instance.getAttributeSet());
 		int d = Math.max(bds.getWidth(), bds.getHeight()) - 20;
-		Location loc0 = Location.create(0, 0);
+		Location loc0 = new Location(0, 0);
 		Location loc1 = loc0.translate(facing.reverse(), 20 + d);
 		Location loc2;
 		if (instance.getAttributeValue(ATTR_CONTROL) == LEFT_HANDED) {

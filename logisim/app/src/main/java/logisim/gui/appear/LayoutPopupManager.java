@@ -148,7 +148,7 @@ class LayoutPopupManager implements SelectionListener, MouseListener, MouseMotio
 		long sincePopup = System.currentTimeMillis() - curPopupTime;
 		if (sincePopup > 50)
 			hideCurrentPopup();
-		dragStart = Location.create(e.getX(), e.getY());
+		dragStart = new Location(e.getX(), e.getY());
 	}
 
 	public void mouseReleased(MouseEvent e) {

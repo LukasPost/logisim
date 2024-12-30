@@ -56,7 +56,7 @@ public class SelectTool extends AbstractTool {
 
 	public SelectTool() {
 		curAction = IDLE;
-		dragStart = Location.create(0, 0);
+		dragStart = new Location(0, 0);
 		dragEnd = dragStart;
 		dragEffective = false;
 	}
@@ -102,7 +102,7 @@ public class SelectTool extends AbstractTool {
 		int mx = e.getX();
 		int my = e.getY();
 		boolean shift = (e.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0;
-		dragStart = Location.create(mx, my);
+		dragStart = new Location(mx, my);
 		dragEffective = false;
 		dragEnd = dragStart;
 		lastMouseX = mx;
@@ -230,7 +230,7 @@ public class SelectTool extends AbstractTool {
 		switch (action) {
 		case MOVE_ALL:
 			Location moveDelta = selection.getMovingDelta();
-			if (dragEffective && !moveDelta.equals(Location.create(0, 0))) {
+			if (dragEffective && !moveDelta.equals(new Location(0, 0))) {
 				canvas.doAction(new ModelTranslateAction(model, selected, moveDelta.getX(), moveDelta.getY()));
 			}
 			break;
@@ -319,7 +319,7 @@ public class SelectTool extends AbstractTool {
 		lastMouseY = my;
 		boolean shift = (mods & MouseEvent.SHIFT_DOWN_MASK) != 0;
 		boolean ctrl = (mods & InputEvent.CTRL_DOWN_MASK) != 0;
-		Location newEnd = Location.create(mx, my);
+		Location newEnd = new Location(mx, my);
 		dragEnd = newEnd;
 
 		Location start = dragStart;
@@ -496,7 +496,7 @@ public class SelectTool extends AbstractTool {
 	}
 
 	private static CanvasObject getObjectAt(CanvasModel model, int x, int y, boolean assumeFilled) {
-		Location loc = Location.create(x, y);
+		Location loc = new Location(x, y);
 		for (CanvasObject o : model.getObjectsFromTop()) {
 			if (o.contains(loc, assumeFilled))
 				return o;

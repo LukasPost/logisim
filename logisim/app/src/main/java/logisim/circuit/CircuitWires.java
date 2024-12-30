@@ -142,8 +142,7 @@ class CircuitWires {
 			while (!computed) {
 				try {
 					wait();
-				}
-				catch (InterruptedException e) {
+				} catch (InterruptedException e) {
 				}
 			}
 		}
@@ -557,22 +556,23 @@ class CircuitWires {
 					computeBundleMap(ret);
 					bundleMap = ret;
 					break;
-				}
-				catch (Throwable t) {
+				} catch (Throwable t) {
 					if (tries == 0) {
 						t.printStackTrace();
 						bundleMap = ret;
 					}
 				}
 			}
-		}
-		catch (RuntimeException ex) {
-			ret.invalidate();
-			ret.markComputed();
+		} catch (RuntimeException ex) {
+			if (ret != null) {
+				ret.invalidate();
+				ret.markComputed();
+			}
 			throw ex;
 		} finally {
 			// Mark the BundleMap as computed in case anybody is waiting for the result.
-			ret.markComputed();
+			if(ret != null)
+				ret.markComputed();
 		}
 		return ret;
 	}

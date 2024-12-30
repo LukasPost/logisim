@@ -337,7 +337,7 @@ public class AddTool extends Tool {
 				Canvas.snapToGrid(e);
 			moveTo(canvas, g, e.getX(), e.getY());
 
-			Location loc = Location.create(e.getX(), e.getY());
+			Location loc = new Location(e.getX(), e.getY());
 			AttributeSet attrsCopy = (AttributeSet) attrs.clone();
 			ComponentFactory source = getFactory();
 			if (source == null)

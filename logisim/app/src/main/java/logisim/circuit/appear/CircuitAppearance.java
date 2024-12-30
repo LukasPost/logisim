@@ -185,7 +185,7 @@ public class CircuitAppearance extends Drawing {
 	private Location findAnchorLocation() {
 		AppearanceAnchor anchor = findAnchor();
 		if (anchor == null) {
-			return Location.create(100, 100);
+			return new Location(100, 100);
 		} else {
 			return anchor.getLocation();
 		}

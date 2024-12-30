@@ -33,7 +33,7 @@ public class Handle {
 	}
 
 	public Location getLocation() {
-		return Location.create(x, y);
+		return new Location(x, y);
 	}
 
 	public boolean isAt(Location loc) {

@@ -104,20 +104,20 @@ public class Decoder extends InstanceFactory {
 			if (facing == Direction.North || facing == Direction.South) {
 				int y = facing == Direction.North ? -10 : 10;
 				if (selectLoc == Plexers.SELECT_TOP_RIGHT) {
-					end0 = Location.create(-30, y);
-					end1 = Location.create(-10, y);
+					end0 = new Location(-30, y);
+					end1 = new Location(-10, y);
 				} else {
-					end0 = Location.create(10, y);
-					end1 = Location.create(30, y);
+					end0 = new Location(10, y);
+					end1 = new Location(30, y);
 				}
 			} else {
 				int x = facing == Direction.West ? -10 : 10;
 				if (selectLoc == Plexers.SELECT_TOP_RIGHT) {
-					end0 = Location.create(x, 10);
-					end1 = Location.create(x, 30);
+					end0 = new Location(x, 10);
+					end1 = new Location(x, 30);
 				} else {
-					end0 = Location.create(x, -30);
-					end1 = Location.create(x, -10);
+					end0 = new Location(x, -30);
+					end1 = new Location(x, -10);
 				}
 			}
 			ps[0] = new Port(end0.getX(), end0.getY(), Port.OUTPUT, 1);
@@ -144,7 +144,7 @@ public class Decoder extends InstanceFactory {
 				dy += ddy;
 			}
 		}
-		Location en = Location.create(0, 0).translate(facing, -10);
+		Location en = new Location(0, 0).translate(facing, -10);
 		ps[outputs] = new Port(0, 0, Port.INPUT, select.getWidth());
 		if (enable) {
 			ps[outputs + 1] = new Port(en.getX(), en.getY(), Port.INPUT, BitWidth.ONE);

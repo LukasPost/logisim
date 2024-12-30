@@ -72,7 +72,7 @@ public class Oval extends Rectangular {
 				x += rand.nextInt(d) - d / 2;
 				y += rand.nextInt(d) - d / 2;
 			}
-			return Location.create(x, y);
+			return new Location(x, y);
 		} else {
 			return super.getRandomPoint(bds, rand);
 		}

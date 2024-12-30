@@ -67,11 +67,11 @@ public class Line extends AbstractCanvasObject {
 	}
 
 	public Location getEnd0() {
-		return Location.create(x0, y0);
+		return new Location(x0, y0);
 	}
 
 	public Location getEnd1() {
-		return Location.create(x1, y1);
+		return new Location(x1, y1);
 	}
 
 	@Override
@@ -120,7 +120,7 @@ public class Line extends AbstractCanvasObject {
 			x += (rand.nextInt(w) - w / 2);
 			y += (rand.nextInt(w) - w / 2);
 		}
-		return Location.create(x, y);
+		return new Location(x, y);
 	}
 
 	@Override
@@ -153,8 +153,8 @@ public class Line extends AbstractCanvasObject {
 			int dx = gesture.getDeltaX();
 			int dy = gesture.getDeltaY();
 			Handle[] ret = new Handle[2];
-			ret[0] = new Handle(this, h.isAt(x0, y0) ? Location.create(x0 + dx, y0 + dy) : Location.create(x0, y0));
-			ret[1] = new Handle(this, h.isAt(x1, y1) ? Location.create(x1 + dx, y1 + dy) : Location.create(x1, y1));
+			ret[0] = new Handle(this, h.isAt(x0, y0) ? new Location(x0 + dx, y0 + dy) : new Location(x0, y0));
+			ret[1] = new Handle(this, h.isAt(x1, y1) ? new Location(x1 + dx, y1 + dy) : new Location(x1, y1));
 			return UnmodifiableList.create(ret);
 		}
 	}

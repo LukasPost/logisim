@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import logisim.circuit.Strings;
 import logisim.data.AbstractAttributeSet;
 import logisim.data.Attribute;
 import logisim.data.AttributeOption;

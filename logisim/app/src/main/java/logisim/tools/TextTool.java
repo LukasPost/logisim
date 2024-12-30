@@ -191,7 +191,7 @@ public class TextTool extends Tool {
 		// Otherwise search for a new caret.
 		int x = e.getX();
 		int y = e.getY();
-		Location loc = Location.create(x, y);
+		Location loc = new Location(x, y);
 		ComponentUserEvent event = new ComponentUserEvent(canvas, x, y);
 
 		// First search in selection.

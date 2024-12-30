@@ -120,7 +120,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
 		int w = bds.getWidth();
 		int h = bds.getHeight();
 		for (int i = 0; i < GENERATE_RANDOM_TRIES; i++) {
-			Location loc = Location.create(x + rand.nextInt(w), y + rand.nextInt(h));
+			Location loc = new Location(x + rand.nextInt(w), y + rand.nextInt(h));
 			if (contains(loc, false))
 				return loc;
 		}

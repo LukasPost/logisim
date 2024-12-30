@@ -116,7 +116,7 @@ public class TextTool extends AbstractTool {
 		boolean found = false;
 		int mx = e.getX();
 		int my = e.getY();
-		Location mloc = Location.create(mx, my);
+		Location mloc = new Location(mx, my);
 		for (CanvasObject o : canvas.getModel().getObjectsFromTop()) {
 			if (o instanceof Text text && o.contains(mloc, true)) {
 				clicked = text;

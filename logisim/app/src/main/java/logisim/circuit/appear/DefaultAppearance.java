@@ -121,9 +121,9 @@ class DefaultAppearance {
 		int rx = OFFS + (9 - (ax + 9) % 10);
 		int ry = OFFS + (9 - (ay + 9) % 10);
 
-		Location e0 = Location.create(rx + (width - 8) / 2, ry + 1);
-		Location e1 = Location.create(rx + (width + 8) / 2, ry + 1);
-		Location ct = Location.create(rx + width / 2, ry + 11);
+		Location e0 = new Location(rx + (width - 8) / 2, ry + 1);
+		Location e1 = new Location(rx + (width + 8) / 2, ry + 1);
+		Location ct = new Location(rx + width / 2, ry + 11);
 		Curve notch = new Curve(e0, e1, ct);
 		notch.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(2));
 		notch.setValue(DrawAttr.STROKE_COLOR, Color.GRAY);
@@ -137,7 +137,7 @@ class DefaultAppearance {
 		placePins(ret, edge.get(Direction.East), rx + width, ry + offsEast, 0, 10);
 		placePins(ret, edge.get(Direction.North), rx + offsNorth, ry, 10, 0);
 		placePins(ret, edge.get(Direction.South), rx + offsSouth, ry + height, 10, 0);
-		ret.add(new AppearanceAnchor(Location.create(rx + ax, ry + ay)));
+		ret.add(new AppearanceAnchor(new Location(rx + ax, ry + ay)));
 		return ret;
 	}
 
@@ -170,7 +170,7 @@ class DefaultAppearance {
 
 	private static void placePins(List<CanvasObject> dest, List<Instance> pins, int x, int y, int dx, int dy) {
 		for (Instance pin : pins) {
-			dest.add(new AppearancePort(Location.create(x, y), pin));
+			dest.add(new AppearancePort(new Location(x, y), pin));
 			x += dx;
 			y += dy;
 		}

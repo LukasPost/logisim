@@ -163,7 +163,7 @@ public class SvgReader {
 		for (int i = 0; i < ret.length; i++) {
 			int x = Integer.parseInt(toks[2 * i]);
 			int y = Integer.parseInt(toks[2 * i + 1]);
-			ret[i] = Location.create(x, y);
+			ret[i] = new Location(x, y);
 		}
 		return UnmodifiableList.create(ret);
 	}
@@ -217,9 +217,9 @@ public class SvgReader {
 					x2 += x0;
 					y2 += y0;
 				}
-				Location e0 = Location.create(x0, y0);
-				Location e1 = Location.create(x2, y2);
-				Location ct = Location.create(x1, y1);
+				Location e0 = new Location(x0, y0);
+				Location e1 = new Location(x2, y2);
+				Location ct = new Location(x1, y1);
 				return new Curve(e0, e1, ct);
 			} else {
 				throw new NumberFormatException("Unexpected format for curve");

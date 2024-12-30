@@ -71,7 +71,7 @@ class PortManager {
 				}
 			}
 			if (anchor == null) {
-				anchor = new AppearanceAnchor(Location.create(100, 100));
+				anchor = new AppearanceAnchor(new Location(100, 100));
 			}
 			int dest = appearance.getObjectsFromBottom().size();
 			appearance.addObjects(dest, Collections.singleton(anchor));
@@ -197,7 +197,7 @@ class PortManager {
 		}
 		x = (x + 9) / 10 * 10; // round coordinates up to ensure they're on grid
 		y = (y + 9) / 10 * 10;
-		Location loc = Location.create(x, y);
+		Location loc = new Location(x, y);
 		while (usedLocs.contains(loc)) {
 			loc = loc.translate(dx, dy);
 		}

@@ -50,7 +50,7 @@ class WireIterator implements Iterator<Location> {
 	}
 
 	public Location next() {
-		Location ret = Location.create(curX, curY);
+		Location ret = new Location(curX, curY);
 		destReturned |= curX == destX && curY == destY;
 		curX += deltaX;
 		curY += deltaY;

@@ -79,17 +79,17 @@ public class BitSelector extends InstanceFactory {
 		Location inPt;
 		Location selPt;
 		if (facing == Direction.West) {
-			inPt = Location.create(30, 0);
-			selPt = Location.create(10, 10);
+			inPt = new Location(30, 0);
+			selPt = new Location(10, 10);
 		} else if (facing == Direction.North) {
-			inPt = Location.create(0, 30);
-			selPt = Location.create(-10, 10);
+			inPt = new Location(0, 30);
+			selPt = new Location(-10, 10);
 		} else if (facing == Direction.South) {
-			inPt = Location.create(0, -30);
-			selPt = Location.create(-10, -10);
+			inPt = new Location(0, -30);
+			selPt = new Location(-10, -10);
 		} else {
-			inPt = Location.create(-30, 0);
-			selPt = Location.create(-10, 10);
+			inPt = new Location(-30, 0);
+			selPt = new Location(-10, 10);
 		}
 
 		Port[] ps = new Port[3];

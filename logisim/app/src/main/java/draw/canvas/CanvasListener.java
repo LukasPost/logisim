@@ -118,7 +118,7 @@ class CanvasListener implements MouseListener, MouseMotionListener, KeyListener,
 	}
 
 	private void handlePopupTrigger(MouseEvent e) {
-		Location loc = Location.create(e.getX(), e.getY());
+		Location loc = new Location(e.getX(), e.getY());
 		List<CanvasObject> objects = canvas.getModel().getObjectsFromTop();
 		CanvasObject clicked = null;
 		for (CanvasObject o : objects) {

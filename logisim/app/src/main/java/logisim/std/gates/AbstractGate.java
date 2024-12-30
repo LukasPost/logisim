@@ -558,13 +558,13 @@ abstract class AbstractGate extends InstanceFactory {
 		}
 
 		if (facing == Direction.North) {
-			return Location.create(dy, dx);
+			return new Location(dy, dx);
 		} else if (facing == Direction.South) {
-			return Location.create(dy, -dx);
+			return new Location(dy, -dx);
 		} else if (facing == Direction.West) {
-			return Location.create(dx, dy);
+			return new Location(dx, dy);
 		} else {
-			return Location.create(-dx, dy);
+			return new Location(-dx, dy);
 		}
 	}
 }

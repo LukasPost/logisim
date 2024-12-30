@@ -8,8 +8,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-import logisim.circuit.CircuitState;
-import logisim.circuit.Wire;
 import logisim.comp.ComponentDrawContext;
 import logisim.data.Direction;
 import logisim.data.Location;
@@ -41,7 +39,7 @@ class SplitterPainter {
 		GraphicsUtil.switchToWidth(g, Wire.WIDTH);
 		for (int i = 0, n = attrs.fanout; i < n; i++) {
 			if (showState) {
-				Value val = state.getValue(Location.create(x, y));
+				Value val = state.getValue(new Location(x, y));
 				g.setColor(val.getColor());
 			}
 			g.drawLine(x, y, x + dxEndSpine, y + dyEndSpine);
@@ -179,7 +177,7 @@ class SplitterPainter {
 			int yi = y1;
 			for (int i = 1; i <= fanout; i++) {
 				if (context.getShowState()) {
-					g.setColor(state.getValue(Location.create(xi, yi)).getColor());
+					g.setColor(state.getValue(new Location(xi, yi)).getColor());
 				}
 				int xSpine = xi + (xi == x0 ? 0 : (xi < x0 ? 10 : -10));
 				g.drawLine(xi, yi, xSpine, ySpine);
@@ -202,7 +200,7 @@ class SplitterPainter {
 			int yi = y1;
 			for (int i = 1; i <= fanout; i++) {
 				if (context.getShowState()) {
-					g.setColor(state.getValue(Location.create(xi, yi)).getColor());
+					g.setColor(state.getValue(new Location(xi, yi)).getColor());
 				}
 				int ySpine = yi + (yi == y0 ? 0 : (yi < y0 ? 10 : -10));
 				g.drawLine(xi, yi, xSpine, ySpine);

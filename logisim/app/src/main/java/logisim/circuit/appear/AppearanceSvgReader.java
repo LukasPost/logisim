@@ -27,7 +27,7 @@ public class AppearanceSvgReader {
 		} else if (name.equals("circ-port")) {
 			Location loc = getLocation(elt);
 			String[] pinStr = elt.getAttribute("pin").split(",");
-			Location pinLoc = Location.create(Integer.parseInt(pinStr[0].trim()), Integer.parseInt(pinStr[1].trim()));
+			Location pinLoc = new Location(Integer.parseInt(pinStr[0].trim()), Integer.parseInt(pinStr[1].trim()));
 			Instance pin = pins.get(pinLoc);
 			if (pin == null) {
 				return null;
@@ -46,6 +46,6 @@ public class AppearanceSvgReader {
 		double h = Double.parseDouble(elt.getAttribute("height"));
 		int px = (int) Math.round(x + w / 2);
 		int py = (int) Math.round(y + h / 2);
-		return Location.create(px, py);
+		return new Location(px, py);
 	}
 }

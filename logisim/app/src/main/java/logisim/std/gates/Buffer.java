@@ -88,7 +88,7 @@ class Buffer extends InstanceFactory {
 
 		Port[] ports = new Port[2];
 		ports[0] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
-		Location out = Location.create(0, 0).translate(facing, -20);
+		Location out = new Location(0, 0).translate(facing, -20);
 		ports[1] = new Port(out.getX(), out.getY(), Port.INPUT, StdAttr.WIDTH);
 		instance.setPorts(ports);
 	}

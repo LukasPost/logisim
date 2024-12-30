@@ -28,37 +28,40 @@ class WireRepair extends CircuitTransaction {
 		void merge(Wire a, Wire b) {
 			ArrayList<Wire> set0 = map.get(a);
 			ArrayList<Wire> set1 = map.get(b);
-			if (set0 == null && set1 == null) {
-				set0 = new ArrayList<Wire>(2);
-				set0.add(a);
-				set0.add(b);
-				map.put(a, set0);
-				map.put(b, set0);
-			} else if (set0 == null && set1 != null) {
-				set1.add(a);
-				map.put(a, set1);
-			} else if (set0 != null && set1 == null) {
-				set0.add(b);
-				map.put(b, set0);
-			} else if (set0 != set1) { // neither is null, and they are different
+			if (set0 == set1)
+				return;
+
+			if (set0 != null && set1 != null) {
 				if (set0.size() > set1.size()) { // ensure set1 is the larger
 					ArrayList<Wire> temp = set0;
 					set0 = set1;
 					set1 = temp;
 				}
 				set1.addAll(set0);
-				for (Wire w : set0) {
+				for (Wire w : set0) 
 					map.put(w, set1);
-				}
+
+			} else if (set0 == null && set1 != null) {
+				set1.add(a);
+				map.put(a, set1);
+			} else if (set0 != null && set1 == null) {
+				set0.add(b);
+				map.put(b, set0);
+			} else {
+				set0 = new ArrayList<Wire>(2);
+				set0.add(a);
+				set0.add(b);
+				map.put(a, set0);
+				map.put(b, set0);
 			}
 		}
 
 		Collection<ArrayList<Wire>> getMergeSets() {
 			IdentityHashMap<ArrayList<Wire>, Boolean> lists;
 			lists = new IdentityHashMap<ArrayList<Wire>, Boolean>();
-			for (ArrayList<Wire> list : map.values()) {
+			for (ArrayList<Wire> list : map.values()) 
 				lists.put(list, Boolean.TRUE);
-			}
+			
 			return lists.keySet();
 		}
 	}
@@ -82,8 +85,10 @@ class WireRepair extends CircuitTransaction {
 	}
 
 	/*
-	 * for debugging: private void printWires(String prefix, PrintStream out) { boolean first = true; for (Wire w :
-	 * circuit.getWires()) { if (first) { out.println(prefix + ": " + w); first = false; } else { out.println("      " +
+	 * for debugging: private void printWires(String prefix, PrintStream out) {
+	 * boolean first = true; for (Wire w :
+	 * circuit.getWires()) { if (first) { out.println(prefix + ": " + w); first =
+	 * false; } else { out.println("      " +
 	 * w); } } out.println(prefix + ": none"); }
 	 */
 

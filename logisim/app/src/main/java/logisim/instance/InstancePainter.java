@@ -134,7 +134,7 @@ public class InstancePainter implements InstanceState {
 
 	public Location getLocation() {
 		InstanceComponent c = comp;
-		return c == null ? Location.create(0, 0) : c.getLocation();
+		return c == null ? new Location(0, 0) : c.getLocation();
 	}
 
 	public boolean isPortConnected(int index) {

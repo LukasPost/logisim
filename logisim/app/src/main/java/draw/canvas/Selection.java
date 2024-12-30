@@ -198,7 +198,7 @@ public class Selection {
 	}
 
 	public Location getMovingDelta() {
-		return Location.create(moveDx, moveDy);
+		return new Location(moveDx, moveDy);
 	}
 
 	public void setMovingDelta(int dx, int dy) {

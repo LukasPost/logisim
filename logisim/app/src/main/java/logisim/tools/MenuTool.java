@@ -127,7 +127,7 @@ public class MenuTool extends Tool {
 	public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
-		Location pt = Location.create(x, y);
+		Location pt = new Location(x, y);
 
 		JPopupMenu menu;
 		Project proj = canvas.getProject();

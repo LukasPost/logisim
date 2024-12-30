@@ -88,7 +88,7 @@ public class PolyTool extends AbstractTool {
 			return;
 		}
 
-		Location loc = Location.create(mx, my);
+		Location loc = new Location(mx, my);
 		ArrayList<Location> locs = locations;
 		if (!active) {
 			locs.clear();
@@ -184,14 +184,14 @@ public class PolyTool extends AbstractTool {
 				Location nextLast = locations.get(index - 1);
 				newLast = LineUtil.snapTo8Cardinals(nextLast, mx, my);
 			} else {
-				newLast = Location.create(mx, my);
+				newLast = new Location(mx, my);
 			}
 			if ((mods & MouseEvent.CTRL_DOWN_MASK) != 0) {
 				int lastX = newLast.getX();
 				int lastY = newLast.getY();
 				lastX = canvas.snapX(lastX);
 				lastY = canvas.snapY(lastY);
-				newLast = Location.create(lastX, lastY);
+				newLast = new Location(lastX, lastY);
 			}
 
 			if (!newLast.equals(last)) {

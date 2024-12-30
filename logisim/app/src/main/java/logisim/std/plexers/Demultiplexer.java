@@ -100,21 +100,21 @@ public class Demultiplexer extends InstanceFactory {
 			Location end0;
 			Location end1;
 			if (facing == Direction.West) {
-				end0 = Location.create(-30, -10);
-				end1 = Location.create(-30, 10);
-				sel = Location.create(-20, selMult * 20);
+				end0 = new Location(-30, -10);
+				end1 = new Location(-30, 10);
+				sel = new Location(-20, selMult * 20);
 			} else if (facing == Direction.North) {
-				end0 = Location.create(-10, -30);
-				end1 = Location.create(10, -30);
-				sel = Location.create(selMult * -20, -20);
+				end0 = new Location(-10, -30);
+				end1 = new Location(10, -30);
+				sel = new Location(selMult * -20, -20);
 			} else if (facing == Direction.South) {
-				end0 = Location.create(-10, 30);
-				end1 = Location.create(10, 30);
-				sel = Location.create(selMult * -20, 20);
+				end0 = new Location(-10, 30);
+				end1 = new Location(10, 30);
+				sel = new Location(selMult * -20, 20);
 			} else {
-				end0 = Location.create(30, -10);
-				end1 = Location.create(30, 10);
-				sel = Location.create(20, selMult * 20);
+				end0 = new Location(30, -10);
+				end1 = new Location(30, 10);
+				sel = new Location(20, selMult * 20);
 			}
 			ps[0] = new Port(end0.getX(), end0.getY(), Port.OUTPUT, data.getWidth());
 			ps[1] = new Port(end1.getX(), end1.getY(), Port.OUTPUT, data.getWidth());
@@ -126,19 +126,19 @@ public class Demultiplexer extends InstanceFactory {
 			if (facing == Direction.West) {
 				dx = -40;
 				ddx = 0;
-				sel = Location.create(-20, selMult * (dy + 10 * outputs));
+				sel = new Location(-20, selMult * (dy + 10 * outputs));
 			} else if (facing == Direction.North) {
 				dy = -40;
 				ddy = 0;
-				sel = Location.create(selMult * dx, -20);
+				sel = new Location(selMult * dx, -20);
 			} else if (facing == Direction.South) {
 				dy = 40;
 				ddy = 0;
-				sel = Location.create(selMult * dx, 20);
+				sel = new Location(selMult * dx, 20);
 			} else {
 				dx = 40;
 				ddx = 0;
-				sel = Location.create(20, selMult * (dy + 10 * outputs));
+				sel = new Location(20, selMult * (dy + 10 * outputs));
 			}
 			for (int i = 0; i < outputs; i++) {
 				ps[i] = new Port(dx, dy, Port.OUTPUT, data.getWidth());

@@ -64,7 +64,7 @@ public class Text extends AbstractCanvasObject {
 	}
 
 	public Location getLocation() {
-		return Location.create(label.getX(), label.getY());
+		return new Location(label.getX(), label.getY());
 	}
 
 	public String getText() {

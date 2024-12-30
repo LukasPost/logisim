@@ -231,7 +231,7 @@ public class SelectTool extends Tool {
 		Project proj = canvas.getProject();
 		Selection sel = proj.getSelection();
 		Circuit circuit = canvas.getCircuit();
-		start = Location.create(e.getX(), e.getY());
+		start = new Location(e.getX(), e.getY());
 		curDx = 0;
 		curDy = 0;
 		moveGesture = null;

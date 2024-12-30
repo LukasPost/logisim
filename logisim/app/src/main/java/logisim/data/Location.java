@@ -3,21 +3,16 @@
 
 package logisim.data;
 
-import logisim.util.Cache;
-
 /**
- * Represents an immutable rectangular bounding box. This is analogous to java.awt's <code>Point</code> class, except
+ * Represents an immutable rectangular bounding box. This is analogous to
+ * java.awt's <code>Point</code> class, except
  * that objects of this type are immutable.
  */
-public class Location implements Comparable<Location> {
-	private static final Cache cache = new Cache();
-
-	private final int hashCode;
+public final class Location implements Comparable<Location> {
 	private final int x;
 	private final int y;
 
-	private Location(int hashCode, int x, int y) {
-		this.hashCode = hashCode;
+	public Location(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
@@ -41,7 +36,7 @@ public class Location implements Comparable<Location> {
 	public Location translate(int dx, int dy) {
 		if (dx == 0 && dy == 0)
 			return this;
-		return Location.create(x + dx, y + dy);
+		return new Location(x + dx, y + dy);
 	}
 
 	public Location translate(Direction dir, int dist) {
@@ -52,14 +47,14 @@ public class Location implements Comparable<Location> {
 		if (dist == 0 && right == 0)
 			return this;
 		if (dir == Direction.East)
-			return Location.create(x + dist, y + right);
+			return new Location(x + dist, y + right);
 		if (dir == Direction.West)
-			return Location.create(x - dist, y - right);
+			return new Location(x - dist, y - right);
 		if (dir == Direction.South)
-			return Location.create(x - right, y + dist);
+			return new Location(x - right, y + dist);
 		if (dir == Direction.North)
-			return Location.create(x + right, y - dist);
-		return Location.create(x + dist, y + right);
+			return new Location(x + right, y - dist);
+		return new Location(x + dist, y + right);
 	}
 
 	// rotates this around (xc,yc) assuming that this is facing in the
@@ -74,11 +69,11 @@ public class Location implements Comparable<Location> {
 		int dx = x - xc;
 		int dy = y - yc;
 		if (degrees == 90) {
-			return create(xc + dy, yc - dx);
+			return new Location(xc + dy, yc - dx);
 		} else if (degrees == 180) {
-			return create(xc - dx, yc - dy);
+			return new Location(xc - dx, yc - dy);
 		} else if (degrees == 270) {
-			return create(xc - dy, yc + dx);
+			return new Location(xc - dy, yc + dx);
 		} else {
 			return this;
 		}
@@ -86,15 +81,14 @@ public class Location implements Comparable<Location> {
 
 	@Override
 	public boolean equals(Object other_obj) {
-		if (!(other_obj instanceof Location))
+		if (!(other_obj instanceof Location other))
 			return false;
-		Location other = (Location) other_obj;
 		return this.x == other.x && this.y == other.y;
 	}
 
 	@Override
 	public int hashCode() {
-		return hashCode;
+		return x * 31 + y;
 	}
 
 	public int compareTo(Location other) {
@@ -107,19 +101,6 @@ public class Location implements Comparable<Location> {
 	@Override
 	public String toString() {
 		return "(" + x + "," + y + ")";
-	}
-
-	public static Location create(int x, int y) {
-		int hashCode = 31 * x + y;
-		Object ret = cache.get(hashCode);
-		if (ret != null) {
-			Location loc = (Location) ret;
-			if (loc.x == x && loc.y == y)
-				return loc;
-		}
-		Location loc = new Location(hashCode, x, y);
-		cache.put(hashCode, loc);
-		return loc;
 	}
 
 	public static Location parse(String value) {
@@ -143,6 +124,6 @@ public class Location implements Comparable<Location> {
 		}
 		int x = Integer.parseInt(value.substring(0, comma).trim());
 		int y = Integer.parseInt(value.substring(comma + 1).trim());
-		return Location.create(x, y);
+		return new Location(x, y);
 	}
 }

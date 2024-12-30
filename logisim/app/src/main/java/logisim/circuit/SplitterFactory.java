@@ -10,7 +10,6 @@ import java.awt.event.InputEvent;
 import javax.swing.Icon;
 
 import logisim.LogisimVersion;
-import logisim.circuit.Strings;
 import logisim.comp.AbstractComponentFactory;
 import logisim.comp.Component;
 import logisim.comp.ComponentDrawContext;
@@ -93,7 +92,7 @@ public class SplitterFactory extends AbstractComponentFactory {
 	public void drawGhost(ComponentDrawContext context, Color color, int x, int y, AttributeSet attrsBase) {
 		SplitterAttributes attrs = (SplitterAttributes) attrsBase;
 		context.getGraphics().setColor(color);
-		Location loc = Location.create(x, y);
+		Location loc = new Location(x, y);
 		if (attrs.appear == SplitterAttributes.APPEAR_LEGACY) {
 			SplitterPainter.drawLegacy(context, attrs, loc);
 		} else {

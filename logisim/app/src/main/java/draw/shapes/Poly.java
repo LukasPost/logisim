@@ -151,7 +151,7 @@ public class Poly extends FillableCanvasObject {
 				double u = Math.random();
 				int x = (int) Math.round(p.getX() + u * (q.getX() - p.getX()));
 				int y = (int) Math.round(p.getY() + u * (q.getY() - p.getY()));
-				return Location.create(x, y);
+				return new Location(x, y);
 			}
 		}
 	}
@@ -203,7 +203,7 @@ public class Poly extends FillableCanvasObject {
 						} else if (next == null) {
 							r = LineUtil.snapTo8Cardinals(prev, x, y);
 						} else {
-							Location to = Location.create(x, y);
+							Location to = new Location(x, y);
 							Location a = LineUtil.snapTo8Cardinals(prev, x, y);
 							Location b = LineUtil.snapTo8Cardinals(next, x, y);
 							int ad = a.manhattanDistanceTo(to);
@@ -211,7 +211,7 @@ public class Poly extends FillableCanvasObject {
 							r = ad < bd ? a : b;
 						}
 					} else {
-						r = Location.create(x, y);
+						r = new Location(x, y);
 					}
 					ret[i] = new Handle(this, r);
 				} else {
