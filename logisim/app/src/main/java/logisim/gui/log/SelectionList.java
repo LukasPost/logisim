@@ -35,8 +35,7 @@ class SelectionList extends JList {
 
 	private class MyCellRenderer extends DefaultListCellRenderer {
 		@Override
-		public java.awt.Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-				boolean hasFocus) {
+		public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean hasFocus) {
 			java.awt.Component ret = super.getListCellRendererComponent(list, value, index, isSelected, hasFocus);
 			if (ret instanceof JLabel && value instanceof SelectionItem) {
 				JLabel label = (JLabel) ret;

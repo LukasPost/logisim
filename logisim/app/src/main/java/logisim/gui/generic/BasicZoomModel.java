@@ -6,7 +6,6 @@ package logisim.gui.generic;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-import logisim.gui.generic.ZoomModel;
 import logisim.prefs.PrefMonitor;
 
 public class BasicZoomModel implements ZoomModel {

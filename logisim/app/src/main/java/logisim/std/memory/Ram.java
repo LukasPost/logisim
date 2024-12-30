@@ -219,7 +219,7 @@ public class Ram extends Mem {
 		}
 	}
 
-	private static class RamState extends MemState implements InstanceData, AttributeListener {
+	private static class RamState extends MemState implements AttributeListener {
 		private Instance parent;
 		private MemListener listener;
 		private HexFrame hexFrame = null;

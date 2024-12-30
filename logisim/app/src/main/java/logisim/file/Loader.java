@@ -183,11 +183,6 @@ public class Loader implements LibraryLoader {
 
 		FileOutputStream fwrite = null;
 		try {
-			try {
-				MacCompatibility.setFileCreatorAndType(dest, "LGSM", "circ");
-			}
-			catch (IOException e) {
-			}
 			fwrite = new FileOutputStream(dest);
 			file.write(fwrite, this);
 			file.setName(toProjectName(dest));
@@ -233,7 +228,7 @@ public class Loader implements LibraryLoader {
 			return false;
 		}
 
-		if (backupCreated && backup.exists()) {
+		if (backupCreated && backup != null && backup.exists()) {
 			backup.delete();
 		}
 		return true;
@@ -326,7 +321,7 @@ public class Loader implements LibraryLoader {
 		// instantiate library
 		Library ret;
 		try {
-			ret = (Library) retClass.newInstance();
+			ret = (Library) retClass.getDeclaredConstructor().newInstance();
 		}
 		catch (Exception e) {
 			throw new LoadFailedException(StringUtil.format(Strings.get("jarLibraryNotCreatedError"), className));

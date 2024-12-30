@@ -107,7 +107,7 @@ public class FactoryDescription {
 				msg = "loading class";
 				Class<?> factoryClass = loader.loadClass(name);
 				msg = "creating instance";
-				Object factoryValue = factoryClass.newInstance();
+				Object factoryValue = factoryClass.getConstructor().newInstance();
 				msg = "converting to factory";
 				if (factoryValue instanceof ComponentFactory) {
 					ret = (ComponentFactory) factoryValue;

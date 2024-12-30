@@ -146,7 +146,6 @@ public class LocaleManager {
 	private ResourceBundle dflt_locale = null;
 
 	public LocaleManager(String file_start) {
-		this.dir_name = dir_name;
 		this.file_start = file_start;
 		loadDefault();
 		managers.add(this);

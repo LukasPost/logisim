@@ -3,13 +3,6 @@
 
 package logisim.util;
 
-import java.io.File;
-import java.io.IOException;
-
-import javax.swing.JMenuBar;
-
-//import net.roydesign.mac.MRJAdapter;
-
 public class MacCompatibility {
 	private MacCompatibility() {
 	}
@@ -62,23 +55,4 @@ public class MacCompatibility {
 			return false;
 		}
 	}
-
-	public static void setFramelessJMenuBar(JMenuBar menubar) {
-		try {
-			// MRJAdapter.setFramelessJMenuBar(menubar);
-		}
-		catch (Throwable t) {
-		}
-	}
-
-	public static void setFileCreatorAndType(File dest, String app, String type) throws IOException {
-		IOException ioExcept = null;
-		/*
-		 * try { try { MRJAdapter.setFileCreatorAndType(dest, app, type); } catch (IOException e) { ioExcept = e; } }
-		 * catch (Throwable t) { }
-		 */
-		if (ioExcept != null)
-			throw ioExcept;
-	}
-
 }

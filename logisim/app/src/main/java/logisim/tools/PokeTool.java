@@ -34,18 +34,16 @@ public class PokeTool extends Tool {
 	private static final Color caretColor = new Color(255, 255, 150);
 
 	private static class WireCaret extends AbstractCaret {
-		AttributeSet opts;
 		Canvas canvas;
 		Wire wire;
 		int x;
 		int y;
 
-		WireCaret(Canvas c, Wire w, int x, int y, AttributeSet opts) {
+		WireCaret(Canvas c, Wire w, int x, int y) {
 			canvas = c;
 			wire = w;
 			this.x = x;
 			this.y = y;
-			this.opts = opts;
 		}
 
 		@Override
@@ -172,8 +170,7 @@ public class PokeTool extends Tool {
 					break;
 
 				if (c instanceof Wire) {
-					Caret caret = new WireCaret(canvas, (Wire) c, x, y,
-							canvas.getProject().getOptions().getAttributeSet());
+					Caret caret = new WireCaret(canvas, (Wire) c, x, y);
 					setPokedComponent(circ, c, caret);
 					canvas.setHighlightedWires(circ.getWireSet((Wire) c));
 				} else {

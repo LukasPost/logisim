@@ -19,7 +19,6 @@ import logisim.file.LogisimFile;
 import logisim.gui.main.Frame;
 import logisim.gui.main.StatisticsDialog;
 import logisim.proj.Project;
-import logisim.tools.AddTool;
 import logisim.tools.Library;
 import logisim.tools.Tool;
 
@@ -94,7 +93,6 @@ public class Popups {
 
 	private static class CircuitPopup extends JPopupMenu implements ActionListener {
 		Project proj;
-		Tool tool;
 		Circuit circuit;
 		JMenuItem analyze = new JMenuItem(Strings.get("projectAnalyzeCircuitItem"));
 		JMenuItem stats = new JMenuItem(Strings.get("projectGetCircuitStatisticsItem"));
@@ -103,10 +101,9 @@ public class Popups {
 		JMenuItem editLayout = new JMenuItem(Strings.get("projectEditCircuitLayoutItem"));
 		JMenuItem editAppearance = new JMenuItem(Strings.get("projectEditCircuitAppearanceItem"));
 
-		CircuitPopup(Project proj, Tool tool, Circuit circuit) {
+		CircuitPopup(Project proj, Circuit circuit) {
 			super(Strings.get("circuitMenu"));
 			this.proj = proj;
-			this.tool = tool;
 			this.circuit = circuit;
 
 			add(editLayout);
@@ -157,8 +154,8 @@ public class Popups {
 		}
 	}
 
-	public static JPopupMenu forCircuit(Project proj, AddTool tool, Circuit circ) {
-		return new CircuitPopup(proj, tool, circ);
+	public static JPopupMenu forCircuit(Project proj, Circuit circ) {
+		return new CircuitPopup(proj, circ);
 	}
 
 	public static JPopupMenu forTool(Project proj, Tool tool) {

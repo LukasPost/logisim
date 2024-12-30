@@ -85,10 +85,8 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
 	@Override
 	public void propagate(InstanceState state) {
-		boolean changed = false;
 		StateData data = (StateData) state.getData();
 		if (data == null) {
-			changed = true;
 			data = new StateData();
 			state.setData(data);
 		}
@@ -97,24 +95,19 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 		Object triggerType = state.getAttributeValue(triggerAttribute);
 		boolean triggered = data.updateClock(state.getPort(n), triggerType);
 
-		if (state.getPort(n + 3) == Value.TRUE) { // clear requested
-			changed |= data.curValue != Value.FALSE;
+		if (state.getPort(n + 3) == Value.TRUE) // clear requested
 			data.curValue = Value.FALSE;
-		} else if (state.getPort(n + 4) == Value.TRUE) { // preset requested
-			changed |= data.curValue != Value.TRUE;
+		else if (state.getPort(n + 4) == Value.TRUE) // preset requested
 			data.curValue = Value.TRUE;
-		} else if (triggered && state.getPort(n + 5) != Value.FALSE) {
+		else if (triggered && state.getPort(n + 5) != Value.FALSE) {
 			// Clock has triggered and flip-flop is enabled: Update the state
 			Value[] inputs = new Value[n];
-			for (int i = 0; i < n; i++) {
+			for (int i = 0; i < n; i++) 
 				inputs[i] = state.getPort(i);
-			}
 
 			Value newVal = computeValue(inputs, data.curValue);
-			if (newVal == Value.TRUE || newVal == Value.FALSE) {
-				changed |= data.curValue != newVal;
+			if (newVal == Value.TRUE || newVal == Value.FALSE) 
 				data.curValue = newVal;
-			}
 		}
 
 		state.setPort(n + 1, data.curValue, Memory.DELAY);

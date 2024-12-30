@@ -5,8 +5,6 @@ package logisim.gui.prefs;
 
 import javax.swing.JComboBox;
 
-import logisim.util.StringGetter;
-
 class PrefOption {
 	private Object value;
 	private String displayString;

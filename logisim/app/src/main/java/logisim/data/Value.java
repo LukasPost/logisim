@@ -6,8 +6,6 @@ package logisim.data;
 import java.awt.Color;
 import java.util.Arrays;
 
-import logisim.util.Cache;
-
 public class Value {
 	public static final Value FALSE = new Value(1, 0, 0, 0);
 	public static final Value TRUE = new Value(1, 0, 0, 1);
@@ -24,8 +22,6 @@ public class Value {
 	public static final Color ERROR_COLOR = new Color(192, 0, 0);
 	public static final Color WIDTH_ERROR_COLOR = new Color(255, 123, 0);
 	public static final Color MULTI_COLOR = Color.BLACK;
-
-	private static final Cache cache = new Cache();
 
 	public static Value create(Value[] values) {
 		if (values.length == 0)
@@ -86,26 +82,17 @@ public class Value {
 			unknown = unknown & mask & ~error;
 			value = value & mask & ~unknown & ~error;
 
-			int hashCode = 31 * (31 * (31 * width + error) + unknown) + value;
-			Object cached = cache.get(hashCode);
-			if (cached != null) {
-				Value val = (Value) cached;
-				if (val.value == value && val.width == width && val.error == error && val.unknown == unknown)
-					return val;
-			}
-			Value ret = new Value(width, error, unknown, value);
-			cache.put(hashCode, ret);
-			return ret;
+			return new Value(width, error, unknown, value);
 		}
 	}
 
 	public static Value repeat(Value base, int bits) {
-		if (base.getWidth() != 1) {
+		if (base.getWidth() != 1) 
 			throw new IllegalArgumentException("first parameter must be one bit");
-		}
-		if (bits == 1) {
+
+		if (bits == 1)
 			return base;
-		} else {
+		else {
 			Value[] ret = new Value[bits];
 			Arrays.fill(ret, base);
 			return create(ret);
@@ -134,23 +121,21 @@ public class Value {
 		if (width == newWidth)
 			return this;
 		int maskInverse = (width == 32 ? 0 : (-1 << width));
-		if (others == Value.ERROR) {
+		if (others == Value.ERROR) 
 			return Value.create(newWidth, error | maskInverse, unknown, value);
-		} else if (others == Value.FALSE) {
+		else if (others == Value.FALSE) 
 			return Value.create(newWidth, error, unknown, value);
-		} else if (others == Value.TRUE) {
+		else if (others == Value.TRUE)
 			return Value.create(newWidth, error, unknown, value | maskInverse);
-		} else {
+		else
 			return Value.create(newWidth, error, unknown | maskInverse, value);
-		}
 	}
 
 	public boolean isUnknown() {
-		if (width == 32) {
+		if (width == 32)
 			return error == 0 && unknown == -1;
-		} else {
+		else
 			return error == 0 && unknown == ((1 << width) - 1);
-		}
 	}
 
 	public boolean isFullyDefined() {
@@ -158,13 +143,13 @@ public class Value {
 	}
 
 	public Value set(int which, Value val) {
-		if (val.width != 1) {
+		if (val.width != 1)
 			throw new RuntimeException("Cannot set multiple values");
-		} else if (which < 0 || which >= width) {
+		else if (which < 0 || which >= width)
 			throw new RuntimeException("Attempt to set outside value's width");
-		} else if (width == 1) {
+		else if (width == 1) 
 			return val;
-		} else {
+		else {
 			int mask = ~(1 << which);
 			return Value.create(this.width, (this.error & mask) | (val.error << which),
 					(this.unknown & mask) | (val.unknown << which), (this.value & mask) | (val.value << which));
@@ -173,9 +158,8 @@ public class Value {
 
 	public Value[] getAll() {
 		Value[] ret = new Value[width];
-		for (int i = 0; i < ret.length; i++) {
+		for (int i = 0; i < ret.length; i++)
 			ret[i] = get(i);
-		}
 		return ret;
 	}
 
@@ -463,25 +447,23 @@ public class Value {
 			if (this == FALSE)
 				return TRUE;
 			return ERROR;
-		} else {
+		} else
 			return Value.create(this.width, this.error | this.unknown, 0, ~this.value);
-		}
 	}
 
 	public Color getColor() {
-		if (error != 0) {
+		if (error != 0)
 			return ERROR_COLOR;
-		} else if (width == 0) {
+		else if (width == 0)
 			return NIL_COLOR;
-		} else if (width == 1) {
+		else if (width == 1) {
 			if (this == UNKNOWN)
 				return UNKNOWN_COLOR;
 			else if (this == TRUE)
 				return TRUE_COLOR;
 			else
 				return FALSE_COLOR;
-		} else {
+		} else
 			return MULTI_COLOR;
-		}
 	}
 }

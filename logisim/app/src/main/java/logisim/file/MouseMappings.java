@@ -163,8 +163,8 @@ public class MouseMappings {
 		for (Map.Entry<Integer, Tool> entry : map.entrySet()) {
 			Integer key = entry.getKey();
 			Tool tool = entry.getValue();
-			if (tool instanceof AddTool) {
-				ComponentFactory factory = ((AddTool) tool).getFactory();
+			if (tool instanceof AddTool at) {
+				ComponentFactory factory = at.getFactory();
 				if (toolMap.containsKey(factory)) {
 					changed = true;
 					Tool newTool = toolMap.get(factory);

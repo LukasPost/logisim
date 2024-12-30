@@ -19,7 +19,6 @@ import logisim.file.Loader;
 import logisim.gui.main.Print;
 import logisim.gui.menu.LogisimMenuBar;
 import logisim.gui.menu.WindowManagers;
-import logisim.gui.start.SplashScreen;
 import logisim.prefs.AppPreferences;
 import logisim.proj.Project;
 import logisim.proj.ProjectActions;
@@ -166,14 +165,10 @@ public class Startup {
 		if (showSplash)
 			monitor.setProgress(SplashScreen.GUI_INIT);
 		WindowManagers.initialize();
-		if (MacCompatibility.isSwingUsingScreenMenuBar()) {
-			MacCompatibility.setFramelessJMenuBar(new LogisimMenuBar(null, null));
-		} else {
-			new LogisimMenuBar(null, null);
-			// most of the time occupied here will be in loading menus, which
-			// will occur eventually anyway; we might as well do it when the
-			// monitor says we are
-		}
+		new LogisimMenuBar(null, null);
+		// most of the time occupied here will be in loading menus, which
+		// will occur eventually anyway; we might as well do it when the
+		// monitor says we are
 
 		// if user has double-clicked a file to open, we'll
 		// use that as the file to open now.

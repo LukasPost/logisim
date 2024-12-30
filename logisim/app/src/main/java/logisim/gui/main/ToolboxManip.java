@@ -185,12 +185,11 @@ class ToolboxManip implements ProjectExplorer.Listener {
 
 	public JPopupMenu menuRequested(ProjectExplorer.Event event) {
 		Object clicked = event.getTarget();
-		if (clicked instanceof AddTool) {
-			AddTool tool = (AddTool) clicked;
+		if (clicked instanceof AddTool tool) {
 			ComponentFactory source = tool.getFactory();
 			if (source instanceof SubcircuitFactory) {
 				Circuit circ = ((SubcircuitFactory) source).getSubcircuit();
-				return Popups.forCircuit(proj, tool, circ);
+				return Popups.forCircuit(proj, circ);
 			} else {
 				return null;
 			}

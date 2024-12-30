@@ -287,8 +287,9 @@ class ComponentSelector extends JTree {
 			return true;
 		}
 
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		public Enumeration children() {
-			return Collections.enumeration(Collections.emptySet());
+			return Collections.emptyEnumeration();
 		}
 	}
 

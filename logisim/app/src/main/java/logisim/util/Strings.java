@@ -3,9 +3,6 @@
 
 package logisim.util;
 
-import logisim.util.LocaleManager;
-import logisim.util.StringGetter;
-
 class Strings {
 	static LocaleManager source = new LocaleManager("util");
 

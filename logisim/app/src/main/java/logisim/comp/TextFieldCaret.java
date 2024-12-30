@@ -181,8 +181,8 @@ class TextFieldCaret implements Caret, TextFieldListener {
 	}
 
 	public void keyPressed(KeyEvent e) {
-		int ign = InputEvent.ALT_MASK | InputEvent.CTRL_MASK | InputEvent.META_MASK;
-		if ((e.getModifiers() & ign) != 0)
+		int ign = InputEvent.ALT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK | InputEvent.META_DOWN_MASK;
+		if ((e.getModifiersEx() & ign) != 0)
 			return;
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_LEFT:
@@ -238,8 +238,8 @@ class TextFieldCaret implements Caret, TextFieldListener {
 	}
 
 	public void keyTyped(KeyEvent e) {
-		int ign = InputEvent.ALT_MASK | InputEvent.CTRL_MASK | InputEvent.META_MASK;
-		if ((e.getModifiers() & ign) != 0)
+		int ign = InputEvent.ALT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK | InputEvent.META_DOWN_MASK;
+		if ((e.getModifiersEx() & ign) != 0)
 			return;
 
 		char c = e.getKeyChar();

@@ -8,41 +8,34 @@ package logisim.data;
  * objects of this type are immutable.
  */
 public class Size {
-	public static Size create(int wid, int ht) {
-		return new Size(wid, ht);
-	}
+	private final int width;
+	private final int height;
 
-	private final int wid;
-	private final int ht;
-
-	private Size(int wid, int ht) {
-		this.wid = wid;
-		this.ht = ht;
+	public Size(int wid, int ht) {
+		this.width = wid;
+		this.height = ht;
 	}
 
 	@Override
 	public boolean equals(Object other_obj) {
-		if (!(other_obj instanceof Size))
-			return false;
-		Size other = (Size) other_obj;
-		return wid == other.wid && ht == other.ht;
+		return other_obj instanceof Size other && width == other.width && height == other.height;
 	}
 
 	@Override
 	public String toString() {
-		return wid + "x" + ht;
+		return width + "x" + height;
 	}
 
 	public int getWidth() {
-		return wid;
+		return width;
 	}
 
 	public int getHeight() {
-		return ht;
+		return height;
 	}
 
 	public java.awt.Dimension toAwtDimension() {
-		return new java.awt.Dimension(wid, ht);
+		return new java.awt.Dimension(width, height);
 	}
 
 	public boolean contains(Location p) {
@@ -50,7 +43,7 @@ public class Size {
 	}
 
 	public boolean contains(int x, int y) {
-		return x >= 0 && y >= 0 && x < this.wid && y < this.ht;
+		return x >= 0 && y >= 0 && x < this.width && y < this.height;
 	}
 
 	public boolean contains(int x, int y, int wid, int ht) {
@@ -60,7 +53,7 @@ public class Size {
 	}
 
 	public boolean contains(Size bd) {
-		return contains(bd.wid, bd.ht);
+		return contains(bd.width, bd.height);
 	}
 
 }

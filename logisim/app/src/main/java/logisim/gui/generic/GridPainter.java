@@ -106,9 +106,9 @@ public class GridPainter {
 			if (model != null) {
 				model.addPropertyChangeListener(ZoomModel.ZOOM, listener);
 				model.addPropertyChangeListener(ZoomModel.SHOW_GRID, listener);
+				setShowGrid(model.getShowGrid());
+				setZoomFactor(model.getZoomFactor());
 			}
-			setShowGrid(model.getShowGrid());
-			setZoomFactor(model.getZoomFactor());
 			destination.repaint();
 		}
 	}

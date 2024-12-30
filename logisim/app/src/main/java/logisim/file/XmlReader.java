@@ -333,6 +333,7 @@ class XmlReader {
 				String attrVal = attrsDefined.get(attrName);
 				if (attrVal == null) {
 					if (setDefaults) {
+						@SuppressWarnings("null")
 						Object val = defaults.getDefaultAttributeValue(attr, ver);
 						if (val != null) {
 							attrs.setValue(attr, val);
@@ -402,10 +403,11 @@ class XmlReader {
 		DocumentBuilder builder = null;
 		try {
 			builder = factory.newDocumentBuilder();
+			return builder.parse(is);
 		}
 		catch (ParserConfigurationException ex) {
 		}
-		return builder.parse(is);
+		return null;
 	}
 
 	private void considerRepairs(Document doc, Element root) {

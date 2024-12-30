@@ -222,7 +222,6 @@ public class AttrTable extends JPanel implements LocaleListener {
 
 	private class CellEditor implements TableCellEditor, FocusListener, ActionListener {
 		LinkedList<CellEditorListener> listeners = new LinkedList<CellEditorListener>();
-		AttrTableModelRow currentRow;
 		Component currentEditor;
 
 		//
@@ -275,7 +274,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 			if (comp instanceof JTextField) {
 				return ((JTextField) comp).getText();
 			} else if (comp instanceof JComboBox) {
-				return ((JComboBox) comp).getSelectedItem();
+				return ((JComboBox<?>) comp).getSelectedItem();
 			} else {
 				return null;
 			}
@@ -305,7 +304,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 
 				Component editor = row.getEditor(parent);
 				if (editor instanceof JComboBox) {
-					((JComboBox) editor).addActionListener(this);
+					((JComboBox<?>) editor).addActionListener(this);
 					editor.addFocusListener(this);
 				} else if (editor instanceof JInputComponent) {
 					JInputComponent input = (JInputComponent) editor;
@@ -329,7 +328,6 @@ public class AttrTable extends JPanel implements LocaleListener {
 				} else {
 					editor.addFocusListener(this);
 				}
-				currentRow = row;
 				currentEditor = editor;
 				return editor;
 			}

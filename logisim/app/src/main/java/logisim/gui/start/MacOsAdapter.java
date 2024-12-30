@@ -5,15 +5,6 @@ package logisim.gui.start;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-//MAC import java.io.File;
-
-//import net.roydesign.event.ApplicationEvent;
-//import net.roydesign.mac.MRJAdapter;
-
-//MAC import com.apple.eawt.Application;
-//MAC import com.apple.eawt.ApplicationAdapter;
-import logisim.gui.prefs.PreferencesFrame;
-import logisim.proj.ProjectActions;
 
 class MacOsAdapter { // MAC extends ApplicationAdapter {
 
