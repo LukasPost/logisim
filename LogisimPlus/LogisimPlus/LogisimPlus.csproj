@@ -1,0 +1,175 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="logisim\util\" />
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="resources\de\analyze.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>analyze.resx</DependentUpon>
+    </Compile>
+    <Compile Update="resources\de\circuit.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>circuit.resx</DependentUpon>
+    </Compile>
+    <Compile Update="resources\de\data.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>data.resx</DependentUpon>
+    </Compile>
+    <Compile Update="resources\de\draw.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>draw.resx</DependentUpon>
+    </Compile>
+    <Compile Update="resources\de\files.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>files.resx</DependentUpon>
+    </Compile>
+    <Compile Update="resources\de\gui.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>gui.resx</DependentUpon>
+    </Compile>
+    <Compile Update="resources\de\hex.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>hex.resx</DependentUpon>
+    </Compile>
+    <Compile Update="resources\de\legacy.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>legacy.resx</DependentUpon>
+    </Compile>
+    <Compile Update="resources\de\log.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>log.resx</DependentUpon>
+    </Compile>
+    <Compile Update="resources\de\menu.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>menu.resx</DependentUpon>
+    </Compile>
+    <Compile Update="resources\de\opts.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>opts.resx</DependentUpon>
+    </Compile>
+    <Compile Update="resources\de\prefs.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>prefs.resx</DependentUpon>
+    </Compile>
+    <Compile Update="resources\de\proj.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>proj.resx</DependentUpon>
+    </Compile>
+    <Compile Update="resources\de\start.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>start.resx</DependentUpon>
+    </Compile>
+    <Compile Update="resources\de\std.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>std.resx</DependentUpon>
+    </Compile>
+    <Compile Update="resources\de\tools.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>tools.resx</DependentUpon>
+    </Compile>
+    <Compile Update="resources\de\util.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>util.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="resources\de\analyze.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>analyze.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="resources\de\circuit.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>circuit.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="resources\de\data.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>data.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="resources\de\draw.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>draw.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="resources\de\files.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>files.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="resources\de\gui.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>gui.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="resources\de\hex.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>hex.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="resources\de\legacy.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>legacy.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="resources\de\log.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>log.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="resources\de\menu.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>menu.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="resources\de\opts.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>opts.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="resources\de\prefs.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>prefs.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="resources\de\proj.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>proj.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="resources\de\start.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>start.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="resources\de\std.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>std.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="resources\de\tools.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>tools.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="resources\de\util.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>util.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

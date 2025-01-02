@@ -1,0 +1,250 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<!-- 
+		Microsoft ResX Schema
+
+		Version 1.3
+
+		The primary goals of this format is to allow a simple XML format 
+		that is mostly human readable. The generation and parsing of the 
+		various data types are done through the TypeConverter classes 
+		associated with the data types.
+
+		Example:
+
+		... ado.net/XML headers & schema ...
+		<resheader name="resmimetype">text/microsoft-resx</resheader>
+		<resheader name="version">1.3</resheader>
+		<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+		<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+		<data name="Name1">this is my long string</data>
+		<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+		<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+			[base64 mime encoded serialized .NET Framework object]
+		</data>
+		<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+			[base64 mime encoded string representing a byte array form of the .NET Framework object]
+		</data>
+
+		There are any number of "resheader" rows that contain simple 
+		name/value pairs.
+
+		Each data row contains a name, and value. The row also contains a 
+		type or mimetype. Type corresponds to a .NET class that support 
+		text/value conversion through the TypeConverter architecture. 
+		Classes that don't support this are serialized and stored with the 
+		mimetype set.
+
+		The mimetype is used for serialized objects, and tells the 
+		ResXResourceReader how to depersist the object. This is currently not 
+		extensible. For a given mimetype the value must be set accordingly:
+
+		Note - application/x-microsoft.net.object.binary.base64 is the format 
+		that the ResXResourceWriter will generate, however the reader can 
+		read any of the formats listed below.
+
+		mimetype: application/x-microsoft.net.object.binary.base64
+		value   : The object must be serialized with 
+			: System.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+		mimetype: application/x-microsoft.net.object.soap.base64
+		value   : The object must be serialized with 
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+		mimetype: application/x-microsoft.net.object.bytearray.base64
+		value   : The object must be serialized into a byte array 
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+	
+	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+		<xsd:element name="root" msdata:IsDataSet="true">
+			<xsd:complexType>
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="data">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="resheader">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" use="required" />
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+			</xsd:complexType>
+		</xsd:element>
+	</xsd:schema>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>1.3</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="preferencesFrameTitle" xml:space="preserve">
+    <value>Logisim: Voreinstellungen</value>
+  </data>
+  <data name="preferencesFrameMenuItem" xml:space="preserve">
+    <value>Voreinstellungen</value>
+  </data>
+  <data name="closeButton" xml:space="preserve">
+    <value>Fenster schlie\u00dfen</value>
+  </data>
+
+  <data name="templateTitle" xml:space="preserve">
+    <value>Vorlage</value>
+  </data>
+  <data name="templateHelp" xml:space="preserve">
+    <value>Wählen Sie die aktuelle Vorlage</value>
+  </data>
+  <data name="templatePlainOption" xml:space="preserve">
+    <value>Einfache Vorlage</value>
+  </data>
+  <data name="templateEmptyOption" xml:space="preserve">
+    <value>Leere Vorlage</value>
+  </data>
+  <data name="templateCustomOption" xml:space="preserve">
+    <value>Individuelle Vorlage:</value>
+  </data>
+  <data name="templateSelectButton" xml:space="preserve">
+    <value>Auswählen...</value>
+  </data>
+  <data name="templateErrorMessage" xml:space="preserve">
+    <value>Vorlage %s konnte nicht geladen werden</value>
+  </data>
+  <data name="templateErrorTitle" xml:space="preserve">
+    <value>Fehler beim Laden der Vorlage</value>
+  </data>
+  <data name="selectDialogTitle" xml:space="preserve">
+    <value>Vorlage auswählen</value>
+  </data>
+  <data name="selectDialogButton" xml:space="preserve">
+    <value>Auswählen</value>
+  </data>
+
+  <data name="intlTitle" xml:space="preserve">
+    <value>Internationalisierung</value>
+  </data>
+  <data name="intlHelp" xml:space="preserve">
+    <value>Internationalisierung bearbeiten</value>
+  </data>
+  <data name="intlLocale" xml:space="preserve">
+    <value>Sprache:</value>
+  </data>
+  <data name="intlReplaceAccents" xml:space="preserve">
+    <value>Akzentzeichen ersetzen</value>
+  </data>
+  <data name="intlGateShape" xml:space="preserve">
+    <value>Gatterform:</value>
+  </data>
+  <data name="shapeShaped" xml:space="preserve">
+    <value>ANSI</value>
+  </data>
+  <data name="shapeRectangular" xml:space="preserve">
+    <value>IEC (rechteckig)</value>
+  </data>
+  <data name="shapeDIN40700" xml:space="preserve">
+    <value>DIN 40700</value>
+  </data>
+
+  <data name="windowTitle" xml:space="preserve">
+    <value>Fenster</value>
+  </data>
+  <data name="windowHelp" xml:space="preserve">
+    <value>Konfiguration des Hauptfensters</value>
+  </data>
+  <data name="windowTickRate" xml:space="preserve">
+    <value>Schaltfrequenz anzeigen</value>
+  </data>
+  <data name="windowProjectToolbar" xml:space="preserve">
+    <value>Projektwerkzeugleiste anzeigen</value>
+  </data>
+  <data name="windowToolbarLocation" xml:space="preserve">
+    <value>Position der Werkzeugleiste</value>
+  </data>
+  <data name="windowToolbarHidden" xml:space="preserve">
+    <value>Versteckt</value>
+  </data>
+  <data name="windowToolbarDownMiddle" xml:space="preserve">
+    <value>Unten Mitte</value>
+  </data>
+
+  <data name="layoutTitle" xml:space="preserve">
+    <value>Layouteditor</value>
+  </data>
+  <data name="layoutHelp" xml:space="preserve">
+    <value>Konfiguration des Layouteditors</value>
+  </data>
+  <data name="layoutAddShowGhosts" xml:space="preserve">
+    <value>Geisterbilder beim Hinzufügen anzeigen</value>
+  </data>
+  <data name="layoutPrinterView" xml:space="preserve">
+    <value>Druckansicht</value>
+  </data>
+  <data name="layoutMoveKeepConnect" xml:space="preserve">
+    <value>Verbindungen beim Verschieben beibehalten</value>
+  </data>
+  <data name="layoutAttributeHalo" xml:space="preserve">
+    <value>Attributhalo anzeigen</value>
+  </data>
+  <data name="layoutShowTips" xml:space="preserve">
+    <value>Bauteiletipps anzeigen</value>
+  </data>
+  <data name="layoutAddAfter" xml:space="preserve">
+    <value>Nach dem Hinzufügen von Bauteilen:</value>
+  </data>
+  <data name="layoutAddAfterUnchanged" xml:space="preserve">
+    <value>Bauteile-Werkzeug aktiviert lassen</value>
+  </data>
+  <data name="layoutAddAfterEdit" xml:space="preserve">
+    <value>Zum Bearbeitungswerkzeug wechseln</value>
+  </data>
+  <data name="layoutRadix1" xml:space="preserve">
+    <value>Erste Basis wenn Leitung angeklickt wird</value>
+  </data>
+  <data name="layoutRadix2" xml:space="preserve">
+    <value>Zweite Basis wenn Leitung angeklickt wird</value>
+  </data>
+
+  <data name="experimentTitle" xml:space="preserve">
+    <value>Experimentell</value>
+  </data>
+  <data name="experimentHelp" xml:space="preserve">
+    <value>Funktionen aktivieren, die noch nicht ausgiebig getestet worden sind</value>
+  </data>
+  <data name="accelLabel" xml:space="preserve">
+    <value>Grafik-Beschleunigung:</value>
+  </data>
+  <data name="accelDefault" xml:space="preserve">
+    <value>Standard verwenden</value>
+  </data>
+  <data name="accelNone" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="accelOpenGL" xml:space="preserve">
+    <value>OpenGL</value>
+  </data>
+  <data name="accelD3D" xml:space="preserve">
+    <value>Direct 3D</value>
+  </data>
+  <data name="accelRestartLabel" xml:space="preserve">
+    <value>Logisim muß zur Aktivierung der Änderungen neu gestartet werden.</value>
+  </data>
+</root>

@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="defaultInputLabels" xml:space="preserve">
+    <value>a,b,c,d,e,f,g,h</value>
+  </data>
+  <data name="defaultOutputLabels" xml:space="preserve">
+    <value>x,y,z,u,v,w,s,t</value>
+  </data>
+  <data name="analyzeCircularError" xml:space="preserve">
+    <value>Zirkelbezug entdeckt; erstelle stattdessen eine Wahrheitstabelle.</value>
+  </data>
+  <data name="analyzeConflictError" xml:space="preserve">
+    <value>Konflikt mit den Ausgängen entdeckt; erstelle stattdessen eine Wahrheitstabelle.</value>
+  </data>
+  <data name="analyzeCannotHandleError" xml:space="preserve">
+    <value>Erstelle eine Wahrheitstabelle für den Ausdruck, aufgrund von %s.</value>
+  </data>
+  <data name="circuitName" xml:space="preserve">
+    <value>Schaltungsname</value>
+  </data>
+  <data name="circuitLabelDirAttr" xml:space="preserve">
+    <value>Ausrichtung der Beschriftung</value>
+  </data>
+  <data name="unknownChangeAction" xml:space="preserve">
+    <value>Schaltung ändern</value>
+  </data>
+  <data name="subcircuitViewItem" xml:space="preserve">
+    <value>%s ansehen</value>
+  </data>
+  <data name="subcircuitCircuitTip" xml:space="preserve">
+    <value>%s Teilschaltung</value>
+  </data>
+  <data name="radixAttr" xml:space="preserve">
+    <value>Basis</value>
+  </data>
+  <data name="radix2" xml:space="preserve">
+    <value>Binär</value>
+  </data>
+  <data name="radix10Signed" xml:space="preserve">
+    <value>Dezimal mit Vorzeichen</value>
+  </data>
+  <data name="radix10Unsigned" xml:space="preserve">
+    <value>Dezimal ohne Vorzeichen</value>
+  </data>
+  <data name="radix8" xml:space="preserve">
+    <value>Oktal</value>
+  </data>
+  <data name="radix16" xml:space="preserve">
+    <value>Hexadezimal</value>
+  </data>
+  <data name="splitterComponent" xml:space="preserve">
+    <value>Verteiler</value>
+  </data>
+  <data name="splitterCombinedTip" xml:space="preserve">
+    <value>Gemeinsame Seite des Verteilers</value>
+  </data>
+  <data name="splitterSplit0Tip" xml:space="preserve">
+    <value>Keine Bits von der gemeinsamen Seite</value>
+  </data>
+  <data name="splitterSplit1Tip" xml:space="preserve">
+    <value>Bit %s der gemeinsamen Seite</value>
+  </data>
+  <data name="splitterSplitManyTip" xml:space="preserve">
+    <value>Bits %s der gemeinsamen Seite</value>
+  </data>
+  <data name="splitterBitWidthAttr" xml:space="preserve">
+    <value>Bitbreite</value>
+  </data>
+  <data name="splitterFanOutAttr" xml:space="preserve">
+    <value>Ausfächerung</value>
+  </data>
+  <data name="splitterBitAttr" xml:space="preserve">
+    <value>Bit %s</value>
+  </data>
+  <data name="splitterBitNone" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="wireComponent" xml:space="preserve">
+    <value>Leitung</value>
+  </data>
+  <data name="wireLengthAttr" xml:space="preserve">
+    <value>Länge</value>
+  </data>
+  <data name="wireDirectionAttr" xml:space="preserve">
+    <value>Richtung</value>
+  </data>
+  <data name="wireDirectionHorzOption" xml:space="preserve">
+    <value>Horizontal</value>
+  </data>
+  <data name="wireDirectionVertOption" xml:space="preserve">
+    <value>Vertikal</value>
+  </data>
+  <data name="circuitAnchor" xml:space="preserve">
+    <value>Anker</value>
+  </data>
+  <data name="appearanceFacingAttr" xml:space="preserve">
+    <value>Symbolausrichtung</value>
+  </data>
+  <data name="circuitPort" xml:space="preserve">
+    <value>Port</value>
+  </data>
+</root>

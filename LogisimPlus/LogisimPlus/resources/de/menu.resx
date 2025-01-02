@@ -1,0 +1,390 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<!-- 
+		Microsoft ResX Schema
+
+		Version 1.3
+
+		The primary goals of this format is to allow a simple XML format 
+		that is mostly human readable. The generation and parsing of the 
+		various data types are done through the TypeConverter classes 
+		associated with the data types.
+
+		Example:
+
+		... ado.net/XML headers & schema ...
+		<resheader name="resmimetype">text/microsoft-resx</resheader>
+		<resheader name="version">1.3</resheader>
+		<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+		<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+		<data name="Name1">this is my long string</data>
+		<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+		<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+			[base64 mime encoded serialized .NET Framework object]
+		</data>
+		<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+			[base64 mime encoded string representing a byte array form of the .NET Framework object]
+		</data>
+
+		There are any number of "resheader" rows that contain simple 
+		name/value pairs.
+
+		Each data row contains a name, and value. The row also contains a 
+		type or mimetype. Type corresponds to a .NET class that support 
+		text/value conversion through the TypeConverter architecture. 
+		Classes that don't support this are serialized and stored with the 
+		mimetype set.
+
+		The mimetype is used for serialized objects, and tells the 
+		ResXResourceReader how to depersist the object. This is currently not 
+		extensible. For a given mimetype the value must be set accordingly:
+
+		Note - application/x-microsoft.net.object.binary.base64 is the format 
+		that the ResXResourceWriter will generate, however the reader can 
+		read any of the formats listed below.
+
+		mimetype: application/x-microsoft.net.object.binary.base64
+		value   : The object must be serialized with 
+			: System.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+		mimetype: application/x-microsoft.net.object.soap.base64
+		value   : The object must be serialized with 
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+		mimetype: application/x-microsoft.net.object.bytearray.base64
+		value   : The object must be serialized into a byte array 
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+	
+	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+		<xsd:element name="root" msdata:IsDataSet="true">
+			<xsd:complexType>
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="data">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="resheader">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" use="required" />
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+			</xsd:complexType>
+		</xsd:element>
+	</xsd:schema>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>1.3</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="editMenu" xml:space="preserve">
+    <value>Bearbeiten</value>
+  </data>
+  <data name="editCantUndoItem" xml:space="preserve">
+    <value>Zurücknehmen nicht möglich</value>
+  </data>
+  <data name="editUndoItem" xml:space="preserve">
+    <value>%s zurücknehmen</value>
+  </data>
+  <data name="editCutItem" xml:space="preserve">
+    <value>Ausschneiden</value>
+  </data>
+  <data name="editCopyItem" xml:space="preserve">
+    <value>Kopieren</value>
+  </data>
+  <data name="editPasteItem" xml:space="preserve">
+    <value>Einfügen</value>
+  </data>
+  <data name="editDuplicateItem" xml:space="preserve">
+    <value>Duplizieren</value>
+  </data>
+  <data name="editClearItem" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="editSelectAllItem" xml:space="preserve">
+    <value>Alles auswählen</value>
+  </data>
+  <data name="editLowerItem" xml:space="preserve">
+    <value>Auswahl absenken</value>
+  </data>
+  <data name="editRaiseItem" xml:space="preserve">
+    <value>Auswahl anheben</value>
+  </data>
+  <data name="editRaiseTopItem" xml:space="preserve">
+    <value>Nach oben</value>
+  </data>
+  <data name="editLowerBottomItem" xml:space="preserve">
+    <value>Nach unten</value>
+  </data>
+  <data name="editAddControlItem" xml:space="preserve">
+    <value>Knoten hinzufügen</value>
+  </data>
+  <data name="editRemoveControlItem" xml:space="preserve">
+    <value>Knoten entfernen</value>
+  </data>
+  <!-- MenuFile.java -->
+  <data name="fileMenu" xml:space="preserve">
+    <value>Datei</value>
+  </data>
+  <data name="fileNewItem" xml:space="preserve">
+    <value>Neu</value>
+  </data>
+  <data name="fileOpenItem" xml:space="preserve">
+    <value>Öffnen...</value>
+  </data>
+  <data name="fileOpenRecentItem" xml:space="preserve">
+    <value>Zuletzt geöffnet</value>
+  </data>
+  <data name="fileOpenRecentNoChoices" xml:space="preserve">
+    <value>(Keine)</value>
+  </data>
+  <data name="fileCloseItem" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="fileSaveItem" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="fileSaveAsItem" xml:space="preserve">
+    <value>Speichern unter...</value>
+  </data>
+  <data name="fileExportImageItem" xml:space="preserve">
+    <value>Bild exportieren...</value>
+  </data>
+  <data name="filePrintItem" xml:space="preserve">
+    <value>Drucken...</value>
+  </data>
+  <data name="filePreferencesItem" xml:space="preserve">
+    <value>Voreinstellungen...</value>
+  </data>
+  <data name="fileQuitItem" xml:space="preserve">
+    <value>Beenden</value>
+  </data>
+  <!-- MenuProject.java -->
+  <data name="projectMenu" xml:space="preserve">
+    <value>Projekt</value>
+  </data>
+  <data name="projectAddCircuitItem" xml:space="preserve">
+    <value>Schaltung hinzufügen...</value>
+  </data>
+  <data name="projectLoadLibraryItem" xml:space="preserve">
+    <value>Bibliothek laden</value>
+  </data>
+  <data name="projectLoadBuiltinItem" xml:space="preserve">
+    <value>Eingebaute Bibliothek...</value>
+  </data>
+  <data name="projectLoadLogisimItem" xml:space="preserve">
+    <value>Logisim Bibliothek...</value>
+  </data>
+  <data name="projectLoadJarItem" xml:space="preserve">
+    <value>JAR-Bibliothek...</value>
+  </data>
+  <data name="projectUnloadLibraryItem" xml:space="preserve">
+    <value>Bibliothek entfernen</value>
+  </data>
+  <data name="projectUnloadLibrariesItem" xml:space="preserve">
+    <value>Bibliotheken entfernen...</value>
+  </data>
+  <data name="projectMoveCircuitDownItem" xml:space="preserve">
+    <value>Schaltung nach oben</value>
+  </data>
+  <data name="projectMoveCircuitUpItem" xml:space="preserve">
+    <value>Schaltung nach unten</value>
+  </data>
+  <data name="projectSetAsMainItem" xml:space="preserve">
+    <value>Als Hauptschaltung festlegen</value>
+  </data>
+  <data name="projectRemoveCircuitItem" xml:space="preserve">
+    <value>Schaltung entfernen</value>
+  </data>
+  <data name="projectEditCircuitLayoutItem" xml:space="preserve">
+    <value>Schaltungslayout bearbeiten</value>
+  </data>
+  <data name="projectEditCircuitAppearanceItem" xml:space="preserve">
+    <value>Schaltungsaussehen bearbeiten</value>
+  </data>
+  <data name="projectRevertAppearanceItem" xml:space="preserve">
+    <value>Aussehen wiederherstellen</value>
+  </data>
+  <data name="projectAnalyzeCircuitItem" xml:space="preserve">
+    <value>Schaltung analysieren</value>
+  </data>
+  <data name="projectGetCircuitStatisticsItem" xml:space="preserve">
+    <value>Schaltungsstatistik ermitteln</value>
+  </data>
+  <data name="projectOptionsItem" xml:space="preserve">
+    <value>Optionen...</value>
+  </data>
+  <!-- MenuSimulate.java -->
+  <data name="simulateMenu" xml:space="preserve">
+    <value>Simulieren</value>
+  </data>
+  <data name="simulateRunItem" xml:space="preserve">
+    <value>Simulation aktiviert</value>
+  </data>
+  <data name="simulateResetItem" xml:space="preserve">
+    <value>Simulation zurücksetzen</value>
+  </data>
+  <data name="simulateStepItem" xml:space="preserve">
+    <value>Simulation weiterschalten</value>
+  </data>
+  <data name="simulateTickOnceItem" xml:space="preserve">
+    <value>Einmal weiterschalten</value>
+  </data>
+  <data name="simulateTickItem" xml:space="preserve">
+    <value>Weiterschalten aktivieren</value>
+  </data>
+  <data name="simulateTickFreqMenu" xml:space="preserve">
+    <value>Schaltfrequenz</value>
+  </data>
+  <data name="simulateTickFreqItem" xml:space="preserve">
+    <value>%s Hz</value>
+  </data>
+  <data name="simulateTickKFreqItem" xml:space="preserve">
+    <value>%s KHz</value>
+  </data>
+  <data name="simulateUpStateMenu" xml:space="preserve">
+    <value>Absteigen</value>
+  </data>
+  <data name="simulateDownStateMenu" xml:space="preserve">
+    <value>Aufsteigen</value>
+  </data>
+  <data name="simulateLogItem" xml:space="preserve">
+    <value>Loggen...</value>
+  </data>
+  <!-- MenuHelp.java -->
+  <data name="helpMenu" xml:space="preserve">
+    <value>Hilfe</value>
+  </data>
+  <data name="helpTutorialItem" xml:space="preserve">
+    <value>Kurzanleitung</value>
+  </data>
+  <data name="helpGuideItem" xml:space="preserve">
+    <value>Anwenderhandbuch</value>
+  </data>
+  <data name="helpLibraryItem" xml:space="preserve">
+    <value>Bibliotheksreferenz</value>
+  </data>
+  <data name="helpAboutItem" xml:space="preserve">
+    <value>Über...</value>
+  </data>
+  <data name="helpNotFoundError" xml:space="preserve">
+    <value>Hilfedaten nicht gefunden.</value>
+  </data>
+  <data name="helpUnavailableError" xml:space="preserve">
+    <value>Konnte die Hilfedaten nicht laden.</value>
+  </data>
+  <data name="helpDisplayError" xml:space="preserve">
+    <value>Konnte die Hilfedaten nicht anzeigen.</value>
+  </data>
+  <data name="helpWindowTitle" xml:space="preserve">
+    <value>Dokumentation von Logisim</value>
+  </data>
+  <data name="helpsetUrl" xml:space="preserve">
+    <value>doc/doc_de.hs</value>
+  </data>
+  <!-- Popups.java -->
+  <data name="projMenu" xml:space="preserve">
+    <value>Projekt</value>
+  </data>
+  <data name="libMenu" xml:space="preserve">
+    <value>Bibliothek</value>
+  </data>
+  <data name="circuitMenu" xml:space="preserve">
+    <value>Schaltung</value>
+  </data>
+  <data name="projectReloadLibraryItem" xml:space="preserve">
+    <value>Bibliothek neu laden</value>
+  </data>
+  <!-- ProjectCircuitActions.java -->
+  <data name="circuitNameDialogTitle" xml:space="preserve">
+    <value>Schaltungsnamen eingeben</value>
+  </data>
+  <data name="circuitNamePrompt" xml:space="preserve">
+    <value>Schaltungsname:</value>
+  </data>
+  <data name="circuitNameMissingError" xml:space="preserve">
+    <value>Jede Schaltung benötigt einen Namen.</value>
+  </data>
+  <data name="circuitNameDuplicateError" xml:space="preserve">
+    <value>Schaltungen müssen unterschiedliche Namen tragen.</value>
+  </data>
+  <data name="circuitRemoveErrorTitle" xml:space="preserve">
+    <value>Kann Schaltung nicht entfernen</value>
+  </data>
+  <data name="circuitRemoveLastError" xml:space="preserve">
+    <value>Bibliothek muss mindestens eine Schaltung enthalten.</value>
+  </data>
+  <data name="circuitRemoveUsedError" xml:space="preserve">
+    <value>Schaltungen, die in anderen Schaltungen benutzt werden, können nicht entfernt werden.</value>
+  </data>
+  <data name="analyzeErrorTitle" xml:space="preserve">
+    <value>Kann nicht analysieren</value>
+  </data>
+  <data name="analyzeMultibitInputError" xml:space="preserve">
+    <value>Die Analyse kann keine Multibit-Eingänge verarbeiten.</value>
+  </data>
+  <data name="analyzeMultibitOutputError" xml:space="preserve">
+    <value>Die Analyse kann keine Multibit-Ausgänge verarbeiten.</value>
+  </data>
+  <data name="analyzeTooManyInputsError" xml:space="preserve">
+    <value>Die Analyse kann nicht mehr als %s Eingänge verarbeiten.</value>
+  </data>
+  <data name="analyzeTooManyOutputsError" xml:space="preserve">
+    <value>Die Analyse kann nicht mehr als %s Ausgänge verarbeiten.</value>
+  </data>
+  <data name="analyzeNoExpressionTitle" xml:space="preserve">
+    <value>Ausdruck wurde nicht ermittelt</value>
+  </data>
+  <!-- ProjectLibraryActions.java -->
+  <data name="loadBuiltinErrorTitle" xml:space="preserve">
+    <value>Kann eingebaute Bibliothek nicht laden</value>
+  </data>
+  <data name="loadBuiltinNoneError" xml:space="preserve">
+    <value>Alle eingebauten Bibliotheken sind schon geladen.</value>
+  </data>
+  <data name="loadBuiltinDialogTitle" xml:space="preserve">
+    <value>Eingebaute Bibliothek laden</value>
+  </data>
+  <data name="loadLogisimDialogTitle" xml:space="preserve">
+    <value>Logisim-Datei laden</value>
+  </data>
+  <data name="loadJarDialogTitle" xml:space="preserve">
+    <value>JAR-Datei laden</value>
+  </data>
+  <data name="jarClassNamePrompt" xml:space="preserve">
+    <value>Klassenname:</value>
+  </data>
+  <data name="jarClassNameTitle" xml:space="preserve">
+    <value>JAR-Klasse eingeben</value>
+  </data>
+  <data name="unloadLibrariesDialogTitle" xml:space="preserve">
+    <value>Zu entfernende Bibliotheken auswählen</value>
+  </data>
+  <data name="unloadErrorTitle" xml:space="preserve">
+    <value>Kann Bibliothek nicht entfernen</value>
+  </data>
+  <data name="unloadNoneError" xml:space="preserve">
+    <value>Alle geöffneten Dateien werden benutzt.</value>
+  </data>
+</root>

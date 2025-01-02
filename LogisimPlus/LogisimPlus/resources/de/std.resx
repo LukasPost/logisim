@@ -1,0 +1,497 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<!-- 
+		Microsoft ResX Schema
+
+		Version 1.3
+
+		The primary goals of this format is to allow a simple XML format 
+		that is mostly human readable. The generation and parsing of the 
+		various data types are done through the TypeConverter classes 
+		associated with the data types.
+
+		Example:
+
+		... ado.net/XML headers & schema ...
+		<resheader name="resmimetype">text/microsoft-resx</resheader>
+		<resheader name="version">1.3</resheader>
+		<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+		<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+		<data name="Name1">this is my long string</data>
+		<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+		<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+			[base64 mime encoded serialized .NET Framework object]
+		</data>
+		<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+			[base64 mime encoded string representing a byte array form of the .NET Framework object]
+		</data>
+
+		There are any number of "resheader" rows that contain simple 
+		name/value pairs.
+
+		Each data row contains a name, and value. The row also contains a 
+		type or mimetype. Type corresponds to a .NET class that support 
+		text/value conversion through the TypeConverter architecture. 
+		Classes that don't support this are serialized and stored with the 
+		mimetype set.
+
+		The mimetype is used for serialized objects, and tells the 
+		ResXResourceReader how to depersist the object. This is currently not 
+		extensible. For a given mimetype the value must be set accordingly:
+
+		Note - application/x-microsoft.net.object.binary.base64 is the format 
+		that the ResXResourceWriter will generate, however the reader can 
+		read any of the formats listed below.
+
+		mimetype: application/x-microsoft.net.object.binary.base64
+		value   : The object must be serialized with 
+			: System.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+		mimetype: application/x-microsoft.net.object.soap.base64
+		value   : The object must be serialized with 
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+		mimetype: application/x-microsoft.net.object.bytearray.base64
+		value   : The object must be serialized into a byte array 
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+	
+	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+		<xsd:element name="root" msdata:IsDataSet="true">
+			<xsd:complexType>
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="data">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="resheader">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" use="required" />
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+			</xsd:complexType>
+		</xsd:element>
+	</xsd:schema>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>1.3</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="builtinLibrary">
+    <value>Eingebaut</value>
+  </data>
+  <data name="stdFacingAttr">
+    <value>Ausrichtung</value>
+  </data>
+  <data name="stdDataWidthAttr">
+    <value>Datenbits</value>
+  </data>
+  <data name="stdTriggerAttr">
+    <value>Trigger</value>
+  </data>
+  <data name="stdTriggerRising">
+    <value>Steigende Flanke</value>
+  </data>
+  <data name="stdTriggerFalling">
+    <value>Fallende Flanke</value>
+  </data>
+  <data name="stdTriggerHigh">
+    <value>H-Niveau</value>
+  </data>
+  <data name="stdTriggerLow">
+    <value>L-Niveau</value>
+  </data>
+  <data name="stdLabelAttr">
+    <value>Beschriftung</value>
+  </data>
+  <data name="stdLabelFontAttr">
+    <value>Zeichensatz der Beschriftung</value>
+  </data>
+  <data name="changeLabelAction">
+    <value>Beschriftung ändern</value>
+  </data>
+  <data name="baseLibrary">
+    <value>Basis</value>
+  </data>
+  <data name="extenderComponent">
+    <value>Bit-Erweiterung</value>
+  </data>
+  <data name="extenderInAttr">
+    <value>Bitbreite</value>
+  </data>
+  <data name="extenderOutAttr">
+    <value>Bitbreite Aus</value>
+  </data>
+  <data name="extenderTypeAttr">
+    <value>Art der Erweiterung</value>
+  </data>
+  <data name="extenderOneType">
+    <value>Eins</value>
+  </data>
+  <data name="extenderZeroType">
+    <value>Null</value>
+  </data>
+  <data name="extenderSignType">
+    <value>Vorzeichen</value>
+  </data>
+  <data name="extenderInputType">
+    <value>Eingang</value>
+  </data>
+  <data name="extenderMainLabel">
+    <value>erweitern</value>
+  </data>
+  <data name="extenderOneLabel">
+    <value>1</value>
+  </data>
+  <data name="extenderZeroLabel">
+    <value>0</value>
+  </data>
+  <data name="extenderSignLabel">
+    <value>Vorzeichen</value>
+  </data>
+  <data name="extenderInputLabel">
+    <value>Eingang</value>
+  </data>
+  <data name="clockComponent">
+    <value>Takt</value>
+  </data>
+  <data name="clockHighAttr">
+    <value>Dauer H-Signal</value>
+  </data>
+  <data name="clockLowAttr">
+    <value>Dauer L-Signal</value>
+  </data>
+  <data name="clockDurationValue">
+    <value>{0} Takte</value>
+  </data>
+  <data name="clockDurationOneValue">
+    <value>1 Takt</value>
+  </data>
+  <data name="durationSmallMessage">
+    <value>Wert muss mindestens {0} sein.</value>
+  </data>
+  <data name="durationLargeMessage">
+    <value>Wert darf höchstens {0} sein.</value>
+  </data>
+  <data name="freqInvalidMessage">
+    <value>Wert ist nicht ganzzahlig</value>
+  </data>
+  <data name="pinComponent">
+    <value>Pin</value>
+  </data>
+  <data name="pinInputName">
+    <value>Eingang</value>
+  </data>
+  <data name="pinOutputName">
+    <value>Ausgang</value>
+  </data>
+  <data name="pinThreeStateAttr">
+    <value>Threestate?</value>
+  </data>
+  <data name="pinOutputAttr">
+    <value>Ausgang?</value>
+  </data>
+  <data name="pinPullAttr">
+    <value>Pull-Verhalten</value>
+  </data>
+  <data name="pinPullNoneOption">
+    <value>Unverändert</value>
+  </data>
+  <data name="pinPullUpOption">
+    <value>Pull-Up</value>
+  </data>
+  <data name="pinPullDownOption">
+    <value>Pull-Down</value>
+  </data>
+  <data name="pinLabelLocAttr">
+    <value>Position der Beschriftung</value>
+  </data>
+  <data name="pinInputToolTip">
+    <value>Eingangspin hinzufügen</value>
+  </data>
+  <data name="pinOutputToolTip">
+    <value>Ausgangspin hinzufügen</value>
+  </data>
+  <data name="pinFrozenTitle">
+    <value>Der Pin ist in der höheren Ebene zugeordnet.</value>
+  </data>
+  <data name="pinFrozenQuestion">
+    <value>Der Pin ist mit dem Zustand der höheren Ebene verknüpft. Einen neuen Schaltungszustand erstellen?</value>
+  </data>
+  <data name="probeComponent">
+    <value>Testpunkt</value>
+  </data>
+  <data name="pullComponent">
+    <value>Pull-Widerstand</value>
+  </data>
+  <data name="pullTypeAttr">
+    <value>Pull-Richtung</value>
+  </data>
+  <data name="pullZeroType">
+    <value>Null</value>
+  </data>
+  <data name="pullOneType">
+    <value>Eins</value>
+  </data>
+  <data name="pullErrorType">
+    <value>Fehler</value>
+  </data>
+  <data name="textComponent">
+    <value>Beschriftung</value>
+  </data>
+  <data name="textTextAttr">
+    <value>Text</value>
+  </data>
+  <data name="textFontAttr">
+    <value>Zeichensatz</value>
+  </data>
+  <data name="textHorzAlignAttr">
+    <value>Horizontale Ausrichtung</value>
+  </data>
+  <data name="textHorzAlignLeftOpt">
+    <value>Links</value>
+  </data>
+  <data name="textHorzAlignRightOpt">
+    <value>Rechts</value>
+  </data>
+  <data name="textHorzAlignCenterOpt">
+    <value>Zentriert</value>
+  </data>
+  <data name="textVertAlignAttr">
+    <value>Vertikale Ausrichtung</value>
+  </data>
+  <data name="textVertAlignTopOpt">
+    <value>Oben</value>
+  </data>
+  <data name="textVertAlignBaseOpt">
+    <value>Basis</value>
+  </data>
+  <data name="textVertAlignBottomOpt">
+    <value>Unten</value>
+  </data>
+  <data name="textVertAlignCenterOpt">
+    <value>Zentriert</value>
+  </data>
+  <data name="tunnelComponent">
+    <value>Tunnel</value>
+  </data>
+  <data name="gatesLibrary">
+    <value>Gatter</value>
+  </data>
+  <data name="gateSizeAttr">
+    <value>Gattergröße</value>
+  </data>
+  <data name="gateSizeNarrowOpt">
+    <value>Schmal</value>
+  </data>
+  <data name="gateSizeNormalOpt">
+    <value>Mittel</value>
+  </data>
+  <data name="gateSizeWideOpt">
+    <value>Breit</value>
+  </data>
+  <data name="gateNegateAttr">
+    <value>Negiere {0}</value>
+  </data>
+  <data name="gateInputsAttr">
+    <value>Anzahl der Eingänge</value>
+  </data>
+  <data name="xorBehaviorAttr">
+    <value>Verhalten bei mehreren Eingängen</value>
+  </data>
+  <data name="xorBehaviorOne">
+    <value>Falls genau ein Eingang gesetzt ist</value>
+  </data>
+  <data name="xorBehaviorOdd">
+    <value>Falls eine ungerade Anzahl gesetzt ist</value>
+  </data>
+  <data name="constantComponent">
+    <value>Konstante</value>
+  </data>
+  <data name="constantValueAttr">
+    <value>Wert</value>
+  </data>
+  <data name="notGateComponent">
+    <value>Inverter</value>
+  </data>
+  <data name="bufferComponent">
+    <value>Puffer</value>
+  </data>
+  <data name="andGateComponent">
+    <value>AND Gatter</value>
+  </data>
+  <data name="nandGateComponent">
+    <value>NAND Gatter</value>
+  </data>
+  <data name="norGateComponent">
+    <value>NOR Gatter</value>
+  </data>
+  <data name="orGateComponent">
+    <value>OR Gatter</value>
+  </data>
+  <data name="xorGateComponent">
+    <value>XOR Gatter</value>
+  </data>
+  <data name="xnorGateComponent">
+    <value>XNOR Gatter</value>
+  </data>
+  <data name="oddParityComponent">
+    <value>Ungerade Parität</value>
+  </data>
+  <data name="evenParityComponent">
+    <value>Gerade Parität</value>
+  </data>
+  <data name="controlledBufferComponent">
+    <value>Tristate-Puffer</value>
+  </data>
+  <data name="controlledInverterComponent">
+    <value>Tristate-Inverter</value>
+  </data>
+  <data name="controlledControlOption">
+    <value>Position der Steuerleitung</value>
+  </data>
+  <data name="controlledLeftHanded">
+    <value>linke Seite</value>
+  </data>
+  <data name="controlledRightHanded">
+    <value>rechte Seite</value>
+  </data>
+  <data name="memoryLibrary">
+    <value>Speicher</value>
+  </data>
+  <data name="memEnableLabel">
+    <value>en</value>
+  </data>
+  <data name="flipFlopClockTip">
+    <value>Takt: Zustandsaktualisierung bei Triggersignal</value>
+  </data>
+  <data name="flipFlopQTip">
+    <value>Aktueller Flip-Flop-Zustand</value>
+  </data>
+  <data name="flipFlopNotQTip">
+    <value>Aktuellen Flip-Flop-Zustand invertieren</value>
+  </data>
+  <data name="flipFlopResetTip">
+    <value>Löschen: wenn 1, gehe asynchron zu Zustand 0</value>
+  </data>
+  <data name="flipFlopPresetTip">
+    <value>Setzen: wenn 1, gehe asynchron zu Zustand 1</value>
+  </data>
+  <data name="flipFlopEnableTip">
+    <value>Freigabe: wenn 0 sind Taktsignale unwirksam</value>
+  </data>
+  <data name="counterComponent">
+    <value>Zähler</value>
+  </data>
+  <data name="counterMaxAttr">
+    <value>Höchstwert</value>
+  </data>
+  <data name="counterGoalAttr">
+    <value>Ziel</value>
+  </data>
+  <data name="counterModuloAttr">
+    <value>Modulo</value>
+  </data>
+  <data name="seqComponent">
+    <value>Sequenz</value>
+  </data>
+  <data name="seqRepAttr">
+    <value>Anzahl der Wiederholungen</value>
+  </data>
+  <data name="seqStartValueAttr">
+    <value>Startwert</value>
+  </data>
+  <data name="seqValueAttr">
+    <value>Zielwert</value>
+  </data>
+  <data name="timerComponent">
+    <value>Zeitgeber</value>
+  </data>
+  <data name="timerLimitAttr">
+    <value>Grenzwert</value>
+  </data>
+  <data name="timerCountAttr">
+    <value>Zählung</value>
+  </data>
+  <data name="timerModeAttr">
+    <value>Modus</value>
+  </data>
+  <data name="timerOneShotMode">
+    <value>Einzelschuss</value>
+  </data>
+  <data name="timerRetriggerMode">
+    <value>Wiederholung</value>
+  </data>
+  <data name="timerCountdownMode">
+    <value>Abzählen</value>
+  </data>
+  <data name="errorComponent">
+    <value>Fehler</value>
+  </data>
+  <data name="operatorLibrary">
+    <value>Operatoren</value>
+  </data>
+  <data name="orComponent">
+    <value>ODER</value>
+  </data>
+  <data name="andComponent">
+    <value>UND</value>
+  </data>
+  <data name="xorComponent">
+    <value>XOR</value>
+  </data>
+  <data name="notComponent">
+    <value>Inverter</value>
+  </data>
+  <data name="bufComponent">
+    <value>Puffer</value>
+  </data>
+  <data name="norComponent">
+    <value>NOR</value>
+  </data>
+  <data name="nandComponent">
+    <value>NAND</value>
+  </data>
+  <data name="uOrComponent">
+    <value>ODER</value>
+  </data>
+  <data name="uAndComponent">
+    <value>UND</value>
+  </data>
+  <data name="uXorComponent">
+    <value>XOR</value>
+  </data>
+  <data name="uNotComponent">
+    <value>Inverter</value>
+  </data>
+  <data name="uNorComponent">
+    <value>NOR</value>
+  </data>
+  <data name="uNandComponent">
+    <value>NAND</value>
+  </data>
+  <data name="errorComponent">
+    <value>Fehler</value>
+  </data>
+</root>

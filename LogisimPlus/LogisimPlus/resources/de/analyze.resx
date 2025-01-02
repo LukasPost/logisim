@@ -1,0 +1,285 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="analyzerWindowTitle" xml:space="preserve">
+    <value>Kombinatorik</value>
+  </data>
+  <data name="inputsTab" xml:space="preserve">
+    <value>Eingänge</value>
+  </data>
+  <data name="outputsTab" xml:space="preserve">
+    <value>Ausgänge</value>
+  </data>
+  <data name="tableTab" xml:space="preserve">
+    <value>Tabelle</value>
+  </data>
+  <data name="expressionTab" xml:space="preserve">
+    <value>Ausdruck</value>
+  </data>
+  <data name="minimizedTab" xml:space="preserve">
+    <value>Minimierung</value>
+  </data>
+  <data name="inputsTabTip" xml:space="preserve">
+    <value>Eingangsvariablen ansehen und bearbeiten.</value>
+  </data>
+  <data name="outputsTabTip" xml:space="preserve">
+    <value>Ausgangsvariablen ansehen und bearbeiten.</value>
+  </data>
+  <data name="tableTabTip" xml:space="preserve">
+    <value>Wahrheitstabelle ansehen und bearbeiten.</value>
+  </data>
+  <data name="expressionTabTip" xml:space="preserve">
+    <value>Logische Ausdrücke ansehen und bearbeiten.</value>
+  </data>
+  <data name="minimizedTabTip" xml:space="preserve">
+    <value>Die kleinstmöglichen Ausdrücke ansehen und bearbeiten.</value>
+  </data>
+  <data name="buildCircuitButton" xml:space="preserve">
+    <value>Schaltung aufbauen</value>
+  </data>
+  <data name="buildProjectLabel" xml:space="preserve">
+    <value>Zielprojekt:</value>
+  </data>
+  <data name="buildNameLabel" xml:space="preserve">
+    <value>Schaltungsname:</value>
+  </data>
+  <data name="buildTwoInputsLabel" xml:space="preserve">
+    <value>Nur Gatter mit zwei Eingängen</value>
+  </data>
+  <data name="buildNandsLabel" xml:space="preserve">
+    <value>Nur NAND-Gatter</value>
+  </data>
+  <data name="buildDialogTitle" xml:space="preserve">
+    <value>Schaltung aufbauen</value>
+  </data>
+  <data name="buildDialogErrorTitle" xml:space="preserve">
+    <value>Konnte Schaltung nicht aufbauen</value>
+  </data>
+  <data name="buildNeedProjectError" xml:space="preserve">
+    <value>Bitte ein Zielprojekt angeben.</value>
+  </data>
+  <data name="buildNeedCircuitError" xml:space="preserve">
+    <value>Bitte einen Schaltungsnamen angeben.</value>
+  </data>
+  <data name="buildConfirmReplaceMessage" xml:space="preserve">
+    <value>Sind Sie sicher, daß Sie die Schaltung %s ersetzen möchten?</value>
+  </data>
+  <data name="buildConfirmReplaceTitle" xml:space="preserve">
+    <value>Ersetzen bestätigen</value>
+  </data>
+  <data name="replaceCircuitAction" xml:space="preserve">
+    <value>Schaltung ersetzen</value>
+  </data>
+  <data name="exprClearButton" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="exprRevertButton" xml:space="preserve">
+    <value>Zurücknehmen</value>
+  </data>
+  <data name="exprEnterButton" xml:space="preserve">
+    <value>Eingabetaste</value>
+  </data>
+  <data name="expressionEmpty" xml:space="preserve">
+    <value>(leer)</value>
+  </data>
+  <data name="karnaughNoOutputError" xml:space="preserve">
+    <value>Kein Ausgang ausgewählt.</value>
+  </data>
+  <data name="karnaughTooManyInputsError" xml:space="preserve">
+    <value>Zu viele Eingänge für die Tabelle.</value>
+  </data>
+  <data name="minimizedSetButton" xml:space="preserve">
+    <value>Als Ausdruck festlegen</value>
+  </data>
+  <data name="outputSelectLabel" xml:space="preserve">
+    <value>Ausgang:</value>
+  </data>
+  <data name="tableEmptyMessage" xml:space="preserve">
+    <value>(leere Tabelle)</value>
+  </data>
+  <data name="tableNullHeader" xml:space="preserve">
+    <value>(keine)</value>
+  </data>
+  <data name="clipPasteErrorTitle" xml:space="preserve">
+    <value>Fehler beim Einfügen</value>
+  </data>
+  <data name="clipPasteSupportedError" xml:space="preserve">
+    <value>Der Inhalt der Zwischenablage konnte nicht eingefügt werden.</value>
+  </data>
+  <data name="clipPasteEndError" xml:space="preserve">
+    <value>Der Inhalt der Zwischenablage ist länger als die Tabelle.</value>
+  </data>
+  <data name="clipPasteSizeError" xml:space="preserve">
+    <value>Der Einfügebereich muß die gleiche Länge wie die Zwischenablage aufweisen.</value>
+  </data>
+  <data name="variableRemoveButton" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
+  <data name="variableMoveUpButton" xml:space="preserve">
+    <value>Nach oben</value>
+  </data>
+  <data name="variableMoveDownButton" xml:space="preserve">
+    <value>Nach unten</value>
+  </data>
+  <data name="variableAddButton" xml:space="preserve">
+    <value>Hinzufügen</value>
+  </data>
+  <data name="variableRenameButton" xml:space="preserve">
+    <value>Umbenennen</value>
+  </data>
+  <data name="variableStartError" xml:space="preserve">
+    <value>Name muß mit einem Buchstaben anfangen.</value>
+  </data>
+  <data name="variablePartError" xml:space="preserve">
+    <value>Der Name darf '%s' nicht enthalten.</value>
+  </data>
+  <data name="variableDuplicateError" xml:space="preserve">
+    <value>Eine Variable gleichen namens besteht bereits.</value>
+  </data>
+  <data name="variableMaximumError" xml:space="preserve">
+    <value>(Maximale Größe von %s erreicht.)</value>
+  </data>
+  <data name="busError" xml:space="preserve">
+    <value>Konflikt mit den Ausgangswerten der Schaltung.</value>
+  </data>
+  <data name="oscillateError" xml:space="preserve">
+    <value>Schaltung schwingt.</value>
+  </data>
+  <data name="implicitAndOperator" xml:space="preserve">
+    <value>(Implizites AND)</value>
+  </data>
+  <data name="invalidCharacterError" xml:space="preserve">
+    <value>Unbekanntes Zeichen: %s</value>
+  </data>
+  <data name="missingLeftOperandError" xml:space="preserve">
+    <value>Fehlender linker Operand für Operator %s.</value>
+  </data>
+  <data name="missingRightOperandError" xml:space="preserve">
+    <value>Fehlender rechter Operand für Operator %s.</value>
+  </data>
+  <data name="lparenMissingError" xml:space="preserve">
+    <value>Keine passende öffnende Klammer.</value>
+  </data>
+  <data name="rparenMissingError" xml:space="preserve">
+    <value>Keine passende schließende Klammer.</value>
+  </data>
+  <data name="badVariableName" xml:space="preserve">
+    <value>%s ist keine Eingangsvariable.</value>
+  </data>
+</root>

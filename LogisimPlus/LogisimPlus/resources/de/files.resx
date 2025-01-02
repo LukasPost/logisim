@@ -1,0 +1,312 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="fileDuplicateError" xml:space="preserve">
+    <value>Fehler beim Kopieren der Datei: %s</value>
+  </data>
+  <data name="defaultProjectName" xml:space="preserve">
+    <value>Unbenannt</value>
+  </data>
+  <data name="unloadUsedError" xml:space="preserve">
+    <value>Schaltung '%s' verwendet Elemente der Bibliothek.</value>
+  </data>
+  <data name="unloadToolbarError" xml:space="preserve">
+    <value>Bibliothek enthält Elemente auf der Werkzeugleiste.</value>
+  </data>
+  <data name="unloadMappingError" xml:space="preserve">
+    <value>Bibliothek enthält Elemente, die mit der Maus verknüpft sind.</value>
+  </data>
+  <data name="xmlConversionError" xml:space="preserve">
+    <value>Interner Fehler beim Erstellen von XML</value>
+  </data>
+  <data name="addCircuitAction" xml:space="preserve">
+    <value>Schaltung hinzufügen</value>
+  </data>
+  <data name="removeCircuitAction" xml:space="preserve">
+    <value>Schaltung entfernen</value>
+  </data>
+  <data name="moveCircuitAction" xml:space="preserve">
+    <value>Schaltungen neu anordnen</value>
+  </data>
+  <data name="loadLibraryAction" xml:space="preserve">
+    <value>Bibliothek laden</value>
+  </data>
+  <data name="loadLibrariesAction" xml:space="preserve">
+    <value>Bibliotheken laden</value>
+  </data>
+  <data name="unloadLibraryAction" xml:space="preserve">
+    <value>Bibliothek entfernen</value>
+  </data>
+  <data name="unloadLibrariesAction" xml:space="preserve">
+    <value>Bibliotheken entfernen</value>
+  </data>
+  <data name="setMainCircuitAction" xml:space="preserve">
+    <value>Hauptschaltung festlegen</value>
+  </data>
+  <data name="revertDefaultsAction" xml:space="preserve">
+    <value>Voreinstellungen wieder herstellen</value>
+  </data>
+  <data name="logisimFileFilter" xml:space="preserve">
+    <value>Logisim-Projekt (*.circ)</value>
+  </data>
+  <data name="jarFileFilter" xml:space="preserve">
+    <value>Java-Archiv (*.jar)</value>
+  </data>
+  <data name="fileDescriptorUnknownError" xml:space="preserve">
+    <value>Deskriptor für %s nicht bekannt.</value>
+  </data>
+  <data name="fileDescriptorError" xml:space="preserve">
+    <value>Unbekannter Bibliotheksdeskriptor %s</value>
+  </data>
+  <data name="fileTypeError" xml:space="preserve">
+    <value>Die Logisim-Bibliothek hat einen unbekannten Typ %s (%s)</value>
+  </data>
+  <data name="fileBuiltinMissingError" xml:space="preserve">
+    <value>Die eingebaute Bibliothek %s ist in dieser Version nicht verfügbar.</value>
+  </data>
+  <data name="fileLibraryMissingError" xml:space="preserve">
+    <value>Die erforderliche Bibliotheksdatei `%s' fehlt. Bitte wählen Sie die Datei im folgenden Dialogfenster aus.</value>
+  </data>
+  <data name="fileLibraryMissingTitle" xml:space="preserve">
+    <value>`%s' lokalisieren.</value>
+  </data>
+  <data name="fileLibraryMissingButton" xml:space="preserve">
+    <value>Auswählen</value>
+  </data>
+  <data name="fileLoadCanceledError" xml:space="preserve">
+    <value>Benutzer hat das Laden abgebrochen. [1]</value>
+  </data>
+  <data name="fileMessageTitle" xml:space="preserve">
+    <value>Dateinachricht</value>
+  </data>
+  <data name="fileErrorTitle" xml:space="preserve">
+    <value>Dateifehler</value>
+  </data>
+  <data name="fileSaveErrorTitle" xml:space="preserve">
+    <value>Kann Datei nicht speichern</value>
+  </data>
+  <data name="fileSaveError" xml:space="preserve">
+    <value>Kann Datei `%s' nicht speichern.</value>
+  </data>
+  <data name="fileSaveCloseError" xml:space="preserve">
+    <value>Kann Datei `%s' nicht schließen.</value>
+  </data>
+  <data name="fileCircularError" xml:space="preserve">
+    <value>Zirkelbezug kann nicht hergestellt werden. (Die Datei wird von der Bibliothek `%s' benutzt.)</value>
+  </data>
+  <data name="unknownLibraryFileError" xml:space="preserve">
+    <value>Keine Datei bekannt, die %s entspricht.</value>
+  </data>
+  <data name="logisimCircularError" xml:space="preserve">
+    <value>Die Datei %s enthält einen Verweis auf sich selbst.</value>
+  </data>
+  <data name="logisimLoadError" xml:space="preserve">
+    <value>Fehler beim Öffnen von %s: %s</value>
+  </data>
+  <data name="jarNotOpenedError" xml:space="preserve">
+    <value>Die JAR-Datei konnte nicht geöffnet werden.</value>
+  </data>
+  <data name="jarClassNotFoundError" xml:space="preserve">
+    <value>Die Klasse %s konnte nicht in der JAR-Datei gefunden werden.</value>
+  </data>
+  <data name="jarClassNotLibraryError" xml:space="preserve">
+    <value>`%s' ist kein gültiger Name einer Bibliothek.</value>
+  </data>
+  <data name="jarLibraryNotCreatedError" xml:space="preserve">
+    <value>Die Bibliothek %s konnte nicht instanziiert werden.</value>
+  </data>
+  <data name="fileAppearanceError" xml:space="preserve">
+    <value>Fehler beim Laden von Element %s</value>
+  </data>
+  <data name="fileAppearanceNotFound" xml:space="preserve">
+    <value>Element %s nicht gefunden</value>
+  </data>
+  <data name="gateUndefinedOption" xml:space="preserve">
+    <value>Gatterausgang bei undefiniertem Zustand</value>
+  </data>
+  <data name="simLimitOption" xml:space="preserve">
+    <value>Simulationsgrenze</value>
+  </data>
+  <data name="simRandomOption" xml:space="preserve">
+    <value>Zufälligkeit der Simulation</value>
+  </data>
+  <data name="gateUndefinedIgnore" xml:space="preserve">
+    <value>Undefinierte Eingänge ignorieren</value>
+  </data>
+  <data name="gateUndefinedError" xml:space="preserve">
+    <value>Fehler bei undefinierten Eingängen</value>
+  </data>
+  <data name="libNameMissingError" xml:space="preserve">
+    <value>kein Bibliotheksname angegeben</value>
+  </data>
+  <data name="libDescMissingError" xml:space="preserve">
+    <value>kein Bibliotheksdeskriptor angegeben</value>
+  </data>
+  <data name="libMissingError" xml:space="preserve">
+    <value>Bibliothek `%s' nicht gefunden</value>
+  </data>
+  <data name="toolNameMissingError" xml:space="preserve">
+    <value>fehlender Werkzeugname</value>
+  </data>
+  <data name="mappingMissingError" xml:space="preserve">
+    <value>fehlender Modifikator zur Mausbelegung</value>
+  </data>
+  <data name="mappingBadError" xml:space="preserve">
+    <value>Modifikator `%s' zur Mausbelegung ungültig</value>
+  </data>
+  <data name="circNameMissingError" xml:space="preserve">
+    <value>fehlender Schaltungsname</value>
+  </data>
+  <data name="compUnknownError" xml:space="preserve">
+    <value>Bauteil `%s' nicht gefunden</value>
+  </data>
+  <data name="compNameMissingError" xml:space="preserve">
+    <value>fehlende Bauteilbezeichnung</value>
+  </data>
+  <data name="compAbsentError" xml:space="preserve">
+    <value>Bauteil `%s' fehlt in der Bibliothek `%s'</value>
+  </data>
+  <data name="compLocMissingError" xml:space="preserve">
+    <value>Position von Bauteil `%s' ist nicht angegeben</value>
+  </data>
+  <data name="compLocInvalidError" xml:space="preserve">
+    <value>Position von Bauteil `%s' ist ungültig (%s)</value>
+  </data>
+  <data name="wireStartMissingError" xml:space="preserve">
+    <value>Anfang der Leitung nicht definiert</value>
+  </data>
+  <data name="wireStartInvalidError" xml:space="preserve">
+    <value>Anfang der Leitung hat falsches Format</value>
+  </data>
+  <data name="wireEndMissingError" xml:space="preserve">
+    <value>Ende der Leitung nicht definiert</value>
+  </data>
+  <data name="wireEndInvalidError" xml:space="preserve">
+    <value>Ende der Leitung hat falsches Format</value>
+  </data>
+  <data name="attrNameMissingError" xml:space="preserve">
+    <value>Name des Attributs fehlt</value>
+  </data>
+  <data name="attrValueInvalidError" xml:space="preserve">
+    <value>Wert des Attributs (%s) ist ungültig für %s</value>
+  </data>
+  <data name="xmlFormatError" xml:space="preserve">
+    <value>Fehler beim XML-Format: %s</value>
+  </data>
+</root>

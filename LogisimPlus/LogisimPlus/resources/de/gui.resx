@@ -1,0 +1,293 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<!-- 
+		Microsoft ResX Schema
+
+		Version 1.3
+
+		The primary goals of this format is to allow a simple XML format 
+		that is mostly human readable. The generation and parsing of the 
+		various data types are done through the TypeConverter classes 
+		associated with the data types.
+
+		Example:
+
+		... ado.net/XML headers & schema ...
+		<resheader name="resmimetype">text/microsoft-resx</resheader>
+		<resheader name="version">1.3</resheader>
+		<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+		<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+		<data name="Name1">this is my long string</data>
+		<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+		<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+			[base64 mime encoded serialized .NET Framework object]
+		</data>
+		<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+			[base64 mime encoded string representing a byte array form of the .NET Framework object]
+		</data>
+
+		There are any number of "resheader" rows that contain simple 
+		name/value pairs.
+
+		Each data row contains a name, and value. The row also contains a 
+		type or mimetype. Type corresponds to a .NET class that support 
+		text/value conversion through the TypeConverter architecture. 
+		Classes that don't support this are serialized and stored with the 
+		mimetype set.
+
+		The mimetype is used for serialized objects, and tells the 
+		ResXResourceReader how to depersist the object. This is currently not 
+		extensible. For a given mimetype the value must be set accordingly:
+
+		Note - application/x-microsoft.net.object.binary.base64 is the format 
+		that the ResXResourceWriter will generate, however the reader can 
+		read any of the formats listed below.
+
+		mimetype: application/x-microsoft.net.object.binary.base64
+		value   : The object must be serialized with 
+			: System.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+		mimetype: application/x-microsoft.net.object.soap.base64
+		value   : The object must be serialized with 
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+		mimetype: application/x-microsoft.net.object.bytearray.base64
+		value   : The object must be serialized into a byte array 
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+	
+	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+		<xsd:element name="root" msdata:IsDataSet="true">
+			<xsd:complexType>
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="data">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="resheader">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" use="required" />
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+			</xsd:complexType>
+		</xsd:element>
+	</xsd:schema>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>1.3</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="attributeDialogTitle">
+    <value>Wert auswählen</value>
+  </data>
+  <data name="changeAttributeAction">
+    <value>Attribut ändern</value>
+  </data>
+  <data name="changeCircuitAttrAction">
+    <value>Schaltung ändern</value>
+  </data>
+  <data name="attributeChangeInvalidError">
+    <value>Attribut wurde nicht verändert da die Anfrage ungültig war</value>
+  </data>
+  <data name="attributeChangeInvalidTitle">
+    <value>Ungültiger Wert</value>
+  </data>
+  <data name="cannotModifyCircuitError">
+    <value>Diese Schaltung kann nicht verändert werden.</value>
+  </data>
+  <data name="canvasWidthError">
+    <value>Breiten nicht kompatibel</value>
+  </data>
+  <data name="canvasOscillationError">
+    <value>Offenbare Oszillation</value>
+  </data>
+  <data name="canvasExceptionError">
+    <value>Simulation aufgrund eines internen Fehlers angehalten</value>
+  </data>
+  <data name="titleCircFileKnown">
+    <value>Logisim: %s von %s</value>
+  </data>
+  <data name="titleFileKnown">
+    <value>Logisim: %s</value>
+  </data>
+  <data name="confirmDiscardMessage">
+    <value>Was soll mit den ungespeicherten Änderungen an %s geschehen?</value>
+  </data>
+  <data name="confirmCloseTitle">
+    <value>Schließen bestätigen</value>
+  </data>
+  <data name="saveOption">
+    <value>Speichern</value>
+  </data>
+  <data name="discardOption">
+    <value>Verwerfen</value>
+  </data>
+  <data name="cancelOption">
+    <value>Abbrechen</value>
+  </data>
+  <data name="exportEmptyCircuitsTitle">
+    <value>Kann nicht exportieren</value>
+  </data>
+  <data name="exportEmptyCircuitsMessage">
+    <value>Keine nicht-leeren Schaltungen für den Export vorhanden.</value>
+  </data>
+  <data name="exportImageSelect">
+    <value>Bild exportieren</value>
+  </data>
+  <data name="exportImageDirectorySelect">
+    <value>Exportverzeichnis auswählen</value>
+  </data>
+  <data name="exportImageFileSelect">
+    <value>Exportdatei auswählen</value>
+  </data>
+  <data name="exportImageButton">
+    <value>Exportieren</value>
+  </data>
+  <data name="exportGifFilter">
+    <value>GIF-Dateien (*.gif)</value>
+  </data>
+  <data name="exportPngFilter">
+    <value>PNG-Dateien (*.png)</value>
+  </data>
+  <data name="exportJpgFilter">
+    <value>JPEG-Dateien (*.jpeg, *.jpg)</value>
+  </data>
+  <data name="exportNewDirectoryErrorTitle">
+    <value>Kann Verzeichnis nicht erstellen</value>
+  </data>
+  <data name="exportNewDirectoryErrorMessage">
+    <value>Das Verzeichnis konnte nicht erstellt werden.</value>
+  </data>
+  <data name="couldNotCreateImage">
+    <value>Die Bilddatei konnte nicht erstellt werden.</value>
+  </data>
+  <data name="couldNotCreateFile">
+    <value>Die Datei konnte nicht erstellt werden.</value>
+  </data>
+  <data name="confirmOverwriteMessage">
+    <value>Die Datei existiert bereits. Soll die Datei überschrieben werden?</value>
+  </data>
+  <data name="confirmOverwriteTitle">
+    <value>Überschreiben bestätigen</value>
+  </data>
+  <data name="exportImageProgress">
+    <value>Berechne Bild...</value>
+  </data>
+  <data name="printEmptyCircuitsTitle">
+    <value>Kann nicht drucken</value>
+  </data>
+  <data name="printEmptyCircuitsMessage">
+    <value>Keine nicht-leeren Schaltungen zum Drucken vorhanden.</value>
+  </data>
+  <data name="printParmsTitle">
+    <value>Druckparameter</value>
+  </data>
+  <data name="printError">
+    <value>Fehler beim Drucken: %s</value>
+  </data>
+  <data name="printErrorTitle">
+    <value>Fehler beim Drucken</value>
+  </data>
+  <data name="dropComponentAction">
+    <value>Bauteil entfernen</value>
+  </data>
+  <data name="dropComponentsAction">
+    <value>Bauteile entfernen</value>
+  </data>
+  <data name="moveSelectionAction">
+    <value>Auswahl verschieben</value>
+  </data>
+  <data name="deleteSelectionAction">
+    <value>Auswahl löschen</value>
+  </data>
+  <data name="duplicateSelectionAction">
+    <value>Auswahl duplizieren</value>
+  </data>
+  <data name="cutSelectionAction">
+    <value>Auswahl ausschneiden</value>
+  </data>
+  <data name="copySelectionAction">
+    <value>Auswahl kopieren</value>
+  </data>
+  <data name="pasteClipboardAction">
+    <value>Aus Zwischenablage einfügen</value>
+  </data>
+  <data name="statsDialogTitle">
+    <value>Logisim: %s Statistik</value>
+  </data>
+  <data name="statsCloseButton">
+    <value>Schließen</value>
+  </data>
+  <data name="statsSimpleCountColumn">
+    <value>Einfach</value>
+  </data>
+  <data name="statsUniqueCountColumn">
+    <value>Eindeutig</value>
+  </data>
+  <data name="statsRecursiveCountColumn">
+    <value>Rekursiv</value>
+  </data>
+  <data name="statsComponentColumn">
+    <value>Bauteil</value>
+  </data>
+  <data name="statsLibraryColumn">
+    <value>Bibliothek</value>
+  </data>
+  <data name="statsTotalWithout">
+    <value>GESAMT (ohne Teilschaltungen)</value>
+  </data>
+  <data name="statsTotalWith">
+    <value>GESAMT (mit Teilschaltungen)</value>
+  </data>
+  <data name="projectAddCircuitTip">
+    <value>Schaltung hinzufügen</value>
+  </data>
+  <data name="projectMoveCircuitDownTip">
+    <value>Angzeigte Schaltung in der Liste nach unten</value>
+  </data>
+  <data name="projectMoveCircuitUpTip">
+    <value>Angzeigte Schaltung in der Liste nach oben</value>
+  </data>
+  <data name="projectRemoveCircuitTip">
+    <value>Angzeigte Schaltung entfernen</value>
+  </data>
+  <data name="projectEditLayoutTip">
+    <value>Layout der angezeigten Schaltung bearbeiten</value>
+  </data>
+  <data name="projectEditAppearanceTip">
+    <value>Aussehen der angezeigten Schaltung als Teilschaltung bearbeiten</value>
+  </data>
+  <data name="tickRateHz">
+    <value>%s Hz</value>
+  </data>
+  <data name="tickRateKHz">
+    <value>%s KHz</value>
+  </data>
+  <data name="zoomShowGrid">
+    <value>Gitternetz umschalten</value>
+  </data>
+  <data name="revertAppearanceAction">
+    <value>Darstellung wiederherstellen</value>
+  </data>
+</root>
