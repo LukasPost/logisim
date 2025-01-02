@@ -83,6 +83,7 @@ public class Register extends InstanceFactory {
 		state.setPort(OUT, Value.createKnown(dataWidth, data.value), DELAY);
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void paintInstance(InstancePainter painter) {
 		Graphics g = painter.getGraphics();

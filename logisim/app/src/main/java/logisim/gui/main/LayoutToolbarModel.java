@@ -68,7 +68,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
 			if (index <= 10) {
 				if (index == 10)
 					index = 0;
-				int mask = frame.getToolkit().getMenuShortcutKeyMask();
+				int mask = frame.getToolkit().getMenuShortcutKeyMaskEx();
 				ret += " (" + InputEventUtil.toKeyDisplayString(mask) + "-" + index + ")";
 			}
 			return ret;
@@ -187,10 +187,8 @@ class LayoutToolbarModel extends AbstractToolbarModel {
 	private void buildContents() {
 		List<ToolbarItem> oldItems = items;
 		List<ToolbarItem> newItems = new ArrayList<ToolbarItem>();
-		int pos = -1;
 		ToolbarData data = proj.getLogisimFile().getOptions().getToolbarData();
 		for (Tool tool : data.getContents()) {
-			++pos;
 			if (tool == null) {
 				newItems.add(new ToolbarSeparator(4));
 			} else {

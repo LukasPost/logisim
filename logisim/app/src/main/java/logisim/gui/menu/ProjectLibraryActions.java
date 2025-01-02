@@ -38,25 +38,25 @@ public class ProjectLibraryActions {
 		}
 	}
 
-	private static class LibraryJList extends JList {
+	private static class LibraryJList extends JList<BuiltinOption> {
 		LibraryJList(List<Library> libraries) {
-			ArrayList<BuiltinOption> options = new ArrayList<BuiltinOption>();
-			for (Library lib : libraries) {
-				options.add(new BuiltinOption(lib));
+			BuiltinOption[] options = new BuiltinOption[libraries.size()];
+			for (int i = 0; i< libraries.size(); i++) {
+				options[i] = new BuiltinOption(libraries.get(i));
 			}
-			setListData(options.toArray());
+			setListData(options);
 		}
 
 		Library[] getSelectedLibraries() {
-			Object[] selected = getSelectedValues();
-			if (selected != null && selected.length > 0) {
-				Library[] libs = new Library[selected.length];
-				for (int i = 0; i < selected.length; i++) {
-					libs[i] = ((BuiltinOption) selected[i]).lib;
+			var selected = getSelectedValuesList();
+			if (selected != null && selected.size() > 0) {
+				Library[] libs = new Library[selected.size()];
+				for (int i = 0; i < selected.size(); i++) {
+					libs[i] = selected.get(i).lib;
 				}
 				return libs;
 			} else {
-				return null;
+				return new Library[0];
 			}
 		}
 	}

@@ -103,7 +103,7 @@ public class ToolbarData {
 		return contents.size();
 	}
 
-	public Object get(int index) {
+	public Tool get(int index) {
 		return contents.get(index);
 	}
 

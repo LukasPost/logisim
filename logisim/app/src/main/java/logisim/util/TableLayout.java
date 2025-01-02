@@ -169,8 +169,6 @@ public class TableLayout implements LayoutManager2 {
 			}
 		}
 
-		// TODO Auto-generated method stub
-
 	}
 
 	public void invalidateLayout(Container parent) {

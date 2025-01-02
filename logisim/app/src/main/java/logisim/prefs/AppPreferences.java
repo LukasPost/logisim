@@ -404,7 +404,7 @@ public class AppPreferences {
 
 			String localeStr = this.get();
 			if (localeStr != null && !localeStr.equals("")) {
-				LocaleManager.setLocale(new Locale(localeStr));
+				LocaleManager.setLocale(Locale.of(localeStr));
 			}
 			LocaleManager.addLocaleListener(myListener);
 			myListener.localeChanged();

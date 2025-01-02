@@ -16,7 +16,7 @@ public abstract class SimulationTreeNode implements TreeNode {
 		return false;
 	}
 
-	public abstract Enumeration children();
+	public abstract Enumeration<TreeNode> children();
 
 	public abstract boolean getAllowsChildren();
 

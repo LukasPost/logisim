@@ -46,6 +46,7 @@ public class JFileChoosers {
 		return currentDirectory;
 	}
 
+	@SuppressWarnings("null")
 	public static JFileChooser create() {
 		RuntimeException first = null;
 		for (int i = 0; i < PROP_NAMES.length; i++) {

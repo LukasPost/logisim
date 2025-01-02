@@ -29,6 +29,7 @@ public class ZipClassLoader extends ClassLoader {
 	private static final int REQUEST_FIND = 0;
 	private static final int REQUEST_LOAD = 1;
 
+	@SuppressWarnings("unused")
 	private static class Request {
 		int action;
 		String resource;
@@ -84,6 +85,7 @@ public class ZipClassLoader extends ClassLoader {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private class WorkThread extends Thread {
 		private LinkedList<Request> requests = new LinkedList<Request>();
 		private ZipFile zipFile = null;
@@ -255,6 +257,7 @@ public class ZipClassLoader extends ClassLoader {
 	}
 
 	@Override
+	@SuppressWarnings("unused")
 	public URL findResource(String resourceName) {
 		if (DEBUG >= 3)
 			System.err.println("findResource " + resourceName); // OK
@@ -267,6 +270,7 @@ public class ZipClassLoader extends ClassLoader {
 	}
 
 	@Override
+	@SuppressWarnings("unused")
 	public Class<?> findClass(String className) throws ClassNotFoundException {
 		boolean found = false;
 		Object result = null;

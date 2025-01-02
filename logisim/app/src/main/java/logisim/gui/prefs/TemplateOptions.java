@@ -67,7 +67,7 @@ class TemplateOptions extends OptionsPanel {
 						catch (IOException ex) {
 						}
 						try {
-							if (reader != null)
+							if (reader2 != null)
 								reader2.close();
 						}
 						catch (IOException ex) {

@@ -243,7 +243,7 @@ public class TtyInterface {
 				retCode = 1; // abnormal exit
 				break;
 			}
-			if (keyboardStates != null) {
+			if (keyboardStates != null && stdinThread != null) {
 				char[] buffer = stdinThread.getBuffer();
 				if (buffer != null) {
 					for (InstanceState keyState : keyboardStates) {

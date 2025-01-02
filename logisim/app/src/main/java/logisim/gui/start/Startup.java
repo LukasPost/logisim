@@ -23,7 +23,6 @@ import logisim.prefs.AppPreferences;
 import logisim.proj.Project;
 import logisim.proj.ProjectActions;
 import logisim.util.LocaleManager;
-import logisim.util.MacCompatibility;
 import logisim.util.StringUtil;
 
 public class Startup {

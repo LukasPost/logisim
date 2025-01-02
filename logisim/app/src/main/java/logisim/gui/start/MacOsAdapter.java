@@ -21,6 +21,7 @@ class MacOsAdapter { // MAC extends ApplicationAdapter {
 	}
 
 	static void addListeners(boolean added) {
+		@SuppressWarnings("unused")
 		MyListener myListener = new MyListener();
 		/*
 		 * if (!added) MRJAdapter.addOpenDocumentListener(myListener); if (!added)

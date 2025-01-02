@@ -80,7 +80,7 @@ public class Shifter extends InstanceFactory {
 	public void propagate(InstanceState state) {
 		// compute output
 		BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
-		int bits = dataWidth == null ? 32 : dataWidth.getWidth();
+		int bits = dataWidth.getWidth();
 		Value vx = state.getPort(IN0);
 		Value vd = state.getPort(IN1);
 		Value vy; // y will by x shifted by d

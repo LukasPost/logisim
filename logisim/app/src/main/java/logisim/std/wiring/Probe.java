@@ -193,6 +193,7 @@ public class Probe extends InstanceFactory {
 				oldData.curValue = newValue;
 			}
 			int oldWidth = oldValue == null ? 1 : oldValue.getBitWidth().getWidth();
+			@SuppressWarnings("null")
 			int newWidth = newValue.getBitWidth().getWidth();
 			if (oldWidth != newWidth) {
 				ProbeAttributes attrs = (ProbeAttributes) state.getAttributeSet();

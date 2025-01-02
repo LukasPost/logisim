@@ -20,14 +20,14 @@ class PrefOptionList implements ActionListener, PropertyChangeListener {
 	private StringGetter labelStr;
 
 	private JLabel label;
-	private JComboBox combo;
+	private JComboBox<PrefOption> combo;
 
 	public PrefOptionList(PrefMonitor<String> pref, StringGetter labelStr, PrefOption[] options) {
 		this.pref = pref;
 		this.labelStr = labelStr;
 
 		label = new JLabel(labelStr.get() + " ");
-		combo = new JComboBox();
+		combo = new JComboBox<>();
 		for (PrefOption opt : options) {
 			combo.addItem(opt);
 		}
@@ -48,7 +48,7 @@ class PrefOptionList implements ActionListener, PropertyChangeListener {
 		return label;
 	}
 
-	JComboBox getJComboBox() {
+	JComboBox<PrefOption> getJComboBox() {
 		return combo;
 	}
 

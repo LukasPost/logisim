@@ -12,13 +12,13 @@ import javax.swing.ListSelectionModel;
 import logisim.comp.Component;
 import logisim.data.Value;
 
-class SelectionList extends JList {
-	private class Model extends AbstractListModel implements ModelListener {
+class SelectionList extends JList<SelectionItem> {
+	private class Model extends AbstractListModel<SelectionItem> implements ModelListener {
 		public int getSize() {
 			return selection == null ? 0 : selection.size();
 		}
 
-		public Object getElementAt(int index) {
+		public SelectionItem getElementAt(int index) {
 			return selection.get(index);
 		}
 

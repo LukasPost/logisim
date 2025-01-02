@@ -127,6 +127,7 @@ public class InputEventUtil {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static String toKeyDisplayString(int mods) {
 		ArrayList<String> arr = new ArrayList<String>();
 		if ((mods & Event.META_MASK) != 0)

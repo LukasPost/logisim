@@ -22,7 +22,6 @@ import javax.swing.filechooser.FileFilter;
 import logisim.std.Builtin;
 import logisim.tools.Library;
 import logisim.util.JFileChoosers;
-import logisim.util.MacCompatibility;
 import logisim.util.StringUtil;
 import logisim.util.ZipClassLoader;
 

@@ -154,6 +154,7 @@ public class Counter extends InstanceFactory {
 		state.setPort(CARRY, carry ? Value.TRUE : Value.FALSE, DELAY);
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void paintInstance(InstancePainter painter) {
 		Graphics g = painter.getGraphics();

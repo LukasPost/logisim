@@ -21,7 +21,6 @@ import logisim.data.Location;
 import logisim.data.Value;
 import logisim.gui.hex.HexFrame;
 import logisim.instance.Instance;
-import logisim.instance.InstanceData;
 import logisim.instance.InstanceLogger;
 import logisim.instance.InstancePainter;
 import logisim.instance.InstanceState;

@@ -322,6 +322,9 @@ public class EditTool extends Tool {
 	}
 
 	private boolean isWiringPoint(Canvas canvas, Location loc, int modsEx) {
+		if(canvas == null)
+			return false;
+		
 		boolean wiring = (modsEx & MouseEvent.ALT_DOWN_MASK) == 0;
 		boolean select = !wiring;
 
@@ -329,11 +332,9 @@ public class EditTool extends Tool {
 			Collection<Component> sel = canvas.getSelection().getComponents();
 			if (sel != null) {
 				for (Component c : sel) {
-					if (c instanceof Wire) {
-						Wire w = (Wire) c;
-						if (w.contains(loc) && !w.endsAt(loc))
-							return select;
-					}
+					if (c instanceof Wire w && w.contains(loc) && !w.endsAt(loc)) 
+						return select;
+					
 				}
 			}
 		}

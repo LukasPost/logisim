@@ -13,8 +13,8 @@ import javax.swing.event.ListSelectionListener;
 
 import logisim.prefs.AppPreferences;
 
-class LocaleSelector extends JList implements LocaleListener, ListSelectionListener {
-	private static class LocaleOption implements Runnable {
+class LocaleSelector extends JList<LocaleSelector.LocaleOption> implements LocaleListener, ListSelectionListener {
+	public static class LocaleOption implements Runnable {
 		private Locale locale;
 		private String text;
 
@@ -48,7 +48,7 @@ class LocaleSelector extends JList implements LocaleListener, ListSelectionListe
 
 	LocaleSelector(Locale[] locales) {
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		DefaultListModel model = new DefaultListModel();
+		DefaultListModel<LocaleOption> model = new DefaultListModel<>();
 		items = new LocaleOption[locales.length];
 		for (int i = 0; i < locales.length; i++) {
 			items[i] = new LocaleOption(locales[i]);

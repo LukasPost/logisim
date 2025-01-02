@@ -33,9 +33,11 @@ public class LayoutEditHandler extends EditHandler implements ProjectListener, L
 	@Override
 	public void computeEnabled() {
 		Project proj = frame.getProject();
-		Selection sel = proj == null ? null : proj.getSelection();
-		boolean selEmpty = (sel == null ? true : sel.isEmpty());
-		boolean canChange = proj != null && proj.getLogisimFile().contains(proj.getCurrentCircuit());
+		if(proj == null)
+			return;
+		Selection sel = proj.getSelection();
+		boolean selEmpty = sel == null || sel.isEmpty();
+		boolean canChange = proj.getLogisimFile().contains(proj.getCurrentCircuit());
 
 		boolean selectAvailable = false;
 		for (Library lib : proj.getLogisimFile().getLibraries()) {

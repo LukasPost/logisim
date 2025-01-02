@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import logisim.data.Attribute;
 import logisim.data.AttributeEvent;
 import logisim.data.AttributeListener;
+import logisim.data.AttributeOption;
 import logisim.data.AttributeSet;
 import logisim.file.Options;
 import logisim.util.TableLayout;
@@ -31,7 +32,7 @@ class SimulateOptions extends OptionsPanel {
 				}
 			} else if (source == simRandomness) {
 				AttributeSet attrs = getOptions().getAttributeSet();
-				Object val = simRandomness.isSelected() ? Options.sim_rand_dflt : Integer.valueOf(0);
+				int val = simRandomness.isSelected() ? Options.sim_rand_dflt : Integer.valueOf(0);
 				getProject().doAction(OptionsActions.setAttribute(attrs, Options.sim_rand_attr, val));
 			} else if (source == gateUndefined) {
 				ComboOption opt = (ComboOption) gateUndefined.getSelectedItem();
@@ -58,7 +59,7 @@ class SimulateOptions extends OptionsPanel {
 
 		private void loadSimLimit(Integer val) {
 			int value = val.intValue();
-			ComboBoxModel model = simLimit.getModel();
+			ComboBoxModel<Integer> model = simLimit.getModel();
 			for (int i = 0; i < model.getSize(); i++) {
 				Integer opt = (Integer) model.getElementAt(i);
 				if (opt.intValue() == value) {
@@ -67,7 +68,7 @@ class SimulateOptions extends OptionsPanel {
 			}
 		}
 
-		private void loadGateUndefined(Object val) {
+		private void loadGateUndefined(AttributeOption val) {
 			ComboOption.setSelected(gateUndefined, val);
 		}
 
@@ -79,12 +80,12 @@ class SimulateOptions extends OptionsPanel {
 	private MyListener myListener = new MyListener();
 
 	private JLabel simLimitLabel = new JLabel();
-	private JComboBox simLimit = new JComboBox(
+	private JComboBox<Integer> simLimit = new JComboBox<>(
 			new Integer[] { Integer.valueOf(200), Integer.valueOf(500), Integer.valueOf(1000), Integer.valueOf(2000),
 					Integer.valueOf(5000), Integer.valueOf(10000), Integer.valueOf(20000), Integer.valueOf(50000), });
 	private JCheckBox simRandomness = new JCheckBox();
 	private JLabel gateUndefinedLabel = new JLabel();
-	private JComboBox gateUndefined = new JComboBox(new Object[] { new ComboOption(Options.GATE_UNDEFINED_IGNORE),
+	private JComboBox<ComboOption> gateUndefined = new JComboBox<>(new ComboOption[] { new ComboOption(Options.GATE_UNDEFINED_IGNORE),
 			new ComboOption(Options.GATE_UNDEFINED_ERROR) });
 
 	public SimulateOptions(OptionsFrame window) {

@@ -23,9 +23,9 @@ class PrefOption {
 		return value;
 	}
 
-	static void setSelected(JComboBox combo, Object value) {
+	static void setSelected(JComboBox<PrefOption> combo, Object value) {
 		for (int i = combo.getItemCount() - 1; i >= 0; i--) {
-			PrefOption opt = (PrefOption) combo.getItemAt(i);
+			PrefOption opt = combo.getItemAt(i);
 			if (opt.getValue().equals(value)) {
 				combo.setSelectedItem(opt);
 				return;

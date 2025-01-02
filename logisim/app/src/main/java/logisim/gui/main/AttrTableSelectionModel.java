@@ -10,8 +10,6 @@ import logisim.comp.ComponentFactory;
 import logisim.data.Attribute;
 import logisim.gui.generic.AttrTableSetException;
 import logisim.gui.generic.AttributeSetTableModel;
-import logisim.gui.main.AttrTableCircuitModel;
-import logisim.gui.main.Selection;
 import logisim.gui.main.Selection.Event;
 import logisim.proj.Project;
 import logisim.tools.SetAttributeAction;
@@ -27,6 +25,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
 		frame.getCanvas().getSelection().addListener(this);
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public String getTitle() {
 		ComponentFactory wireFactory = null;

@@ -3,7 +3,6 @@
 
 package logisim.gui.main;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
@@ -15,7 +14,7 @@ import logisim.data.Bounds;
 import logisim.file.LogisimFile;
 import logisim.proj.Project;
 
-class CircuitJList extends JList {
+class CircuitJList extends JList<Circuit> {
 	public CircuitJList(Project proj, boolean includeEmpty) {
 		LogisimFile file = proj.getLogisimFile();
 		Circuit current = proj.getCurrentCircuit();
@@ -36,17 +35,11 @@ class CircuitJList extends JList {
 	}
 
 	public List<Circuit> getSelectedCircuits() {
-		Object[] selected = getSelectedValues();
-		if (selected != null && selected.length > 0) {
-			ArrayList<Circuit> ret = new ArrayList<Circuit>(selected.length);
-			for (Object sel : selected) {
-				if (sel instanceof Circuit)
-					ret.add((Circuit) sel);
-			}
-			return ret;
-		} else {
+		List<Circuit> selected = getSelectedValuesList();
+		if (selected != null) 
+			return selected;
+		else 
 			return Collections.emptyList();
-		}
 	}
 
 }

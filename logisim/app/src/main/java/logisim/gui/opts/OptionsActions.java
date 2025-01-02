@@ -11,14 +11,14 @@ import logisim.proj.Project;
 import logisim.tools.Tool;
 import logisim.util.StringUtil;
 
-class OptionsActions {
+class OptionsActions<E> {
 	private OptionsActions() {
 	}
 
-	public static Action setAttribute(AttributeSet attrs, Attribute<?> attr, Object value) {
-		Object oldValue = attrs.getValue(attr);
+	public static <V> Action setAttribute(AttributeSet attrs, Attribute<V> attr, V value) {
+		V oldValue = attrs.getValue(attr);
 		if (!oldValue.equals(value)) {
-			return new SetAction(attrs, attr, value);
+			return new SetAction<>(attrs, attr, value);
 		} else {
 			return null;
 		}
@@ -32,17 +32,15 @@ class OptionsActions {
 		return new RemoveMapping(mm, mods);
 	}
 
-	private static class SetAction extends Action {
+	private static class SetAction<E> extends Action {
 		private AttributeSet attrs;
-		private Attribute<Object> attr;
-		private Object newval;
-		private Object oldval;
+		private Attribute<E> attr;
+		private E newval;
+		private E oldval;
 
-		SetAction(AttributeSet attrs, Attribute<?> attr, Object value) {
-			@SuppressWarnings("unchecked")
-			Attribute<Object> a = (Attribute<Object>) attr;
+		SetAction(AttributeSet attrs, Attribute<E> attr, E value) {
 			this.attrs = attrs;
-			this.attr = a;
+			this.attr = attr;
 			this.newval = value;
 		}
 

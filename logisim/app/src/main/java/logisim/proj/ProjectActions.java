@@ -126,13 +126,13 @@ public class ProjectActions {
 			file = loader.openLogisimFile(templReader);
 		}
 		catch (IOException ex) {
-			displayException(baseProject.getFrame(), ex);
+			if(baseProject != null)
+				displayException(baseProject.getFrame(), ex);
 			file = createEmptyFile(loader);
 		}
 		catch (LoadFailedException ex) {
-			if (!ex.isShown()) {
+			if (!ex.isShown() && baseProject != null)
 				displayException(baseProject.getFrame(), ex);
-			}
 			file = createEmptyFile(loader);
 		} finally {
 			try {

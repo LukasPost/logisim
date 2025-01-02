@@ -31,7 +31,7 @@ import logisim.analyze.model.VariableListListener;
 import logisim.util.StringUtil;
 
 class VariableTab extends AnalyzerTab implements TabInterface {
-	private static class VariableListModel extends AbstractListModel implements VariableListListener {
+	private static class VariableListModel extends AbstractListModel<String> implements VariableListListener {
 		private VariableList list;
 		private String[] listCopy;
 
@@ -49,7 +49,7 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 			return listCopy.length;
 		}
 
-		public Object getElementAt(int index) {
+		public String getElementAt(int index) {
 			return index >= 0 && index < listCopy.length ? listCopy[index] : null;
 		}
 
@@ -141,38 +141,12 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 		public void valueChanged(ListSelectionEvent event) {
 			computeEnabled();
 		}
-
-		/*
-		public void listChanged(VariableListEvent event) {
-			switch (event.getType()) {
-			case VariableListEvent.ALL_REPLACED:
-				list.setSelectedIndices(new int[0]);
-				break;
-			case VariableListEvent.REMOVE:
-				if (event.getVariable().equals(list.getSelectedValue())) {
-					int index = ((Integer) event.getData()).intValue();
-					if (index >= data.size()) {
-						if (data.isEmpty()) {
-							list.setSelectedIndices(new int[0]);
-						}
-						index = data.size() - 1;
-					}
-					list.setSelectedValue(data.get(index), true);
-				}
-				break;
-			case VariableListEvent.ADD:
-			case VariableListEvent.MOVE:
-			case VariableListEvent.REPLACE:
-				break;
-			}
-			list.validate();
-		}*/
 	}
 
 	private VariableList data;
 	private MyListener myListener = new MyListener();
 
-	private JList list = new JList();
+	private JList<String> list = new JList<>();
 	private JTextField field = new JTextField();
 	private JButton remove = new JButton();
 	private JButton moveUp = new JButton();

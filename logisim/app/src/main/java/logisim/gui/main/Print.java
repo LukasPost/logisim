@@ -80,7 +80,7 @@ public class Print {
 		GridBagLayout gridbag;
 		GridBagConstraints gbc;
 
-		ParmsPanel(JList list) {
+		ParmsPanel(JList<?> list) {
 			// set up components
 			rotateToFit = new JCheckBox();
 			rotateToFit.setSelected(true);

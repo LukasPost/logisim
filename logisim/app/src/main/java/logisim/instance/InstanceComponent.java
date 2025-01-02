@@ -76,20 +76,17 @@ class InstanceComponent implements Component, AttributeListener, ToolTipMaker {
 		}
 		HashSet<Attribute<BitWidth>> wattrs = null;
 		boolean toolTipFound = false;
-		ArrayList<EndData> endsChangedOld = null;
-		ArrayList<EndData> endsChangedNew = null;
+		ArrayList<EndData> endsChangedOld = new ArrayList<EndData>();
+		ArrayList<EndData> endsChangedNew = new ArrayList<EndData>();
 		Iterator<Port> pit = ports.iterator();
 		for (int i = 0; pit.hasNext() || i < esOldLength; i++) {
 			Port p = pit.hasNext() ? pit.next() : null;
+			@SuppressWarnings("null")
 			EndData oldEnd = i < esOldLength ? esOld[i] : null;
 			EndData newEnd = p == null ? null : p.toEnd(loc, attrs);
 			if (oldEnd == null || !oldEnd.equals(newEnd)) {
 				if (newEnd != null)
 					es[i] = newEnd;
-				if (endsChangedOld == null) {
-					endsChangedOld = new ArrayList<EndData>();
-					endsChangedNew = new ArrayList<EndData>();
-				}
 				endsChangedOld.add(oldEnd);
 				endsChangedNew.add(newEnd);
 			}
@@ -121,7 +118,7 @@ class InstanceComponent implements Component, AttributeListener, ToolTipMaker {
 		}
 		widthAttrs = wattrs;
 		hasToolTips = toolTipFound;
-		if (endsChangedOld != null) {
+		if (!endsChangedOld.isEmpty()) {
 			fireEndsChanged(endsChangedOld, endsChangedNew);
 		}
 	}

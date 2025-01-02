@@ -94,6 +94,7 @@ class MenuSimulate extends Menu {
 	}
 
 	private class MyListener implements ActionListener, SimulatorListener, ChangeListener {
+		@SuppressWarnings("null")
 		public void actionPerformed(ActionEvent e) {
 			Object src = e.getSource();
 			Project proj = menubar.getProject();

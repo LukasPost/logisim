@@ -83,6 +83,7 @@ class SelectionAttributes extends AbstractAttributeSet {
 		}
 	}
 
+	@SuppressWarnings("null")
 	private void updateList(boolean ignoreIfSelectionSame) {
 		Selection sel = selection;
 		Set<Component> oldSel = selected;

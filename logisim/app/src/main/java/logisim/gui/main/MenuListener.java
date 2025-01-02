@@ -184,6 +184,7 @@ class MenuListener {
 			computeEnabled();
 		}
 
+		@SuppressWarnings("null")
 		public void actionPerformed(ActionEvent event) {
 			Object src = event.getSource();
 			Project proj = frame.getProject();

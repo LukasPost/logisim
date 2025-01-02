@@ -9,13 +9,8 @@ import logisim.data.AttributeOption;
 import logisim.util.StringGetter;
 
 class ComboOption {
-	private Object value;
+	private AttributeOption value;
 	private StringGetter getter;
-
-	ComboOption(String value, StringGetter getter) {
-		this.value = value;
-		this.getter = getter;
-	}
 
 	ComboOption(AttributeOption value) {
 		this.value = value;
@@ -26,18 +21,16 @@ class ComboOption {
 	public String toString() {
 		if (getter != null)
 			return getter.get();
-		if (value instanceof AttributeOption)
-			return ((AttributeOption) value).toDisplayString();
-		return "???";
+		return value.toDisplayString();
 	}
 
-	public Object getValue() {
+	public AttributeOption getValue() {
 		return value;
 	}
 
-	static void setSelected(JComboBox combo, Object value) {
+	static void setSelected(JComboBox<ComboOption> combo, AttributeOption value) {
 		for (int i = combo.getItemCount() - 1; i >= 0; i--) {
-			ComboOption opt = (ComboOption) combo.getItemAt(i);
+			ComboOption opt = combo.getItemAt(i);
 			if (opt.getValue().equals(value)) {
 				combo.setSelectedItem(opt);
 				return;

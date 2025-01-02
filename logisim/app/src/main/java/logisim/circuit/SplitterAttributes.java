@@ -118,7 +118,7 @@ class SplitterAttributes extends AbstractAttributeSet {
 		@Override
 		public java.awt.Component getCellEditor(Integer value) {
 			int index = value.intValue();
-			javax.swing.JComboBox combo = new javax.swing.JComboBox(options);
+			javax.swing.JComboBox<BitOutOption> combo = new javax.swing.JComboBox<>(options);
 			combo.setSelectedIndex(index);
 			return combo;
 		}
