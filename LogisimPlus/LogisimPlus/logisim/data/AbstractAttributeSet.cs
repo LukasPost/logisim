@@ -56,7 +56,7 @@ namespace logisim.data
 
 // JAVA TO C# CONVERTER TASK: There is no C# equivalent to the Java 'super' constraint:
 // ORIGINAL LINE: protected <V> void fireAttributeValueChanged(Attribute<? super V> attr, V value)
-		protected internal virtual void fireAttributeValueChanged<V, T1>(Attribute<T1> attr, V value)
+		protected internal virtual void fireAttributeValueChanged<V>(Attribute attr, V value)
 		{
 			if (listeners != null)
 			{

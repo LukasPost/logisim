@@ -168,11 +168,11 @@ namespace logisim.circuit.appear
 			}
 		}
 
-		public virtual void setObjectsForce<T1>(IList<T1> value) where T1 : draw.model.CanvasObject
+		public virtual void setObjectsForce<T1>(IEnumerable<T1> value) where T1 : draw.model.CanvasObject
 		{
 			// This shouldn't ever be an issue, but just to make doubly sure, we'll
 			// check that the anchor and all ports are in their proper places.
-			IList<CanvasObject> shapes = new List<CanvasObject>(value);
+			IList<CanvasObject> shapes = value.Cast<CanvasObject>().ToList();
 			int n = shapes.Count;
 			int ports = 0;
 			for (int i = n - 1; i >= 0; i--)
@@ -219,7 +219,7 @@ namespace logisim.circuit.appear
 		{
 			Direction defaultFacing = Facing;
 			double rotate = 0.0;
-			if (facing != defaultFacing)
+			if (facing != defaultFacing && g is Graphics2D)
 			{
 				rotate = defaultFacing.toRadians() - facing.toRadians();
 				((Graphics2D) g).rotate(rotate);

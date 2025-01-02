@@ -112,8 +112,8 @@ namespace logisim.circuit.appear
 			int offsEast = computeOffset(numEast, numWest, maxVert);
 			int offsWest = computeOffset(numWest, numEast, maxVert);
 
-			int width = computeDimension(maxVert, maxHorz);
-			int height = computeDimension(maxHorz, maxVert);
+			int width = computeSize(maxVert, maxHorz);
+			int height = computeSize(maxHorz, maxVert);
 
 			// compute position of anchor relative to top left corner of box
 			int ax;
@@ -168,7 +168,7 @@ namespace logisim.circuit.appear
 			return ret;
 		}
 
-		private static int computeDimension(int maxThis, int maxOthers)
+		private static int computeSize(int maxThis, int maxOthers)
 		{
 			if (maxThis < 3)
 			{

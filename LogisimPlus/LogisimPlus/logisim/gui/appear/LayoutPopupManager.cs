@@ -145,8 +145,8 @@ namespace logisim.gui.appear
 			layout.setCircuit(circuitState, ports);
 			JViewport owner = canvasPane.getViewport();
 			Point ownerLoc = owner.getLocationOnScreen();
-			Dimension ownerDim = owner.getSize();
-			Dimension layoutDim = layout.getPreferredSize();
+			Size ownerDim = owner.getSize();
+			Size layoutDim = layout.getPreferredSize();
 			int x = ownerLoc.x + Math.Max(0, ownerDim.width - layoutDim.width - 5);
 			int y = ownerLoc.y + Math.Max(0, ownerDim.height - layoutDim.height - 5);
 			PopupFactory factory = PopupFactory.getSharedInstance();

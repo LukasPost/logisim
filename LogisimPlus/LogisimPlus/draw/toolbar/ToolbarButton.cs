@@ -9,11 +9,10 @@
 
 namespace draw.toolbar
 {
-    using LogisimPlus.draw.gui;
-    using System;
+    using LogisimPlus.Java;
     using GraphicsUtil = logisim.util.GraphicsUtil;
 
-	internal class ToolbarButton : Control
+	internal class ToolbarButton : JComponent, MouseListener
 	{
 		private const int BORDER = 2;
 
@@ -24,71 +23,93 @@ namespace draw.toolbar
 		{
 			this.toolbar = toolbar;
 			this.item = item;
-			//CanFocus = true;
-			AutoToolTip.AttachToolTip(this, "");
+			addMouseListener(this);
+			setFocusable(true);
+			setToolTipText("");
 		}
 
-        public virtual ToolbarItem Item => item;
-
-        public override Size MinimumSize
-        {
-            get
-            {
-                Size dim = item.getDimension(toolbar.Orientation);
-                dim.Width += 2 * BORDER;
-                dim.Height += 2 * BORDER;
-                return dim;
-            }
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
+		public virtual ToolbarItem Item
 		{
-			Graphics g = e.Graphics;
+			get
+			{
+				return item;
+			}
+		}
+
+		public override Size MinimumSize
+        {
+			get
+			{
+				Size dim = item.getSize(toolbar.Orientation);
+				dim.Width += 2 * BORDER;
+				dim.Height += 2 * BORDER;
+				return dim;
+			}
+		}
+
+		public override void paintComponent(JGraphics g)
+		{
 			if (toolbar.Pressed == this)
 			{
-                Size dim = item.getDimension(toolbar.Orientation);
+				Size dim = item.getSize(toolbar.Orientation);
+				Color defaultColor = g.getColor();
 				GraphicsUtil.switchToWidth(g, 2);
-				g.FillRectangle(Brushes.Gray, BORDER, BORDER, dim.Width, dim.Height);
+				g.setColor(Color.Gray);
+				g.fillRect(BORDER, BORDER, dim.Width, dim.Height);
 				GraphicsUtil.switchToWidth(g, 1);
+				g.setColor(defaultColor);
 			}
 
-			Graphics g2 = g.create();
+			JGraphics g2 = g.create();
 			g2.translate(BORDER, BORDER);
-			item.paintIcon(this, g);
-			g2.dispose();
+			item.paintIcon(this, g2);
+			//g2.dispose();
 
 			// draw selection indicator
 			if (toolbar.ToolbarModel.isSelected(item))
 			{
-                Size dim = item.getDimension(toolbar.Orientation);
-				using Pen p = new Pen(Brushes.Black, 2);
-				g.DrawRectangle(p, BORDER, BORDER, dim.Width, dim.Height);
+				Size dim = item.getSize(toolbar.Orientation);
+				GraphicsUtil.switchToWidth(g, 2);
+				g.setColor(Color.Black);
+				g.drawRect(BORDER, BORDER, dim.Width, dim.Height);
+				GraphicsUtil.switchToWidth(g, 1);
 			}
 		}
 
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
-            base.OnMouseDown(e);
-            if (item != null && item.Selectable)
-                toolbar.Pressed = this;
-        }
+		public override string getToolTipText(MouseEvent e)
+		{
+			return item.ToolTip;
+		}
 
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
-            base.OnMouseUp(e);
-            if (toolbar.Pressed == this)
-            {
-                toolbar.ToolbarModel.itemSelected(item);
-                toolbar.Pressed = null;
-            }
-        }
+		public virtual void mousePressed(MouseEvent e)
+		{
+			if (item != null && item.Selectable)
+			{
+				toolbar.Pressed = this;
+			}
+		}
 
-        protected override void OnMouseLeave(EventArgs e)
-        {
-            base.OnMouseLeave(e);
-            if (toolbar.Pressed == this)
+		public virtual void mouseReleased(MouseEvent e)
+		{
+			if (toolbar.Pressed == this)
+			{
+				toolbar.ToolbarModel.itemSelected(item);
 				toolbar.Pressed = null;
-        }
+			}
+		}
+
+		public virtual void mouseClicked(MouseEvent e)
+		{
+		}
+
+		public virtual void mouseEntered(MouseEvent e)
+		{
+		}
+
+		public virtual void mouseExited(MouseEvent e)
+		{
+			toolbar.Pressed = null;
+		}
 	}
 
 }

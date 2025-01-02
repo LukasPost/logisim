@@ -123,7 +123,7 @@ namespace logisim.gui.start
 				if (value)
 				{
 					pack();
-					Dimension dim = getToolkit().getScreenSize();
+					Size dim = getToolkit().getScreenSize();
 					int x = (int)(dim.getWidth() - getWidth()) / 2;
 					int y = (int)(dim.getHeight() - getHeight()) / 2;
 					setLocation(x, y);

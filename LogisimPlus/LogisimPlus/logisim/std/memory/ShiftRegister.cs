@@ -133,7 +133,7 @@ namespace logisim.std.memory
 			}
 			else
 			{
-				data.setDimensions(width, length);
+				data.setSizes(width, length);
 			}
 			return data;
 		}

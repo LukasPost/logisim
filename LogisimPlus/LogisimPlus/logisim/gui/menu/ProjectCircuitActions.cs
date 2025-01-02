@@ -56,7 +56,7 @@ namespace logisim.gui.menu
 			GridBagLayout gb = new GridBagLayout();
 			GridBagConstraints gc = new GridBagConstraints();
 			JPanel strut = new JPanel(null);
-			strut.setPreferredSize(new Dimension(3 * field.getPreferredSize().width / 2, 0));
+			strut.setPreferredSize(new Size(3 * field.getPreferredSize().width / 2, 0));
 			JPanel panel = new JPanel(gb);
 			gc.gridx = 0;
 			gc.gridy = GridBagConstraints.RELATIVE;

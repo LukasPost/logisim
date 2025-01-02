@@ -175,7 +175,7 @@ namespace logisim.gui.main
 			{
 				set
 				{
-					Dimension tableDim = getPreferredSize();
+					Size tableDim = getPreferredSize();
     
 					double total = 0;
 					for (int i = 0; i < getColumnModel().getColumnCount(); i++)
@@ -216,7 +216,7 @@ namespace logisim.gui.main
 			contents.add(buttonPanel, BorderLayout.PAGE_END);
 			this.pack();
 
-			Dimension pref = contents.getPreferredSize();
+			Size pref = contents.getPreferredSize();
 			if (pref.width > 750 || pref.height > 550)
 			{
 				if (pref.width > 750)

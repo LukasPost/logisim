@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -23,13 +24,9 @@ namespace logisim.util
 		public const int V_BOTTOM = 2;
 		public const int V_CENTER_OVERALL = 3;
 
-		public static void switchToWidth(Graphics g, int width)
+		public static void switchToWidth(JGraphics g, int width)
 		{
-			if (g is Graphics2D)
-			{
-				Graphics2D g2 = (Graphics2D) g;
-				g2.setStroke(new BasicStroke((float) width));
-			}
+			g.setStroke(width);
 		}
 
 		public static void drawCenteredArc(Graphics g, int x, int y, int r, int start, int dist)

@@ -149,7 +149,7 @@ namespace logisim.gui.main
 			internal JRadioButton formatJpg;
 			internal GridBagLayout gridbag;
 			internal GridBagConstraints gbc;
-			internal Dimension curScaleDim;
+			internal Size curScaleDim;
 
 // JAVA TO C# CONVERTER TASK: Wildcard generics in constructor parameters are not converted. Move the generic type parameter and constraint to the class header:
 // ORIGINAL LINE: OptionsPanel(javax.swing.JList<?> list)
@@ -171,7 +171,7 @@ namespace logisim.gui.main
 				curScale = new JLabel("222%");
 				curScale.setHorizontalAlignment(SwingConstants.RIGHT);
 				curScale.setVerticalAlignment(SwingConstants.CENTER);
-				curScaleDim = new Dimension(curScale.getPreferredSize());
+				curScaleDim = new Size(curScale.getPreferredSize());
 				curScaleDim.height = Math.Max(curScaleDim.height, slider.getPreferredSize().height);
 				stateChanged(null);
 

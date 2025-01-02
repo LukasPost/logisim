@@ -450,7 +450,7 @@ namespace com.connectina.swing.fontchooser
 			styleList = new javax.swing.JList<string>();
 			sizeSpinner = new javax.swing.JSpinner();
 			int spinnerHeight = (int) sizeSpinner.getPreferredSize().getHeight();
-			sizeSpinner.setPreferredSize(new Dimension(60, spinnerHeight));
+			sizeSpinner.setPreferredSize(new Size(60, spinnerHeight));
 			sizeScrollPane = new javax.swing.JScrollPane();
 			sizeList = new javax.swing.JList<int>();
 			previewPanel = new JPanel();
@@ -480,8 +480,8 @@ namespace com.connectina.swing.fontchooser
 			gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
 			fontPanel.add(sizeLabel, gridBagConstraints);
 
-			familyScrollPane.setMinimumSize(new Dimension(80, 50));
-			familyScrollPane.setPreferredSize(new Dimension(240, 150));
+			familyScrollPane.setMinimumSize(new Size(80, 50));
+			familyScrollPane.setPreferredSize(new Size(240, 150));
 			familyScrollPane.setViewportView(familyList);
 
 			gridBagConstraints = new java.awt.GridBagConstraints();
@@ -494,8 +494,8 @@ namespace com.connectina.swing.fontchooser
 			gridBagConstraints.insets = new java.awt.Insets(0, 0, 11, 11);
 			fontPanel.add(familyScrollPane, gridBagConstraints);
 
-			styleScrollPane.setMinimumSize(new Dimension(60, 120));
-			styleScrollPane.setPreferredSize(new Dimension(80, 150));
+			styleScrollPane.setMinimumSize(new Size(60, 120));
+			styleScrollPane.setPreferredSize(new Size(80, 150));
 			styleScrollPane.setViewportView(styleList);
 
 			gridBagConstraints = new java.awt.GridBagConstraints();
@@ -515,8 +515,8 @@ namespace com.connectina.swing.fontchooser
 			gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
 			fontPanel.add(sizeSpinner, gridBagConstraints);
 
-			sizeScrollPane.setMinimumSize(new Dimension(50, 120));
-			sizeScrollPane.setPreferredSize(new Dimension(60, 150));
+			sizeScrollPane.setMinimumSize(new Size(50, 120));
+			sizeScrollPane.setPreferredSize(new Size(60, 150));
 			sizeScrollPane.setViewportView(sizeList);
 
 			gridBagConstraints = new java.awt.GridBagConstraints();
@@ -546,7 +546,7 @@ namespace com.connectina.swing.fontchooser
 
 			previewAreaPanel.setBackground(new java.awt.Color(255, 255, 255));
 			previewAreaPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-			previewAreaPanel.setPreferredSize(new Dimension(200, 80));
+			previewAreaPanel.setPreferredSize(new Size(200, 80));
 			previewAreaPanel.setLayout(new java.awt.BorderLayout());
 
 			previewAreaLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);

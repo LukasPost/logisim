@@ -31,8 +31,9 @@ namespace logisim.circuit
 	using GraphicsUtil = logisim.util.GraphicsUtil;
 	using IteratorUtil = logisim.util.IteratorUtil;
 	using logisim.util;
+    using LogisimPlus.Java;
 
-	internal class CircuitWires
+    internal class CircuitWires
 	{
 		private bool instanceFieldsInitialized = false;
 
@@ -526,13 +527,13 @@ namespace logisim.circuit
 					{
 						foreach (WireThread t in th)
 						{
-							dirtyThreads.add(t);
+							dirtyThreads.Add(t);
 						}
 					}
 				}
 			}
 
-			if (dirtyThreads.Empty)
+			if (!dirtyThreads.Any())
 			{
 				return;
 			}
@@ -543,7 +544,7 @@ namespace logisim.circuit
 			{
 				Value v = getThreadValue(circState, t);
 				s.thr_values[t] = v;
-				bundles.addAll(t.Bundles);
+				bundles.AddRange(t.Bundles);
 			}
 
 			// now propagate values through circuit
@@ -594,8 +595,8 @@ namespace logisim.circuit
 		{
 			bool showState = context.ShowState;
 			CircuitState state = context.CircuitState;
-			Graphics g = context.Graphics;
-			g.setColor(Color.BLACK);
+			JGraphics g = context.Graphics;
+			g.setColor(Color.Black);
 			GraphicsUtil.switchToWidth(g, Wire.WIDTH);
 			WireSet highlighted = context.HighlightedWires;
 
@@ -625,7 +626,7 @@ namespace logisim.circuit
 					}
 					else
 					{
-						g.setColor(Color.BLACK);
+						g.setColor(Color.Black);
 					}
 					if (highlighted.containsWire(w))
 					{
@@ -663,7 +664,7 @@ namespace logisim.circuit
 							}
 							else
 							{
-								g.setColor(Color.BLACK);
+								g.setColor(Color.Black);
 							}
 							if (highlighted.containsLocation(loc))
 							{
@@ -703,7 +704,7 @@ namespace logisim.circuit
 						}
 						else
 						{
-							g.setColor(Color.BLACK);
+							g.setColor(Color.Black);
 						}
 						if (highlighted.containsWire(w))
 						{
@@ -755,7 +756,7 @@ namespace logisim.circuit
 								}
 								else
 								{
-									g.setColor(Color.BLACK);
+									g.setColor(Color.Black);
 								}
 								if (highlighted.containsLocation(loc))
 								{
@@ -854,7 +855,7 @@ namespace logisim.circuit
 					foreach (Location pt in b.points)
 					{
 						ret.setBundleAt(pt, bpar);
-						bpar.points.add(pt);
+						bpar.points.Add(pt);
 					}
 					bpar.addPullValue(b.PullValue);
 // JAVA TO C# CONVERTER TASK: .NET enumerators are read-only:
@@ -953,7 +954,7 @@ namespace logisim.circuit
 					{
 						WireThread thr = b.threads[i].find();
 						b.threads[i] = thr;
-						thr.Bundles.add(new ThreadBundle(i, b));
+						thr.Bundles.Add(new ThreadBundle(i, b));
 					}
 				}
 			}
@@ -986,7 +987,7 @@ namespace logisim.circuit
 				if (b0 == null)
 				{
 					WireBundle b1 = ret.createBundleAt(w.e1);
-					b1.points.add(w.e0);
+					b1.points.Add(w.e0);
 					ret.setBundleAt(w.e0, b1);
 				}
 				else
@@ -994,7 +995,7 @@ namespace logisim.circuit
 					WireBundle b1 = ret.getBundleAt(w.e1);
 					if (b1 == null)
 					{ // t1 doesn't exist
-						b0.points.add(w.e1);
+						b0.points.Add(w.e1);
 						ret.setBundleAt(w.e1, b0);
 					}
 					else
@@ -1011,7 +1012,10 @@ namespace logisim.circuit
 			Dictionary<string, List<Location>> tunnelSets = new Dictionary<string, List<Location>>();
 			foreach (Component comp in tunnels)
 			{
-				string label = comp.AttributeSet.getValue(StdAttr.LABEL);
+				object obj = comp.AttributeSet.getValue(StdAttr.LABEL);
+				if (obj is not string label)
+					continue;
+
 				label = label.Trim();
 				if (!label.Equals(""))
 				{
@@ -1073,7 +1077,7 @@ namespace logisim.circuit
 				if (b == null)
 				{
 					b = ret.createBundleAt(loc);
-					b.points.add(loc);
+					b.points.Add(loc);
 					ret.setBundleAt(loc, b);
 				}
 				Instance instance = Instance.getInstanceFor(comp);

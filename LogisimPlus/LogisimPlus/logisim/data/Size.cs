@@ -10,7 +10,7 @@
 namespace logisim.data
 {
 	/// <summary>
-	/// Represents the dimensions of a rectangle. This is analogous to java.awt's <code>Dimension</code> class, except that
+	/// Represents the Sizes of a rectangle. This is analogous to java.awt's <code>Size</code> class, except that
 	/// objects of this type are immutable.
 	/// </summary>
 	public class Size
@@ -50,9 +50,9 @@ namespace logisim.data
 			}
 		}
 
-		public virtual java.awt.Dimension toAwtDimension()
+		public virtual java.awt.Size toAwtSize()
 		{
-			return new java.awt.Dimension(width, height);
+			return new java.awt.Size(width, height);
 		}
 
 		public virtual bool contains(Location p)

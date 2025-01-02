@@ -225,7 +225,7 @@ namespace logisim.circuit
 			}
 		}
 
-		public override void setValue<E>(Attribute<E> attr, E value)
+		public override void setValue(Attribute attr, object value)
 		{
 			if (attr == StdAttr.FACING)
 			{

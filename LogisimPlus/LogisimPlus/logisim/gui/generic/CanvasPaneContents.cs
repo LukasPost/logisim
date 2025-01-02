@@ -17,7 +17,7 @@ namespace logisim.gui.generic
 		void recomputeSize();
 
 		// from Scrollable
-		Dimension PreferredScrollableViewportSize {get;}
+		Size PreferredScrollableViewportSize {get;}
 
 		int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction);
 

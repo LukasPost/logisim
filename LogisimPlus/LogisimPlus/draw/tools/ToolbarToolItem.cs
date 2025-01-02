@@ -64,15 +64,15 @@ namespace draw.tools
 			}
 		}
 
-		public virtual Dimension getDimension(object orientation)
+		public virtual Size getSize(object orientation)
 		{
 			if (icon == null)
 			{
-				return new Dimension(16, 16);
+				return new Size(16, 16);
 			}
 			else
 			{
-				return new Dimension(icon.getIconWidth() + 8, icon.getIconHeight() + 8);
+				return new Size(icon.getIconWidth() + 8, icon.getIconHeight() + 8);
 			}
 		}
 	}

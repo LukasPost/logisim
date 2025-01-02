@@ -34,7 +34,7 @@ namespace draw.canvas
 			addMouseListener(listener);
 			addMouseMotionListener(listener);
 			addKeyListener(listener);
-			setPreferredSize(new Dimension(200, 200));
+			setPreferredSize(new Size(200, 200));
 		}
 
 		public virtual CanvasModel Model

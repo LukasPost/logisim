@@ -45,7 +45,7 @@ namespace logisim.std.memory
 			}
 		}
 
-		public virtual void setDimensions(BitWidth newWidth, int newLength)
+		public virtual void setSizes(BitWidth newWidth, int newLength)
 		{
 			Value[] v = vs;
 			BitWidth oldWidth = width;

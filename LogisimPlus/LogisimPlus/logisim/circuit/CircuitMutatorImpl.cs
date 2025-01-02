@@ -102,30 +102,28 @@ namespace logisim.circuit
 			}
 		}
 
-		public virtual void set<T1>(Circuit circuit, Component comp, Attribute<T1> attr, object newValue)
+		public virtual void set(Circuit circuit, Component comp, Attribute attr, object newValue)
 		{
 			if (circuit.contains(comp))
 			{
 				modified.Add(circuit);
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
 // ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<Object> a = (logisim.data.Attribute<Object>) attr;
-				Attribute<object> a = (Attribute<object>) attr;
 				AttributeSet attrs = comp.AttributeSet;
-				object oldValue = attrs.getValue(a);
+				object oldValue = attrs.getValue(attr);
 				log.Add(CircuitChange.set(circuit, comp, attr, oldValue, newValue));
-				attrs.setValue(a, newValue);
+				attrs.setValue(attr, newValue);
 			}
 		}
 
-		public virtual void setForCircuit<T1>(Circuit circuit, Attribute<T1> attr, object newValue)
+		public virtual void setForCircuit(Circuit circuit, Attribute attr, object newValue)
 		{
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
 // ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<Object> a = (logisim.data.Attribute<Object>) attr;
-			Attribute<object> a = (Attribute<object>) attr;
 			AttributeSet attrs = circuit.StaticAttributes;
-			object oldValue = attrs.getValue(a);
+			object oldValue = attrs.getValue(attr);
 			log.Add(CircuitChange.setForCircuit(circuit, attr, oldValue, newValue));
-			attrs.setValue(a, newValue);
+			attrs.setValue(attr, newValue);
 		}
 
 		private ReplacementMap getMap(Circuit circuit)
@@ -163,11 +161,11 @@ namespace logisim.circuit
 			modified.Add(circuit);
 		}
 
-		internal virtual ICollection<Circuit> ModifiedCircuits
+		internal virtual IEnumerable<Circuit> ModifiedCircuits
 		{
 			get
 			{
-				return Collections.unmodifiableSet(modified);
+				return modified;
 			}
 		}
 	}

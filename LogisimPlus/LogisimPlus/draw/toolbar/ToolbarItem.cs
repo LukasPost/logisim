@@ -7,6 +7,8 @@
 /* Copyright (c) 2010, Carl Burch. License information is located in the
  * logisim.Main source code and at www.cburch.com/logisim/. */
 
+using LogisimPlus.Java;
+
 namespace draw.toolbar
 {
 
@@ -14,11 +16,11 @@ namespace draw.toolbar
 	{
 		bool Selectable {get;}
 
-		void paintIcon(Control destination, Graphics g);
+		void paintIcon(JComponent destination, JGraphics g);
 
 		string ToolTip {get;}
 
-		Size getDimension(object orientation);
+		Size getSize(object orientation);
 	}
 
 }

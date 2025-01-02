@@ -145,7 +145,7 @@ namespace logisim.gui.opts
 			close.addActionListener(myListener);
 
 			Container contents = getContentPane();
-			tabbedPane.setPreferredSize(new Dimension(450, 300));
+			tabbedPane.setPreferredSize(new Size(450, 300));
 			contents.add(tabbedPane, BorderLayout.CENTER);
 			contents.add(buttonPanel, BorderLayout.SOUTH);
 

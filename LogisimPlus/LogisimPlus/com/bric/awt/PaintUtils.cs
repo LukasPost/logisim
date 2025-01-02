@@ -34,18 +34,18 @@ namespace com.bric.awt
 		/// Four shades of white, each with increasing opacity. </summary>
 		public static readonly Color[] whites = new Color[]
 		{
-			new Color(255, 255, 255, 50),
-			new Color(255, 255, 255, 100),
-			new Color(255, 255, 255, 150)
+			Color.FromArgb(255, 255, 255, 50),
+            Color.FromArgb(255, 255, 255, 100),
+			Color.FromArgb(255, 255, 255, 150)
 		};
 
 		/// <summary>
 		/// Four shades of black, each with increasing opacity. </summary>
 		public static readonly Color[] blacks = new Color[]
 		{
-			new Color(0, 0, 0, 50),
-			new Color(0, 0, 0, 100),
-			new Color(0, 0, 0, 150)
+			Color.FromArgb(0, 0, 0, 50),
+			Color.FromArgb(0, 0, 0, 100),
+			Color.FromArgb(0, 0, 0, 150)
 		};
 
 		/// <returns> the color used to indicate when a component has focus. By default this uses the color (64,113,167), but

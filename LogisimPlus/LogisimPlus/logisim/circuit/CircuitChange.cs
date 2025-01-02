@@ -58,22 +58,22 @@ namespace logisim.circuit
 			return new CircuitChange(circuit, REPLACE, null, null, null, replMap);
 		}
 
-		public static CircuitChange set<T1>(Circuit circuit, Component comp, Attribute<T1> attr, object value)
+		public static CircuitChange set(Circuit circuit, Component comp, Attribute attr, object value)
 		{
 			return new CircuitChange(circuit, SET, comp, attr, null, value);
 		}
 
-		public static CircuitChange set<T1>(Circuit circuit, Component comp, Attribute<T1> attr, object oldValue, object newValue)
+		public static CircuitChange set<T1>(Circuit circuit, Component comp, Attribute attr, object oldValue, object newValue)
 		{
 			return new CircuitChange(circuit, SET, comp, attr, oldValue, newValue);
 		}
 
-		public static CircuitChange setForCircuit<T1>(Circuit circuit, Attribute<T1> attr, object v)
+		public static CircuitChange setForCircuit(Circuit circuit, Attribute attr, object v)
 		{
 			return new CircuitChange(circuit, SET_FOR_CIRCUIT, null, attr, null, v);
 		}
 
-		public static CircuitChange setForCircuit<T1>(Circuit circuit, Attribute<T1> attr, object oldValue, object newValue)
+		public static CircuitChange setForCircuit(Circuit circuit, Attribute attr, object oldValue, object newValue)
 		{
 			return new CircuitChange(circuit, SET_FOR_CIRCUIT, null, attr, oldValue, newValue);
 		}
@@ -86,7 +86,7 @@ namespace logisim.circuit
 		private ICollection<Component> comps;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private logisim.data.Attribute<?> attr;
-		private Attribute<object> attr;
+		private Attribute attr;
 		private object oldValue;
 		private object newValue;
 
@@ -103,7 +103,7 @@ namespace logisim.circuit
 
 // JAVA TO C# CONVERTER TASK: Wildcard generics in constructor parameters are not converted. Move the generic type parameter and constraint to the class header:
 // ORIGINAL LINE: private CircuitChange(Circuit circuit, int type, logisim.comp.Component comp, logisim.data.Attribute<?> attr, Object oldValue, Object newValue)
-		private CircuitChange(Circuit circuit, int type, Component comp, Attribute<T1> attr, object oldValue, object newValue)
+		private CircuitChange(Circuit circuit, int type, Component comp, Attribute attr, object oldValue, object newValue)
 		{
 			this.circuit = circuit;
 			this.type = type;
@@ -139,7 +139,7 @@ namespace logisim.circuit
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public logisim.data.Attribute<?> getAttribute()
-		public virtual Attribute<object> Attribute
+		public virtual Attribute Attribute
 		{
 			get
 			{

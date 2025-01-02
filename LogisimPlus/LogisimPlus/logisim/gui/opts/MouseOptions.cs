@@ -43,15 +43,15 @@ namespace logisim.gui.opts
 			public AddArea(MouseOptions outerInstance)
 			{
 				this.outerInstance = outerInstance;
-				setPreferredSize(new Dimension(75, 60));
-				setMinimumSize(new Dimension(75, 60));
+				setPreferredSize(new Size(75, 60));
+				setMinimumSize(new Size(75, 60));
 				setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), BorderFactory.createEtchedBorder()));
 			}
 
 			public override void paintComponent(Graphics g)
 			{
 				base.paintComponent(g);
-				Dimension sz = getSize();
+				Size sz = getSize();
 				g.setFont(outerInstance.remove.getFont());
 				string label1;
 				string label2;
@@ -344,7 +344,7 @@ namespace logisim.gui.opts
 			add(explorerPane);
 			gbc.weightx = 0.0;
 			JPanel gap = new JPanel();
-			gap.setPreferredSize(new Dimension(10, 10));
+			gap.setPreferredSize(new Size(10, 10));
 			gridbag.setConstraints(gap, gbc);
 			add(gap);
 			gbc.weightx = 1.0;

@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using System.Collections;
 using System.Collections.Generic;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -260,7 +261,7 @@ namespace logisim.circuit
 			}
 			else
 			{
-				Location e0 = mids.First;
+				Location e0 = mids.First();
 				foreach (Location e1 in mids)
 				{
 					mergeResult.Add(Wire.create(e0, e1));
@@ -284,7 +285,7 @@ namespace logisim.circuit
 
 		private void doSplits(CircuitMutator mutator)
 		{
-			ISet<Location> splitLocs = circuit.wires.points.getSplitLocations();
+			ICollection<Location> splitLocs = circuit.wires.points.SplitLocations;
 			ReplacementMap repl = new ReplacementMap();
 			foreach (Wire w in circuit.Wires)
 			{

@@ -58,7 +58,7 @@ namespace logisim.circuit
 			return new SplitterAttributes();
 		}
 
-		public virtual object getDefaultAttributeValue<T1>(Attribute<T1> attr, LogisimVersion ver)
+		public virtual object getDefaultAttributeValue(Attribute attr, LogisimVersion ver)
 		{
 			if (attr == SplitterAttributes.ATTR_APPEARANCE)
 			{

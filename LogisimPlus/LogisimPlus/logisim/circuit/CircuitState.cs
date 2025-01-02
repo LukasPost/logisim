@@ -165,7 +165,7 @@ namespace logisim.circuit
 								{
 									CircuitState sub = (CircuitState) compState;
 									sub.parentState = null;
-									outerInstance.substates.remove(sub);
+									outerInstance.substates.Remove(sub);
 								}
 							}
 						}
@@ -247,15 +247,15 @@ namespace logisim.circuit
 				CircuitState newSub = new CircuitState(src.proj, oldSub.circuit);
 				newSub.copyFrom(oldSub, @base);
 				newSub.parentState = this;
-				this.substates.add(newSub);
+				this.substates.Add(newSub);
 				substateData[oldSub] = newSub;
 			}
 			foreach (Component key in src.componentData.Keys)
 			{
 				object oldValue = src.componentData[key];
-				if (oldValue is CircuitState)
+				if (oldValue is CircuitState cs)
 				{
-					object newValue = substateData[oldValue];
+					object newValue = substateData[cs];
 					if (newValue != null)
 					{
 						this.componentData[key] = newValue;
@@ -290,8 +290,8 @@ namespace logisim.circuit
 				this.wireData = (CircuitWires.State) src.wireData.clone();
 			}
 			this.values.PutAll(src.values);
-			this.dirtyComponents.addAll(src.dirtyComponents);
-			this.dirtyPoints.addAll(src.dirtyPoints);
+			this.dirtyComponents.AddRange(src.dirtyComponents);
+			this.dirtyPoints.AddRange(src.dirtyPoints);
 		}
 
 		public override string ToString()
@@ -318,7 +318,7 @@ namespace logisim.circuit
 			}
 		}
 
-		public virtual ISet<CircuitState> Substates
+		public virtual ICollection<CircuitState> Substates
 		{
 			get
 			{ // returns Set of CircuitStates
@@ -366,14 +366,14 @@ namespace logisim.circuit
 					if (oldState != null && oldState.parentComp == comp)
 					{
 						// it looks like it's being removed
-						substates.remove(oldState);
+						substates.Remove(oldState);
 						oldState.parentState = null;
 						oldState.parentComp = null;
 					}
 					if (newState != null && newState.parentState != this)
 					{
 						// this is the first time I've heard about this CircuitState
-						substates.add(newState);
+						substates.Add(newState);
 						newState.@base = this.@base;
 						newState.parentState = this;
 						newState.parentComp = comp;
@@ -408,24 +408,24 @@ namespace logisim.circuit
 		{
 			try
 			{
-				dirtyComponents.add(comp);
+				dirtyComponents.Add(comp);
 			}
 			catch (Exception)
 			{
 				SmallSet<Component> set = new SmallSet<Component>();
-				set.add(comp);
+				set.Add(comp);
 				dirtyComponents = set;
 			}
 		}
 
 		public virtual void markComponentsDirty(ICollection<Component> comps)
 		{
-			dirtyComponents.addAll(comps);
+			dirtyComponents.AddRange(comps);
 		}
 
 		public virtual void markPointAsDirty(Location pt)
 		{
-			dirtyPoints.add(pt);
+			dirtyPoints.Add(pt);
 		}
 
 		public virtual InstanceState getInstanceState(Component comp)
@@ -467,7 +467,7 @@ namespace logisim.circuit
 
 		internal virtual void processDirtyComponents()
 		{
-			if (!dirtyComponents.Empty)
+			if (dirtyComponents.Any())
 			{
 				// This seeming wasted copy is to avoid ConcurrentModifications
 				// if we used an iterator instead.
@@ -477,7 +477,7 @@ namespace logisim.circuit
 				{
 					try
 					{
-						toProcess = dirtyComponents.toArray();
+						toProcess = dirtyComponents.ToArray();
 						break;
 					}
 					catch (Exception e)
@@ -494,7 +494,7 @@ namespace logisim.circuit
 						}
 					}
 				}
-				dirtyComponents.clear();
+				dirtyComponents.Clear();
 				foreach (object compObj in toProcess)
 				{
 					if (compObj is Component)
@@ -510,8 +510,8 @@ namespace logisim.circuit
 				}
 			}
 
-			CircuitState[] subs = new CircuitState[substates.size()];
-			foreach (CircuitState substate in substates.toArray(subs))
+			CircuitState[] subs = new CircuitState[substates.Count];
+			foreach (CircuitState substate in substates.ToArray(subs))
 			{
 				substate.processDirtyComponents();
 			}
@@ -520,14 +520,14 @@ namespace logisim.circuit
 		internal virtual void processDirtyPoints()
 		{
 			HashSet<Location> dirty = new HashSet<Location>(dirtyPoints);
-			dirtyPoints.clear();
+			dirtyPoints.Clear();
 			if (circuit.wires.isMapVoided())
 			{
 				for (int i = 3; i >= 0; i--)
 				{
 					try
 					{
-						dirty.addAll(circuit.wires.points.getSplitLocations());
+						dirty.AddRange(circuit.wires.points.getSplitLocations());
 						break;
 					}
 					catch (ConcurrentModificationException e)
@@ -553,8 +553,8 @@ namespace logisim.circuit
 				circuit.wires.propagate(this, dirty);
 			}
 
-			CircuitState[] subs = new CircuitState[substates.size()];
-			foreach (CircuitState substate in substates.toArray(subs))
+			CircuitState[] subs = new CircuitState[substates.Count];
+			foreach (CircuitState substate in substates.ToArray(subs))
 			{
 				substate.processDirtyPoints();
 			}

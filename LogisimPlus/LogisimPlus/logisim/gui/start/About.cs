@@ -76,7 +76,7 @@ namespace logisim.gui.start
 
 				int prefWidth = IMAGE_WIDTH + 2 * IMAGE_BORDER;
 				int prefHeight = IMAGE_HEIGHT + 2 * IMAGE_BORDER;
-				setPreferredSize(new Dimension(prefWidth, prefHeight));
+				setPreferredSize(new Size(prefWidth, prefHeight));
 				setBackground(Color.WHITE);
 				addAncestorListener(this);
 

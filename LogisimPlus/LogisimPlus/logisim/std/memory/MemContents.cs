@@ -36,7 +36,7 @@ namespace logisim.std.memory
 		private MemContents(int addrBits, int width)
 		{
 			listeners = null;
-			setDimensions(addrBits, width);
+			setSizes(addrBits, width);
 		}
 
 		//
@@ -449,7 +449,7 @@ namespace logisim.std.memory
 			}
 		}
 
-		public virtual void setDimensions(int addrBits, int width)
+		public virtual void setSizes(int addrBits, int width)
 		{
 			if (addrBits == this.addrBits && width == this.width)
 			{

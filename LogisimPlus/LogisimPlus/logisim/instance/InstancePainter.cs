@@ -21,8 +21,9 @@ namespace logisim.instance
 	using Location = logisim.data.Location;
 	using Value = logisim.data.Value;
 	using Project = logisim.proj.Project;
+    using LogisimPlus.Java;
 
-	public class InstancePainter : InstanceState
+    public class InstancePainter : InstanceState
 	{
 		private ComponentDrawContext context;
 		private InstanceComponent comp;
@@ -103,7 +104,7 @@ namespace logisim.instance
 			}
 		}
 
-		public virtual Graphics Graphics
+		public virtual JGraphics Graphics
 		{
 			get
 			{

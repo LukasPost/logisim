@@ -28,14 +28,14 @@ namespace logisim.circuit
 		public static readonly AttributeOption APPEAR_RIGHT = new AttributeOption("right", Strings.getter("splitterAppearanceRight"));
 		public static readonly AttributeOption APPEAR_CENTER = new AttributeOption("center", Strings.getter("splitterAppearanceCenter"));
 
-		public static readonly Attribute<AttributeOption> ATTR_APPEARANCE = Attributes.forOption("appear", Strings.getter("splitterAppearanceAttr"), new AttributeOption[] {APPEAR_LEFT, APPEAR_RIGHT, APPEAR_CENTER, APPEAR_LEGACY});
+		public static readonly Attribute ATTR_APPEARANCE = Attributes.forOption("appear", Strings.getter("splitterAppearanceAttr"), new AttributeOption[] {APPEAR_LEFT, APPEAR_RIGHT, APPEAR_CENTER, APPEAR_LEGACY});
 
-		public static readonly Attribute<BitWidth> ATTR_WIDTH = Attributes.forBitWidth("incoming", Strings.getter("splitterBitWidthAttr"));
-		public static readonly Attribute<int> ATTR_FANOUT = Attributes.forIntegerRange("fanout", Strings.getter("splitterFanOutAttr"), 1, 32);
+		public static readonly Attribute ATTR_WIDTH = Attributes.forBitWidth("incoming", Strings.getter("splitterBitWidthAttr"));
+		public static readonly Attribute ATTR_FANOUT = Attributes.forIntegerRange("fanout", Strings.getter("splitterFanOutAttr"), 1, 32);
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private static final java.util.List<logisim.data.Attribute<?>> INIT_ATTRIBUTES = java.util.Arrays.asList(new logisim.data.Attribute<?>[] { logisim.instance.StdAttr.FACING, ATTR_FANOUT, ATTR_WIDTH, ATTR_APPEARANCE});
-		private static readonly IList<Attribute<object>> INIT_ATTRIBUTES = new List<Attribute<object>> {StdAttr.FACING, ATTR_FANOUT, ATTR_WIDTH, ATTR_APPEARANCE};
+		private static readonly IList<Attribute> INIT_ATTRIBUTES = new List<Attribute> {StdAttr.FACING, ATTR_FANOUT, ATTR_WIDTH, ATTR_APPEARANCE};
 
 		private const string unchosen_val = "none";
 
@@ -83,7 +83,7 @@ namespace logisim.circuit
 			}
 		}
 
-		internal class BitOutAttribute : Attribute<int>
+		internal class BitOutAttribute : Attribute
 		{
 			internal int which;
 			internal BitOutOption[] options;
@@ -149,7 +149,7 @@ namespace logisim.circuit
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private java.util.ArrayList<logisim.data.Attribute<?>> attrs = new java.util.ArrayList<logisim.data.Attribute<?>>(INIT_ATTRIBUTES);
-		private List<Attribute<object>> attrs = new List<Attribute<object>>(INIT_ATTRIBUTES);
+		private List<Attribute> attrs = new List<Attribute>(INIT_ATTRIBUTES);
 		private SplitterParameters parameters;
 		internal AttributeOption appear = APPEAR_LEFT;
 		internal Direction facing = Direction.East;
@@ -167,7 +167,7 @@ namespace logisim.circuit
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?> getBitOutAttribute(int index)
-		internal virtual Attribute<object> getBitOutAttribute(int index)
+		internal virtual Attribute getBitOutAttribute(int index)
 		{
 			return attrs[INIT_ATTRIBUTES.Count + index];
 		}
@@ -178,7 +178,7 @@ namespace logisim.circuit
 			dest.parameters = this.parameters;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: dest.attrs = new java.util.ArrayList<logisim.data.Attribute<?>>(this.attrs.size());
-			dest.attrs = new List<Attribute<object>>(this.attrs.Count);
+			dest.attrs = new List<Attribute>(this.attrs.Count);
 			dest.attrs.AddRange(INIT_ATTRIBUTES);
 			for (int i = INIT_ATTRIBUTES.Count, n = this.attrs.Count; i < n; i++)
 			{
@@ -209,7 +209,7 @@ namespace logisim.circuit
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override IList<Attribute> Attributes
 		{
 			get
 			{
@@ -219,28 +219,28 @@ namespace logisim.circuit
 
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
 // ORIGINAL LINE: @Override @SuppressWarnings("unchecked") public <V> V getValue(logisim.data.Attribute<V> attr)
-		public override V getValue<V>(Attribute<V> attr)
+		public override object getValue(Attribute attr)
 		{
 			if (attr == StdAttr.FACING)
 			{
-				return (V) facing;
+				return facing;
 			}
 			else if (attr == ATTR_FANOUT)
 			{
-				return (V) Convert.ToInt32(fanout);
+				return Convert.ToInt32(fanout);
 			}
 			else if (attr == ATTR_WIDTH)
 			{
-				return (V) BitWidth.create(bit_end.Length);
+				return BitWidth.create(bit_end.Length);
 			}
 			else if (attr == ATTR_APPEARANCE)
 			{
-				return (V) appear;
+				return appear;
 			}
 			else if (attr is BitOutAttribute)
 			{
 				BitOutAttribute bitOut = (BitOutAttribute) attr;
-				return (V) Convert.ToInt32(bit_end[bitOut.which]);
+				return Convert.ToInt32(bit_end[bitOut.which]);
 			}
 			else
 			{
@@ -248,7 +248,7 @@ namespace logisim.circuit
 			}
 		}
 
-		public override void setValue<V>(Attribute<V> attr, V value)
+		public override void setValue(Attribute attr, object value)
 		{
 			if (attr == StdAttr.FACING)
 			{

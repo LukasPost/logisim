@@ -20,8 +20,9 @@ namespace logisim.comp
 	using InstancePainter = logisim.instance.InstancePainter;
 	using AppPreferences = logisim.prefs.AppPreferences;
 	using GraphicsUtil = logisim.util.GraphicsUtil;
+    using LogisimPlus.Java;
 
-	public class ComponentDrawContext
+    public class ComponentDrawContext
 	{
 		private const int PIN_OFFS = 2;
 		private const int PIN_RAD = 4;
@@ -29,15 +30,15 @@ namespace logisim.comp
 		private java.awt.Component dest;
 		private Circuit circuit;
 		private CircuitState circuitState;
-		private Graphics @base;
-		private Graphics g;
+		private JGraphics @base;
+		private JGraphics g;
 		private bool showState;
 		private bool showColor;
 		private bool printView;
 		private WireSet highlightedWires;
 		private InstancePainter instancePainter;
 
-		public ComponentDrawContext(java.awt.Component dest, Circuit circuit, CircuitState circuitState, Graphics @base, Graphics g, bool printView)
+		public ComponentDrawContext(java.awt.Component dest, Circuit circuit, CircuitState circuitState, JGraphics @base, JGraphics g, bool printView)
 		{
 			this.dest = dest;
 			this.circuit = circuit;
@@ -51,7 +52,7 @@ namespace logisim.comp
 			this.instancePainter = new InstancePainter(this, null);
 		}
 
-		public ComponentDrawContext(java.awt.Component dest, Circuit circuit, CircuitState circuitState, Graphics @base, Graphics g) : this(dest, circuit, circuitState, @base, g, false)
+		public ComponentDrawContext(java.awt.Component dest, Circuit circuit, CircuitState circuitState, JGraphics @base, JGraphics g) : this(dest, circuit, circuitState, @base, g, false)
 		{
 		}
 
@@ -118,7 +119,7 @@ namespace logisim.comp
 			}
 		}
 
-		public virtual Graphics Graphics
+		public virtual JGraphics Graphics
 		{
 			get
 			{
@@ -161,7 +162,7 @@ namespace logisim.comp
 		public virtual void drawBounds(Component comp)
 		{
 			GraphicsUtil.switchToWidth(g, 2);
-			g.setColor(Color.BLACK);
+			g.setColor(Color.Black);
 			Bounds bds = comp.Bounds;
 			g.drawRect(bds.X, bds.Y, bds.Width, bds.Height);
 			GraphicsUtil.switchToWidth(g, 1);
@@ -184,15 +185,15 @@ namespace logisim.comp
 			g.drawRect(x, y, width, height);
 			if (!string.ReferenceEquals(label, null) && !label.Equals(""))
 			{
-				FontMetrics fm = @base.getFontMetrics(g.getFont());
-				int lwid = fm.stringWidth(label);
+				SizeF labelSize= g.measureString(label);
+				int lwid = (int)labelSize.Width;
 				if (height > 20)
 				{ // centered at top edge
-					g.drawString(label, x + (width - lwid) / 2, y + 2 + fm.getAscent());
+					g.drawString(label, x + (width - lwid) / 2, y + 2 + (int)labelSize.Height);
 				}
 				else
 				{ // centered overall
-					g.drawString(label, x + (width - lwid) / 2, y + (height + fm.getAscent()) / 2 - 1);
+					g.drawString(label, x + (width - lwid) / 2, y + (height + (int)labelSize.Height) / 2 - 1);
 				}
 			}
 		}
@@ -209,15 +210,15 @@ namespace logisim.comp
 			g.drawRect(x + 1, y + 1, width - 1, height - 1);
 			if (!string.ReferenceEquals(label, null) && !label.Equals(""))
 			{
-				FontMetrics fm = @base.getFontMetrics(g.getFont());
-				int lwid = fm.stringWidth(label);
-				if (height > 20)
+                SizeF labelSize = g.measureString(label);
+                int lwid = (int)labelSize.Width;
+                if (height > 20)
 				{ // centered at top edge
-					g.drawString(label, x + (width - lwid) / 2, y + 2 + fm.getAscent());
+					g.drawString(label, x + (width - lwid) / 2, y + 2 + (int)labelSize.Height);
 				}
 				else
 				{ // centered overall
-					g.drawString(label, x + (width - lwid) / 2, y + (height + fm.getAscent()) / 2 - 1);
+					g.drawString(label, x + (width - lwid) / 2, y + (height + (int)labelSize.Height) / 2 - 1);
 				}
 			}
 		}
@@ -246,7 +247,7 @@ namespace logisim.comp
 			}
 			else
 			{
-				g.setColor(Color.BLACK);
+				g.setColor(Color.Black);
 			}
 			g.fillOval(x - PIN_OFFS, y - PIN_OFFS, PIN_RAD, PIN_RAD);
 			g.setColor(curColor);
@@ -280,7 +281,7 @@ namespace logisim.comp
 			}
 			else
 			{
-				g.setColor(Color.BLACK);
+				g.setColor(Color.Black);
 			}
 			g.fillOval(pt.X - PIN_OFFS, pt.Y - PIN_OFFS, PIN_RAD, PIN_RAD);
 			g.setColor(curColor);
@@ -299,7 +300,7 @@ namespace logisim.comp
 				}
 				else
 				{
-					g.setColor(Color.BLACK);
+					g.setColor(Color.Black);
 				}
 				g.fillOval(pt.X - PIN_OFFS, pt.Y - PIN_OFFS, PIN_RAD, PIN_RAD);
 			}
@@ -309,7 +310,7 @@ namespace logisim.comp
 		public virtual void drawClock(Component comp, int i, Direction dir)
 		{
 			Color curColor = g.getColor();
-			g.setColor(Color.BLACK);
+			g.setColor(Color.Black);
 			GraphicsUtil.switchToWidth(g, 2);
 
 			EndData e = comp.getEnd(i);
@@ -365,9 +366,9 @@ namespace logisim.comp
 
 		public virtual void drawHandle(int x, int y)
 		{
-			g.setColor(Color.white);
+			g.setColor(Color.White);
 			g.fillRect(x - 3, y - 3, 7, 7);
-			g.setColor(Color.black);
+			g.setColor(Color.Black);
 			g.drawRect(x - 3, y - 3, 7, 7);
 		}
 

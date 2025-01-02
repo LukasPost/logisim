@@ -278,7 +278,7 @@ namespace hex
 				lineHeight = fm.getHeight();
 			}
 
-			// update header and cell dimensions
+			// update header and cell Sizes
 			headerWidth = headerChars * charWidth + spaceWidth;
 			spacerWidth = spaceWidth;
 			cellWidth = cellChars * charWidth + spaceWidth;
@@ -304,7 +304,7 @@ namespace hex
 			}
 
 			// update preferred size
-			Dimension pref = hex.getPreferredSize();
+			Size pref = hex.getPreferredSize();
 			if (pref.width != width || pref.height != height)
 			{
 				pref.width = width;

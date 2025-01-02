@@ -34,8 +34,9 @@ namespace logisim.circuit
 	using GraphicsUtil = logisim.util.GraphicsUtil;
 	using StringGetter = logisim.util.StringGetter;
 	using StringUtil = logisim.util.StringUtil;
+    using LogisimPlus.Java;
 
-	public class SubcircuitFactory : InstanceFactory
+    public class SubcircuitFactory : InstanceFactory
 	{
 		private class CircuitFeature : StringGetter, MenuExtender, ActionListener
 		{
@@ -142,7 +143,7 @@ namespace logisim.circuit
 			// configureLabel(instance); already done in computePorts
 		}
 
-		public override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		public override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == StdAttr.FACING)
 			{
@@ -348,12 +349,11 @@ namespace logisim.circuit
 
 				int x = bds.X + bds.Width / 2;
 				int y = bds.Y + bds.Height / 2;
-				Graphics g = painter.Graphics.create();
+				JGraphics g = painter.Graphics;
 				double angle = Math.PI / 2 - (up.toRadians() - defaultFacing.toRadians()) - facing.toRadians();
-				if (g is Graphics2D && Math.Abs(angle) > 0.01)
+				if (Math.Abs(angle) > 0.01)
 				{
-					Graphics2D g2 = (Graphics2D) g;
-					g2.rotate(angle, x, y);
+					g.rotate(angle, x, y);
 				}
 				g.setFont(font);
 				if (lines == 1 && !backs)
@@ -362,9 +362,9 @@ namespace logisim.circuit
 				}
 				else
 				{
-					FontMetrics fm = g.getFontMetrics();
-					int height = fm.getHeight();
-					y = y - (height * lines - fm.getLeading()) / 2 + fm.getAscent();
+                    SizeF labelSize = g.measureString(label);
+                    int height = labelSize.Height;
+					y = y - (height * lines - labelSize.Height) / 2 + labelSize.Height;
 					back = label.IndexOf('\\');
 					while (back >= 0 && back <= label.Length - 2)
 					{

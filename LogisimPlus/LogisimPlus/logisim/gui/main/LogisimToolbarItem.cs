@@ -65,9 +65,15 @@ namespace logisim.gui.main
 			}
 		}
 
-        public virtual bool Selectable => menu != null && menu.isEnabled(action);
+		public virtual bool Selectable
+		{
+			get
+			{
+				return menu != null && menu.isEnabled(action);
+			}
+		}
 
-        public virtual void paintIcon(Control destination, Graphics g)
+		public virtual void paintIcon(Component destination, Graphics g)
 		{
 			if (!Selectable && g is Graphics2D)
 			{
@@ -91,7 +97,19 @@ namespace logisim.gui.main
 		}
 
 
-        public virtual Size getDimension(object orientation) => icon?.Size ?? new Size(16, 16);
-    }
+		public virtual Size getSize(object orientation)
+		{
+			if (icon == null)
+			{
+				return new Size(16, 16);
+			}
+			else
+			{
+				int w = icon.getIconWidth();
+				int h = icon.getIconHeight();
+				return new Size(w, h + 2);
+			}
+		}
+	}
 
 }

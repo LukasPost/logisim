@@ -18,7 +18,7 @@ namespace logisim.gui.prefs
 	{
 		private class RestrictedLabel : JLabel
 		{
-			public override Dimension MaximumSize
+			public override Size MaximumSize
 			{
 				get
 				{

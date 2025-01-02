@@ -175,7 +175,7 @@ namespace logisim.analyze.gui
 
 			caret.paintBackground(g);
 
-			Dimension sz = getSize();
+			Size sz = getSize();
 			int top = Math.Max(0, (sz.height - tableHeight) / 2);
 			int left = Math.Max(0, (sz.width - tableWidth) / 2);
 			int inputs = table.InputColumnCount;
@@ -293,7 +293,7 @@ namespace logisim.analyze.gui
 
 		internal virtual int getX(int col)
 		{
-			Dimension sz = getSize();
+			Size sz = getSize();
 			int left = Math.Max(0, (sz.width - tableWidth) / 2);
 			int inputs = table.InputColumnCount;
 			if (inputs == 0)
@@ -305,7 +305,7 @@ namespace logisim.analyze.gui
 
 		internal virtual int getY(int row)
 		{
-			Dimension sz = getSize();
+			Size sz = getSize();
 			int top = Math.Max(0, (sz.height - tableHeight) / 2);
 			return top + cellHeight + HEADER_SEP + row * cellHeight;
 		}
@@ -323,7 +323,7 @@ namespace logisim.analyze.gui
 			int outputs = table.OutputColumnCount;
 			if (inputs == 0 && outputs == 0)
 			{
-				setPreferredSize(new Dimension(0, 0));
+				setPreferredSize(new Size(0, 0));
 				return;
 			}
 
@@ -359,7 +359,7 @@ namespace logisim.analyze.gui
 			}
 			tableWidth = (cellWidth + COLUMN_SEP) * (inputs + outputs) - COLUMN_SEP;
 			tableHeight = cellHeight * (1 + table.RowCount) + HEADER_SEP;
-			setPreferredSize(new Dimension(tableWidth, tableHeight));
+			setPreferredSize(new Size(tableWidth, tableHeight));
 			revalidate();
 			repaint();
 		}

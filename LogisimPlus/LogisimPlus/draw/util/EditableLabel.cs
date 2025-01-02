@@ -294,7 +294,7 @@ namespace draw.util
 			}
 			field.setFont(f);
 
-			Dimension dim = field.getPreferredSize();
+			Size dim = field.getPreferredSize();
 			int w;
 			int border = EditableLabelField.FIELD_BORDER;
 			if (dimsKnown)
@@ -347,7 +347,7 @@ namespace draw.util
 			g.setFont(font);
 			if (!dimsKnown)
 			{
-				computeDimensions(g, font, g.getFontMetrics());
+				computeSizes(g, font, g.getFontMetrics());
 			}
 			int x0 = LeftX;
 			int y0 = BaseY;
@@ -355,7 +355,7 @@ namespace draw.util
 			g.drawString(text, x0, y0);
 		}
 
-		private void computeDimensions(Graphics g, Font font, FontMetrics fm)
+		private void computeSizes(Graphics g, Font font, FontMetrics fm)
 		{
 			string s = text;
 			FontRenderContext frc = ((Graphics2D) g).getFontRenderContext();

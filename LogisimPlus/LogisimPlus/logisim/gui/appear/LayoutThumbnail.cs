@@ -36,7 +36,7 @@ namespace logisim.gui.appear
 			circuitState = null;
 			ports = null;
 			setBackground(Color.LIGHT_GRAY);
-			setPreferredSize(new Dimension(200, 200));
+			setPreferredSize(new Size(200, 200));
 		}
 
 		public virtual void setCircuit(CircuitState circuitState, ICollection<Instance> ports)
@@ -52,7 +52,7 @@ namespace logisim.gui.appear
 			{
 				Circuit circuit = circuitState.Circuit;
 				Bounds bds = circuit.getBounds(g);
-				Dimension size = getSize();
+				Size size = getSize();
 				double scaleX = (double)(size.width - 2 * BORDER) / bds.Width;
 				double scaleY = (double)(size.height - 2 * BORDER) / bds.Height;
 				double scale = Math.Min(1.0, Math.Min(scaleX, scaleY));

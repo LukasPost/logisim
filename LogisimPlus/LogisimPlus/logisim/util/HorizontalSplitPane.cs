@@ -112,7 +112,7 @@ namespace logisim.util
 			{
 			}
 
-			public virtual Dimension preferredLayoutSize(Container parent)
+			public virtual Size preferredLayoutSize(Container parent)
 			{
 				if (outerInstance.fraction <= 0.0)
 				{
@@ -123,12 +123,12 @@ namespace logisim.util
 					return outerInstance.comp0.getPreferredSize();
 				}
 				Insets @in = parent.getInsets();
-				Dimension d0 = outerInstance.comp0.getPreferredSize();
-				Dimension d1 = outerInstance.comp1.getPreferredSize();
-				return new Dimension(@in.left + Math.Max(d0.width, d1.width) + @in.right, @in.top + d0.height + d1.height + @in.bottom);
+				Size d0 = outerInstance.comp0.getPreferredSize();
+				Size d1 = outerInstance.comp1.getPreferredSize();
+				return new Size(@in.left + Math.Max(d0.width, d1.width) + @in.right, @in.top + d0.height + d1.height + @in.bottom);
 			}
 
-			public virtual Dimension minimumLayoutSize(Container parent)
+			public virtual Size minimumLayoutSize(Container parent)
 			{
 				if (outerInstance.fraction <= 0.0)
 				{
@@ -139,9 +139,9 @@ namespace logisim.util
 					return outerInstance.comp0.getMinimumSize();
 				}
 				Insets @in = parent.getInsets();
-				Dimension d0 = outerInstance.comp0.getMinimumSize();
-				Dimension d1 = outerInstance.comp1.getMinimumSize();
-				return new Dimension(@in.left + Math.Max(d0.width, d1.width) + @in.right, @in.top + d0.height + d1.height + @in.bottom);
+				Size d0 = outerInstance.comp0.getMinimumSize();
+				Size d1 = outerInstance.comp1.getMinimumSize();
+				return new Size(@in.left + Math.Max(d0.width, d1.width) + @in.right, @in.top + d0.height + d1.height + @in.bottom);
 			}
 
 			public virtual void layoutContainer(Container parent)

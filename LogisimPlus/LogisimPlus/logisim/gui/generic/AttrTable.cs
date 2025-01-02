@@ -64,12 +64,12 @@ namespace logisim.gui.generic
 
 		private class TitleLabel : JLabel
 		{
-			public override Dimension MinimumSize
+			public override Size MinimumSize
 			{
 				get
 				{
-					Dimension ret = base.getMinimumSize();
-					return new Dimension(1, ret.height);
+					Size ret = base.getMinimumSize();
+					return new Size(1, ret.height);
 				}
 			}
 		}

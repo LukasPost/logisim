@@ -12,7 +12,7 @@ namespace logisim.data
 
 	using StringGetter = logisim.util.StringGetter;
 
-	public abstract class Attribute<V>
+	public abstract class Attribute
 	{
 		private string name;
 		private StringGetter disp;
@@ -44,27 +44,27 @@ namespace logisim.data
 			}
 		}
 
-		public virtual java.awt.Component getCellEditor(Window source, V value)
+		public virtual java.awt.Component getCellEditor(Window source, object value)
 		{
 			return getCellEditor(value);
 		}
 
-		protected internal virtual java.awt.Component getCellEditor(V value)
+		protected internal virtual java.awt.Component getCellEditor(object value)
 		{
 			return new JTextField(toDisplayString(value));
 		}
 
-		public virtual string toDisplayString(V value)
+		public virtual string toDisplayString(object? value)
 		{
 			return value == null ? "" : value.ToString();
 		}
 
-		public virtual string toStandardString(V value)
+		public virtual string toStandardString(object? value)
 		{
 			return value.ToString();
 		}
 
-		public abstract V parse(string value);
+		public abstract object parse(string value);
 	}
 
 }

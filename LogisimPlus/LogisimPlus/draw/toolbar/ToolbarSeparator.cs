@@ -29,7 +29,7 @@ namespace draw.toolbar
 
 		public virtual void paintIcon(Component destination, Graphics g)
 		{
-			Dimension dim = destination.getSize();
+			Size dim = destination.getSize();
 			g.setColor(Color.GRAY);
 			int x = 0;
 			int y = 0;
@@ -60,9 +60,9 @@ namespace draw.toolbar
 			}
 		}
 
-		public virtual Dimension getDimension(object orientation)
+		public virtual Size getSize(object orientation)
 		{
-			return new Dimension(size, size);
+			return new Size(size, size);
 		}
 	}
 

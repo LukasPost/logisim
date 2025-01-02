@@ -638,7 +638,7 @@ namespace logisim.gui.main
 				}
 
 				outerInstance.computeViewportContents();
-				Dimension sz = getSize();
+				Size sz = getSize();
 				g.setColor(Value.WIDTH_ERROR_COLOR);
 
 				if (!string.ReferenceEquals(widthMessage, null))
@@ -931,10 +931,10 @@ namespace logisim.gui.main
 			Bounds bounds = proj.CurrentCircuit.Bounds;
 			int width = bounds.X + bounds.Width + BOUNDS_BUFFER;
 			int height = bounds.Y + bounds.Height + BOUNDS_BUFFER;
-			Dimension dim;
+			Size dim;
 			if (canvasPane == null)
 			{
-				dim = new Dimension(width, height);
+				dim = new Size(width, height);
 			}
 			else
 			{
@@ -1235,7 +1235,7 @@ namespace logisim.gui.main
 			computeSize(true);
 		}
 
-		public virtual Dimension PreferredScrollableViewportSize
+		public virtual Size PreferredScrollableViewportSize
 		{
 			get
 			{

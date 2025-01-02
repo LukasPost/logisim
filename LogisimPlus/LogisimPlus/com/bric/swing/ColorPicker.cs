@@ -34,7 +34,7 @@ namespace com.bric.swing
 	/// However this panel is also resizable, and it can exist in other contexts. For example, you might try the following
 	/// panel: <BR>
 	/// <code>ColorPicker picker = new ColorPicker(false, false);</code> <BR>
-	/// <code>picker.setPreferredSize(new Dimension(200,160));</code> <BR>
+	/// <code>picker.setPreferredSize(new Size(200,160));</code> <BR>
 	/// <code>picker.setMode(ColorPicker.HUE);</code>
 	/// <P>
 	/// This will create a miniature color picker that still lets the user choose from every available color, but it does not
@@ -131,7 +131,7 @@ namespace com.bric.swing
 			c.gridy = 0;
 			c.weighty = 1;
 			c.fill = GridBagConstraints.BOTH;
-			picker.setPreferredSize(new Dimension(220, 200));
+			picker.setPreferredSize(new Size(220, 200));
 			demo.getContentPane().add(picker, c);
 			c.gridy++;
 			c.weighty = 0;
@@ -968,7 +968,7 @@ namespace com.bric.swing
 			expertControls.add(options, c);
 
 			preview.setOpaque(true);
-			colorPanel.setPreferredSize(new Dimension(expertControls.getPreferredSize().height, expertControls.getPreferredSize().height));
+			colorPanel.setPreferredSize(new Size(expertControls.getPreferredSize().height, expertControls.getPreferredSize().height));
 
 			slider.addChangeListener(changeListener);
 			colorPanel.addChangeListener(changeListener);

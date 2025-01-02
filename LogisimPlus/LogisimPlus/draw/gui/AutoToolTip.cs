@@ -8,7 +8,7 @@ namespace LogisimPlus.draw.gui;
 internal class AutoToolTip
 {
     private static Dictionary<Control, ToolTip> tooltips = [];
-    public static void AttachToolTip(Control control, string text)
+    public static void AttachToolTip(Control control, Func<string> textGetter)
     {
         if (!tooltips.TryGetValue(control, out var toolTip))
         {
@@ -26,6 +26,7 @@ internal class AutoToolTip
 
         // Set up the ToolTip text for the Button and Checkbox.
         toolTip.SetToolTip(control, "My button1");
+        toolTip.Popup += (s, e) => textGetter();
     }
 
     public static void RemoveToolTip(Control control)

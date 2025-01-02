@@ -37,7 +37,7 @@ namespace logisim.circuit
 		//
 		// access methods
 		//
-		internal virtual ISet<Location> SplitLocations
+		internal virtual ICollection<Location> SplitLocations
 		{
 			get
 			{
@@ -83,7 +83,7 @@ namespace logisim.circuit
 			LocationData locData = map[loc];
 			if (locData == null)
 			{
-				return Collections.emptySet();
+				return [];
 			}
 			else
 			{
@@ -120,7 +120,7 @@ namespace logisim.circuit
 			LocationData locData = map[loc];
 			if (locData == null)
 			{
-				return Collections.emptySet();
+				return [];
 			}
 
 			// first see how many elements we have; we can handle some simple
@@ -142,11 +142,11 @@ namespace logisim.circuit
 			}
 			if (retSize == 0)
 			{
-				return Collections.emptySet();
+				return [];
 			}
 			if (retSize == 1)
 			{
-				return Collections.singleton(retValue);
+				return [retValue];
 			}
 
 			// otherwise we have to create our own list

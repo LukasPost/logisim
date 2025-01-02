@@ -214,7 +214,7 @@ namespace logisim.analyze.gui
 					tableHeight = fm.getHeight();
 					tableWidth = fm.stringWidth(message);
 				}
-				setPreferredSize(new Dimension(tableWidth, tableHeight));
+				setPreferredSize(new Size(tableWidth, tableHeight));
 				repaint();
 				return;
 			}
@@ -239,7 +239,7 @@ namespace logisim.analyze.gui
 			int cols = 1 << COL_VARS[table.InputColumnCount];
 			tableWidth = headHeight + cellWidth * (cols + 1);
 			tableHeight = headHeight + cellHeight * (rows + 1);
-			setPreferredSize(new Dimension(tableWidth, tableHeight));
+			setPreferredSize(new Size(tableWidth, tableHeight));
 			invalidate();
 			repaint();
 		}
@@ -250,7 +250,7 @@ namespace logisim.analyze.gui
 
 			TruthTable table = model.TruthTable;
 			int inputCount = table.InputColumnCount;
-			Dimension sz = getSize();
+			Size sz = getSize();
 			string message = null;
 			if (string.ReferenceEquals(output, null))
 			{

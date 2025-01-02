@@ -228,7 +228,7 @@ namespace logisim.gui.log
 		{
 			base.paintComponent(g);
 
-			Dimension sz = getSize();
+			Size sz = getSize();
 			int top = Math.Max(0, (sz.height - tableHeight) / 2);
 			int left = Math.Max(0, (sz.width - tableWidth) / 2);
 			Model model = Model;
@@ -299,7 +299,7 @@ namespace logisim.gui.log
 			int columns = sel.size();
 			if (columns == 0)
 			{
-				setPreferredSize(new Dimension(0, 0));
+				setPreferredSize(new Size(0, 0));
 				return;
 			}
 
@@ -323,7 +323,7 @@ namespace logisim.gui.log
 
 			tableWidth = (cellWidth + COLUMN_SEP) * columns - COLUMN_SEP;
 			tableHeight = cellHeight * (1 + rowCount) + HEADER_SEP;
-			setPreferredSize(new Dimension(tableWidth, tableHeight));
+			setPreferredSize(new Size(tableWidth, tableHeight));
 			revalidate();
 			repaint();
 		}

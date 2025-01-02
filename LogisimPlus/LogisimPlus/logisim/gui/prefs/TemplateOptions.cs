@@ -201,8 +201,8 @@ namespace logisim.gui.prefs
 			gbc.gridy = 3;
 			gbc.gridx = GridBagConstraints.RELATIVE;
 			JPanel strut = new JPanel();
-			strut.setMinimumSize(new Dimension(50, 1));
-			strut.setPreferredSize(new Dimension(50, 1));
+			strut.setMinimumSize(new Size(50, 1));
+			strut.setPreferredSize(new Size(50, 1));
 			gbc.weightx = 0.0;
 			gridbag.setConstraints(strut, gbc);
 			add(strut);

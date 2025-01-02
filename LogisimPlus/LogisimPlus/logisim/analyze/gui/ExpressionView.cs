@@ -489,11 +489,11 @@ namespace logisim.analyze.gui
 				height = Math.Max(MINIMUM_HEIGHT, curY - fm.getLeading() - EXTRA_LEADING);
 			}
 
-			public virtual Dimension PreferredSize
+			public virtual Size PreferredSize
 			{
 				get
 				{
-					return new Dimension(10, height);
+					return new Size(10, height);
 				}
 			}
 

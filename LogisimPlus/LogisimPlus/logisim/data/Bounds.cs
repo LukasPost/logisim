@@ -42,7 +42,7 @@ namespace logisim.data
 
 		public static Bounds create(Rectangle rect)
 		{
-			return create(rect.x, rect.y, rect.width, rect.height);
+			return create(rect.X, rect.Y, rect.Width, rect.Height);
 		}
 
 		public static Bounds create(Location pt)

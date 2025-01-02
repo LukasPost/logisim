@@ -86,7 +86,7 @@ namespace logisim.circuit
 				addSubstates(stateMap, s, s);
 			}
 
-			Graphics g = context.Graphics;
+			JGraphics g = context.Graphics;
 			GraphicsUtil.switchToWidth(g, 2);
 			foreach (Entry e in data)
 			{

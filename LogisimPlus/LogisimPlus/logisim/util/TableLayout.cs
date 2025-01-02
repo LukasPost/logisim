@@ -19,7 +19,7 @@ namespace logisim.util
 		private List<Component[]> contents;
 		private int curRow;
 		private int curCol;
-		private Dimension prefs;
+		private Size prefs;
 		private int[] prefRow;
 		private int[] prefCol;
 		private double[] rowWeight;
@@ -105,7 +105,7 @@ namespace logisim.util
 			prefs = null;
 		}
 
-		public virtual Dimension preferredLayoutSize(Container parent)
+		public virtual Size preferredLayoutSize(Container parent)
 		{
 			if (prefs == null)
 			{
@@ -120,7 +120,7 @@ namespace logisim.util
 					{
 						if (row[j] != null)
 						{
-							Dimension dim = row[j].getPreferredSize();
+							Size dim = row[j].getPreferredSize();
 							if (dim.height > rowHeight)
 							{
 								rowHeight = dim.height;
@@ -139,21 +139,21 @@ namespace logisim.util
 				{
 					width += prefCol[i];
 				}
-				this.prefs = new Dimension(width, height);
+				this.prefs = new Size(width, height);
 				this.prefRow = prefRow;
 				this.prefCol = prefCol;
 			}
-			return new Dimension(prefs);
+			return new Size(prefs);
 		}
 
-		public virtual Dimension minimumLayoutSize(Container parent)
+		public virtual Size minimumLayoutSize(Container parent)
 		{
 			return preferredLayoutSize(parent);
 		}
 
-		public virtual Dimension maximumLayoutSize(Container parent)
+		public virtual Size maximumLayoutSize(Container parent)
 		{
-			return new Dimension(int.MaxValue, int.MaxValue);
+			return new Size(int.MaxValue, int.MaxValue);
 		}
 
 		public virtual float getLayoutAlignmentX(Container parent)
@@ -168,10 +168,10 @@ namespace logisim.util
 
 		public virtual void layoutContainer(Container parent)
 		{
-			Dimension pref = preferredLayoutSize(parent);
+			Size pref = preferredLayoutSize(parent);
 			int[] prefRow = this.prefRow;
 			int[] prefCol = this.prefCol;
-			Dimension size = parent.getSize();
+			Size size = parent.getSize();
 
 			double y0;
 			int yRemaining = size.height - pref.height;

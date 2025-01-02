@@ -17,7 +17,7 @@ namespace logisim.circuit
 
 	internal class CircuitLocker
 	{
-		private static AtomicInteger NEXT_SERIAL_NUMBER = new AtomicInteger(0);
+		private static int NEXT_SERIAL_NUMBER = 0;
 
 		private int serialNumber;
 		private ReadWriteLock circuitLock;
@@ -27,7 +27,7 @@ namespace logisim.circuit
 
 		internal CircuitLocker()
 		{
-			serialNumber = NEXT_SERIAL_NUMBER.getAndIncrement();
+            serialNumber = Interlocked.Increment(ref NEXT_SERIAL_NUMBER);
 			circuitLock = new ReentrantReadWriteLock();
 			mutatingThread = null;
 			mutatingMutator = null;
@@ -50,7 +50,7 @@ namespace logisim.circuit
 		{
 			if (mutatingThread != Thread.CurrentThread)
 			{
-				throw new System.InvalidOperationException(operationName + " outside transaction");
+				throw new InvalidOperationException(operationName + " outside transaction");
 			}
 		}
 

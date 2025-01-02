@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -151,11 +152,11 @@ namespace logisim.gui.start
 			{
 				Library lib = count.Library;
 				string libName = lib == null ? "-" : lib.DisplayName;
-				System.out.printf(fmtNormal, Convert.ToInt32(count.UniqueCount), Convert.ToInt32(count.RecursiveCount), count.Factory.DisplayName, libName);
+				DebugOut.printf(fmtNormal, Convert.ToInt32(count.UniqueCount), Convert.ToInt32(count.RecursiveCount), count.Factory.DisplayName, libName);
 			}
 			FileStatistics.Count totalWithout = stats.TotalWithoutSubcircuits;
-			System.out.printf(fmt + "%s\n", Convert.ToInt32(totalWithout.UniqueCount), Convert.ToInt32(totalWithout.RecursiveCount), Strings.get("statsTotalWithout"));
-			System.out.printf(fmt + "%s\n", Convert.ToInt32(total.UniqueCount), Convert.ToInt32(total.RecursiveCount), Strings.get("statsTotalWith"));
+			DebugOut.printf(fmt + "%s\n", Convert.ToInt32(totalWithout.UniqueCount), Convert.ToInt32(totalWithout.RecursiveCount), Strings.get("statsTotalWithout"));
+			DebugOut.printf(fmt + "%s\n", Convert.ToInt32(total.UniqueCount), Convert.ToInt32(total.RecursiveCount), Strings.get("statsTotalWith"));
 		}
 
 		private static int countDigits(int num)
@@ -250,7 +251,7 @@ namespace logisim.gui.start
 				else
 				{
 					stdinThread = new StdinThread();
-					stdinThread.Start();
+					stdinThread.run();
 				}
 			}
 
@@ -398,11 +399,11 @@ namespace logisim.gui.start
 		// is not interactively echoed until System.in.read() is invoked.
 		private class StdinThread : Thread
 		{
-			internal LinkedList<char[]> queue; // of char[]
+			internal Queue<char[]> queue; // of char[]
 
 			public StdinThread()
 			{
-				queue = new LinkedList<char[]>();
+				queue = new Queue<char[]>();
 			}
 
 			public virtual char[] Buffer
@@ -417,7 +418,7 @@ namespace logisim.gui.start
 						}
 						else
 						{
-							return queue.RemoveFirst();
+							return queue.Dequeue();
 						}
 					}
 				}
@@ -438,7 +439,7 @@ namespace logisim.gui.start
 							Array.Copy(buffer, 0, add, 0, nbytes);
 							lock (queue)
 							{
-								queue.AddLast(add);
+								queue.Enqueue(add);
 							}
 						}
 					}

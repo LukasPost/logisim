@@ -132,7 +132,7 @@ namespace draw.toolbar
 			revalidate();
 		}
 
-		internal virtual ToolbarButton? Pressed
+		internal virtual ToolbarButton Pressed
 		{
 			get
 			{

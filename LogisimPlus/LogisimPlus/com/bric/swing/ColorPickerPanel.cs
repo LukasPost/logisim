@@ -246,8 +246,8 @@ namespace com.bric.swing
 		/// Creates a new <code>ColorPickerPanel</code> </summary>
 		public ColorPickerPanel()
 		{
-			setMaximumSize(new Dimension(MAX_SIZE + imagePadding.left + imagePadding.right, MAX_SIZE + imagePadding.top + imagePadding.bottom));
-			setPreferredSize(new Dimension((int)(MAX_SIZE * .75), (int)(MAX_SIZE * .75)));
+			setMaximumSize(new Size(MAX_SIZE + imagePadding.left + imagePadding.right, MAX_SIZE + imagePadding.top + imagePadding.bottom));
+			setPreferredSize(new Size((int)(MAX_SIZE * .75), (int)(MAX_SIZE * .75)));
 
 			setRGB(0, 0, 0);
 			addMouseListener(mouseListener);

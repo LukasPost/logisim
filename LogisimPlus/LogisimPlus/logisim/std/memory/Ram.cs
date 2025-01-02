@@ -350,7 +350,7 @@ namespace logisim.std.memory
 				AttributeSet attrs = e.Source;
 				BitWidth addrBits = attrs.getValue(Mem.ADDR_ATTR);
 				BitWidth dataBits = attrs.getValue(Mem.DATA_ATTR);
-				Contents.setDimensions(addrBits.Width, dataBits.Width);
+				Contents.setSizes(addrBits.Width, dataBits.Width);
 			}
 		}
 

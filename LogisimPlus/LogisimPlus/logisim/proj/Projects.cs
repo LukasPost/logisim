@@ -150,7 +150,7 @@ namespace logisim.proj
 			}
 			if (lowest != null)
 			{
-				Dimension sz = frame.getToolkit().getScreenSize();
+				Size sz = frame.getToolkit().getScreenSize();
 				int x = Math.Min(lowest.x + 20, sz.width - 200);
 				int y = Math.Min(lowest.y + 20, sz.height - 200);
 				if (x < 0)

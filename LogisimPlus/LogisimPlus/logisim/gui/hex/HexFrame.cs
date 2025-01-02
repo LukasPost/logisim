@@ -231,7 +231,7 @@ namespace logisim.gui.hex
 			save.addActionListener(myListener);
 			close.addActionListener(myListener);
 
-			Dimension pref = editor.getPreferredSize();
+			Size pref = editor.getPreferredSize();
 			JScrollPane scroll = new JScrollPane(editor, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			pref.height = Math.Min(pref.height, pref.width * 3 / 2);
 			scroll.setPreferredSize(pref);
@@ -245,8 +245,8 @@ namespace logisim.gui.hex
 			myListener.localeChanged();
 			pack();
 
-			Dimension size = getSize();
-			Dimension screen = getToolkit().getScreenSize();
+			Size size = getSize();
+			Size screen = getToolkit().getScreenSize();
 			if (size.width > screen.width || size.height > screen.height)
 			{
 				size.width = Math.Min(size.width, screen.width);

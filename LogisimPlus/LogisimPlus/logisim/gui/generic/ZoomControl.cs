@@ -122,7 +122,7 @@ namespace logisim.gui.generic
 			{
 				this.outerInstance = outerInstance;
 				addMouseListener(this);
-				setPreferredSize(new Dimension(15, 15));
+				setPreferredSize(new Size(15, 15));
 				setToolTipText("");
 				setFocusable(true);
 			}

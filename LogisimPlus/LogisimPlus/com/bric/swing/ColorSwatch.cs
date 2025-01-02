@@ -84,8 +84,8 @@ namespace com.bric.swing
 		public ColorSwatch(int width)
 		{
 			w = width;
-			setPreferredSize(new Dimension(width, width));
-			setMinimumSize(new Dimension(width, width));
+			setPreferredSize(new Size(width, width));
+			setMinimumSize(new Size(width, width));
 			addMouseListener(mouseListener);
 		}
 

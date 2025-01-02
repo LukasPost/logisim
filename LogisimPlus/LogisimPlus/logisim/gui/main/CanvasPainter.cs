@@ -120,7 +120,7 @@ namespace logisim.gui.main
 		internal virtual void paintContents(Graphics g, Project proj)
 		{
 			Rectangle clip = g.getClipBounds();
-			Dimension size = canvas.getSize();
+			Size size = canvas.getSize();
 			double zoomFactor = canvas.ZoomFactor;
 			if (canvas.ifPaintDirtyReset() || clip == null)
 			{

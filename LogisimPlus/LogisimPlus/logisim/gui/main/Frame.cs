@@ -563,7 +563,7 @@ namespace logisim.gui.main
 			}
 			int state = getExtendedState() & ~JFrame.ICONIFIED;
 			AppPreferences.WINDOW_STATE.set(Convert.ToInt32(state));
-			Dimension dim = getSize();
+			Size dim = getSize();
 			AppPreferences.WINDOW_WIDTH.set(Convert.ToInt32(dim.width));
 			AppPreferences.WINDOW_HEIGHT.set(Convert.ToInt32(dim.height));
 			Point loc;

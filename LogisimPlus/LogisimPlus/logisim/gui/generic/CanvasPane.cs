@@ -113,11 +113,11 @@ namespace logisim.gui.generic
 			}
 		}
 
-		public virtual Dimension ViewportSize
+		public virtual Size ViewportSize
 		{
 			get
 			{
-				Dimension size = new Dimension();
+				Size size = new Size();
 				getViewport().getSize(size);
 				return size;
 			}
@@ -142,7 +142,7 @@ namespace logisim.gui.generic
 			return (int) (long)Math.Round(10 * zoom, MidpointRounding.AwayFromZero);
 		}
 
-		public virtual Dimension supportPreferredSize(int width, int height)
+		public virtual Size supportPreferredSize(int width, int height)
 		{
 			double zoom = ZoomFactor;
 			if (zoom != 1.0)
@@ -150,7 +150,7 @@ namespace logisim.gui.generic
 				width = (int) Math.Ceiling(width * zoom);
 				height = (int) Math.Ceiling(height * zoom);
 			}
-			Dimension minSize = ViewportSize;
+			Size minSize = ViewportSize;
 			if (minSize.width > width)
 			{
 				width = minSize.width;
@@ -159,7 +159,7 @@ namespace logisim.gui.generic
 			{
 				height = minSize.height;
 			}
-			return new Dimension(width, height);
+			return new Size(width, height);
 		}
 	}
 

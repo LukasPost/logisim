@@ -111,12 +111,12 @@ namespace logisim.std.memory
 			if (attr == Mem.ADDR_ATTR)
 			{
 				addrBits = (BitWidth) value;
-				contents.setDimensions(addrBits.Width, dataBits.Width);
+				contents.setSizes(addrBits.Width, dataBits.Width);
 			}
 			else if (attr == Mem.DATA_ATTR)
 			{
 				dataBits = (BitWidth) value;
-				contents.setDimensions(addrBits.Width, dataBits.Width);
+				contents.setSizes(addrBits.Width, dataBits.Width);
 			}
 			else if (attr == Rom.CONTENTS_ATTR)
 			{

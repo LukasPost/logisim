@@ -271,7 +271,7 @@ namespace hex
 		//
 		// Scrollable methods
 		//
-		public virtual Dimension PreferredScrollableViewportSize
+		public virtual Size PreferredScrollableViewportSize
 		{
 			get
 			{

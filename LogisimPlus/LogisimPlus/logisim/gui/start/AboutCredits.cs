@@ -71,7 +71,7 @@ namespace logisim.gui.start
 
 			int prefWidth = About.IMAGE_WIDTH + 2 * About.IMAGE_BORDER;
 			int prefHeight = About.IMAGE_HEIGHT / 2 + About.IMAGE_BORDER;
-			setPreferredSize(new Dimension(prefWidth, prefHeight));
+			setPreferredSize(new Size(prefWidth, prefHeight));
 
 			fadeStop = (float)(About.IMAGE_HEIGHT / 4.0);
 

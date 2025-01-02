@@ -253,8 +253,8 @@ namespace logisim.util
 			}
 
 			owner.pack();
-			Dimension screenSize = owner.getToolkit().getScreenSize();
-			Dimension windowSize = owner.getPreferredSize();
+			Size screenSize = owner.getToolkit().getScreenSize();
+			Size windowSize = owner.getPreferredSize();
 			Point windowLoc = owner.getLocation();
 
 			bool locChanged = false;

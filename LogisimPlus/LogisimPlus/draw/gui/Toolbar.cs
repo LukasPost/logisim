@@ -126,7 +126,7 @@ namespace draw.gui
 				this.tools[i % 2][i / 2] = toolBase[i];
 			}
 
-			setPreferredSize(new Dimension(3 * ICON_SEP + 2 * ICON_WIDTH, ICON_SEP + tools[0].Length * (ICON_HEIGHT + ICON_SEP)));
+			setPreferredSize(new Size(3 * ICON_SEP + 2 * ICON_WIDTH, ICON_SEP + tools[0].Length * (ICON_HEIGHT + ICON_SEP)));
 			addMouseListener(listener);
 			addMouseMotionListener(listener);
 		}

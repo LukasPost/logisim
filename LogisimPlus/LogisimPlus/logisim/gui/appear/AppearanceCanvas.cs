@@ -368,10 +368,10 @@ namespace logisim.gui.appear
 			}
 			int width = bounds.X + bounds.Width + BOUNDS_BUFFER;
 			int height = bounds.Y + bounds.Height + BOUNDS_BUFFER;
-			Dimension dim;
+			Size dim;
 			if (canvasPane == null)
 			{
-				dim = new Dimension(width, height);
+				dim = new Size(width, height);
 			}
 			else
 			{
@@ -409,7 +409,7 @@ namespace logisim.gui.appear
 			repaint();
 		}
 
-		public virtual Dimension PreferredScrollableViewportSize
+		public virtual Size PreferredScrollableViewportSize
 		{
 			get
 			{

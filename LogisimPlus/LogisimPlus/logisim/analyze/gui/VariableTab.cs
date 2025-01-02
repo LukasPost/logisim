@@ -210,7 +210,7 @@ namespace logisim.analyze.gui
 			field.getDocument().addDocumentListener(myListener);
 
 			JScrollPane listPane = new JScrollPane(list, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-			listPane.setPreferredSize(new Dimension(100, 100));
+			listPane.setPreferredSize(new Size(100, 100));
 
 			JPanel topPanel = new JPanel(new GridLayout(3, 1));
 			topPanel.add(remove);

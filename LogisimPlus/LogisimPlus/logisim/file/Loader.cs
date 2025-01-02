@@ -462,7 +462,7 @@ namespace logisim.file
 				textArea.setCaretPosition(0);
 
 				JScrollPane scrollPane = new JScrollPane(textArea);
-				scrollPane.setPreferredSize(new Dimension(350, 150));
+				scrollPane.setPreferredSize(new Size(350, 150));
 				JOptionPane.showMessageDialog(parent, scrollPane, Strings.get("fileErrorTitle"), JOptionPane.ERROR_MESSAGE);
 			}
 			else

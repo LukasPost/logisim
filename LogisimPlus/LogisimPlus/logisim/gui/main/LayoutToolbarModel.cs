@@ -97,9 +97,9 @@ namespace logisim.gui.main
 				}
 			}
 
-			public virtual Dimension getDimension(object orientation)
+			public virtual Size getSize(object orientation)
 			{
-				return new Dimension(24, 24);
+				return new Size(24, 24);
 			}
 		}
 

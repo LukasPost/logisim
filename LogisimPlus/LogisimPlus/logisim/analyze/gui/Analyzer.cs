@@ -190,9 +190,9 @@ namespace logisim.analyze.gui
 
 			Container contents = getContentPane();
 			JPanel vertStrut = new JPanel(null);
-			vertStrut.setPreferredSize(new Dimension(0, 300));
+			vertStrut.setPreferredSize(new Size(0, 300));
 			JPanel horzStrut = new JPanel(null);
-			horzStrut.setPreferredSize(new Dimension(450, 0));
+			horzStrut.setPreferredSize(new Size(450, 0));
 			JPanel buttonPanel = new JPanel();
 			buttonPanel.add(buildCircuit);
 			contents.add(vertStrut, BorderLayout.WEST);
@@ -243,7 +243,7 @@ namespace logisim.analyze.gui
 			public void componentResized(ComponentEvent @event)
 			{
 				int width = pane.getViewport().getWidth();
-				comp.setSize(new Dimension(width, comp.getHeight()));
+				comp.setSize(new Size(width, comp.getHeight()));
 			}
 
 			public void componentMoved(ComponentEvent arg0)

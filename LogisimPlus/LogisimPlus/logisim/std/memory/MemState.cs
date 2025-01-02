@@ -74,7 +74,7 @@ namespace logisim.std.memory
 			}
 			else
 			{
-				contents.setDimensions(addrBits, dataBits);
+				contents.setSizes(addrBits, dataBits);
 			}
 			if (addrBits <= 12)
 			{
