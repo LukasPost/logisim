@@ -22,7 +22,7 @@ namespace logisim.std.arith
 	using Port = logisim.instance.Port;
 	using StdAttr = logisim.instance.StdAttr;
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	public class Adder : InstanceFactory
 	{
@@ -36,29 +36,29 @@ namespace logisim.std.arith
 
 		public Adder() : base("Adder", Strings.getter("adderComponent"))
 		{
-			setAttributes(new Attribute[] {StdAttr.WIDTH}, new object[] {BitWidth.create(8)});
-			KeyConfigurator = new BitWidthConfigurator(StdAttr.WIDTH);
+			setAttributes(new Attribute[] {StdAttr.Width}, new object[] {BitWidth.create(8)});
+			KeyConfigurator = new BitWidthConfigurator(StdAttr.Width);
 			OffsetBounds = Bounds.create(-40, -20, 40, 40);
 			IconName = "adder.gif";
 
 			Port[] ps = new Port[5];
-			ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.WIDTH);
-			ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.WIDTH);
-			ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
+			ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.Width);
+			ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.Width);
+			ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.Width);
 			ps[C_IN] = new Port(-20, -20, Port.INPUT, 1);
 			ps[C_OUT] = new Port(-20, 20, Port.INPUT, 1);
-			ps[IN0].setToolTip(Strings.getter("adderInputTip"));
-			ps[IN1].setToolTip(Strings.getter("adderInputTip"));
-			ps[OUT].setToolTip(Strings.getter("adderOutputTip"));
-			ps[C_IN].setToolTip(Strings.getter("adderCarryInTip"));
-			ps[C_OUT].setToolTip(Strings.getter("adderCarryOutTip"));
+			ps[IN0].ToolTip = Strings.getter("adderInputTip");
+			ps[IN1].ToolTip = Strings.getter("adderInputTip");
+			ps[OUT].ToolTip = Strings.getter("adderOutputTip");
+			ps[C_IN].ToolTip = Strings.getter("adderCarryInTip");
+			ps[C_OUT].ToolTip = Strings.getter("adderCarryOutTip");
 			setPorts(ps);
 		}
 
 		public override void propagate(InstanceState state)
 		{
 			// get attributes
-			BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+			BitWidth dataWidth = state.getAttributeValue(StdAttr.Width);
 
 			// compute outputs
 			Value a = state.getPort(IN0);
@@ -74,10 +74,10 @@ namespace logisim.std.arith
 
 		public override void paintInstance(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			painter.drawBounds();
 
-			g.setColor(Color.GRAY);
+			g.setColor(Color.Gray);
 			painter.drawPort(IN0);
 			painter.drawPort(IN1);
 			painter.drawPort(OUT);
@@ -87,11 +87,11 @@ namespace logisim.std.arith
 			Location loc = painter.Location;
 			int x = loc.X;
 			int y = loc.Y;
-			GraphicsUtil.switchToWidth(g, 2);
-			g.setColor(Color.BLACK);
+			JGraphicsUtil.switchToWidth(g, 2);
+			g.setColor(Color.Black);
 			g.drawLine(x - 15, y, x - 5, y);
 			g.drawLine(x - 10, y - 5, x - 10, y + 5);
-			GraphicsUtil.switchToWidth(g, 1);
+			JGraphicsUtil.switchToWidth(g, 1);
 		}
 
 		internal static Value[] computeSum(BitWidth width, Value a, Value b, Value c_in)

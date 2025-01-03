@@ -185,7 +185,7 @@ namespace logisim.circuit
 
 		private CircuitWires.State wireData = null;
 		private Dictionary<Component, object> componentData = new Dictionary<Component, object>();
-		private IDictionary<Location, Value> values = new Dictionary<Location, Value>();
+		private Dictionary<Location, Value> values = new Dictionary<Location, Value>();
 		private SmallSet<Component> dirtyComponents = new SmallSet<Component>();
 		private SmallSet<Location> dirtyPoints = new SmallSet<Location>();
 		internal Dictionary<Location, SetData> causes = new Dictionary<Location, SetData>();

@@ -22,7 +22,7 @@ namespace logisim.gui.appear
 	{
 		private AppearanceCanvas canvas;
 		private EditHandler handler;
-		private IDictionary<LogisimMenuItem, bool> enabled;
+		private Dictionary<LogisimMenuItem, bool> enabled;
 
 		public AppearanceEditPopup(AppearanceCanvas canvas) : base(true)
 		{
@@ -85,7 +85,7 @@ namespace logisim.gui.appear
 			}
 			else if (item == LogisimMenuBar.RAISE_TOP)
 			{
-				handler.raiseTop();
+				handler.raHashSetop();
 			}
 			else if (item == LogisimMenuBar.LOWER_BOTTOM)
 			{

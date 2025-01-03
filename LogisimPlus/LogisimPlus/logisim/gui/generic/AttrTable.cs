@@ -500,13 +500,13 @@ namespace logisim.gui.generic
 			int titleSize = (long)Math.Round(baseFont.getSize() * 1.2f, MidpointRounding.AwayFromZero);
 			Font titleFont = baseFont.deriveFont((float) titleSize).deriveFont(Font.BOLD);
 			title.setFont(titleFont);
-			Color bgColor = new Color(240, 240, 240);
+			Color bgColor = Color.FromArgb(255, 240, 240, 240);
 			setBackground(bgColor);
 			table.setBackground(bgColor);
 			object renderer = table.getDefaultRenderer(typeof(string));
 			if (renderer is JComponent)
 			{
-				((JComponent) renderer).setBackground(Color.WHITE);
+				((JComponent) renderer).setBackground(Color.White);
 			}
 
 			JScrollPane tableScroll = new JScrollPane(table);

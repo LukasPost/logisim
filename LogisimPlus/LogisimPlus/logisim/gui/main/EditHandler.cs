@@ -55,7 +55,7 @@ namespace logisim.gui.main
 
 		public abstract void lower();
 
-		public abstract void raiseTop();
+		public abstract void raHashSetop();
 
 		public abstract void lowerBottom();
 

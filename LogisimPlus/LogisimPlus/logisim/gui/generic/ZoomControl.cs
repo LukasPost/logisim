@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -142,11 +143,11 @@ namespace logisim.gui.generic
 				}
 			}
 
-			protected internal override void paintComponent(Graphics g)
+			protected internal override void paintComponent(JGraphics g)
 			{
 				int width = getWidth();
 				int height = getHeight();
-				g.setColor(state ? Color.black : getBackground().darker());
+				g.setColor(state ? Color.Black : getBackground().darker());
 				int dim = (Math.Min(width, height) - 4) / 3 * 3 + 1;
 				int xoff = (width - dim) / 2;
 				int yoff = (height - dim) / 2;

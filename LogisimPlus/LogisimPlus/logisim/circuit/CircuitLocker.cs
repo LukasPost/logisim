@@ -76,10 +76,10 @@ namespace logisim.circuit
 			}
 		}
 
-		internal static IDictionary<Circuit, Lock> acquireLocks(CircuitTransaction xn, CircuitMutatorImpl mutator)
+		internal static Dictionary<Circuit, Lock> acquireLocks(CircuitTransaction xn, CircuitMutatorImpl mutator)
 		{
-			IDictionary<Circuit, int> requests = xn.AccessedCircuits;
-			IDictionary<Circuit, Lock> circuitLocks = new Dictionary<Circuit, Lock>();
+			Dictionary<Circuit, int> requests = xn.AccessedCircuits;
+			Dictionary<Circuit, Lock> circuitLocks = new Dictionary<Circuit, Lock>();
 			// Acquire locks in serial-number order to avoid deadlock
 			Circuit[] lockOrder = requests.Keys.ToArray();
 			Array.Sort(lockOrder, new CircuitComparator());
@@ -125,7 +125,7 @@ namespace logisim.circuit
 			return circuitLocks;
 		}
 
-		internal static void releaseLocks(IDictionary<Circuit, Lock> locks)
+		internal static void releaseLocks(Dictionary<Circuit, Lock> locks)
 		{
 			Thread curThread = Thread.CurrentThread;
 			foreach (KeyValuePair<Circuit, Lock> entry in locks.SetOfKeyValuePairs())

@@ -121,13 +121,13 @@ namespace logisim.util
 						if (row[j] != null)
 						{
 							Size dim = row[j].getPreferredSize();
-							if (dim.height > rowHeight)
+							if (dim.Height > rowHeight)
 							{
-								rowHeight = dim.height;
+								rowHeight = dim.Height;
 							}
-							if (dim.width > prefCol[j])
+							if (dim.Width > prefCol[j])
 							{
-								prefCol[j] = dim.width;
+								prefCol[j] = dim.Width;
 							}
 						}
 					}
@@ -174,7 +174,7 @@ namespace logisim.util
 			Size size = parent.getSize();
 
 			double y0;
-			int yRemaining = size.height - pref.height;
+			int yRemaining = size.Height - pref.height;
 			double rowWeightTotal = 0.0;
 			if (yRemaining != 0 && rowWeight != null)
 			{
@@ -192,7 +192,7 @@ namespace logisim.util
 				y0 = 0;
 			}
 
-			int x0 = (size.width - pref.width) / 2;
+			int x0 = (size.Width - pref.width) / 2;
 			if (x0 < 0)
 			{
 				x0 = 0;

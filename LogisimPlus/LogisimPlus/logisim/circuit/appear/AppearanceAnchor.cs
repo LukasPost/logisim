@@ -28,14 +28,14 @@ namespace logisim.circuit.appear
 
 	public class AppearanceAnchor : AppearanceElement
 	{
-		public static readonly Attribute<Direction> FACING = Attributes.forDirection("facing", Strings.getter("appearanceFacingAttr"));
+		public static readonly Attribute FACING = data.Attributes.forDirection("facing", Strings.getter("appearanceFacingAttr"));
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: static final java.util.List<logisim.data.Attribute<?>> ATTRIBUTES = logisim.util.UnmodifiableList.create(new logisim.data.Attribute<?>[] { FACING });
-		internal static readonly IList<Attribute<object>> ATTRIBUTES = UnmodifiableList.create(new Attribute<object>[] {FACING});
+		internal static readonly List<Attribute> ATTRIBUTES = UnmodifiableList.create(new Attribute[] {FACING});
 
 		private const int RADIUS = 3;
 		private const int INDICATOR_LENGTH = 8;
-		private static readonly Color SYMBOL_COLOR = new Color(0, 128, 0);
+		private static readonly Color SYMBOL_COLOR = Color.FromArgb(255, 0, 128, 0);
 
 		private Direction facing;
 
@@ -92,7 +92,7 @@ namespace logisim.circuit.appear
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
@@ -102,11 +102,11 @@ namespace logisim.circuit.appear
 
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
 // ORIGINAL LINE: @Override @SuppressWarnings("unchecked") public <V> V getValue(logisim.data.Attribute<V> attr)
-		public virtual V getValue<V>(Attribute<V> attr)
+		public virtual object getValue(Attribute attr)
 		{
 			if (attr == FACING)
 			{
-				return (V) facing;
+				return facing;
 			}
 			else
 			{
@@ -114,7 +114,7 @@ namespace logisim.circuit.appear
 			}
 		}
 
-		protected internal override void updateValue<T1>(Attribute<T1> attr, object value)
+		protected internal override void updateValue(Attribute attr, object value)
 		{
 			if (attr == FACING)
 			{
@@ -126,7 +126,7 @@ namespace logisim.circuit.appear
 			}
 		}
 
-		public override void paint(Graphics g, HandleGesture gesture)
+		public override void paint(JGraphics g, HandleGesture gesture)
 		{
 			Location location = Location;
 			int x = location.X;
@@ -170,7 +170,7 @@ namespace logisim.circuit.appear
 			}
 		}
 
-		public override IList<Handle> getHandles(HandleGesture gesture)
+		public override List<Handle> getHandles(HandleGesture gesture)
 		{
 			Location c = Location;
 			Location end = c.translate(facing, RADIUS + INDICATOR_LENGTH);

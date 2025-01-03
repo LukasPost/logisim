@@ -30,7 +30,7 @@ namespace logisim.std.memory
 	using MenuExtender = logisim.tools.MenuExtender;
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
 	using JoinedConfigurator = logisim.tools.key.JoinedConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using StringGetter = logisim.util.StringGetter;
 	using StringUtil = logisim.util.StringUtil;
 
@@ -43,8 +43,8 @@ namespace logisim.std.memory
 		// room in the box to include such long memory addresses with the current font
 		// size. And second, I'd alter the MemContents class's PAGE_SIZE_BITS constant
 		// to 14 so that its "page table" isn't quite so big.
-		public static readonly Attribute<BitWidth> ADDR_ATTR = Attributes.forBitWidth("addrWidth", Strings.getter("ramAddrWidthAttr"), 2, 24);
-		public static readonly Attribute<BitWidth> DATA_ATTR = Attributes.forBitWidth("dataWidth", Strings.getter("ramDataWidthAttr"));
+		public static readonly Attribute ADDR_ATTR = Attributes.forBitWidth("addrWidth", Strings.getter("ramAddrWidthAttr"), 2, 24);
+		public static readonly Attribute DATA_ATTR = Attributes.forBitWidth("dataWidth", Strings.getter("ramDataWidthAttr"));
 
 		// port-related constants
 		internal const int DATA = 0;
@@ -88,14 +88,14 @@ namespace logisim.std.memory
 			ps[DATA] = new Port(0, 0, Port.INOUT, DATA_ATTR);
 			ps[ADDR] = new Port(-140, 0, Port.INPUT, ADDR_ATTR);
 			ps[CS] = new Port(-90, 40, Port.INPUT, 1);
-			ps[DATA].setToolTip(Strings.getter("memDataTip"));
-			ps[ADDR].setToolTip(Strings.getter("memAddrTip"));
-			ps[CS].setToolTip(Strings.getter("memCSTip"));
+			ps[DATA].ToolTip = Strings.getter("memDataTip");
+			ps[ADDR].ToolTip = Strings.getter("memAddrTip");
+			ps[CS].ToolTip = Strings.getter("memCSTip");
 		}
 
 		public override void paintInstance(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			Bounds bds = painter.Bounds;
 
 			// draw boundary
@@ -151,13 +151,13 @@ namespace logisim.std.memory
 						label = StringUtil.format(Strings.get("ramByteLabel"), "" + bytes);
 					}
 				}
-				GraphicsUtil.drawCenteredText(g, label, bds.X + bds.Width / 2, bds.Y + bds.Height / 2);
+				JGraphicsUtil.drawCenteredText(g, label, bds.X + bds.Width / 2, bds.Y + bds.Height / 2);
 			}
 
 			// draw input and output ports
 			painter.drawPort(DATA, Strings.get("ramDataLabel"), Direction.West);
 			painter.drawPort(ADDR, Strings.get("ramAddrLabel"), Direction.East);
-			g.setColor(Color.GRAY);
+			g.setColor(Color.Gray);
 			painter.drawPort(CS, Strings.get("ramCSLabel"), Direction.South);
 		}
 

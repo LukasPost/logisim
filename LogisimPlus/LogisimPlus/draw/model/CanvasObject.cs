@@ -13,7 +13,8 @@ namespace draw.model
 {
 
 	using logisim.data;
-	using AttributeSet = logisim.data.AttributeSet;
+    using LogisimPlus.Java;
+    using AttributeSet = logisim.data.AttributeSet;
 	using Bounds = logisim.data.Bounds;
 	using Location = logisim.data.Location;
 
@@ -25,7 +26,7 @@ namespace draw.model
 
 		public abstract AttributeSet AttributeSet {get;}
 
-		public abstract V getValue<V>(Attribute<V> attr);
+		public abstract object getValue(Attribute attr);
 
 		public abstract Bounds Bounds {get;}
 
@@ -37,7 +38,7 @@ namespace draw.model
 
 		public abstract bool overlaps(CanvasObject other);
 
-		public abstract IList<Handle> getHandles(HandleGesture gesture);
+		public abstract List<Handle> getHandles(HandleGesture gesture);
 
 		public abstract bool canRemove();
 
@@ -47,7 +48,7 @@ namespace draw.model
 
 		public abstract Handle canDeleteHandle(Location desired);
 
-		public abstract void paint(Graphics g, HandleGesture gesture);
+		public abstract void paint(JGraphics g, HandleGesture gesture);
 
 		Handle moveHandle(HandleGesture gesture);
 
@@ -57,7 +58,7 @@ namespace draw.model
 
 		void translate(int dx, int dy);
 
-		void setValue<V>(Attribute<V> attr, V value);
+		void setValue(Attribute attr, object value);
 	}
 
 }

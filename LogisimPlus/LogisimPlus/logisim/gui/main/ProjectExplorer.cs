@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System.Collections.Generic;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -50,7 +51,7 @@ namespace logisim.gui.main
 
 		private const string DIRTY_MARKER = "*";
 
-		internal static readonly Color MAGNIFYING_INTERIOR = new Color(200, 200, 255, 64);
+		internal static readonly Color MAGNIFYING_INTERIOR = Color.FromArgb(255, 200, 200, 255, 64);
 
 		public class Event
 		{
@@ -122,7 +123,7 @@ namespace logisim.gui.main
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private java.util.List<?> getChildren(Object parent)
-			internal virtual IList<object> getChildren(object parent)
+			internal virtual List<object> getChildren(object parent)
 			{
 				if (parent == outerInstance.proj.LogisimFile)
 				{
@@ -177,7 +178,7 @@ namespace logisim.gui.main
 				fireNodesChanged(Collections.singletonList(e));
 			}
 
-			internal virtual void fireNodesChanged(IList<TreeModelEvent> events)
+			internal virtual void fireNodesChanged(List<TreeModelEvent> events)
 			{
 				foreach (TreeModelEvent e in events)
 				{
@@ -237,7 +238,7 @@ namespace logisim.gui.main
 					TreePath path = new TreePath(stack.ToArray());
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: java.util.List<? extends logisim.tools.Tool> toolList = value.getTools();
-					IList<Tool> toolList = value.Tools;
+					List<Tool> toolList = value.Tools;
 					int[] indices = new int[toolList.Count];
 					object[] tools = new object[indices.Length];
 					for (int i = 0; i < indices.Length; i++)
@@ -292,18 +293,18 @@ namespace logisim.gui.main
 				}
 			}
 
-			public virtual void paintIcon(java.awt.Component c, Graphics g, int x, int y)
+			public virtual void paintIcon(JComponent c, JGraphics g, int x, int y)
 			{
 				// draw halo if appropriate
 				if (tool == outerInstance.haloedTool && AppPreferences.ATTRIBUTE_HALO.Boolean)
 				{
 					g.setColor(Canvas.HALO_COLOR);
 					g.fillRoundRect(x, y, 20, 20, 10, 10);
-					g.setColor(Color.BLACK);
+					g.setColor(Color.Black);
 				}
 
 				// draw tool icon
-				Graphics gIcon = g.create();
+				JGraphics gIcon = g.create();
 				ComponentDrawContext context = new ComponentDrawContext(outerInstance, null, null, g, gIcon);
 				tool.paintIcon(context, x, y);
 				gIcon.dispose();
@@ -317,7 +318,7 @@ namespace logisim.gui.main
 					int[] yp = new int[] {ty + 1, y + 20, y + 18, ty - 1};
 					g.setColor(MAGNIFYING_INTERIOR);
 					g.fillOval(x + 5, y + 5, 10, 10);
-					g.setColor(Color.BLACK);
+					g.setColor(Color.Black);
 					g.drawOval(x + 5, y + 5, 10, 10);
 					g.fillPolygon(xp, yp, xp.Length);
 				}

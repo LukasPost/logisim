@@ -18,8 +18,9 @@ namespace logisim.gui.opts
 	using ToolbarListener = logisim.file.ToolbarData.ToolbarListener;
 	using AppPreferences = logisim.prefs.AppPreferences;
 	using Tool = logisim.tools.Tool;
+    using LogisimPlus.Java;
 
-	internal class ToolbarList : JList
+    internal class ToolbarList : JList
 	{
 		private class ToolIcon : Icon
 		{
@@ -30,9 +31,9 @@ namespace logisim.gui.opts
 				this.tool = tool;
 			}
 
-			public virtual void paintIcon(Component comp, Graphics g, int x, int y)
+			public virtual void paintIcon(JComponent comp, JGraphics g, int x, int y)
 			{
-				Graphics gNew = g.create();
+				JGraphics gNew = g.create();
 				tool.paintIcon(new ComponentDrawContext(comp, null, null, g, gNew), x + 2, y + 2);
 				gNew.dispose();
 			}

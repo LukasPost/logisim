@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 using System.Collections.Generic;
 
@@ -17,7 +18,7 @@ namespace logisim.std.gates
 	using Location = logisim.data.Location;
 	using Value = logisim.data.Value;
 	using InstancePainter = logisim.instance.InstancePainter;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	public class PainterShaped
 	{
@@ -73,11 +74,11 @@ namespace logisim.std.gates
 
 		internal static void paintAnd(InstancePainter painter, int width, int height)
 		{
-			Graphics g = painter.Graphics;
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphics g = painter.Graphics;
+			JGraphicsUtil.switchToWidth(g, 2);
 			int[] xp = new int[] {-width / 2, -width + 1, -width + 1, -width / 2};
 			int[] yp = new int[] {-width / 2, -width / 2, width / 2, width / 2};
-			GraphicsUtil.drawCenteredArc(g, -width / 2, 0, width / 2, -90, 180);
+			JGraphicsUtil.drawCenteredArc(g, -width / 2, 0, width / 2, -90, 180);
 
 			g.drawPolyline(xp, yp, 4);
 			if (height > width)
@@ -88,14 +89,14 @@ namespace logisim.std.gates
 
 		internal static void paintOr(InstancePainter painter, int width, int height)
 		{
-			Graphics g = painter.Graphics;
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphics g = painter.Graphics;
+			JGraphicsUtil.switchToWidth(g, 2);
 			/*
 			 * The following, used previous to version 2.5.1, didn't use GeneralPath g.setColor(Color.LIGHT_GRAY); if (width
-			 * < 40) { GraphicsUtil.drawCenteredArc(g, -30, -21, 36, -90, 53); GraphicsUtil.drawCenteredArc(g, -30, 21, 36,
-			 * 90, -53); } else if (width < 60) { GraphicsUtil.drawCenteredArc(g, -50, -37, 62, -90, 53);
-			 * GraphicsUtil.drawCenteredArc(g, -50, 37, 62, 90, -53); } else { GraphicsUtil.drawCenteredArc(g, -70, -50, 85,
-			 * -90, 53); GraphicsUtil.drawCenteredArc(g, -70, 50, 85, 90, -53); } paintShield(g, -width, 0, width, height);
+			 * < 40) { JGraphicsUtil.drawCenteredArc(g, -30, -21, 36, -90, 53); JGraphicsUtil.drawCenteredArc(g, -30, 21, 36,
+			 * 90, -53); } else if (width < 60) { JGraphicsUtil.drawCenteredArc(g, -50, -37, 62, -90, 53);
+			 * JGraphicsUtil.drawCenteredArc(g, -50, 37, 62, 90, -53); } else { JGraphicsUtil.drawCenteredArc(g, -70, -50, 85,
+			 * -90, 53); JGraphicsUtil.drawCenteredArc(g, -70, 50, 85, 90, -53); } paintShield(g, -width, 0, width, height);
 			 */
 
 			GeneralPath path;
@@ -111,7 +112,7 @@ namespace logisim.std.gates
 			{
 				path = PATH_WIDE;
 			}
-			((Graphics2D) g).draw(path);
+			g.draw(path);
 			if (height > width)
 			{
 				paintShield(g, 0, width, height);
@@ -120,11 +121,11 @@ namespace logisim.std.gates
 
 		internal static void paintNot(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphics g = painter.Graphics;
+			JGraphicsUtil.switchToWidth(g, 2);
 			if (painter.getAttributeValue(NotGate.ATTR_SIZE) == NotGate.SIZE_NARROW)
 			{
-				GraphicsUtil.switchToWidth(g, 2);
+				JGraphicsUtil.switchToWidth(g, 2);
 				int[] xp = new int[4];
 				int[] yp = new int[4];
 				xp[0] = -6;
@@ -157,24 +158,24 @@ namespace logisim.std.gates
 
 		internal static void paintXor(InstancePainter painter, int width, int height)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			paintOr(painter, width - 10, width - 10);
 			paintShield(g, -10, width - 10, height);
 		}
 
-		private static void paintShield(Graphics g, int xlate, int width, int height)
+		private static void paintShield(JGraphics g, int xlate, int width, int height)
 		{
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphicsUtil.switchToWidth(g, 2);
 			g.translate(xlate, 0);
-			((Graphics2D) g).draw(computeShield(width, height));
+			g.draw(computeShield(width, height));
 			g.translate(-xlate, 0);
 
 			/*
 			 * The following, used previous to version 2.5.1, didn't use GeneralPath if (width < 40) {
-			 * GraphicsUtil.drawCenteredArc(g, x - 26, y, 30, -30, 60); } else if (width < 60) {
-			 * GraphicsUtil.drawCenteredArc(g, x - 43, y, 50, -30, 60); } else { GraphicsUtil.drawCenteredArc(g, x - 60, y,
-			 * 70, -30, 60); } if (height > width) { // we need to draw the shield GraphicsUtil.drawCenteredArc(g, x - dx, y
-			 * - (width + extra) / 2, extra, -30, 60); GraphicsUtil.drawCenteredArc(g, x - dx, y + (width + extra) / 2,
+			 * JGraphicsUtil.drawCenteredArc(g, x - 26, y, 30, -30, 60); } else if (width < 60) {
+			 * JGraphicsUtil.drawCenteredArc(g, x - 43, y, 50, -30, 60); } else { JGraphicsUtil.drawCenteredArc(g, x - 60, y,
+			 * 70, -30, 60); } if (height > width) { // we need to draw the shield JGraphicsUtil.drawCenteredArc(g, x - dx, y
+			 * - (width + extra) / 2, extra, -30, 60); JGraphicsUtil.drawCenteredArc(g, x - dx, y + (width + extra) / 2,
 			 * extra, -30, 60); }
 			 */
 		}
@@ -239,9 +240,9 @@ namespace logisim.std.gates
 			}
 			else
 			{
-				Graphics g = painter.Graphics;
+				JGraphics g = painter.Graphics;
 				Color baseColor = g.getColor();
-				GraphicsUtil.switchToWidth(g, 3);
+				JGraphicsUtil.switchToWidth(g, 3);
 				for (int i = 0; i < inputs; i++)
 				{
 					Location offs = factory.getInputOffset(attrs, i);
@@ -266,7 +267,7 @@ namespace logisim.std.gates
 						Location cent = src.translate(facing, lengths[i] + 5);
 						g.setColor(baseColor);
 						painter.drawDongle(cent.X, cent.Y);
-						GraphicsUtil.switchToWidth(g, 3);
+						JGraphicsUtil.switchToWidth(g, 3);
 					}
 				}
 			}

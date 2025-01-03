@@ -9,13 +9,13 @@
 
 namespace logisim.analyze.gui
 {
-
-	using Entry = logisim.analyze.model.Entry;
+    using LogisimPlus.Java;
+    using Entry = logisim.analyze.model.Entry;
 	using TruthTable = logisim.analyze.model.TruthTable;
 
 	internal interface TruthTablePanel
 	{
-		public static Color ERROR_COLOR = new Color(255, 128, 128);
+		public static Color ERROR_COLOR = Color.FromArgb(255, 255, 128, 128);
 
 		TruthTable TruthTable {get;}
 

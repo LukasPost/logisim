@@ -9,8 +9,8 @@
 
 namespace logisim.circuit
 {
-
-	using Bounds = logisim.data.Bounds;
+    using LogisimPlus.Java;
+    using Bounds = logisim.data.Bounds;
 	using Canvas = logisim.gui.main.Canvas;
 	using InstancePainter = logisim.instance.InstancePainter;
 	using InstancePoker = logisim.instance.InstancePoker;
@@ -19,8 +19,8 @@ namespace logisim.circuit
 	public class SubcircuitPoker : InstancePoker
 	{
 
-		private static readonly Color MAGNIFYING_INTERIOR = new Color(200, 200, 255, 64);
-		private static readonly Color MAGNIFYING_INTERIOR_DOWN = new Color(128, 128, 255, 192);
+		private static readonly Color MAGNIFYING_INTERIOR = Color.FromArgb(255, 200, 200, 255, 64);
+		private static readonly Color MAGNIFYING_INTERIOR_DOWN = Color.FromArgb(255, 128, 128, 255, 192);
 
 		private bool mouseDown;
 
@@ -44,7 +44,7 @@ namespace logisim.circuit
 				int ty = cy + 3;
 				int[] xp = new int[] {tx - 1, cx + 8, cx + 10, tx + 1};
 				int[] yp = new int[] {ty + 1, cy + 10, cy + 8, ty - 1};
-				Graphics g = painter.Graphics;
+				JGraphics g = painter.Graphics;
 				if (mouseDown)
 				{
 					g.setColor(MAGNIFYING_INTERIOR_DOWN);
@@ -54,7 +54,7 @@ namespace logisim.circuit
 					g.setColor(MAGNIFYING_INTERIOR);
 				}
 				g.fillOval(cx - 5, cy - 5, 10, 10);
-				g.setColor(Color.BLACK);
+				g.setColor(Color.Black);
 				g.drawOval(cx - 5, cy - 5, 10, 10);
 				g.fillPolygon(xp, yp, xp.Length);
 			}

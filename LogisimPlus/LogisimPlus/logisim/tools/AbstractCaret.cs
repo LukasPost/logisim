@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System.Collections.Generic;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -17,7 +18,7 @@ namespace logisim.tools
 	public class AbstractCaret : Caret
 	{
 		private List<CaretListener> listeners = new List<CaretListener>();
-		private IList<CaretListener> listenersView;
+		private List<CaretListener> listenersView;
 		private Bounds bds = Bounds.EMPTY_BOUNDS;
 
 		public AbstractCaret()
@@ -36,7 +37,7 @@ namespace logisim.tools
 			listeners.Remove(e);
 		}
 
-		protected internal virtual IList<CaretListener> CaretListeners
+		protected internal virtual List<CaretListener> CaretListeners
 		{
 			get
 			{
@@ -53,7 +54,7 @@ namespace logisim.tools
 			}
 		}
 
-		// query/Graphics methods
+		// query/JGraphics methods
 		public virtual string Text
 		{
 			get
@@ -62,12 +63,12 @@ namespace logisim.tools
 			}
 		}
 
-		public virtual Bounds getBounds(Graphics g)
+		public virtual Bounds getBounds(JGraphics g)
 		{
 			return bds;
 		}
 
-		public virtual void draw(Graphics g)
+		public virtual void draw(JGraphics g)
 		{
 		}
 

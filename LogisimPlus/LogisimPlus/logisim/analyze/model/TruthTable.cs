@@ -160,7 +160,7 @@ namespace logisim.analyze.model
 		}
 
 		private MyListener myListener;
-		private IList<TruthTableListener> listeners = new List<TruthTableListener>();
+		private List<TruthTableListener> listeners = new List<TruthTableListener>();
 		private AnalyzerModel model;
 		private Dictionary<string, Entry[]> outputColumns = new Dictionary<string, Entry[]>();
 

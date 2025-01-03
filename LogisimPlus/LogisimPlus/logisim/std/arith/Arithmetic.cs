@@ -31,7 +31,7 @@ namespace logisim.std.arith
 			new FactoryDescription("BitFinder", Strings.getter("bitFinderComponent"), "bitfindr.gif", "BitFinder")
 		};
 
-		private IList<Tool> tools = null;
+		private List<Tool> tools = null;
 
 		public Arithmetic()
 		{
@@ -53,7 +53,7 @@ namespace logisim.std.arith
 			}
 		}
 
-		public override IList<Tool> Tools
+		public override List<Tool> Tools
 		{
 			get
 			{

@@ -34,7 +34,7 @@ namespace draw.shapes
 		private double[] lens;
 		private Bounds bounds;
 
-		public Poly(bool closed, IList<Location> locations)
+		public Poly(bool closed, List<Location> locations)
 		{
 			Handle[] hs = new Handle[locations.Count];
 			int i = -1;
@@ -112,7 +112,7 @@ namespace draw.shapes
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
@@ -229,7 +229,7 @@ namespace draw.shapes
 			}
 		}
 
-		public override IList<Handle> getHandles(HandleGesture gesture)
+		public override List<Handle> getHandles(HandleGesture gesture)
 		{
 			Handle[] hs = handles;
 			if (gesture == null)
@@ -303,7 +303,7 @@ namespace draw.shapes
 
 		public override Handle moveHandle(HandleGesture gesture)
 		{
-			IList<Handle> hs = getHandles(gesture);
+			List<Handle> hs = getHandles(gesture);
 			Handle[] @is = new Handle[hs.Count];
 			Handle ret = null;
 			int i = -1;
@@ -435,9 +435,9 @@ namespace draw.shapes
 			return previous;
 		}
 
-		public override void paint(Graphics g, HandleGesture gesture)
+		public override void paint(JGraphics g, HandleGesture gesture)
 		{
-			IList<Handle> hs = getHandles(gesture);
+			List<Handle> hs = getHandles(gesture);
 			int[] xs = new int[hs.Count];
 			int[] ys = new int[hs.Count];
 			int i = -1;

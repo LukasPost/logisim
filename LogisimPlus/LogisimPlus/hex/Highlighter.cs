@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System.Collections.Generic;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -118,7 +119,7 @@ namespace hex
 			}
 		}
 
-		internal virtual void paint(Graphics g, long start, long end)
+		internal virtual void paint(JGraphics g, long start, long end)
 		{
 			lock (this)
 			{

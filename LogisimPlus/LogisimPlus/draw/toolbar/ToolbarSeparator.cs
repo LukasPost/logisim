@@ -7,6 +7,8 @@
 /* Copyright (c) 2010, Carl Burch. License information is located in the
  * logisim.Main source code and at www.cburch.com/logisim/. */
 
+using LogisimPlus.Java;
+
 namespace draw.toolbar
 {
 
@@ -27,14 +29,14 @@ namespace draw.toolbar
 			}
 		}
 
-		public virtual void paintIcon(Component destination, Graphics g)
+		public virtual void paintIcon(JComponent destination, JGraphics g)
 		{
 			Size dim = destination.getSize();
-			g.setColor(Color.GRAY);
+			g.setColor(Color.Gray);
 			int x = 0;
 			int y = 0;
-			int w = dim.width;
-			int h = dim.height;
+			int w = dim.Width;
+			int h = dim.Height;
 			if (h >= w)
 			{ // separator is a vertical line in horizontal toolbar
 				h -= 8;

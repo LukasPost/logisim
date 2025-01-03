@@ -23,12 +23,12 @@ namespace logisim.gui.opts
 		{
 		}
 
-		public static Action setAttribute<V>(AttributeSet attrs, Attribute<V> attr, V value)
+		public static Action setAttribute(AttributeSet attrs, Attribute attr, object value)
 		{
 			V oldValue = attrs.getValue(attr);
 			if (!oldValue.Equals(value))
 			{
-				return new SetAction<>(attrs, attr, value);
+				return new SetAction(attrs, attr, value);
 			}
 			else
 			{
@@ -46,14 +46,14 @@ namespace logisim.gui.opts
 			return new RemoveMapping(mm, mods);
 		}
 
-		private class SetAction<E> : Action
+		private class SetAction : Action
 		{
 			internal AttributeSet attrs;
-			internal Attribute<E> attr;
-			internal E newval;
-			internal E oldval;
+			internal Attribute attr;
+			internal object newval;
+			internal object oldval;
 
-			internal SetAction(AttributeSet attrs, Attribute<E> attr, E value)
+			internal SetAction(AttributeSet attrs, Attribute attr, object value)
 			{
 				this.attrs = attrs;
 				this.attr = attr;

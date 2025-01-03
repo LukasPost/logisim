@@ -38,7 +38,7 @@ namespace logisim.proj
 			}
 		}
 
-		public virtual IList<Action> Actions
+		public virtual List<Action> Actions
 		{
 			get
 			{

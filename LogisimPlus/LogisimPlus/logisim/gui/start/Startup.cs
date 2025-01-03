@@ -126,7 +126,7 @@ namespace logisim.gui.start
 			this.showSplash = !isTty;
 		}
 
-		internal virtual IList<File> FilesToOpen
+		internal virtual List<File> FilesToOpen
 		{
 			get
 			{
@@ -150,7 +150,7 @@ namespace logisim.gui.start
 			}
 		}
 
-		internal virtual IDictionary<File, File> Substitutions
+		internal virtual Dictionary<File, File> Substitutions
 		{
 			get
 			{
@@ -314,7 +314,7 @@ namespace logisim.gui.start
 
 		public static Startup parseArgs(string[] args)
 		{
-			// see whether we'll be using any graphics
+			// see whether we'll be using any JGraphics
 			bool isTty = false;
 			bool isClearPreferences = false;
 			for (int i = 0; i < args.Length; i++)
@@ -337,8 +337,8 @@ namespace logisim.gui.start
 
 				LocaleManager.ReplaceAccents = false;
 
-				// Initialize graphics acceleration if appropriate
-				AppPreferences.handleGraphicsAcceleration();
+				// Initialize JGraphics acceleration if appropriate
+				AppPreferences.handleJGraphicsAcceleration();
 			}
 
 			Startup ret = new Startup(isTty);

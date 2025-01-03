@@ -50,14 +50,13 @@ namespace logisim.gui.main
 	using Library = logisim.tools.Library;
 	using Tool = logisim.tools.Tool;
 	using ToolTipMaker = logisim.tools.ToolTipMaker;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using LocaleListener = logisim.util.LocaleListener;
 	using LocaleManager = logisim.util.LocaleManager;
 	using StringGetter = logisim.util.StringGetter;
+    using LogisimPlus.Java;
 
-
-
-	public class Canvas : JPanel, LocaleListener, CanvasPaneContents
+    public class Canvas : JPanel, LocaleListener, CanvasPaneContents
 	{
 		private bool instanceFieldsInitialized = false;
 
@@ -68,7 +67,7 @@ namespace logisim.gui.main
 			myProjectListener = new MyProjectListener(this);
 		}
 
-		internal static readonly Color HALO_COLOR = new Color(192, 255, 255);
+		internal static readonly Color HALO_COLOR = Color.FromArgb(255, 192, 255, 255);
 
 		private const int BOUNDS_BUFFER = 70;
 		// pixels shown in canvas beyond outermost boundaries
@@ -76,9 +75,9 @@ namespace logisim.gui.main
 		// don't bother to update the size if it hasn't changed more than this
 		internal static readonly double SQRT_2 = Math.Sqrt(2.0);
 		private static readonly int BUTTONS_MASK = InputEvent.BUTTON1_DOWN_MASK | InputEvent.BUTTON2_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK;
-		private static readonly Color DEFAULT_ERROR_COLOR = new Color(192, 0, 0);
+		private static readonly Color DEFAULT_ERROR_COLOR = Color.FromArgb(255, 192, 0, 0);
 
-		private static readonly Color TICK_RATE_COLOR = new Color(0, 0, 92, 92);
+		private static readonly Color TICK_RATE_COLOR = Color.FromArgb(255, 0, 0, 92, 92);
 		private static readonly Font TICK_RATE_FONT = new Font("serif", Font.BOLD, 12);
 
 		private class MyListener : MouseInputListener, KeyListener, PopupMenuListener, PropertyChangeListener
@@ -114,7 +113,7 @@ namespace logisim.gui.main
 				Tool tool = getToolFor(e);
 				if (tool != null)
 				{
-					tool.mouseMoved(outerInstance, getGraphics(), e);
+					tool.mouseMoved(outerInstance, getJGraphics(), e);
 				}
 			}
 
@@ -122,7 +121,7 @@ namespace logisim.gui.main
 			{
 				if (outerInstance.drag_tool != null)
 				{
-					outerInstance.drag_tool.mouseDragged(outerInstance, getGraphics(), e);
+					outerInstance.drag_tool.mouseDragged(outerInstance, getJGraphics(), e);
 				}
 			}
 
@@ -130,14 +129,14 @@ namespace logisim.gui.main
 			{
 				if (outerInstance.drag_tool != null)
 				{
-					outerInstance.drag_tool.mouseEntered(outerInstance, getGraphics(), e);
+					outerInstance.drag_tool.mouseEntered(outerInstance, getJGraphics(), e);
 				}
 				else
 				{
 					Tool tool = getToolFor(e);
 					if (tool != null)
 					{
-						tool.mouseEntered(outerInstance, getGraphics(), e);
+						tool.mouseEntered(outerInstance, getJGraphics(), e);
 					}
 				}
 			}
@@ -146,14 +145,14 @@ namespace logisim.gui.main
 			{
 				if (outerInstance.drag_tool != null)
 				{
-					outerInstance.drag_tool.mouseExited(outerInstance, getGraphics(), e);
+					outerInstance.drag_tool.mouseExited(outerInstance, getJGraphics(), e);
 				}
 				else
 				{
 					Tool tool = getToolFor(e);
 					if (tool != null)
 					{
-						tool.mouseExited(outerInstance, getGraphics(), e);
+						tool.mouseExited(outerInstance, getJGraphics(), e);
 					}
 				}
 			}
@@ -166,7 +165,7 @@ namespace logisim.gui.main
 				outerInstance.drag_tool = getToolFor(e);
 				if (outerInstance.drag_tool != null)
 				{
-					outerInstance.drag_tool.mousePressed(outerInstance, getGraphics(), e);
+					outerInstance.drag_tool.mousePressed(outerInstance, getJGraphics(), e);
 				}
 
 				outerInstance.completeAction();
@@ -176,14 +175,14 @@ namespace logisim.gui.main
 			{
 				if (outerInstance.drag_tool != null)
 				{
-					outerInstance.drag_tool.mouseReleased(outerInstance, getGraphics(), e);
+					outerInstance.drag_tool.mouseReleased(outerInstance, getJGraphics(), e);
 					outerInstance.drag_tool = null;
 				}
 
 				Tool tool = outerInstance.proj.Tool;
 				if (tool != null)
 				{
-					tool.mouseMoved(outerInstance, getGraphics(), e);
+					tool.mouseMoved(outerInstance, getJGraphics(), e);
 				}
 
 				outerInstance.completeAction();
@@ -393,7 +392,7 @@ namespace logisim.gui.main
 				}
 			}
 
-			internal virtual Tool findTool<T1>(IList<T1> opts) where T1 : logisim.tools.Tool
+			internal virtual Tool findTool<T1>(List<T1> opts) where T1 : logisim.tools.Tool
 			{
 				Tool ret = null;
 				foreach (Tool o in opts)
@@ -463,7 +462,7 @@ namespace logisim.gui.main
 			{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?> attr = e.getAttribute();
-				Attribute<object> attr = e.Attribute;
+				Attribute attr = e.Attribute;
 				if (attr == Options.ATTR_GATE_UNDEFINED)
 				{
 					CircuitState circState = outerInstance.CircuitState;
@@ -590,7 +589,7 @@ namespace logisim.gui.main
 				}
 			}
 
-			public override void paintChildren(Graphics g)
+			public override void paintChildren(JGraphics g)
 			{
 				base.paintChildren(g);
 				paintContents(g);
@@ -604,7 +603,7 @@ namespace logisim.gui.main
 				}
 			}
 
-			internal virtual void paintContents(Graphics g)
+			internal virtual void paintContents(JGraphics g)
 			{
 				/*
 				 * TODO this is for the SimulatorPrototype class int speed = proj.getSimulator().getSimulationSpeed();
@@ -646,38 +645,38 @@ namespace logisim.gui.main
 					paintString(g, widthMessage);
 				}
 
-				GraphicsUtil.switchToWidth(g, 3);
+				JGraphicsUtil.switchToWidth(g, 3);
 				if (isNorth)
 				{
-					GraphicsUtil.drawArrow(g, sz.width / 2, 20, sz.width / 2, 2, 10, 30);
+					JGraphicsUtil.drawArrow(g, sz.width / 2, 20, sz.width / 2, 2, 10, 30);
 				}
 				if (isSouth)
 				{
-					GraphicsUtil.drawArrow(g, sz.width / 2, sz.height - 20, sz.width / 2, sz.height - 2, 10, 30);
+					JGraphicsUtil.drawArrow(g, sz.width / 2, sz.height - 20, sz.width / 2, sz.height - 2, 10, 30);
 				}
 				if (isEast)
 				{
-					GraphicsUtil.drawArrow(g, sz.width - 20, sz.height / 2, sz.width - 2, sz.height / 2, 10, 30);
+					JGraphicsUtil.drawArrow(g, sz.width - 20, sz.height / 2, sz.width - 2, sz.height / 2, 10, 30);
 				}
 				if (isWest)
 				{
-					GraphicsUtil.drawArrow(g, 20, sz.height / 2, 2, sz.height / 2, 10, 30);
+					JGraphicsUtil.drawArrow(g, 20, sz.height / 2, 2, sz.height / 2, 10, 30);
 				}
 				if (isNortheast)
 				{
-					GraphicsUtil.drawArrow(g, sz.width - 14, 14, sz.width - 2, 2, 10, 30);
+					JGraphicsUtil.drawArrow(g, sz.width - 14, 14, sz.width - 2, 2, 10, 30);
 				}
 				if (isNorthwest)
 				{
-					GraphicsUtil.drawArrow(g, 14, 14, 2, 2, 10, 30);
+					JGraphicsUtil.drawArrow(g, 14, 14, 2, 2, 10, 30);
 				}
 				if (isSoutheast)
 				{
-					GraphicsUtil.drawArrow(g, sz.width - 14, sz.height - 14, sz.width - 2, sz.height - 2, 10, 30);
+					JGraphicsUtil.drawArrow(g, sz.width - 14, sz.height - 14, sz.width - 2, sz.height - 2, 10, 30);
 				}
 				if (isSouthwest)
 				{
-					GraphicsUtil.drawArrow(g, 14, sz.height - 14, 2, sz.height - 2, 10, 30);
+					JGraphicsUtil.drawArrow(g, 14, sz.height - 14, 2, sz.height - 2, 10, 30);
 				}
 
 				if (AppPreferences.SHOW_TICK_RATE.Boolean)
@@ -694,12 +693,12 @@ namespace logisim.gui.main
 					}
 				}
 
-				GraphicsUtil.switchToWidth(g, 1);
-				g.setColor(Color.BLACK);
+				JGraphicsUtil.switchToWidth(g, 1);
+				g.setColor(Color.Black);
 
 			}
 
-			internal virtual void paintString(Graphics g, string msg)
+			internal virtual void paintString(JGraphics g, string msg)
 			{
 				Font old = g.getFont();
 				g.setFont(old.deriveFont(Font.BOLD).deriveFont(18.0f));
@@ -748,7 +747,7 @@ namespace logisim.gui.main
 			this.canvasPane = null;
 			this.tickCounter = new TickCounter();
 
-			setBackground(Color.white);
+			setBackground(Color.White);
 			addMouseListener(myListener);
 			addMouseMotionListener(myListener);
 			addKeyListener(myListener);
@@ -873,7 +872,7 @@ namespace logisim.gui.main
 		}
 
 		//
-		// graphics methods
+		// JGraphics methods
 		//
 		internal virtual double ZoomFactor
 		{
@@ -943,12 +942,12 @@ namespace logisim.gui.main
 			if (!immediate)
 			{
 				Bounds old = oldPreferredSize;
-				if (old != null && Math.Abs(old.Width - dim.width) < THRESH_SIZE_UPDATE && Math.Abs(old.Height - dim.height) < THRESH_SIZE_UPDATE)
+				if (old != null && Math.Abs(old.Width - dim.Width) < THRESH_SIZE_UPDATE && Math.Abs(old.Height - dim.Height) < THRESH_SIZE_UPDATE)
 				{
 					return;
 				}
 			}
-			oldPreferredSize = Bounds.create(0, 0, dim.width, dim.height);
+			oldPreferredSize = Bounds.create(0, 0, dim.Width, dim.Height);
 			setPreferredSize(dim);
 			revalidate();
 		}
@@ -970,7 +969,7 @@ namespace logisim.gui.main
 			}
 		}
 
-		public override void paintComponent(Graphics g)
+		public override void paintComponent(JGraphics g)
 		{
 			inPaint = true;
 			try
@@ -1010,7 +1009,7 @@ namespace logisim.gui.main
 
 		private void computeViewportContents()
 		{
-			ISet<WidthIncompatibilityData> exceptions = proj.CurrentCircuit.WidthIncompatibilityData;
+			HashSet<WidthIncompatibilityData> exceptions = proj.CurrentCircuit.WidthIncompatibilityData;
 			if (exceptions == null || exceptions.Count == 0)
 			{
 				viewport.WidthMessage = null;
@@ -1120,7 +1119,7 @@ namespace logisim.gui.main
 			}
 			else
 			{
-				this.repaint(r.x, r.y, r.width, r.height);
+				this.repaint(r.X, r.Y, r.Width, r.Height);
 			}
 		}
 

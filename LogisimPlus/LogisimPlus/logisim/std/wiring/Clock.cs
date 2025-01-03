@@ -30,14 +30,15 @@ namespace logisim.std.wiring
 	using InstanceState = logisim.instance.InstanceState;
 	using Port = logisim.instance.Port;
 	using StdAttr = logisim.instance.StdAttr;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using Icons = logisim.util.Icons;
+    using LogisimPlus.Java;
 
-	public class Clock : InstanceFactory
+    public class Clock : InstanceFactory
 	{
-		public static readonly Attribute<int> ATTR_HIGH = new DurationAttribute("highDuration", Strings.getter("clockHighAttr"), 1, int.MaxValue);
+		public static readonly Attribute ATTR_HIGH = new DurationAttribute("highDuration", Strings.getter("clockHighAttr"), 1, int.MaxValue);
 
-		public static readonly Attribute<int> ATTR_LOW = new DurationAttribute("lowDuration", Strings.getter("clockLowAttr"), 1, int.MaxValue);
+		public static readonly Attribute ATTR_LOW = new DurationAttribute("lowDuration", Strings.getter("clockLowAttr"), 1, int.MaxValue);
 
 		public static readonly Clock FACTORY = new Clock();
 
@@ -48,16 +49,9 @@ namespace logisim.std.wiring
 			internal Value sending = Value.FALSE;
 			internal int clicks = 0;
 
-			public virtual ClockState clone()
+			public virtual object Clone()
 			{
-				try
-				{
-					return (ClockState) base.clone();
-				}
-				catch (CloneNotSupportedException)
-				{
-					return null;
-				}
+				return base.MemberwiseClone();
 			}
 		}
 
@@ -99,7 +93,7 @@ namespace logisim.std.wiring
 			internal virtual bool isInside(InstanceState state, MouseEvent e)
 			{
 				Bounds bds = state.Instance.Bounds;
-				return bds.contains(e.getX(), e.getY());
+				return bds.contains(e.x, e.y);
 			}
 		}
 
@@ -113,15 +107,15 @@ namespace logisim.std.wiring
 
 		public override Bounds getOffsetBounds(AttributeSet attrs)
 		{
-			return Probe.getOffsetBounds(attrs.getValue(StdAttr.FACING), BitWidth.ONE, RadixOption.RADIX_2);
+			return Probe.getOffsetBounds((Direction)attrs.getValue(StdAttr.FACING), BitWidth.ONE, RadixOption.RADIX_2);
 		}
 
 		//
-		// graphics methods
+		// JGraphics methods
 		//
 		public override void paintIcon(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			if (toolIcon != null)
 			{
 				toolIcon.paintIcon(painter.Destination, g, 2, 2);
@@ -133,7 +127,7 @@ namespace logisim.std.wiring
 				g.drawPolyline(new int[] {6, 6, 10, 10, 14, 14}, new int[] {10, 6, 6, 14, 14, 10}, 6);
 			}
 
-			Direction dir = painter.getAttributeValue(StdAttr.FACING);
+			Direction dir = (Direction)painter.getAttributeValue(StdAttr.FACING);
 			int pinx = 15;
 			int piny = 8;
 			if (dir == Direction.East)
@@ -159,13 +153,13 @@ namespace logisim.std.wiring
 
 		public override void paintInstance(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
-			Bounds bds = painter.getInstance().Bounds; // intentionally with no graphics object - we don't want label
+			JGraphics g = painter.Graphics;
+			Bounds bds = painter.getInstance().Bounds; // intentionally with no JGraphics object - we don't want label
 															// included
 			int x = bds.X;
 			int y = bds.Y;
-			GraphicsUtil.switchToWidth(g, 2);
-			g.setColor(Color.BLACK);
+			JGraphicsUtil.switchToWidth(g, 2);
+			g.setColor(Color.Black);
 			g.drawRect(x, y, bds.Width, bds.Height);
 
 			painter.drawLabel();
@@ -179,7 +173,7 @@ namespace logisim.std.wiring
 			}
 			else
 			{
-				g.setColor(Color.BLACK);
+				g.setColor(Color.Black);
 				drawUp = true;
 			}
 			x += 10;
@@ -205,11 +199,11 @@ namespace logisim.std.wiring
 		protected internal override void configureNewInstance(Instance instance)
 		{
 			instance.addAttributeListener();
-			instance.setPorts(new Port[] {new Port(0, 0, Port.OUTPUT, BitWidth.ONE)});
+			instance.Ports = new Port[] { new Port(0, 0, Port.OUTPUT, BitWidth.ONE) };
 			configureLabel(instance);
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == Pin.ATTR_LABEL_LOC)
 			{
@@ -269,7 +263,7 @@ namespace logisim.std.wiring
 		//
 		private void configureLabel(Instance instance)
 		{
-			Direction facing = instance.getAttributeValue(StdAttr.FACING);
+			Direction facing = (Direction)instance.getAttributeValue(StdAttr.FACING);
 			Direction labelLoc = instance.getAttributeValue(Pin.ATTR_LABEL_LOC);
 			Probe.configureLabel(instance, labelLoc, facing);
 		}

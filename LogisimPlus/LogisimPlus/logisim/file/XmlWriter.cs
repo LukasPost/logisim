@@ -317,11 +317,11 @@ namespace logisim.file
 			}
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: for (logisim.data.Attribute<?> attrBase : attrs.getAttributes())
-			foreach (Attribute<object> attrBase in attrs.Attributes)
+			foreach (Attribute attrBase in attrs.Attributes)
 			{
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<Object> attr = (logisim.data.Attribute<Object>) attrBase;
-				Attribute<object> attr = (Attribute<object>) attrBase;
+// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute attr = (logisim.data.Attribute) attrBase;
+				Attribute attr = (Attribute) attrBase;
 				object val = attrs.getValue(attr);
 				if (attrs.isToSave(attr) && val != null)
 				{

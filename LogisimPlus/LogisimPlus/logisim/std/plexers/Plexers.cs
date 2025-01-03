@@ -22,11 +22,12 @@ namespace logisim.std.plexers
 	using FactoryDescription = logisim.tools.FactoryDescription;
 	using Library = logisim.tools.Library;
 	using Tool = logisim.tools.Tool;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
+    using LogisimPlus.Java;
 
-	public class Plexers : Library
+    public class Plexers : Library
 	{
-		public static readonly Attribute<BitWidth> ATTR_SELECT = Attributes.forBitWidth("select", Strings.getter("plexerSelectBitsAttr"), 1, 5);
+		public static readonly Attribute ATTR_SELECT = Attributes.forBitWidth("select", Strings.getter("plexerSelectBitsAttr"), 1, 5);
 		public static readonly object DEFAULT_SELECT = BitWidth.create(1);
 
 		public static readonly Attribute<bool> ATTR_TRISTATE = Attributes.forBoolean("tristate", Strings.getter("plexerThreeStateAttr"));
@@ -34,13 +35,13 @@ namespace logisim.std.plexers
 
 		public static readonly AttributeOption DISABLED_FLOATING = new AttributeOption("Z", Strings.getter("plexerDisabledFloating"));
 		public static readonly AttributeOption DISABLED_ZERO = new AttributeOption("0", Strings.getter("plexerDisabledZero"));
-		public static readonly Attribute<AttributeOption> ATTR_DISABLED = Attributes.forOption("disabled", Strings.getter("plexerDisabledAttr"), new AttributeOption[] {DISABLED_FLOATING, DISABLED_ZERO});
+		public static readonly Attribute ATTR_DISABLED = Attributes.forOption("disabled", Strings.getter("plexerDisabledAttr"), new AttributeOption[] {DISABLED_FLOATING, DISABLED_ZERO});
 
 		public static readonly Attribute<bool> ATTR_ENABLE = Attributes.forBoolean("enable", Strings.getter("plexerEnableAttr"));
 
 		internal static readonly AttributeOption SELECT_BOTTOM_LEFT = new AttributeOption("bl", Strings.getter("plexerSelectBottomLeftOption"));
 		internal static readonly AttributeOption SELECT_TOP_RIGHT = new AttributeOption("tr", Strings.getter("plexerSelectTopRightOption"));
-		internal static readonly Attribute<AttributeOption> ATTR_SELECT_LOC = Attributes.forOption("selloc", Strings.getter("plexerSelectLocAttr"), new AttributeOption[] {SELECT_BOTTOM_LEFT, SELECT_TOP_RIGHT});
+		internal static readonly Attribute ATTR_SELECT_LOC = Attributes.forOption("selloc", Strings.getter("plexerSelectLocAttr"), new AttributeOption[] {SELECT_BOTTOM_LEFT, SELECT_TOP_RIGHT});
 
 		protected internal const int DELAY = 3;
 
@@ -53,7 +54,7 @@ namespace logisim.std.plexers
 			new FactoryDescription("BitSelector", Strings.getter("bitSelectorComponent"), "bitSelector.gif", "BitSelector")
 		};
 
-		private IList<Tool> tools = null;
+		private List<Tool> tools = null;
 
 		public Plexers()
 		{
@@ -75,7 +76,7 @@ namespace logisim.std.plexers
 			}
 		}
 
-		public override IList<Tool> Tools
+		public override List<Tool> Tools
 		{
 			get
 			{
@@ -87,7 +88,7 @@ namespace logisim.std.plexers
 			}
 		}
 
-		internal static void drawTrapezoid(Graphics g, Bounds bds, Direction facing, int facingLean)
+		internal static void drawTrapezoid(JGraphics g, Bounds bds, Direction facing, int facingLean)
 		{
 			int wid = bds.Width;
 			int ht = bds.Height;
@@ -117,7 +118,7 @@ namespace logisim.std.plexers
 				yp[1] += facingLean;
 				yp[2] -= facingLean;
 			}
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphicsUtil.switchToWidth(g, 2);
 			g.drawPolygon(xp, yp, 4);
 		}
 

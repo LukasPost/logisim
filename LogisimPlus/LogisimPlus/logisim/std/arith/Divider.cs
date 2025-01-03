@@ -22,7 +22,7 @@ namespace logisim.std.arith
 	using Port = logisim.instance.Port;
 	using StdAttr = logisim.instance.StdAttr;
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	public class Divider : InstanceFactory
 	{
@@ -36,17 +36,17 @@ namespace logisim.std.arith
 
 		public Divider() : base("Divider", Strings.getter("dividerComponent"))
 		{
-			setAttributes(new Attribute[] {StdAttr.WIDTH}, new object[] {BitWidth.create(8)});
-			KeyConfigurator = new BitWidthConfigurator(StdAttr.WIDTH);
+			setAttributes(new Attribute[] {StdAttr.Width}, new object[] {BitWidth.create(8)});
+			KeyConfigurator = new BitWidthConfigurator(StdAttr.Width);
 			OffsetBounds = Bounds.create(-40, -20, 40, 40);
 			IconName = "divider.gif";
 
 			Port[] ps = new Port[5];
-			ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.WIDTH);
-			ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.WIDTH);
-			ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
-			ps[UPPER] = new Port(-20, -20, Port.INPUT, StdAttr.WIDTH);
-			ps[REM] = new Port(-20, 20, Port.OUTPUT, StdAttr.WIDTH);
+			ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.Width);
+			ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.Width);
+			ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.Width);
+			ps[UPPER] = new Port(-20, -20, Port.INPUT, StdAttr.Width);
+			ps[REM] = new Port(-20, 20, Port.OUTPUT, StdAttr.Width);
 			ps[IN0].setToolTip(Strings.getter("dividerDividendLowerTip"));
 			ps[IN1].setToolTip(Strings.getter("dividerDivisorTip"));
 			ps[OUT].setToolTip(Strings.getter("dividerOutputTip"));
@@ -58,7 +58,7 @@ namespace logisim.std.arith
 		public override void propagate(InstanceState state)
 		{
 			// get attributes
-			BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+			BitWidth dataWidth = state.getAttributeValue(StdAttr.Width);
 
 			// compute outputs
 			Value a = state.getPort(IN0);
@@ -74,10 +74,10 @@ namespace logisim.std.arith
 
 		public override void paintInstance(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			painter.drawBounds();
 
-			g.setColor(Color.GRAY);
+			g.setColor(Color.Gray);
 			painter.drawPort(IN0);
 			painter.drawPort(IN1);
 			painter.drawPort(OUT);
@@ -87,12 +87,12 @@ namespace logisim.std.arith
 			Location loc = painter.Location;
 			int x = loc.X;
 			int y = loc.Y;
-			GraphicsUtil.switchToWidth(g, 2);
-			g.setColor(Color.BLACK);
+			JGraphicsUtil.switchToWidth(g, 2);
+			g.setColor(Color.Black);
 			g.fillOval(x - 12, y - 7, 4, 4);
 			g.drawLine(x - 15, y, x - 5, y);
 			g.fillOval(x - 12, y + 3, 4, 4);
-			GraphicsUtil.switchToWidth(g, 1);
+			JGraphicsUtil.switchToWidth(g, 1);
 		}
 
 		internal static Value[] computeResult(BitWidth width, Value a, Value b, Value upper)

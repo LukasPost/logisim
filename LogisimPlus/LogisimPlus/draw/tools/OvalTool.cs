@@ -17,8 +17,9 @@ namespace draw.tools
 	using Oval = draw.shapes.Oval;
 	using logisim.data;
 	using Icons = logisim.util.Icons;
+    using LogisimPlus.Java;
 
-	public class OvalTool : RectangularTool
+    public class OvalTool : RectangularTool
 	{
 		private DrawingAttributeSet attrs;
 
@@ -37,11 +38,11 @@ namespace draw.tools
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
-				return DrawAttr.getFillAttributes(attrs.getValue(DrawAttr.PAINT_TYPE));
+				return DrawAttr.getFillAttributes((AttributeOption)attrs.getValue(DrawAttr.PAINT_TYPE));
 			}
 		}
 
@@ -50,12 +51,12 @@ namespace draw.tools
 			return attrs.applyTo(new Oval(x, y, w, h));
 		}
 
-		public override void drawShape(Graphics g, int x, int y, int w, int h)
+		public override void drawShape(JGraphics g, int x, int y, int w, int h)
 		{
 			g.drawOval(x, y, w, h);
 		}
 
-		public override void fillShape(Graphics g, int x, int y, int w, int h)
+		public override void fillShape(JGraphics g, int x, int y, int w, int h)
 		{
 			g.fillOval(x, y, w, h);
 		}

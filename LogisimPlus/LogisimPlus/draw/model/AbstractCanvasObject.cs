@@ -20,13 +20,14 @@ namespace draw.model
 	using Bounds = logisim.data.Bounds;
 	using Location = logisim.data.Location;
 	using logisim.util;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 
 	using Document = org.w3c.dom.Document;
 	using Element = org.w3c.dom.Element;
+    using LogisimPlus.Java;
 
-	public abstract class AbstractCanvasObject : AttributeSet, CanvasObject, ICloneable
+    public abstract class AbstractCanvasObject : AttributeSet, CanvasObject, ICloneable
 	{
 		private const int OVERLAP_TRIES = 50;
 		private const int GENERATE_RANDOM_TRIES = 20;
@@ -60,11 +61,11 @@ namespace draw.model
 
 		public abstract void translate(int dx, int dy);
 
-		public abstract IList<Handle> getHandles(HandleGesture gesture);
+		public abstract List<Handle> getHandles(HandleGesture gesture);
 
-		protected internal abstract void updateValue<T1>(Attribute<T1> attr, object value);
+		protected internal abstract void updateValue(Attribute attr, object value);
 
-		public abstract void paint(Graphics g, HandleGesture gesture);
+		public abstract void paint(JGraphics g, HandleGesture gesture);
 
 		public virtual bool canRemove()
 		{
@@ -169,9 +170,9 @@ namespace draw.model
 		// methods required by AttributeSet interface
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public abstract java.util.List<logisim.data.Attribute<?>> getAttributes();
-		public abstract IList<Attribute<object>> Attributes {get;}
+		public abstract List<Attribute> Attributes {get;}
 
-		public abstract V getValue<V>(Attribute<V> attr);
+		public abstract object getValue(Attribute attr);
 
 		public virtual void addAttributeListener(AttributeListener l)
 		{
@@ -183,32 +184,25 @@ namespace draw.model
 			listeners.remove(l);
 		}
 
-		public virtual CanvasObject clone()
+		public virtual object Clone()
 		{
-			try
-			{
-				AbstractCanvasObject ret = (AbstractCanvasObject) base.clone();
-				ret.listeners = new EventSourceWeakSupport<AttributeListener>();
-				return ret;
-			}
-			catch (CloneNotSupportedException)
-			{
-				return null;
-			}
+			AbstractCanvasObject ret = (AbstractCanvasObject)base.MemberwiseClone();
+			ret.listeners = new EventSourceWeakSupport<AttributeListener>();
+			return ret;
 		}
 
-		public virtual bool containsAttribute<T1>(Attribute<T1> attr)
+		public virtual bool containsAttribute(Attribute attr)
 		{
 			return Attributes.Contains(attr);
 		}
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public logisim.data.Attribute<?> getAttribute(String name)
-		public virtual Attribute<object> getAttribute(string name)
+		public virtual Attribute getAttribute(string name)
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: for (logisim.data.Attribute<?> attr : getAttributes())
-			foreach (Attribute<object> attr in Attributes)
+			foreach (Attribute attr in Attributes)
 			{
 				if (attr.Name.Equals(name))
 				{
@@ -218,22 +212,22 @@ namespace draw.model
 			return null;
 		}
 
-		public virtual bool isReadOnly<T1>(Attribute<T1> attr)
+		public virtual bool isReadOnly(Attribute attr)
 		{
 			return false;
 		}
 
-		public virtual void setReadOnly<T1>(Attribute<T1> attr, bool value)
+		public virtual void setReadOnly(Attribute attr, bool value)
 		{
 			throw new System.NotSupportedException("setReadOnly");
 		}
 
-		public virtual bool isToSave<T1>(Attribute<T1> attr)
+		public virtual bool isToSave(Attribute attr)
 		{
 			return true;
 		}
 
-		public void setValue<V>(Attribute<V> attr, V value)
+		public void setValue(Attribute attr, object value)
 		{
 			object old = getValue(attr);
 			bool same = old == null ? value == null : old.Equals(value);
@@ -257,11 +251,11 @@ namespace draw.model
 			}
 		}
 
-		protected internal virtual bool setForStroke(Graphics g)
+		protected internal virtual bool setForStroke(JGraphics g)
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: java.util.List<logisim.data.Attribute<?>> attrs = getAttributes();
-			IList<Attribute<object>> attrs = Attributes;
+			List<Attribute> attrs = Attributes;
 			if (attrs.Contains(DrawAttr.PAINT_TYPE))
 			{
 				object value = getValue(DrawAttr.PAINT_TYPE);
@@ -271,17 +265,17 @@ namespace draw.model
 				}
 			}
 
-			int? width = getValue(DrawAttr.STROKE_WIDTH);
+			int? width = (int)getValue(DrawAttr.STROKE_WIDTH);
 			if (width != null && width.Value > 0)
 			{
-				Color color = getValue(DrawAttr.STROKE_COLOR);
-				if (color != null && color.getAlpha() == 0)
+				Color color = (Color)getValue(DrawAttr.STROKE_COLOR);
+				if (color != null && color.A == 0)
 				{
 					return false;
 				}
 				else
 				{
-					GraphicsUtil.switchToWidth(g, width.Value);
+					JGraphicsUtil.switchToWidth(g, width.Value);
 					if (color != null)
 					{
 						g.setColor(color);
@@ -295,11 +289,11 @@ namespace draw.model
 			}
 		}
 
-		protected internal virtual bool setForFill(Graphics g)
+		protected internal virtual bool setForFill(JGraphics g)
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: java.util.List<logisim.data.Attribute<?>> attrs = getAttributes();
-			IList<Attribute<object>> attrs = Attributes;
+			List<Attribute> attrs = Attributes;
 			if (attrs.Contains(DrawAttr.PAINT_TYPE))
 			{
 				object value = getValue(DrawAttr.PAINT_TYPE);
@@ -309,8 +303,8 @@ namespace draw.model
 				}
 			}
 
-			Color color = getValue(DrawAttr.FILL_COLOR);
-			if (color != null && color.getAlpha() == 0)
+			Color color = (Color)getValue(DrawAttr.FILL_COLOR);
+			if (color != null && color.A == 0)
 			{
 				return false;
 			}

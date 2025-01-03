@@ -18,7 +18,7 @@ namespace draw.actions
 
 	public class ModelRemoveAction : ModelAction
 	{
-		private IDictionary<CanvasObject, int> removed;
+		private Dictionary<CanvasObject, int> removed;
 
 		public ModelRemoveAction(CanvasModel model, CanvasObject removed) : this(model, Collections.singleton(removed))
 		{

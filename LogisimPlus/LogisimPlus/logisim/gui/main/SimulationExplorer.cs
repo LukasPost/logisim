@@ -17,8 +17,9 @@ namespace logisim.gui.main
 	using Project = logisim.proj.Project;
 	using ProjectEvent = logisim.proj.ProjectEvent;
 	using ProjectListener = logisim.proj.ProjectListener;
+    using LogisimPlus.Java;
 
-	internal class SimulationExplorer : JPanel, ProjectListener, MouseListener
+    internal class SimulationExplorer : JPanel, ProjectListener, MouseListener
 	{
 		private Project project;
 		private SimulationTreeModel model;

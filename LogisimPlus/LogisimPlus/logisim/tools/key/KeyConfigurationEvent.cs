@@ -9,8 +9,8 @@
 
 namespace logisim.tools.key
 {
-
-	using AttributeSet = logisim.data.AttributeSet;
+    using LogisimPlus.Java;
+    using AttributeSet = logisim.data.AttributeSet;
 
 	public class KeyConfigurationEvent
 	{

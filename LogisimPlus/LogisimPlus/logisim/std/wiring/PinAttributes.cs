@@ -23,8 +23,8 @@ namespace logisim.std.wiring
 		public static new PinAttributes instance = new PinAttributes();
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
-// ORIGINAL LINE: private static final java.util.List<logisim.data.Attribute<?>> ATTRIBUTES = java.util.Arrays.asList(new logisim.data.Attribute<?>[] { logisim.instance.StdAttr.FACING, Pin.ATTR_TYPE, logisim.instance.StdAttr.WIDTH, Pin.ATTR_TRISTATE, Pin.ATTR_PULL, logisim.instance.StdAttr.LABEL, Pin.ATTR_LABEL_LOC, logisim.instance.StdAttr.LABEL_FONT });
-		private static readonly IList<Attribute<object>> ATTRIBUTES = new List<Attribute<object>> {StdAttr.FACING, Pin.ATTR_TYPE, StdAttr.WIDTH, Pin.ATTR_TRISTATE, Pin.ATTR_PULL, StdAttr.LABEL, Pin.ATTR_LABEL_LOC, StdAttr.LABEL_FONT};
+// ORIGINAL LINE: private static final java.util.List<logisim.data.Attribute<?>> ATTRIBUTES = java.util.Arrays.asList(new logisim.data.Attribute<?>[] { logisim.instance.StdAttr.FACING, Pin.ATTR_TYPE, logisim.instance.StdAttr.Width, Pin.ATTR_TRISTATE, Pin.ATTR_PULL, logisim.instance.StdAttr.LABEL, Pin.ATTR_LABEL_LOC, logisim.instance.StdAttr.LABEL_FONT });
+		private static readonly List<Attribute> ATTRIBUTES = new List<Attribute> {StdAttr.FACING, Pin.ATTR_TYPE, StdAttr.Width, Pin.ATTR_TRISTATE, Pin.ATTR_PULL, StdAttr.LABEL, Pin.ATTR_LABEL_LOC, StdAttr.LABEL_FONT};
 
 		internal new BitWidth width = BitWidth.ONE;
 		internal bool threeState = true;
@@ -37,7 +37,7 @@ namespace logisim.std.wiring
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
@@ -47,23 +47,23 @@ namespace logisim.std.wiring
 
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
 // ORIGINAL LINE: @Override @SuppressWarnings("unchecked") public <V> V getValue(logisim.data.Attribute<V> attr)
-		public override V getValue<V>(Attribute<V> attr)
+		public override object getValue(Attribute attr)
 		{
-			if (attr == StdAttr.WIDTH)
+			if (attr == StdAttr.Width)
 			{
-				return (V) width;
+				return width;
 			}
 			if (attr == Pin.ATTR_TRISTATE)
 			{
-				return (V) Convert.ToBoolean(threeState);
+				return Convert.ToBoolean(threeState);
 			}
 			if (attr == Pin.ATTR_TYPE)
 			{
-				return (V) Convert.ToBoolean(type == EndData.OUTPUT_ONLY);
+				return Convert.ToBoolean(type == EndData.OUTPUT_ONLY);
 			}
 			if (attr == Pin.ATTR_PULL)
 			{
-				return (V) pull;
+				return pull;
 			}
 			return base.getValue(attr);
 		}
@@ -84,9 +84,9 @@ namespace logisim.std.wiring
 			}
 		}
 
-		public override void setValue<V>(Attribute<V> attr, V value)
+		public override void setValue(Attribute attr, object value)
 		{
-			if (attr == StdAttr.WIDTH)
+			if (attr == StdAttr.Width)
 			{
 				width = (BitWidth) value;
 			}

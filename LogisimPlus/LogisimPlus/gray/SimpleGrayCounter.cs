@@ -16,7 +16,7 @@ namespace gray
 	using InstancePainter = logisim.instance.InstancePainter;
 	using InstanceState = logisim.instance.InstanceState;
 	using Port = logisim.instance.Port;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using StringUtil = logisim.util.StringUtil;
 
 	/// <summary>
@@ -77,7 +77,7 @@ namespace gray
 			{
 				CounterData state = CounterData.get(painter, BIT_WIDTH);
 				Bounds bds = painter.Bounds;
-				GraphicsUtil.drawCenteredText(painter.Graphics, StringUtil.toHexString(BIT_WIDTH.Width, state.Value.toIntValue()), bds.X + bds.Width / 2, bds.Y + bds.Height / 2);
+				JGraphicsUtil.drawCenteredText(painter.Graphics, StringUtil.toHexString(BIT_WIDTH.Width, state.Value.toIntValue()), bds.X + bds.Width / 2, bds.Y + bds.Height / 2);
 			}
 		}
 	}

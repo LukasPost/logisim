@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System.Collections.Generic;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -21,12 +22,12 @@ namespace logisim.comp
 	{
 		private LinkedList<CaretListener> listeners = new LinkedList<CaretListener>();
 		private TextField field;
-		private Graphics g;
+		private JGraphics g;
 		private string oldText;
 		private string curText;
 		private int pos;
 
-		public TextFieldCaret(TextField field, Graphics g, int pos)
+		public TextFieldCaret(TextField field, JGraphics g, int pos)
 		{
 			this.field = field;
 			this.g = g;
@@ -37,7 +38,7 @@ namespace logisim.comp
 			field.addTextFieldListener(this);
 		}
 
-		public TextFieldCaret(TextField field, Graphics g, int x, int y) : this(field, g, 0)
+		public TextFieldCaret(TextField field, JGraphics g, int x, int y) : this(field, g, 0)
 		{
 			moveCaret(x, y);
 		}
@@ -50,7 +51,7 @@ namespace logisim.comp
 		public virtual void removeCaretListener(CaretListener l)
 		{
 // JAVA TO C# CONVERTER TASK: There is no .NET LinkedList equivalent to the Java 'remove' method:
-			listeners.remove(l);
+			listeners.Remove(l);
 		}
 
 		public virtual string Text
@@ -68,7 +69,7 @@ namespace logisim.comp
 			field.Text = text;
 		}
 
-		public virtual void draw(Graphics g)
+		public virtual void draw(JGraphics g)
 		{
 			if (field.Font != null)
 			{
@@ -77,18 +78,18 @@ namespace logisim.comp
 
 			// draw boundary
 			Bounds bds = getBounds(g);
-			g.setColor(Color.white);
+			g.setColor(Color.White);
 			g.fillRect(bds.X, bds.Y, bds.Width, bds.Height);
-			g.setColor(Color.black);
+			g.setColor(Color.Black);
 			g.drawRect(bds.X, bds.Y, bds.Width, bds.Height);
 
 			// draw text
 			int x = field.X;
 			int y = field.Y;
-			FontMetrics fm = g.getFontMetrics();
-			int width = fm.stringWidth(curText);
-			int ascent = fm.getAscent();
-			int descent = fm.getDescent();
+			SizeF textSize = g.measureString(curText);
+			int width = (int)textsize.Width;
+			int ascent = (int)(textsize.Height / 2);
+			int descent = (int)(textsize.Height / 2);
 			switch (field.HAlign)
 			{
 			case TextField.H_CENTER:
@@ -119,29 +120,32 @@ namespace logisim.comp
 			// draw cursor
 			if (pos > 0)
 			{
-				x += fm.stringWidth(curText.Substring(0, pos));
+				x += (int)g.measureString(curText.Substring(0, pos)).Width;
 			}
 			g.drawLine(x, y, x, y - ascent);
 		}
 
-		public virtual Bounds getBounds(Graphics g)
+		public virtual Bounds getBounds(JGraphics g)
 		{
 			int x = field.X;
 			int y = field.Y;
 			Font font = field.Font;
-			FontMetrics fm;
+			SizeF textSize;
 			if (font == null)
 			{
-				fm = g.getFontMetrics();
+				textSize = g.measureString(curText);
 			}
 			else
 			{
-				fm = g.getFontMetrics(font);
+				Font old = g.getFont();
+				g.setFont(font);
+				textSize = g.measureString(curText);
+				g.setFont(old);
 			}
-			int width = fm.stringWidth(curText);
-			int ascent = fm.getAscent();
-			int descent = fm.getDescent();
-			int height = ascent + descent;
+			int width = (int)textsize.Width;
+			int ascent = (int)(textsize.Height / 2);
+            int descent = (int)(textsize.Height /2);
+			int height = (int)textsize.Height;
 			switch (field.HAlign)
 			{
 			case TextField.H_CENTER:
@@ -196,7 +200,7 @@ namespace logisim.comp
 		public virtual void mousePressed(MouseEvent e)
 		{
 			// TODO: enhance label editing
-			moveCaret(e.getX(), e.getY());
+			moveCaret(e.x, e.y);
 		}
 
 		public virtual void mouseDragged(MouseEvent e)
@@ -206,9 +210,9 @@ namespace logisim.comp
 
 		public virtual void mouseReleased(MouseEvent e)
 		{
-			// TODO: enhance label editing
-			moveCaret(e.getX(), e.getY());
-		}
+            // TODO: enhance label editing
+            moveCaret(e.x, e.y);
+        }
 
 		public virtual void keyPressed(KeyEvent e)
 		{

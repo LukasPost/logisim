@@ -24,7 +24,7 @@ namespace logisim.std
 
 	public class Builtin : Library
 	{
-		private IList<Library> libraries = null;
+		private List<Library> libraries = null;
 
 		public Builtin()
 		{
@@ -56,15 +56,15 @@ namespace logisim.std
 			}
 		}
 
-		public override IList<Tool> Tools
+		public override List<Tool> Tools
 		{
 			get
 			{
-				return Collections.emptyList();
+				return [];
 			}
 		}
 
-		public override IList<Library> Libraries
+		public override List<Library> Libraries
 		{
 			get
 			{

@@ -16,7 +16,7 @@ namespace logisim.analyze.model
 	public class Implicant : IComparable<Implicant>
 	{
 		internal static Implicant MINIMAL_IMPLICANT = new Implicant(0, -1);
-		internal static IList<Implicant> MINIMAL_LIST = new List<Implicant> {MINIMAL_IMPLICANT};
+		internal static List<Implicant> MINIMAL_LIST = new List<Implicant> {MINIMAL_IMPLICANT};
 
 		private class TermIterator : IEnumerable<Implicant>, IEnumerator<Implicant>
 		{
@@ -177,7 +177,7 @@ namespace logisim.analyze.model
 			return term == null ? Expressions.constant(1) : term;
 		}
 
-		internal static Expression toExpression(int format, AnalyzerModel model, IList<Implicant> implicants)
+		internal static Expression toExpression(int format, AnalyzerModel model, List<Implicant> implicants)
 		{
 			if (implicants == null)
 			{
@@ -204,13 +204,13 @@ namespace logisim.analyze.model
 			}
 		}
 
-		internal static IList<Implicant> computeMinimal(int format, AnalyzerModel model, string variable)
+		internal static List<Implicant> computeMinimal(int format, AnalyzerModel model, string variable)
 		{
 			TruthTable table = model.TruthTable;
 			int column = model.Outputs.IndexOf(variable);
 			if (column < 0)
 			{
-				return Collections.emptyList();
+				return [];
 			}
 
 			Entry desired = format == AnalyzerModel.FORMAT_SUM_OF_PRODUCTS ? Entry.ONE : Entry.ZERO;

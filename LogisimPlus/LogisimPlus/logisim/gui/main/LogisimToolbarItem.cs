@@ -73,19 +73,19 @@ namespace logisim.gui.main
 			}
 		}
 
-		public virtual void paintIcon(Component destination, Graphics g)
+		public virtual void paintIcon(Component destination, JGraphics g)
 		{
-			if (!Selectable && g is Graphics2D)
+			if (!Selectable && g is JGraphics2D)
 			{
 				Composite c = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
-				((Graphics2D) g).setComposite(c);
+				g.setComposite(c);
 			}
 
 			if (icon == null)
 			{
-				g.setColor(new Color(255, 128, 128));
+				g.setColor(Color.FromArgb(255, 255, 128, 128));
 				g.fillRect(4, 4, 8, 8);
-				g.setColor(Color.BLACK);
+				g.setColor(Color.Black);
 				g.drawLine(4, 4, 12, 12);
 				g.drawLine(4, 12, 12, 4);
 				g.drawRect(4, 4, 8, 8);

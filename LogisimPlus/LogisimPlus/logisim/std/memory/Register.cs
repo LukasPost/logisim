@@ -22,7 +22,7 @@ namespace logisim.std.memory
 	using Port = logisim.instance.Port;
 	using StdAttr = logisim.instance.StdAttr;
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using StringUtil = logisim.util.StringUtil;
 
 	public class Register : InstanceFactory
@@ -36,31 +36,31 @@ namespace logisim.std.memory
 
 		public Register() : base("Register", Strings.getter("registerComponent"))
 		{
-			setAttributes(new Attribute[] {StdAttr.WIDTH, StdAttr.TRIGGER, StdAttr.LABEL, StdAttr.LABEL_FONT}, new object[] {BitWidth.create(8), StdAttr.TRIG_RISING, "", StdAttr.DEFAULT_LABEL_FONT});
-			KeyConfigurator = new BitWidthConfigurator(StdAttr.WIDTH);
+			setAttributes(new Attribute[] {StdAttr.Width, StdAttr.TRIGGER, StdAttr.LABEL, StdAttr.LABEL_FONT}, new object[] {BitWidth.create(8), StdAttr.TRIG_RISING, "", StdAttr.DEFAULT_LABEL_FONT});
+			KeyConfigurator = new BitWidthConfigurator(StdAttr.Width);
 			OffsetBounds = Bounds.create(-30, -20, 30, 40);
 			IconName = "register.gif";
 			InstancePoker = typeof(RegisterPoker);
 			InstanceLogger = typeof(RegisterLogger);
 
 			Port[] ps = new Port[5];
-			ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
-			ps[IN] = new Port(-30, 0, Port.INPUT, StdAttr.WIDTH);
+			ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.Width);
+			ps[IN] = new Port(-30, 0, Port.INPUT, StdAttr.Width);
 			ps[CK] = new Port(-20, 20, Port.INPUT, 1);
 			ps[CLR] = new Port(-10, 20, Port.INPUT, 1);
 			ps[EN] = new Port(-30, 10, Port.INPUT, 1);
-			ps[OUT].setToolTip(Strings.getter("registerQTip"));
-			ps[IN].setToolTip(Strings.getter("registerDTip"));
-			ps[CK].setToolTip(Strings.getter("registerClkTip"));
-			ps[CLR].setToolTip(Strings.getter("registerClrTip"));
-			ps[EN].setToolTip(Strings.getter("registerEnableTip"));
+			ps[OUT].ToolTip = Strings.getter("registerQTip");
+			ps[IN].ToolTip = Strings.getter("registerDTip");
+			ps[CK].ToolTip = Strings.getter("registerClkTip");
+			ps[CLR].ToolTip = Strings.getter("registerClrTip");
+			ps[EN].ToolTip = Strings.getter("registerEnableTip");
 			setPorts(ps);
 		}
 
 		protected internal override void configureNewInstance(Instance instance)
 		{
 			Bounds bds = instance.Bounds;
-			instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, bds.X + bds.Width / 2, bds.Y - 3, GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
+			instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, bds.X + bds.Width / 2, bds.Y - 3, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_BASELINE);
 		}
 
 		public override void propagate(InstanceState state)
@@ -72,7 +72,7 @@ namespace logisim.std.memory
 				state.Data = data;
 			}
 
-			BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+			BitWidth dataWidth = state.getAttributeValue(StdAttr.Width);
 			object triggerType = state.getAttributeValue(StdAttr.TRIGGER);
 			bool triggered = data.updateClock(state.getPort(CK), triggerType);
 
@@ -96,10 +96,10 @@ namespace logisim.std.memory
 // ORIGINAL LINE: @SuppressWarnings("null") @Override public void paintInstance(logisim.instance.InstancePainter painter)
 		public override void paintInstance(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			Bounds bds = painter.Bounds;
 			RegisterData state = (RegisterData) painter.Data;
-			BitWidth widthVal = painter.getAttributeValue(StdAttr.WIDTH);
+			BitWidth widthVal = painter.getAttributeValue(StdAttr.Width);
 			int width = widthVal == null ? 8 : widthVal.Width;
 
 			// determine text to draw in label
@@ -141,21 +141,21 @@ namespace logisim.std.memory
 				painter.drawPort(IN);
 				painter.drawPort(OUT);
 			}
-			g.setColor(Color.GRAY);
+			g.setColor(Color.Gray);
 			painter.drawPort(CLR, "0", Direction.South);
 			painter.drawPort(EN, Strings.get("memEnableLabel"), Direction.East);
-			g.setColor(Color.BLACK);
+			g.setColor(Color.Black);
 			painter.drawClock(CK, Direction.North);
 
 			// draw contents
 			if (string.ReferenceEquals(b, null))
 			{
-				GraphicsUtil.drawText(g, a, bds.X + 15, bds.Y + 4, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+				JGraphicsUtil.drawText(g, a, bds.X + 15, bds.Y + 4, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_TOP);
 			}
 			else
 			{
-				GraphicsUtil.drawText(g, a, bds.X + 15, bds.Y + 3, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
-				GraphicsUtil.drawText(g, b, bds.X + 15, bds.Y + 15, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+				JGraphicsUtil.drawText(g, a, bds.X + 15, bds.Y + 3, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_TOP);
+				JGraphicsUtil.drawText(g, b, bds.X + 15, bds.Y + 15, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_TOP);
 			}
 		}
 	}

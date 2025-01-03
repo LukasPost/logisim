@@ -14,12 +14,12 @@ namespace draw.model
 
 	internal class DrawingOverlaps
 	{
-		private IDictionary<CanvasObject, IList<CanvasObject>> map;
-		private ISet<CanvasObject> untested;
+		private Dictionary<CanvasObject, List<CanvasObject>> map;
+		private HashSet<CanvasObject> untested;
 
 		public DrawingOverlaps()
 		{
-			map = new Dictionary<CanvasObject, IList<CanvasObject>>();
+			map = new Dictionary<CanvasObject, List<CanvasObject>>();
 			untested = new HashSet<CanvasObject>();
 		}
 
@@ -27,10 +27,10 @@ namespace draw.model
 		{
 			ensureUpdated();
 
-			IList<CanvasObject> ret = map[o];
+			List<CanvasObject> ret = map[o];
 			if (ret == null || ret.Count == 0)
 			{
-				return Collections.emptyList();
+				return [];
 			}
 			else
 			{
@@ -58,7 +58,7 @@ namespace draw.model
 
 		private void addOverlap(CanvasObject a, CanvasObject b)
 		{
-			IList<CanvasObject> alist = map[a];
+			List<CanvasObject> alist = map[a];
 			if (alist == null)
 			{
 				alist = new List<CanvasObject>();
@@ -78,12 +78,12 @@ namespace draw.model
 		public virtual void removeShape(CanvasObject shape)
 		{
 			untested.remove(shape);
-			IList<CanvasObject> mapped = map.Remove(shape);
+			List<CanvasObject> mapped = map.Remove(shape);
 			if (mapped != null)
 			{
 				foreach (CanvasObject o in mapped)
 				{
-					IList<CanvasObject> reverse = map[o];
+					List<CanvasObject> reverse = map[o];
 					if (reverse != null)
 					{
 						reverse.Remove(shape);

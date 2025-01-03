@@ -164,7 +164,7 @@ namespace logisim.gui.menu
 
 		public static void doAnalyze(Project proj, Circuit circuit)
 		{
-			IDictionary<Instance, string> pinNames = Analyze.getPinLabels(circuit);
+			Dictionary<Instance, string> pinNames = Analyze.getPinLabels(circuit);
 			List<string> inputNames = new List<string>();
 			List<string> outputNames = new List<string>();
 			foreach (KeyValuePair<Instance, string> entry in pinNames.SetOfKeyValuePairs())
@@ -179,7 +179,7 @@ namespace logisim.gui.menu
 				{
 					outputNames.Add(entry.Value);
 				}
-				if (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1)
+				if (pin.getAttributeValue(StdAttr.Width).getWidth() > 1)
 				{
 					if (isInput)
 					{
@@ -210,7 +210,7 @@ namespace logisim.gui.menu
 			analyzer.toFront();
 		}
 
-		private static void configureAnalyzer(Project proj, Circuit circuit, Analyzer analyzer, IDictionary<Instance, string> pinNames, List<string> inputNames, List<string> outputNames)
+		private static void configureAnalyzer(Project proj, Circuit circuit, Analyzer analyzer, Dictionary<Instance, string> pinNames, List<string> inputNames, List<string> outputNames)
 		{
 			analyzer.Model.setVariables(inputNames, outputNames);
 

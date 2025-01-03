@@ -9,8 +9,8 @@
 
 namespace logisim.std.memory
 {
-
-	using BitWidth = logisim.data.BitWidth;
+    using LogisimPlus.Java;
+    using BitWidth = logisim.data.BitWidth;
 	using Bounds = logisim.data.Bounds;
 	using InstancePainter = logisim.instance.InstancePainter;
 	using InstancePoker = logisim.instance.InstancePoker;
@@ -38,12 +38,12 @@ namespace logisim.std.memory
 		public override void paint(InstancePainter painter)
 		{
 			Bounds bds = painter.Bounds;
-			BitWidth dataWidth = painter.getAttributeValue(StdAttr.WIDTH);
+			BitWidth dataWidth = (BitWidth)painter.getAttributeValue(StdAttr.Width);
 			int width = dataWidth == null ? 8 : dataWidth.Width;
 			int len = (width + 3) / 4;
 
-			Graphics g = painter.Graphics;
-			g.setColor(Color.RED);
+			JGraphics g = painter.Graphics;
+			g.setColor(Color.Red);
 			if (len > 4)
 			{
 				g.drawRect(bds.X, bds.Y + 3, bds.Width, 25);
@@ -53,7 +53,7 @@ namespace logisim.std.memory
 				int wid = 7 * len + 2;
 				g.drawRect(bds.X + (bds.Width - wid) / 2, bds.Y + 4, wid, 15);
 			}
-			g.setColor(Color.BLACK);
+			g.setColor(Color.Black);
 		}
 
 		public override void keyTyped(InstanceState state, KeyEvent e)
@@ -64,7 +64,7 @@ namespace logisim.std.memory
 				return;
 			}
 
-			BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+			BitWidth dataWidth = state.getAttributeValue(StdAttr.Width);
 			if (dataWidth == null)
 			{
 				dataWidth = BitWidth.create(8);

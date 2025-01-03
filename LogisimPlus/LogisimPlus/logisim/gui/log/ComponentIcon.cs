@@ -9,8 +9,8 @@
 
 namespace logisim.gui.log
 {
-
-	using Component = logisim.comp.Component;
+    using LogisimPlus.Java;
+    using Component = logisim.comp.Component;
 	using ComponentDrawContext = logisim.comp.ComponentDrawContext;
 
 	internal class ComponentIcon : Icon
@@ -51,10 +51,10 @@ namespace logisim.gui.log
 			}
 		}
 
-		public virtual void paintIcon(java.awt.Component c, Graphics g, int x, int y)
+		public virtual void paintIcon(java.awt.Component c, JGraphics g, int x, int y)
 		{
 			// draw tool icon
-			Graphics gIcon = g.create();
+			JGraphics gIcon = g.create();
 			ComponentDrawContext context = new ComponentDrawContext(c, null, null, g, gIcon);
 			comp.Factory.paintIcon(context, x, y, comp.AttributeSet);
 			gIcon.dispose();

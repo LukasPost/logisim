@@ -20,7 +20,7 @@ namespace logisim.gui.generic
 		private const int GRID_DOT_COLOR = unchecked((int)0xFF777777);
 		private const int GRID_DOT_ZOOMED_COLOR = unchecked((int)0xFFCCCCCC);
 
-		private static readonly Color GRID_ZOOMED_OUT_COLOR = new Color(210, 210, 210);
+		private static readonly Color GRID_ZOOMED_OUT_COLOR = Color.FromArgb(255, 210, 210, 210);
 
 		private class Listener : PropertyChangeListener
 		{
@@ -148,7 +148,7 @@ namespace logisim.gui.generic
 		}
 
 
-		public virtual void paintGrid(Graphics g)
+		public virtual void paintGrid(JGraphics g)
 		{
 			Rectangle clip = g.getClipBounds();
 			Component dest = destination;
@@ -178,9 +178,9 @@ namespace logisim.gui.generic
 			}
 		}
 
-		private void paintGridOld(Graphics g, int size, double f, Rectangle clip)
+		private void paintGridOld(JGraphics g, int size, double f, Rectangle clip)
 		{
-			g.setColor(Color.GRAY);
+			g.setColor(Color.Gray);
 			if (f == 1.0)
 			{
 				int start_x = ((clip.x + 9) / size) * size;
@@ -216,7 +216,7 @@ namespace logisim.gui.generic
 				if (f <= 0.5)
 				{ // make every 5th pixel darker
 					int size5 = 5 * size;
-					g.setColor(Color.GRAY);
+					g.setColor(Color.Gray);
 					x0 = size5 * (int) Math.Ceiling(clip.x / f / size5);
 					y0 = size5 * (int) Math.Ceiling(clip.y / f / size5);
 					for (double x = x0; x < x1; x += size5)
@@ -235,7 +235,7 @@ namespace logisim.gui.generic
 				 * (int)(clip.width / f); int y0 = 10 * (int) Math.ceil(clip.y / f / 10); int y1 = y0 + (int) (clip.height /
 				 * f); int s = f > 0.5 ? 1 : f > 0.25 ? 2 : 3; int i0 = s - ((x0 + 10*s - 1) % (s * 10)) / 10 - 1; int j0 =
 				 * s - ((y1 + 10*s - 1) % (s * 10)) / 10 - 1; for (int i = 0; i < s; i++) { for (int x = x0+i*10; x < x1; x
-				 * += s*10) { for (int j = 0; j < s; j++) { g.setColor(i == i0 && j == j0 ? Color.gray :
+				 * += s*10) { for (int j = 0; j < s; j++) { g.setColor(i == i0 && j == j0 ? Color.Gray :
 				 * GRID_ZOOMED_OUT_COLOR); for (int y = y0+j*10; y < y1; y += s*10) { int sx = (int) Math.round(f * x); int
 				 * sy = (int) Math.round(f * y); g.fillRect(sx, sy, 1, 1); } } } }
 				 */

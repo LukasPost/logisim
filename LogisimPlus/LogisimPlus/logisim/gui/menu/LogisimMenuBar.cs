@@ -32,7 +32,7 @@ namespace logisim.gui.menu
 		public static readonly LogisimMenuItem SELECT_ALL = new LogisimMenuItem("SelectAll");
 		public static readonly LogisimMenuItem RAISE = new LogisimMenuItem("Raise");
 		public static readonly LogisimMenuItem LOWER = new LogisimMenuItem("Lower");
-		public static readonly LogisimMenuItem RAISE_TOP = new LogisimMenuItem("RaiseTop");
+		public static readonly LogisimMenuItem RAISE_TOP = new LogisimMenuItem("RaHashSetop");
 		public static readonly LogisimMenuItem LOWER_BOTTOM = new LogisimMenuItem("LowerBottom");
 		public static readonly LogisimMenuItem ADD_CONTROL = new LogisimMenuItem("AddControl");
 		public static readonly LogisimMenuItem REMOVE_CONTROL = new LogisimMenuItem("RemoveControl");

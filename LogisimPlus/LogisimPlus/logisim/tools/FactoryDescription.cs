@@ -25,7 +25,7 @@ namespace logisim.tools
 	/// </summary>
 	public class FactoryDescription
 	{
-		public static IList<Tool> getTools(Type @base, FactoryDescription[] descriptions)
+		public static List<Tool> getTools(Type @base, FactoryDescription[] descriptions)
 		{
 			Tool[] tools = new Tool[descriptions.Length];
 			for (int i = 0; i < tools.Length; i++)

@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace logisim.gui.appear
 	using Bounds = logisim.data.Bounds;
 	using Instance = logisim.instance.Instance;
 	using Pin = logisim.std.wiring.Pin;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	public class LayoutThumbnail : JComponent
 	{
@@ -35,7 +36,7 @@ namespace logisim.gui.appear
 		{
 			circuitState = null;
 			ports = null;
-			setBackground(Color.LIGHT_GRAY);
+			setBackground(Color.LightGray);
 			setPreferredSize(new Size(200, 200));
 		}
 
@@ -46,36 +47,36 @@ namespace logisim.gui.appear
 			repaint();
 		}
 
-		protected internal override void paintComponent(Graphics g)
+		public internal override void paintComponent(JGraphics g)
 		{
 			if (circuitState != null)
 			{
 				Circuit circuit = circuitState.Circuit;
 				Bounds bds = circuit.getBounds(g);
 				Size size = getSize();
-				double scaleX = (double)(size.width - 2 * BORDER) / bds.Width;
-				double scaleY = (double)(size.height - 2 * BORDER) / bds.Height;
+				double scaleX = (double)(size.Width - 2 * BORDER) / bds.Width;
+				double scaleY = (double)(size.Height - 2 * BORDER) / bds.Height;
 				double scale = Math.Min(1.0, Math.Min(scaleX, scaleY));
 
-				Graphics gCopy = g.create();
-				int borderX = (int)((size.width - bds.Width * scale) / 2);
-				int borderY = (int)((size.height - bds.Height * scale) / 2);
+				JGraphics gCopy = g.create();
+				int borderX = (int)((size.Width - bds.Width * scale) / 2);
+				int borderY = (int)((size.Height - bds.Height * scale) / 2);
 				gCopy.translate(borderX, borderY);
-				if (scale != 1.0 && g is Graphics2D)
+				if (scale != 1.0)
 				{
-					((Graphics2D) gCopy).scale(scale, scale);
+					gCopy.scale(scale, scale);
 				}
 				gCopy.translate(-bds.X, -bds.Y);
 
 				ComponentDrawContext context = new ComponentDrawContext(this, circuit, circuitState, g, gCopy);
 				context.ShowState = false;
 				context.ShowColor = false;
-				circuit.draw(context, Enumerable.Empty<Component>());
+				circuit.draw(context, []);
 				if (ports != null)
 				{
 					gCopy.setColor(AppearancePort.COLOR);
 					int width = Math.Max(4, (int)((2 / scale) + 0.5));
-					GraphicsUtil.switchToWidth(gCopy, width);
+					JGraphicsUtil.switchToWidth(gCopy, width);
 					foreach (Instance port in ports)
 					{
 						Bounds b = port.Bounds;
@@ -102,9 +103,9 @@ namespace logisim.gui.appear
 				}
 				gCopy.dispose();
 
-				g.setColor(Color.BLACK);
-				GraphicsUtil.switchToWidth(g, 2);
-				g.drawRect(0, 0, size.width - 2, size.height - 2);
+				g.setColor(Color.Black);
+				JGraphicsUtil.switchToWidth(g, 2);
+				g.drawRect(0, 0, size.Width - 2, size.Height - 2);
 			}
 		}
 

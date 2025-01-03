@@ -32,14 +32,15 @@ namespace logisim.std.gates
 	using WireRepair = logisim.tools.WireRepair;
 	using WireRepairData = logisim.tools.WireRepairData;
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using Icons = logisim.util.Icons;
+    using LogisimPlus.Java;
 
-	internal class ControlledBuffer : InstanceFactory
+    internal class ControlledBuffer : InstanceFactory
 	{
 		private static readonly AttributeOption RIGHT_HANDED = new AttributeOption("right", Strings.getter("controlledRightHanded"));
 		private static readonly AttributeOption LEFT_HANDED = new AttributeOption("left", Strings.getter("controlledLeftHanded"));
-		private static readonly Attribute<AttributeOption> ATTR_CONTROL = Attributes.forOption("control", Strings.getter("controlledControlOption"), new AttributeOption[] {RIGHT_HANDED, LEFT_HANDED});
+		private static readonly Attribute ATTR_CONTROL = Attributes.forOption("control", Strings.getter("controlledControlOption"), new AttributeOption[] {RIGHT_HANDED, LEFT_HANDED});
 
 		public static ComponentFactory FACTORY_BUFFER = new ControlledBuffer(false);
 		public static ComponentFactory FACTORY_INVERTER = new ControlledBuffer(true);
@@ -54,14 +55,14 @@ namespace logisim.std.gates
 			this.isInverter = isInverter;
 			if (isInverter)
 			{
-				setAttributes(new Attribute[] {StdAttr.FACING, StdAttr.WIDTH, NotGate.ATTR_SIZE, ATTR_CONTROL, StdAttr.LABEL, StdAttr.LABEL_FONT}, new object[] {Direction.East, BitWidth.ONE, NotGate.SIZE_WIDE, RIGHT_HANDED, "", StdAttr.DEFAULT_LABEL_FONT});
+				setAttributes(new Attribute[] {StdAttr.FACING, StdAttr.Width, NotGate.ATTR_SIZE, ATTR_CONTROL, StdAttr.LABEL, StdAttr.LABEL_FONT}, new object[] {Direction.East, BitWidth.ONE, NotGate.SIZE_WIDE, RIGHT_HANDED, "", StdAttr.DEFAULT_LABEL_FONT});
 			}
 			else
 			{
-				setAttributes(new Attribute[] {StdAttr.FACING, StdAttr.WIDTH, ATTR_CONTROL, StdAttr.LABEL, StdAttr.LABEL_FONT}, new object[] {Direction.East, BitWidth.ONE, RIGHT_HANDED, "", StdAttr.DEFAULT_LABEL_FONT});
+				setAttributes(new Attribute[] {StdAttr.FACING, StdAttr.Width, ATTR_CONTROL, StdAttr.LABEL, StdAttr.LABEL_FONT}, new object[] {Direction.East, BitWidth.ONE, RIGHT_HANDED, "", StdAttr.DEFAULT_LABEL_FONT});
 			}
 			FacingAttribute = StdAttr.FACING;
-			KeyConfigurator = new BitWidthConfigurator(StdAttr.WIDTH);
+			KeyConfigurator = new BitWidthConfigurator(StdAttr.Width);
 		}
 
 		public override Bounds getOffsetBounds(AttributeSet attrs)
@@ -88,7 +89,7 @@ namespace logisim.std.gates
 		}
 
 		//
-		// graphics methods
+		// JGraphics methods
 		//
 		public override void paintGhost(InstancePainter painter)
 		{
@@ -97,7 +98,7 @@ namespace logisim.std.gates
 
 		public override void paintIcon(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			Icon icon = isInverter ? ICON_INVERTER : ICON_BUFFER;
 			if (icon != null)
 			{
@@ -106,7 +107,7 @@ namespace logisim.std.gates
 			else
 			{
 				int x = isInverter ? 0 : 2;
-				g.setColor(Color.BLACK);
+				g.setColor(Color.Black);
 				int[] xp = new int[] {x + 15, x + 1, x + 1, x + 15};
 				int[] yp = new int[] {10, 3, 17, 10};
 				g.drawPolyline(xp, yp, 4);
@@ -123,10 +124,10 @@ namespace logisim.std.gates
 		{
 			Direction face = painter.getAttributeValue(StdAttr.FACING);
 
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 
 			// draw control wire
-			GraphicsUtil.switchToWidth(g, 3);
+			JGraphicsUtil.switchToWidth(g, 3);
 			Location pt0 = painter.getInstance().getPortLocation(2);
 			Location pt1;
 			if (painter.getAttributeValue(ATTR_CONTROL) == LEFT_HANDED)
@@ -144,7 +145,7 @@ namespace logisim.std.gates
 			g.drawLine(pt0.X, pt0.Y, pt1.X, pt1.Y);
 
 			// draw triangle
-			g.setColor(Color.BLACK);
+			g.setColor(Color.Black);
 			paintShape(painter);
 
 			// draw input and output pins
@@ -163,12 +164,12 @@ namespace logisim.std.gates
 			int x = loc.X;
 			int y = loc.Y;
 			double rotate = 0.0;
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			g.translate(x, y);
-			if (facing != Direction.East && g is Graphics2D)
+			if (facing != Direction.East)
 			{
 				rotate = -facing.toRadians();
-				((Graphics2D) g).rotate(rotate);
+				g.rotate(rotate);
 			}
 
 			if (isInverter)
@@ -177,7 +178,7 @@ namespace logisim.std.gates
 			}
 			else
 			{
-				GraphicsUtil.switchToWidth(g, 2);
+				JGraphicsUtil.switchToWidth(g, 2);
 				int d = isInverter ? 10 : 0;
 				int[] xp = new int[] {-d, -19 - d, -19 - d, -d};
 				int[] yp = new int[] {0, -7, 7, 0};
@@ -187,7 +188,7 @@ namespace logisim.std.gates
 
 			if (rotate != 0.0)
 			{
-				((Graphics2D) g).rotate(-rotate);
+				g.rotate(-rotate);
 			}
 			g.translate(-x, -y);
 		}
@@ -202,7 +203,7 @@ namespace logisim.std.gates
 			NotGate.configureLabel(instance, false, instance.getPortLocation(2));
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == StdAttr.FACING || attr == NotGate.ATTR_SIZE)
 			{
@@ -235,16 +236,16 @@ namespace logisim.std.gates
 			}
 
 			Port[] ports = new Port[3];
-			ports[0] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
-			ports[1] = new Port(loc1.X, loc1.Y, Port.INPUT, StdAttr.WIDTH);
+			ports[0] = new Port(0, 0, Port.OUTPUT, StdAttr.Width);
+			ports[1] = new Port(loc1.X, loc1.Y, Port.INPUT, StdAttr.Width);
 			ports[2] = new Port(loc2.X, loc2.Y, Port.INPUT, 1);
-			instance.setPorts(ports);
+			instance.Ports = ports;
 		}
 
 		public override void propagate(InstanceState state)
 		{
 			Value control = state.getPort(2);
-			BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
+			BitWidth width = state.getAttributeValue(StdAttr.Width);
 			if (control == Value.TRUE)
 			{
 				Value @in = state.getPort(1);

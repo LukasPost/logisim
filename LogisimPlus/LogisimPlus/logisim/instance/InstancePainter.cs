@@ -45,7 +45,7 @@ namespace logisim.instance
 			get
 			{
 				InstanceComponent c = comp;
-				return c == null ? null : c.Instance;
+				return c?.Instance;
 			}
 		}
 
@@ -255,7 +255,7 @@ namespace logisim.instance
 			}
 		}
 
-		public virtual E getAttributeValue<E>(Attribute<E> attr)
+        public virtual object getAttributeValue(Attribute attr)
 		{
 			InstanceComponent c = comp;
 			AttributeSet @as = c == null ? attrs : c.AttributeSet;

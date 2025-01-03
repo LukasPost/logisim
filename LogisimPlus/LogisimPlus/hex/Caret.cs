@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System.Collections.Generic;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -15,7 +16,7 @@ namespace hex
 
 	public class Caret
 	{
-		private static Color SELECT_COLOR = new Color(192, 192, 255);
+		private static Color SELECT_COLOR = Color.FromArgb(255, 192, 192, 255);
 
 		private class Listener : MouseListener, MouseMotionListener, KeyListener, FocusListener
 		{
@@ -365,19 +366,18 @@ namespace hex
 			}
 		}
 
-		internal virtual void paintForeground(Graphics g, long start, long end)
+		internal virtual void paintForeground(JGraphics g, long start, long end)
 		{
 			if (cursor >= start && cursor < end && hex.isFocusOwner())
 			{
 				Measures measures = hex.Measures;
 				int x = measures.toX(cursor);
 				int y = measures.toY(cursor);
-				Graphics2D g2 = (Graphics2D) g;
-				Stroke oldStroke = g2.getStroke();
-				g2.setColor(hex.getForeground());
-				g2.setStroke(CURSOR_STROKE);
-				g2.drawRect(x, y, measures.CellWidth - 1, measures.CellHeight - 1);
-				g2.setStroke(oldStroke);
+				Stroke oldStroke = g.getStroke();
+				g.setColor(hex.getForeground());
+				g.setStroke(CURSOR_STROKE);
+				g.drawRect(x, y, measures.CellWidth - 1, measures.CellHeight - 1);
+				g.setStroke(oldStroke);
 			}
 		}
 	}

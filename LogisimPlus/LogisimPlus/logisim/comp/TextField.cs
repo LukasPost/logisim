@@ -13,18 +13,18 @@ namespace logisim.comp
 {
 
 	using Bounds = logisim.data.Bounds;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	public class TextField
 	{
-		public const int H_LEFT = GraphicsUtil.H_LEFT;
-		public const int H_CENTER = GraphicsUtil.H_CENTER;
-		public const int H_RIGHT = GraphicsUtil.H_RIGHT;
-		public const int V_TOP = GraphicsUtil.V_TOP;
-		public const int V_CENTER = GraphicsUtil.V_CENTER;
-		public const int V_CENTER_OVERALL = GraphicsUtil.V_CENTER_OVERALL;
-		public const int V_BASELINE = GraphicsUtil.V_BASELINE;
-		public const int V_BOTTOM = GraphicsUtil.V_BOTTOM;
+		public const int H_LEFT = JGraphicsUtil.H_LEFT;
+		public const int H_CENTER = JGraphicsUtil.H_CENTER;
+		public const int H_RIGHT = JGraphicsUtil.H_RIGHT;
+		public const int V_TOP = JGraphicsUtil.V_TOP;
+		public const int V_CENTER = JGraphicsUtil.V_CENTER;
+		public const int V_CENTER_OVERALL = JGraphicsUtil.V_CENTER_OVERALL;
+		public const int V_BASELINE = JGraphicsUtil.V_BASELINE;
+		public const int V_BOTTOM = JGraphicsUtil.V_BOTTOM;
 
 		private int x;
 		private int y;
@@ -133,7 +133,7 @@ namespace logisim.comp
 			}
 		}
 
-		public virtual TextFieldCaret getCaret(Graphics g, int pos)
+		public virtual TextFieldCaret getCaret(JGraphics g, int pos)
 		{
 			return new TextFieldCaret(this, g, pos);
 		}
@@ -177,14 +177,14 @@ namespace logisim.comp
 
 
 		//
-		// graphics methods
+		// JGraphics methods
 		//
-		public virtual TextFieldCaret getCaret(Graphics g, int x, int y)
+		public virtual TextFieldCaret getCaret(JGraphics g, int x, int y)
 		{
 			return new TextFieldCaret(this, g, x, y);
 		}
 
-		public virtual Bounds getBounds(Graphics g)
+		public virtual Bounds getBounds(JGraphics g)
 		{
 			int x = this.x;
 			int y = this.y;
@@ -231,7 +231,7 @@ namespace logisim.comp
 			return Bounds.create(x, y - ascent, width, ascent + descent);
 		}
 
-		public virtual void draw(Graphics g)
+		public virtual void draw(JGraphics g)
 		{
 			Font old = g.getFont();
 			if (font != null)

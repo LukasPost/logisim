@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 using System.Collections.Generic;
 
@@ -16,7 +17,7 @@ namespace logisim.std.gates
 	using Location = logisim.data.Location;
 	using Value = logisim.data.Value;
 	using InstancePainter = logisim.instance.InstancePainter;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	internal class PainterDin
 	{
@@ -53,7 +54,7 @@ namespace logisim.std.gates
 
 		private static void paint(InstancePainter painter, int width, int height, bool drawBubble, int dinType)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			int xMid = -width;
 			int y0 = -height / 2;
 			if (drawBubble)
@@ -88,7 +89,7 @@ namespace logisim.std.gates
 				throw new System.ArgumentException("unrecognized shape");
 			}
 
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphicsUtil.switchToWidth(g, 2);
 			int x0 = xMid - diam / 2;
 			Color oldColor = g.getColor();
 			if (painter.ShowState)
@@ -127,7 +128,7 @@ namespace logisim.std.gates
 			attrs.inputs = inputs;
 			attrs.size = baseAttrs.size;
 
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			// draw state if appropriate
 			// ignore lines if in print view
 			int r = Math.Min(height / 2, width);
@@ -159,7 +160,7 @@ namespace logisim.std.gates
 
 			AbstractGate factory = hasBubble ? (logisim.std.gates.AbstractGate)NorGate.FACTORY : OrGate.FACTORY;
 			bool printView = painter.PrintView && painter.getInstance() != null;
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphicsUtil.switchToWidth(g, 2);
 			for (int i = 0; i < inputs; i++)
 			{
 				if (!printView || painter.isPortConnected(i))

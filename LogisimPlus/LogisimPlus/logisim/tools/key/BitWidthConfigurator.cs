@@ -16,15 +16,15 @@ namespace logisim.tools.key
 
 	public class BitWidthConfigurator : NumericConfigurator<BitWidth>
 	{
-		public BitWidthConfigurator(Attribute<BitWidth> attr, int min, int max, int modifiersEx) : base(attr, min, max, modifiersEx)
+		public BitWidthConfigurator(Attribute attr, int min, int max, int modifiersEx) : base(attr, min, max, modifiersEx)
 		{
 		}
 
-		public BitWidthConfigurator(Attribute<BitWidth> attr, int min, int max) : base(attr, min, max, InputEvent.ALT_DOWN_MASK)
+		public BitWidthConfigurator(Attribute attr, int min, int max) : base(attr, min, max, InputEvent.ALT_DOWN_MASK)
 		{
 		}
 
-		public BitWidthConfigurator(Attribute<BitWidth> attr) : base(attr, 1, Value.MAX_WIDTH, InputEvent.ALT_DOWN_MASK)
+		public BitWidthConfigurator(Attribute attr) : base(attr, 1, Value.MAX_WIDTH, InputEvent.ALT_DOWN_MASK)
 		{
 		}
 

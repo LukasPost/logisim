@@ -96,11 +96,11 @@ namespace logisim.gui.appear
 				this.forward = forward;
 			}
 
-			protected internal override IDictionary<Circuit, int> AccessedCircuits
+			protected internal override Dictionary<Circuit, int> AccessedCircuits
 			{
 				get
 				{
-					IDictionary<Circuit, int> accessMap = new Dictionary<Circuit, int>();
+					Dictionary<Circuit, int> accessMap = new Dictionary<Circuit, int>();
 					foreach (Circuit supercirc in outerInstance.circuit.CircuitsUsingThis)
 					{
 						accessMap[supercirc] = READ_WRITE;

@@ -9,8 +9,8 @@
 
 namespace draw.tools
 {
-
-	using ToolbarItem = draw.toolbar.ToolbarItem;
+    using LogisimPlus.Java;
+    using ToolbarItem = draw.toolbar.ToolbarItem;
 
 	public class ToolbarToolItem : ToolbarItem
 	{
@@ -39,13 +39,13 @@ namespace draw.tools
 			}
 		}
 
-		public virtual void paintIcon(Component destination, Graphics g)
+		public virtual void paintIcon(JComponent destination, JGraphics g)
 		{
 			if (icon == null)
 			{
-				g.setColor(new Color(255, 128, 128));
+				g.setColor(Color.FromArgb(255, 255, 128, 128));
 				g.fillRect(4, 4, 8, 8);
-				g.setColor(Color.BLACK);
+				g.setColor(Color.Black);
 				g.drawLine(4, 4, 12, 12);
 				g.drawLine(4, 12, 12, 4);
 				g.drawRect(4, 4, 8, 8);

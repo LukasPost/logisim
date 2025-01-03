@@ -15,12 +15,12 @@ namespace draw.model
 	{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private logisim.data.Attribute<?> attr;
-		private Attribute<object> attr;
+		private Attribute attr;
 		private CanvasObject @object;
 
 // JAVA TO C# CONVERTER TASK: Wildcard generics in constructor parameters are not converted. Move the generic type parameter and constraint to the class header:
 // ORIGINAL LINE: public AttributeMapKey(logisim.data.Attribute<?> attr, CanvasObject object)
-		public AttributeMapKey(Attribute<T1> attr, CanvasObject @object)
+		public AttributeMapKey(Attribute attr, CanvasObject @object)
 		{
 			this.attr = attr;
 			this.@object = @object;
@@ -28,7 +28,7 @@ namespace draw.model
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public logisim.data.Attribute<?> getAttribute()
-		public virtual Attribute<object> Attribute
+		public virtual Attribute Attribute
 		{
 			get
 			{

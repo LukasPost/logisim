@@ -21,7 +21,7 @@ namespace logisim.comp
 		public abstract object getFeature(object key);
 		public abstract void draw(ComponentDrawContext context);
 		public abstract void expose(ComponentDrawContext context);
-		public abstract logisim.data.AttributeSet AttributeSet {get;}
+		public abstract logisim.data.AttributeSet AttributeSet { get; protected set; }
 		public abstract void removeComponentListener(ComponentListener l);
 		public abstract void addComponentListener(ComponentListener l);
 		protected internal AbstractComponent()
@@ -36,11 +36,11 @@ namespace logisim.comp
 		//
 		// location/extent methods
 		//
-		public abstract Location Location {get;}
+		public abstract Location Location { get; protected set; }
 
-		public abstract Bounds Bounds {get;}
+		public abstract Bounds Bounds { get; protected set; }
 
-		public virtual Bounds getBounds(Graphics g)
+		public virtual Bounds getBounds(JGraphics g)
 		{
 			return Bounds;
 		}
@@ -55,7 +55,7 @@ namespace logisim.comp
 			return bds.contains(pt, 1);
 		}
 
-		public virtual bool contains(Location pt, Graphics g)
+		public virtual bool contains(Location pt, JGraphics g)
 		{
 			Bounds bds = getBounds(g);
 			if (bds == null)
@@ -68,7 +68,7 @@ namespace logisim.comp
 		//
 		// propagation methods
 		//
-		public abstract IList<EndData> Ends {get;}
+		public abstract List<EndData> Ends {get;}
 
 		public virtual EndData getEnd(int index)
 		{

@@ -49,7 +49,7 @@ namespace logisim.std.memory
 
 		public override Value getLogValue(InstanceState state, object option)
 		{
-			BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+			BitWidth dataWidth = state.getAttributeValue(StdAttr.Width);
 			if (dataWidth == null)
 			{
 				dataWidth = BitWidth.create(0);

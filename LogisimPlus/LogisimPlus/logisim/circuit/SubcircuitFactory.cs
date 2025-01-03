@@ -31,7 +31,7 @@ namespace logisim.circuit
 	using Project = logisim.proj.Project;
 	using Pin = logisim.std.wiring.Pin;
 	using MenuExtender = logisim.tools.MenuExtender;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using StringGetter = logisim.util.StringGetter;
 	using StringUtil = logisim.util.StringUtil;
     using LogisimPlus.Java;
@@ -167,7 +167,7 @@ namespace logisim.circuit
 		internal virtual void computePorts(Instance instance)
 		{
 			Direction facing = instance.getAttributeValue(StdAttr.FACING);
-			IDictionary<Location, Instance> portLocs = source.Appearance.getPortOffsets(facing);
+			Dictionary<Location, Instance> portLocs = source.Appearance.getPortOffsets(facing);
 			Port[] ports = new Port[portLocs.Count];
 			Instance[] pins = new Instance[portLocs.Count];
 			int i = -1;
@@ -177,7 +177,7 @@ namespace logisim.circuit
 				Location loc = portLoc.Key;
 				Instance pin = portLoc.Value;
 				string type = Pin.FACTORY.isInputPin(pin) ? Port.INPUT : Port.OUTPUT;
-				BitWidth width = pin.getAttributeValue(StdAttr.WIDTH);
+				BitWidth width = pin.getAttributeValue(StdAttr.Width);
 				ports[i] = new Port(loc.X, loc.Y, type, width);
 				pins[i] = pin;
 
@@ -202,27 +202,27 @@ namespace logisim.circuit
 
 			int x = bds.X + bds.Width / 2;
 			int y = bds.Y + bds.Height / 2;
-			int ha = GraphicsUtil.H_CENTER;
-			int va = GraphicsUtil.V_CENTER;
+			int ha = JGraphicsUtil.H_CENTER;
+			int va = JGraphicsUtil.V_CENTER;
 			if (loc == Direction.East)
 			{
 				x = bds.X + bds.Width + 2;
-				ha = GraphicsUtil.H_LEFT;
+				ha = JGraphicsUtil.H_LEFT;
 			}
 			else if (loc == Direction.West)
 			{
 				x = bds.X - 2;
-				ha = GraphicsUtil.H_RIGHT;
+				ha = JGraphicsUtil.H_RIGHT;
 			}
 			else if (loc == Direction.South)
 			{
 				y = bds.Y + bds.Height + 2;
-				va = GraphicsUtil.V_TOP;
+				va = JGraphicsUtil.V_TOP;
 			}
 			else
 			{
 				y = bds.Y - 2;
-				va = GraphicsUtil.V_BASELINE;
+				va = JGraphicsUtil.V_BASELINE;
 			}
 			instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, x, y, ha, va);
 		}
@@ -285,20 +285,20 @@ namespace logisim.circuit
 		//
 		public override void paintGhost(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			Color fg = g.getColor();
-			int v = fg.getRed() + fg.getGreen() + fg.getBlue();
+			int v = fg.R + fg.G + fg.B;
 			Composite oldComposite = null;
-			if (g is Graphics2D && v > 50)
+			if (v > 50)
 			{
-				oldComposite = ((Graphics2D) g).getComposite();
+				oldComposite = g.getComposite();
 				Composite c = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
-				((Graphics2D) g).setComposite(c);
+				g.setComposite(c);
 			}
 			paintBase(painter, g);
 			if (oldComposite != null)
 			{
-				((Graphics2D) g).setComposite(oldComposite);
+				g.setComposite(oldComposite);
 			}
 		}
 
@@ -308,7 +308,7 @@ namespace logisim.circuit
 			painter.drawPorts();
 		}
 
-		private void paintBase(InstancePainter painter, Graphics g)
+		private void paintBase(InstancePainter painter, JGraphics g)
 		{
 			CircuitAttributes attrs = (CircuitAttributes) painter.AttributeSet;
 			Direction facing = attrs.Facing;
@@ -358,13 +358,13 @@ namespace logisim.circuit
 				g.setFont(font);
 				if (lines == 1 && !backs)
 				{
-					GraphicsUtil.drawCenteredText(g, label, x, y);
+					JGraphicsUtil.drawCenteredText(g, label, x, y);
 				}
 				else
 				{
                     SizeF labelSize = g.measureString(label);
-                    int height = labelSize.Height;
-					y = y - (height * lines - labelSize.Height) / 2 + labelSize.Height;
+                    int height = labelsize.Height;
+					y = y - (height * lines - labelsize.Height) / 2 + labelsize.Height;
 					back = label.IndexOf('\\');
 					while (back >= 0 && back <= label.Length - 2)
 					{
@@ -372,7 +372,7 @@ namespace logisim.circuit
 						if (c == 'n')
 						{
 							string line = label.Substring(0, back);
-							GraphicsUtil.drawText(g, line, x, y, GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
+							JGraphicsUtil.drawText(g, line, x, y, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_BASELINE);
 							y += height;
 							label = label.Substring(back + 2);
 							back = label.IndexOf('\\');
@@ -387,7 +387,7 @@ namespace logisim.circuit
 							back = label.IndexOf('\\', back + 2);
 						}
 					}
-					GraphicsUtil.drawText(g, label, x, y, GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
+					JGraphicsUtil.drawText(g, label, x, y, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_BASELINE);
 				}
 				g.dispose();
 			}

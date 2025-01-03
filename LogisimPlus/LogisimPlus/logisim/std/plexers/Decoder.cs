@@ -27,7 +27,7 @@ namespace logisim.std.plexers
 	using Port = logisim.instance.Port;
 	using StdAttr = logisim.instance.StdAttr;
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	public class Decoder : InstanceFactory
 	{
@@ -39,7 +39,7 @@ namespace logisim.std.plexers
 			FacingAttribute = StdAttr.FACING;
 		}
 
-		public virtual object getDefaultAttributeValue<T1>(Attribute<T1> attr, LogisimVersion ver)
+		public virtual object getDefaultAttributeValue<T1>(Attribute attr, LogisimVersion ver)
 		{
 			if (attr == Plexers.ATTR_ENABLE)
 			{
@@ -90,7 +90,7 @@ namespace logisim.std.plexers
 			updatePorts(instance);
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == StdAttr.FACING || attr == Plexers.ATTR_SELECT_LOC || attr == Plexers.ATTR_SELECT)
 			{
@@ -185,14 +185,14 @@ namespace logisim.std.plexers
 			}
 			for (int i = 0; i < outputs; i++)
 			{
-				ps[i].setToolTip(Strings.getter("decoderOutTip", "" + i));
+				ps[i].ToolTip = Strings.getter("decoderOutTip", "" + i);
 			}
-			ps[outputs].setToolTip(Strings.getter("decoderSelectTip"));
+			ps[outputs].ToolTip = Strings.getter("decoderSelectTip");
 			if (enable)
 			{
-				ps[outputs + 1].setToolTip(Strings.getter("decoderEnableTip"));
+				ps[outputs + 1].ToolTip = Strings.getter("decoderEnableTip");
 			}
-			instance.setPorts(ps);
+			instance.Ports = ps;
 		}
 
 		public override void propagate(InstanceState state)
@@ -263,7 +263,7 @@ namespace logisim.std.plexers
 
 		public override void paintInstance(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			Bounds bds = painter.Bounds;
 			Direction facing = painter.getAttributeValue(StdAttr.FACING);
 			object selectLoc = painter.getAttributeValue(Plexers.ATTR_SELECT_LOC);
@@ -273,7 +273,7 @@ namespace logisim.std.plexers
 			int outputs = 1 << select.Width;
 
 			// draw stubs for select and enable ports
-			GraphicsUtil.switchToWidth(g, 3);
+			JGraphicsUtil.switchToWidth(g, 3);
 			bool vertical = facing == Direction.North || facing == Direction.South;
 			int dx = vertical ? selMult : 0;
 			int dy = vertical ? 0 : -selMult;
@@ -296,7 +296,7 @@ namespace logisim.std.plexers
 				}
 				g.drawLine(en.X, en.Y, en.X + len * dx, en.Y + len * dy);
 			}
-			GraphicsUtil.switchToWidth(g, 1);
+			JGraphicsUtil.switchToWidth(g, 1);
 
 			// draw a circle indicating where the select input is located
 			Multiplexer.drawSelectCircle(g, bds, painter.getInstance().getPortLocation(outputs));
@@ -309,33 +309,33 @@ namespace logisim.std.plexers
 			{
 				x0 = 3;
 				y0 = 15;
-				halign = GraphicsUtil.H_LEFT;
+				halign = JGraphicsUtil.H_LEFT;
 			}
 			else if (facing == Direction.North)
 			{
 				x0 = 10;
 				y0 = 15;
-				halign = GraphicsUtil.H_CENTER;
+				halign = JGraphicsUtil.H_CENTER;
 			}
 			else if (facing == Direction.South)
 			{
 				x0 = 10;
 				y0 = bds.Height - 3;
-				halign = GraphicsUtil.H_CENTER;
+				halign = JGraphicsUtil.H_CENTER;
 			}
 			else
 			{
 				x0 = bds.Width - 3;
 				y0 = 15;
-				halign = GraphicsUtil.H_RIGHT;
+				halign = JGraphicsUtil.H_RIGHT;
 			}
-			g.setColor(Color.GRAY);
-			GraphicsUtil.drawText(g, "0", bds.X + x0, bds.Y + y0, halign, GraphicsUtil.V_BASELINE);
+			g.setColor(Color.Gray);
+			JGraphicsUtil.drawText(g, "0", bds.X + x0, bds.Y + y0, halign, JGraphicsUtil.V_BASELINE);
 
 			// draw trapezoid, "Decd", and ports
-			g.setColor(Color.BLACK);
+			g.setColor(Color.Black);
 			Plexers.drawTrapezoid(g, bds, facing.reverse(), outputs == 2 ? 10 : 20);
-			GraphicsUtil.drawCenteredText(g, "Decd", bds.X + bds.Width / 2, bds.Y + bds.Height / 2);
+			JGraphicsUtil.drawCenteredText(g, "Decd", bds.X + bds.Width / 2, bds.Y + bds.Height / 2);
 			painter.drawPorts();
 		}
 	}

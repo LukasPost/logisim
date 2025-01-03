@@ -20,19 +20,12 @@ namespace logisim.instance
 			this.value = value;
 		}
 
-		public virtual InstanceDataSingleton clone()
-		{
-			try
-			{
-				return (InstanceDataSingleton) base.clone();
-			}
-			catch (CloneNotSupportedException)
-			{
-				return null;
-			}
-		}
+        public virtual object Clone()
+        {
+            return MemberwiseClone();
+        }
 
-		public virtual object Value
+        public virtual object Value
 		{
 			get
 			{

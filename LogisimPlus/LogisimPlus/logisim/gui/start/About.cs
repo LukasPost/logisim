@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 using System.Threading;
 
@@ -16,7 +17,7 @@ namespace logisim.gui.start
 
 	using Main = logisim.Main;
 	using Value = logisim.data.Value;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	public class About
 	{
@@ -58,8 +59,8 @@ namespace logisim.gui.start
 
 		private class MyPanel : JPanel, AncestorListener
 		{
-			internal readonly Color fadeColor = new Color(255, 255, 255, 128);
-			internal readonly Color headerColor = new Color(143, 0, 0);
+			internal readonly Color fadeColor = Color.FromArgb(255, 255, 255, 255, 128);
+			internal readonly Color headerColor = Color.FromArgb(255, 143, 0, 0);
 			internal readonly Color gateColor = Color.DARK_GRAY;
 			internal readonly Font headerFont = new Font("Monospaced", Font.BOLD, 72);
 			internal readonly Font versionFont = new Font("Serif", Font.PLAIN | Font.ITALIC, 32);
@@ -77,7 +78,7 @@ namespace logisim.gui.start
 				int prefWidth = IMAGE_WIDTH + 2 * IMAGE_BORDER;
 				int prefHeight = IMAGE_HEIGHT + 2 * IMAGE_BORDER;
 				setPreferredSize(new Size(prefWidth, prefHeight));
-				setBackground(Color.WHITE);
+				setBackground(Color.White);
 				addAncestorListener(this);
 
 				credits = new AboutCredits();
@@ -85,7 +86,7 @@ namespace logisim.gui.start
 				add(credits);
 			}
 
-			public override void paintComponent(Graphics g)
+			public override void paintComponent(JGraphics g)
 			{
 				base.paintComponent(g);
 
@@ -103,13 +104,9 @@ namespace logisim.gui.start
 				}
 			}
 
-			internal virtual void drawCircuit(Graphics g, int x0, int y0)
+			internal virtual void drawCircuit(JGraphics g, int x0, int y0)
 			{
-				if (g is Graphics2D)
-				{
-					Graphics2D g2 = (Graphics2D) g;
-					g2.setStroke(new BasicStroke(5.0f));
-				}
+				g.setStroke(new BasicStroke(5.0f));
 				drawWires(g, x0, y0);
 				g.setColor(gateColor);
 				drawNot(g, x0, y0, 70, 10);
@@ -119,7 +116,7 @@ namespace logisim.gui.start
 				drawOr(g, x0, y0, 220, 60);
 			}
 
-			internal virtual void drawWires(Graphics g, int x0, int y0)
+			internal virtual void drawWires(JGraphics g, int x0, int y0)
 			{
 				Value upperNot = upper.not();
 				Value lowerNot = lower.not();
@@ -172,7 +169,7 @@ namespace logisim.gui.start
 				g.drawLine(toX(x0, 220), y, toX(x0, 240), y);
 			}
 
-			internal virtual void drawNot(Graphics g, int x0, int y0, int x, int y)
+			internal virtual void drawNot(JGraphics g, int x0, int y0, int x, int y)
 			{
 				int[] xp = new int[4];
 				int[] yp = new int[4];
@@ -189,7 +186,7 @@ namespace logisim.gui.start
 				g.drawOval(xp[0], yp[0] - diam / 2, diam, diam);
 			}
 
-			internal virtual void drawAnd(Graphics g, int x0, int y0, int x, int y)
+			internal virtual void drawAnd(JGraphics g, int x0, int y0, int x, int y)
 			{
 				int[] xp = new int[4];
 				int[] yp = new int[4];
@@ -206,13 +203,13 @@ namespace logisim.gui.start
 				g.drawPolyline(xp, yp, 4);
 			}
 
-			internal virtual void drawOr(Graphics g, int x0, int y0, int x, int y)
+			internal virtual void drawOr(JGraphics g, int x0, int y0, int x, int y)
 			{
 				int cx = toX(x0, x - 50);
 				int cd = toDim(62);
-				GraphicsUtil.drawCenteredArc(g, cx, toY(y0, y - 37), cd, -90, 53);
-				GraphicsUtil.drawCenteredArc(g, cx, toY(y0, y + 37), cd, 90, -53);
-				GraphicsUtil.drawCenteredArc(g, toX(x0, x - 93), toY(y0, y), toDim(50), -30, 60);
+				JGraphicsUtil.drawCenteredArc(g, cx, toY(y0, y - 37), cd, -90, 53);
+				JGraphicsUtil.drawCenteredArc(g, cx, toY(y0, y + 37), cd, 90, -53);
+				JGraphicsUtil.drawCenteredArc(g, toX(x0, x - 93), toY(y0, y), toDim(50), -30, 60);
 			}
 
 			internal static int toX(int x0, int offs)
@@ -230,7 +227,7 @@ namespace logisim.gui.start
 				return offs * 3 / 2;
 			}
 
-			internal virtual void drawText(Graphics g, int x, int y)
+			internal virtual void drawText(JGraphics g, int x, int y)
 			{
 				FontMetrics fm;
 				string str;
@@ -287,7 +284,7 @@ namespace logisim.gui.start
 			MyPanel imgPanel = ImagePanel;
 			JPanel panel = new JPanel(new BorderLayout());
 			panel.add(imgPanel);
-			panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+			panel.setBorder(BorderFactory.createLineBorder(Color.Black, 2));
 
 			JOptionPane.showMessageDialog(owner, panel, "Logisim " + Main.VERSION_NAME, JOptionPane.PLAIN_MESSAGE);
 		}

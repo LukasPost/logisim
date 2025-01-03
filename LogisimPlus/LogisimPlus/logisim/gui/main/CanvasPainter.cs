@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 using System.Collections.Generic;
 
@@ -27,11 +28,11 @@ namespace logisim.gui.main
 	using AppPreferences = logisim.prefs.AppPreferences;
 	using Project = logisim.proj.Project;
 	using Tool = logisim.tools.Tool;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	internal class CanvasPainter : PropertyChangeListener
 	{
-		private static readonly ISet<Component> NO_COMPONENTS = Collections.emptySet();
+		private static readonly HashSet<Component> NO_COMPONENTS = Collections.emptySet();
 
 		private Canvas canvas;
 		private GridPainter grid;
@@ -84,14 +85,14 @@ namespace logisim.gui.main
 			{
 				return;
 			}
-			Graphics g = canvas.getGraphics();
+			JGraphics g = canvas.getJGraphics();
 			exposeHaloedComponent(g);
 			haloedCircuit = circ;
 			haloedComponent = comp;
 			exposeHaloedComponent(g);
 		}
 
-		private void exposeHaloedComponent(Graphics g)
+		private void exposeHaloedComponent(JGraphics g)
 		{
 			Component c = haloedComponent;
 			if (c == null)
@@ -117,25 +118,25 @@ namespace logisim.gui.main
 		//
 		// painting methods
 		//
-		internal virtual void paintContents(Graphics g, Project proj)
+		internal virtual void paintContents(JGraphics g, Project proj)
 		{
 			Rectangle clip = g.getClipBounds();
 			Size size = canvas.getSize();
 			double zoomFactor = canvas.ZoomFactor;
 			if (canvas.ifPaintDirtyReset() || clip == null)
 			{
-				clip = new Rectangle(0, 0, size.width, size.height);
+				clip = new Rectangle(0, 0, size.Width, size.Height);
 			}
-			g.setColor(Color.white);
-			g.fillRect(clip.x, clip.y, clip.width, clip.height);
+			g.setColor(Color.White);
+			g.fillRect(clip.X, clip.Y, clip.Width, clip.Height);
 
 			grid.paintGrid(g);
-			g.setColor(Color.black);
+			g.setColor(Color.Black);
 
-			Graphics gScaled = g.create();
-			if (zoomFactor != 1.0 && gScaled is Graphics2D)
+			JGraphics gScaled = g.create();
+			if (zoomFactor != 1.0)
 			{
-				((Graphics2D) gScaled).scale(zoomFactor, zoomFactor);
+				gScaled.scale(zoomFactor, zoomFactor);
 			}
 			drawWithUserState(g, gScaled, proj);
 			drawWidthIncompatibilityData(g, gScaled, proj);
@@ -144,18 +145,18 @@ namespace logisim.gui.main
 			CircuitState circState = proj.CircuitState;
 			ComponentDrawContext ptContext = new ComponentDrawContext(canvas, circ, circState, g, gScaled);
 			ptContext.HighlightedWires = highlightedWires;
-			gScaled.setColor(Color.RED);
+			gScaled.setColor(Color.Red);
 			circState.drawOscillatingPoints(ptContext);
 			gScaled.setColor(Color.BLUE);
 			proj.Simulator.drawStepPoints(ptContext);
 			gScaled.dispose();
 		}
 
-		private void drawWithUserState(Graphics @base, Graphics g, Project proj)
+		private void drawWithUserState(JGraphics @base, JGraphics g, Project proj)
 		{
 			Circuit circ = proj.CurrentCircuit;
 			Selection sel = proj.Selection;
-			ISet<Component> hidden;
+			HashSet<Component> hidden;
 			Tool dragTool = canvas.DragTool;
 			if (dragTool == null)
 			{
@@ -174,7 +175,7 @@ namespace logisim.gui.main
 			bool showHalo = AppPreferences.ATTRIBUTE_HALO.Boolean;
 			if (showHalo && haloedComponent != null && haloedCircuit == circ && !hidden.Contains(haloedComponent))
 			{
-				GraphicsUtil.switchToWidth(g, 3);
+				JGraphicsUtil.switchToWidth(g, 3);
 				g.setColor(Canvas.HALO_COLOR);
 				Bounds bds = haloedComponent.getBounds(g).expand(5);
 				int w = bds.Width;
@@ -182,8 +183,8 @@ namespace logisim.gui.main
 				double a = Canvas.SQRT_2 * w;
 				double b = Canvas.SQRT_2 * h;
 				g.drawOval((int) (long)Math.Round(bds.X + w / 2.0 - a / 2.0, MidpointRounding.AwayFromZero), (int) (long)Math.Round(bds.Y + h / 2.0 - b / 2.0, MidpointRounding.AwayFromZero), (int) (long)Math.Round(a, MidpointRounding.AwayFromZero), (int) (long)Math.Round(b, MidpointRounding.AwayFromZero));
-				GraphicsUtil.switchToWidth(g, 1);
-				g.setColor(Color.BLACK);
+				JGraphicsUtil.switchToWidth(g, 1);
+				g.setColor(Color.Black);
 			}
 
 			// draw circuit and selection
@@ -198,16 +199,16 @@ namespace logisim.gui.main
 			Tool tool = dragTool != null ? dragTool : proj.Tool;
 			if (tool != null && !canvas.PopupMenuUp)
 			{
-				Graphics gCopy = g.create();
+				JGraphics gCopy = g.create();
 				context.Graphics = gCopy;
 				tool.draw(canvas, context);
 				gCopy.dispose();
 			}
 		}
 
-		private void drawWidthIncompatibilityData(Graphics @base, Graphics g, Project proj)
+		private void drawWidthIncompatibilityData(JGraphics @base, JGraphics g, Project proj)
 		{
-			ISet<WidthIncompatibilityData> exceptions;
+			HashSet<WidthIncompatibilityData> exceptions;
 			exceptions = proj.CurrentCircuit.WidthIncompatibilityData;
 			if (exceptions == null || exceptions.Count == 0)
 			{
@@ -215,7 +216,7 @@ namespace logisim.gui.main
 			}
 
 			g.setColor(Value.WIDTH_ERROR_COLOR);
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphicsUtil.switchToWidth(g, 2);
 			FontMetrics fm = @base.getFontMetrics(g.getFont());
 			foreach (WidthIncompatibilityData ex in exceptions)
 			{
@@ -253,8 +254,8 @@ namespace logisim.gui.main
 					g.drawString(caption, p.X + 5, p.Y + 2 + fm.getAscent());
 				}
 			}
-			g.setColor(Color.BLACK);
-			GraphicsUtil.switchToWidth(g, 1);
+			g.setColor(Color.Black);
+			JGraphicsUtil.switchToWidth(g, 1);
 		}
 	}
 

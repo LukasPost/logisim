@@ -202,20 +202,20 @@ namespace logisim.util
 																				// ht
 																				// and
 																				// width
-						Graphics2D graphics = image.createGraphics(); // creating
+						JGraphics2D JGraphics = image.createJGraphics(); // creating
 																		// the
-																		// graphics
+																		// JGraphics
 																		// for
 																		// buffered
 																		// image
-						graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f)); // Sets the
+						JGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f)); // Sets the
 																											// Composite for
 																											// the
-																											// Graphics2D
+																											// JGraphics2D
 																											// context
 						lbl.setOpaque(false);
-						lbl.paint(graphics); // painting the graphics to label
-						graphics.dispose();
+						lbl.paint(JGraphics); // painting the JGraphics to label
+						JGraphics.dispose();
 					}
 					dragSource.startDrag(dge, DragSource.DefaultMoveNoDrop, image, new Point(0, 0), new TransferableNode(draggedNode), this);
 				}
@@ -323,7 +323,7 @@ namespace logisim.util
 			{
 				tree.paintImmediately(rect2D.getBounds());
 				rect2D.setRect((int) pt.getX(), (int) pt.getY(), image.getWidth(), image.getHeight());
-				tree.getGraphics().drawImage(image, (int) pt.getX(), (int) pt.getY(), tree);
+				tree.getJGraphics().drawImage(image, (int) pt.getX(), (int) pt.getY(), tree);
 			}
 
 			internal void clearImage()
@@ -342,7 +342,7 @@ namespace logisim.util
 		{
 			Insets insets = DEFAULT_INSETS;
 			Rectangle outer = tree.getVisibleRect();
-			Rectangle inner = new Rectangle(outer.x + insets.left, outer.y + insets.top, outer.width - (insets.left + insets.right), outer.height - (insets.top + insets.bottom));
+			Rectangle inner = new Rectangle(outer.X + insets.left, outer.Y + insets.top, outer.Width - (insets.left + insets.right), outer.Height - (insets.top + insets.bottom));
 			if (!inner.contains(cursorLocation))
 			{
 				Rectangle scrollRect = new Rectangle(cursorLocation.x - insets.left, cursorLocation.y - insets.top, insets.left + insets.right, insets.top + insets.bottom);

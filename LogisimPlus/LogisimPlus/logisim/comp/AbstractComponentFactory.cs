@@ -17,12 +17,13 @@ namespace logisim.comp
 	using Bounds = logisim.data.Bounds;
 	using Location = logisim.data.Location;
 	using Value = logisim.data.Value;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using Icons = logisim.util.Icons;
 	using StringGetter = logisim.util.StringGetter;
 	using StringUtil = logisim.util.StringUtil;
+    using LogisimPlus.Java;
 
-	public abstract class AbstractComponentFactory : ComponentFactory
+    public abstract class AbstractComponentFactory : ComponentFactory
 	{
 		private static readonly Icon toolIcon = Icons.getIcon("subcirc.gif");
 
@@ -70,7 +71,7 @@ namespace logisim.comp
 			return false;
 		}
 
-		public virtual object getDefaultAttributeValue<T1>(Attribute<T1> attr, LogisimVersion ver)
+		public virtual object getDefaultAttributeValue(Attribute attr, LogisimVersion ver)
 		{
 			AttributeSet dfltSet = defaultSet;
 			if (dfltSet == null)
@@ -86,23 +87,23 @@ namespace logisim.comp
 		//
 		public virtual void drawGhost(ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs)
 		{
-			Graphics g = context.Graphics;
+			JGraphics g = context.Graphics;
 			Bounds bds = getOffsetBounds(attrs);
 			g.setColor(color);
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphicsUtil.switchToWidth(g, 2);
 			g.drawRect(x + bds.X, y + bds.Y, bds.Width, bds.Height);
 		}
 
 		public virtual void paintIcon(ComponentDrawContext context, int x, int y, AttributeSet attrs)
 		{
-			Graphics g = context.Graphics;
+			JGraphics g = context.Graphics;
 			if (toolIcon != null)
 			{
 				toolIcon.paintIcon(context.Destination, g, x + 2, y + 2);
 			}
 			else
 			{
-				g.setColor(Color.black);
+				g.setColor(Color.Black);
 				g.drawRect(x + 5, y + 2, 11, 17);
 				Value[] v = new Value[] {Value.TRUE, Value.FALSE};
 				for (int i = 0; i < 3; i++)

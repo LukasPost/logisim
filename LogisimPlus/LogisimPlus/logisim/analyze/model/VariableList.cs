@@ -18,7 +18,7 @@ namespace logisim.analyze.model
 		private List<VariableListListener> listeners = new List<VariableListListener>();
 		private int maxSize;
 		private List<string> data;
-		private IList<string> dataView;
+		private List<string> dataView;
 
 		public VariableList(int maxSize)
 		{
@@ -74,7 +74,7 @@ namespace logisim.analyze.model
 			}
 		}
 
-		public virtual IList<string> All
+		public virtual List<string> All
 		{
 			get
 			{

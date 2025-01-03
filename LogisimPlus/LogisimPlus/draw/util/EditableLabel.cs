@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -16,9 +17,9 @@ namespace draw.util
 
 	public class EditableLabel : ICloneable
 	{
-		public static readonly int LEFT = JTextField.LEFT;
-		public static readonly int RIGHT = JTextField.RIGHT;
-		public static readonly int CENTER = JTextField.CENTER;
+		public const int LEFT = JTextField.LEFT;
+		public const int RIGHT = JTextField.RIGHT;
+		public const int CENTER = JTextField.CENTER;
 
 		public const int TOP = 8;
 		public const int MIDDLE = 9;
@@ -45,22 +46,15 @@ namespace draw.util
 			this.y = y;
 			this.text = text;
 			this.font = font;
-			this.color = Color.BLACK;
+			this.color = Color.Black;
 			this.horzAlign = LEFT;
 			this.vertAlign = BASELINE;
 			this.dimsKnown = false;
 		}
 
-		public override EditableLabel clone()
+		public override object Clone()
 		{
-			try
-			{
-				return (EditableLabel) base.clone();
-			}
-			catch (CloneNotSupportedException)
-			{
-				return new EditableLabel(x, y, text, font);
-			}
+			return MemberwiseClone();
 		}
 
 		public override bool Equals(object other)
@@ -318,8 +312,8 @@ namespace draw.util
 				w = (int) (long)Math.Round(w * zoom, MidpointRounding.AwayFromZero);
 			}
 
-			w = Math.Max(w, dim.width);
-			int h = dim.height;
+			w = Math.Max(w, dim.Width);
+			int h = dim.Height;
 			switch (horzAlign)
 			{
 			case LEFT:
@@ -342,7 +336,7 @@ namespace draw.util
 			field.setBounds(x0, y0, w, h);
 		}
 
-		public virtual void paint(Graphics g)
+		public virtual void paint(JGraphics g)
 		{
 			g.setFont(font);
 			if (!dimsKnown)
@@ -355,10 +349,10 @@ namespace draw.util
 			g.drawString(text, x0, y0);
 		}
 
-		private void computeSizes(Graphics g, Font font, FontMetrics fm)
+		private void computeSizes(JGraphics g, Font font, FontMetrics fm)
 		{
 			string s = text;
-			FontRenderContext frc = ((Graphics2D) g).getFontRenderContext();
+			FontRenderContext frc = g.getFontRenderContext();
 			width = fm.stringWidth(s);
 			ascent = fm.getAscent();
 			descent = fm.getDescent();

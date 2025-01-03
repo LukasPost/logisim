@@ -30,15 +30,15 @@ namespace logisim.file
 	public class XmlCircuitReader : CircuitTransaction
 	{
 		private XmlReader.ReadContext reader;
-		private IList<XmlReader.CircuitData> circuitsData;
+		private List<XmlReader.CircuitData> circuitsData;
 
-		public XmlCircuitReader(XmlReader.ReadContext reader, IList<XmlReader.CircuitData> circDatas)
+		public XmlCircuitReader(XmlReader.ReadContext reader, List<XmlReader.CircuitData> circDatas)
 		{
 			this.reader = reader;
 			this.circuitsData = circDatas;
 		}
 
-		protected internal override IDictionary<Circuit, int> AccessedCircuits
+		protected internal override Dictionary<Circuit, int> AccessedCircuits
 		{
 			get
 			{
@@ -63,7 +63,7 @@ namespace logisim.file
 		{
 			Element elt = circData.circuitElement;
 			Circuit dest = circData.circuit;
-			IDictionary<Element, Component> knownComponents = circData.knownComponents;
+			Dictionary<Element, Component> knownComponents = circData.knownComponents;
 			if (knownComponents == null)
 			{
 				knownComponents = Collections.emptyMap();
@@ -109,7 +109,7 @@ namespace logisim.file
 				}
 			}
 
-			IList<AbstractCanvasObject> appearance = circData.appearance;
+			List<AbstractCanvasObject> appearance = circData.appearance;
 			if (appearance != null && appearance.Count > 0)
 			{
 				dest.Appearance.ObjectsForce = appearance;

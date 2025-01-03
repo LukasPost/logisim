@@ -101,8 +101,8 @@ namespace logisim.gui.main
 		}
 
 // JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in C#:
-// ORIGINAL LINE: @Override public void setValueRequested(logisim.data.Attribute<Object> attr, Object value) throws logisim.gui.generic.AttrTableSetException
-		public override void setValueRequested(Attribute<object> attr, object value)
+// ORIGINAL LINE: @Override public void setValueRequested(logisim.data.Attribute attr, Object value) throws logisim.gui.generic.AttrTableSetException
+		public override void setValueRequested(Attribute attr, object value)
 		{
 			Selection selection = frame.Canvas.Selection;
 			Circuit circuit = frame.Canvas.Circuit;

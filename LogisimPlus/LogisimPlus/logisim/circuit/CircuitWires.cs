@@ -28,7 +28,7 @@ namespace logisim.circuit
 	using StdAttr = logisim.instance.StdAttr;
 	using PullResistor = logisim.std.wiring.PullResistor;
 	using Tunnel = logisim.std.wiring.Tunnel;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using IteratorUtil = logisim.util.IteratorUtil;
 	using logisim.util;
     using LogisimPlus.Java;
@@ -99,7 +99,7 @@ namespace logisim.circuit
 			{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?> attr = e.getAttribute();
-				Attribute<object> attr = e.Attribute;
+				Attribute attr = e.Attribute;
 				if (attr == StdAttr.LABEL || attr == PullResistor.ATTR_PULL_TYPE)
 				{
 					outerInstance.voidBundleMap();
@@ -170,7 +170,7 @@ namespace logisim.circuit
 				pointBundles[p] = b;
 			}
 
-			internal virtual ISet<Location> BundlePoints
+			internal virtual HashSet<Location> BundlePoints
 			{
 				get
 				{
@@ -178,7 +178,7 @@ namespace logisim.circuit
 				}
 			}
 
-			internal virtual ISet<WireBundle> Bundles
+			internal virtual HashSet<WireBundle> Bundles
 			{
 				get
 				{
@@ -245,7 +245,7 @@ namespace logisim.circuit
 			}
 		}
 
-		internal virtual ISet<WidthIncompatibilityData> WidthIncompatibilityData
+		internal virtual HashSet<WidthIncompatibilityData> WidthIncompatibilityData
 		{
 			get
 			{
@@ -307,7 +307,7 @@ namespace logisim.circuit
 			}
 		}
 
-		internal virtual ISet<Wire> Wires
+		internal virtual HashSet<Wire> Wires
 		{
 			get
 			{
@@ -471,7 +471,7 @@ namespace logisim.circuit
 		//
 		// utility methods
 		//
-		internal virtual void propagate(CircuitState circState, ISet<Location> points)
+		internal virtual void propagate(CircuitState circState, HashSet<Location> points)
 		{
 			BundleMap map = BundleMap;
 			SmallSet<WireThread> dirtyThreads = new SmallSet<WireThread>(); // affected threads
@@ -597,7 +597,7 @@ namespace logisim.circuit
 			CircuitState state = context.CircuitState;
 			JGraphics g = context.Graphics;
 			g.setColor(Color.Black);
-			GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+			JGraphicsUtil.switchToWidth(g, Wire.WIDTH);
 			WireSet highlighted = context.HighlightedWires;
 
 			BundleMap bmap = BundleMap;
@@ -630,9 +630,9 @@ namespace logisim.circuit
 					}
 					if (highlighted.containsWire(w))
 					{
-						GraphicsUtil.switchToWidth(g, Wire.WIDTH + 2);
+						JGraphicsUtil.switchToWidth(g, Wire.WIDTH + 2);
 						g.drawLine(s.X, s.Y, t.X, t.Y);
-						GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+						JGraphicsUtil.switchToWidth(g, Wire.WIDTH);
 					}
 					else
 					{
@@ -708,9 +708,9 @@ namespace logisim.circuit
 						}
 						if (highlighted.containsWire(w))
 						{
-							GraphicsUtil.switchToWidth(g, Wire.WIDTH + 2);
+							JGraphicsUtil.switchToWidth(g, Wire.WIDTH + 2);
 							g.drawLine(s.X, s.Y, t.X, t.Y);
-							GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+							JGraphicsUtil.switchToWidth(g, Wire.WIDTH);
 						}
 						else
 						{
@@ -866,7 +866,7 @@ namespace logisim.circuit
 			// make a WireBundle object for each end of a splitter
 			foreach (Splitter spl in splitters)
 			{
-				IList<EndData> ends = new List<EndData>(spl.Ends);
+				List<EndData> ends = new List<EndData>(spl.Ends);
 				foreach (EndData end in ends)
 				{
 					Location p = end.Location;
@@ -890,7 +890,7 @@ namespace logisim.circuit
 			// determine the bundles at the end of each splitter
 			foreach (Splitter spl in splitters)
 			{
-				IList<EndData> ends = new List<EndData>(spl.Ends);
+				List<EndData> ends = new List<EndData>(spl.Ends);
 				int index = -1;
 				foreach (EndData end in ends)
 				{

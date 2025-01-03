@@ -60,22 +60,22 @@ namespace logisim.data
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public static Attribute<?> forOption(String name, Object[] vals)
-		public static Attribute<object> forOption(string name, object[] vals)
+		public static Attribute forOption(string name, object[] vals)
 		{
 			return forOption(name, getter(name), vals);
 		}
 
-		public static Attribute<int> forInteger(string name)
+		public static Attribute forInteger(string name)
 		{
 			return forInteger(name, getter(name));
 		}
 
-		public static Attribute<int> forHexInteger(string name)
+		public static Attribute forHexInteger(string name)
 		{
 			return forHexInteger(name, getter(name));
 		}
 
-		public static Attribute<int> forIntegerRange(string name, int start, int end)
+		public static Attribute forIntegerRange(string name, int start, int end)
 		{
 			return forIntegerRange(name, getter(name), start, end);
 		}
@@ -95,17 +95,17 @@ namespace logisim.data
 			return forDirection(name, getter(name));
 		}
 
-		public static Attribute<BitWidth> forBitWidth(string name)
+		public static Attribute forBitWidth(string name)
 		{
 			return forBitWidth(name, getter(name));
 		}
 
-		public static Attribute<BitWidth> forBitWidth(string name, int min, int max)
+		public static Attribute forBitWidth(string name, int min, int max)
 		{
 			return forBitWidth(name, getter(name), min, max);
 		}
 
-		public static Attribute<Font> forFont(string name)
+		public static Attribute forFont(string name)
 		{
 			return forFont(name, getter(name));
 		}
@@ -115,7 +115,7 @@ namespace logisim.data
 			return forLocation(name, getter(name));
 		}
 
-		public static Attribute<Color> forColor(string name)
+		public static Attribute forColor(string name)
 		{
 			return forColor(name, getter(name));
 		}
@@ -133,17 +133,17 @@ namespace logisim.data
 			return new OptionAttribute<V>(name, disp, vals);
 		}
 
-		public static Attribute<int> forInteger(string name, StringGetter disp)
+		public static Attribute forInteger(string name, StringGetter disp)
 		{
 			return new IntegerAttribute(name, disp);
 		}
 
-		public static Attribute<int> forHexInteger(string name, StringGetter disp)
+		public static Attribute forHexInteger(string name, StringGetter disp)
 		{
 			return new HexIntegerAttribute(name, disp);
 		}
 
-		public static Attribute<int> forIntegerRange(string name, StringGetter disp, int start, int end)
+		public static Attribute forIntegerRange(string name, StringGetter disp, int start, int end)
 		{
 			return new IntegerRangeAttribute(name, disp, start, end);
 		}
@@ -163,17 +163,17 @@ namespace logisim.data
 			return new DirectionAttribute(name, disp);
 		}
 
-		public static Attribute<BitWidth> forBitWidth(string name, StringGetter disp)
+		public static Attribute forBitWidth(string name, StringGetter disp)
 		{
 			return new BitWidth.Attribute(name, disp);
 		}
 
-		public static Attribute<BitWidth> forBitWidth(string name, StringGetter disp, int min, int max)
+		public static Attribute forBitWidth(string name, StringGetter disp, int min, int max)
 		{
 			return new BitWidth.Attribute(name, disp, min, max);
 		}
 
-		public static Attribute<Font> forFont(string name, StringGetter disp)
+		public static Attribute forFont(string name, StringGetter disp)
 		{
 			return new FontAttribute(name, disp);
 		}
@@ -183,7 +183,7 @@ namespace logisim.data
 			return new LocationAttribute(name, disp);
 		}
 
-		public static Attribute<Color> forColor(string name, StringGetter disp)
+		public static Attribute forColor(string name, StringGetter disp)
 		{
 			return new ColorAttribute(name, disp);
 		}
@@ -272,7 +272,7 @@ namespace logisim.data
 			}
 		}
 
-		private class IntegerAttribute : Attribute<int>
+		private class IntegerAttribute : Attribute
 		{
 			internal IntegerAttribute(string name, StringGetter disp) : base(name, disp)
 			{
@@ -284,7 +284,7 @@ namespace logisim.data
 			}
 		}
 
-		private class HexIntegerAttribute : Attribute<int>
+		private class HexIntegerAttribute : Attribute
 		{
 			internal HexIntegerAttribute(string name, StringGetter disp) : base(name, disp)
 			{
@@ -366,7 +366,7 @@ namespace logisim.data
 			}
 		}
 
-		private class IntegerRangeAttribute : Attribute<int>
+		private class IntegerRangeAttribute : Attribute
 		{
 			internal int?[] options = null;
 			internal int start;
@@ -439,7 +439,7 @@ namespace logisim.data
 			}
 		}
 
-		private class FontAttribute : Attribute<Font>
+		private class FontAttribute : Attribute
 		{
 			internal FontAttribute(string name, StringGetter disp) : base(name, disp)
 			{
@@ -502,7 +502,7 @@ namespace logisim.data
 			}
 		}
 
-		private class ColorAttribute : Attribute<Color>
+		private class ColorAttribute : Attribute
 		{
 			public ColorAttribute(string name, StringGetter desc) : base(name, desc)
 			{
@@ -515,8 +515,8 @@ namespace logisim.data
 
 			public override string toStandardString(Color c)
 			{
-				string ret = "#" + hex(c.getRed()) + hex(c.getGreen()) + hex(c.getBlue());
-				return c.getAlpha() == 255 ? ret : ret + hex(c.getAlpha());
+				string ret = "#" + hex(c.R) + hex(c.G) + hex(c.B);
+				return c.A == 255 ? ret : ret + hex(c.A);
 			}
 
 			internal virtual string hex(int value)
@@ -539,7 +539,7 @@ namespace logisim.data
 					int g = Convert.ToInt32(value.Substring(3, 2), 16);
 					int b = Convert.ToInt32(value.Substring(5, 2), 16);
 					int a = Convert.ToInt32(value.Substring(7, 2), 16);
-					return new Color(r, g, b, a);
+					return Color.FromArgb(255, r, g, b, a);
 				}
 				else
 				{
@@ -549,7 +549,7 @@ namespace logisim.data
 
 			public override Component getCellEditor(Color value)
 			{
-				Color init = value == null ? Color.BLACK : value;
+				Color init = value == null ? Color.Black : value;
 				return new ColorChooser(init);
 			}
 		}

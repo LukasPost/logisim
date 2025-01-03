@@ -23,8 +23,8 @@ namespace logisim.std.wiring
 	internal class TunnelAttributes : AbstractAttributeSet
 	{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
-// ORIGINAL LINE: private static final java.util.List<logisim.data.Attribute<?>> ATTRIBUTES = java.util.Arrays.asList(new logisim.data.Attribute<?>[] { logisim.instance.StdAttr.FACING, logisim.instance.StdAttr.WIDTH, logisim.instance.StdAttr.LABEL, logisim.instance.StdAttr.LABEL_FONT });
-		private static readonly IList<Attribute<object>> ATTRIBUTES = new List<Attribute<object>> {StdAttr.FACING, StdAttr.WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT};
+// ORIGINAL LINE: private static final java.util.List<logisim.data.Attribute<?>> ATTRIBUTES = java.util.Arrays.asList(new logisim.data.Attribute<?>[] { logisim.instance.StdAttr.FACING, logisim.instance.StdAttr.Width, logisim.instance.StdAttr.LABEL, logisim.instance.StdAttr.LABEL_FONT });
+		private static readonly List<Attribute> ATTRIBUTES = new List<Attribute> {StdAttr.FACING, StdAttr.Width, StdAttr.LABEL, StdAttr.LABEL_FONT};
 
 		private Direction facing;
 		private BitWidth width;
@@ -128,7 +128,7 @@ namespace logisim.std.wiring
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
@@ -138,35 +138,35 @@ namespace logisim.std.wiring
 
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
 // ORIGINAL LINE: @Override @SuppressWarnings("unchecked") public <V> V getValue(logisim.data.Attribute<V> attr)
-		public override V getValue<V>(Attribute<V> attr)
+		public override object getValue(Attribute attr)
 		{
 			if (attr == StdAttr.FACING)
 			{
-				return (V) facing;
+				return facing;
 			}
-			if (attr == StdAttr.WIDTH)
+			if (attr == StdAttr.Width)
 			{
-				return (V) width;
+				return width;
 			}
 			if (attr == StdAttr.LABEL)
 			{
-				return (V) label;
+				return label;
 			}
 			if (attr == StdAttr.LABEL_FONT)
 			{
-				return (V) labelFont;
+				return labelFont;
 			}
 			return null;
 		}
 
-		public override void setValue<V>(Attribute<V> attr, V value)
+		public override void setValue(Attribute attr, object value)
 		{
 			if (attr == StdAttr.FACING)
 			{
 				facing = (Direction) value;
 				configureLabel();
 			}
-			else if (attr == StdAttr.WIDTH)
+			else if (attr == StdAttr.Width)
 			{
 				width = (BitWidth) value;
 			}

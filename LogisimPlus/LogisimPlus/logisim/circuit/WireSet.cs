@@ -16,13 +16,13 @@ namespace logisim.circuit
 
 	public class WireSet
 	{
-		private static readonly ISet<Wire> NULL_WIRES = Collections.emptySet();
+		private static readonly HashSet<Wire> NULL_WIRES = Collections.emptySet();
 		public static readonly WireSet EMPTY = new WireSet(NULL_WIRES);
 
-		private ISet<Wire> wires;
-		private ISet<Location> points;
+		private HashSet<Wire> wires;
+		private HashSet<Location> points;
 
-		internal WireSet(ISet<Wire> wires)
+		internal WireSet(HashSet<Wire> wires)
 		{
 			if (wires.Count == 0)
 			{

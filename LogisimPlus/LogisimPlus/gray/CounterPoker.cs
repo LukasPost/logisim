@@ -17,13 +17,14 @@ namespace gray
 	using InstancePoker = logisim.instance.InstancePoker;
 	using InstanceState = logisim.instance.InstanceState;
 	using StdAttr = logisim.instance.StdAttr;
+    using LogisimPlus.Java;
 
-	/// <summary>
-	/// When the user clicks a counter using the Poke Tool, a CounterPoker object is created, and that object will handle all
-	/// user events. Note that CounterPoker is a class specific to GrayCounter, and that it must be a subclass of
-	/// InstancePoker in the logisim.instance package.
-	/// </summary>
-	public class CounterPoker : InstancePoker
+    /// <summary>
+    /// When the user clicks a counter using the Poke Tool, a CounterPoker object is created, and that object will handle all
+    /// user events. Note that CounterPoker is a class specific to GrayCounter, and that it must be a subclass of
+    /// InstancePoker in the logisim.instance package.
+    /// </summary>
+    public class CounterPoker : InstancePoker
 	{
 		public CounterPoker()
 		{
@@ -45,15 +46,15 @@ namespace gray
 		public override void paint(InstancePainter painter)
 		{
 			Bounds bds = painter.Bounds;
-			BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
+			BitWidth width = painter.getAttributeValue(StdAttr.Width);
 			int len = (width.Width + 3) / 4;
 
-			Graphics g = painter.Graphics;
-			g.setColor(Color.RED);
+			JGraphics g = painter.Graphics;
+			g.setColor(Color.Red);
 			int wid = 7 * len + 2; // width of caret rectangle
 			int ht = 16; // height of caret rectangle
 			g.drawRect(bds.X + (bds.Width - wid) / 2, bds.Y + (bds.Height - ht) / 2, wid, ht);
-			g.setColor(Color.BLACK);
+			g.setColor(Color.Black);
 		}
 
 		/// <summary>
@@ -62,7 +63,7 @@ namespace gray
 		{
 			// convert it to a hex digit; if it isn't a hex digit, abort.
 			int val = Character.digit(e.getKeyChar(), 16);
-			BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
+			BitWidth width = state.getAttributeValue(StdAttr.Width);
 			if (val < 0 || (val & width.Mask) != val)
 			{
 				return;

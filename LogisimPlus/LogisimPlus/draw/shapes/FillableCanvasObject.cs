@@ -28,8 +28,8 @@ namespace draw.shapes
 		{
 			paintType = DrawAttr.PAINT_STROKE;
 			strokeWidth = 1;
-			strokeColor = Color.BLACK;
-			fillColor = Color.WHITE;
+			strokeColor = Color.Black;
+			fillColor = Color.White;
 		}
 
 		public override bool matches(CanvasObject other)
@@ -93,25 +93,23 @@ namespace draw.shapes
 			}
 		}
 
-// JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @Override @SuppressWarnings("unchecked") public <V> V getValue(logisim.data.Attribute<V> attr)
-		public virtual V getValue<V>(Attribute<V> attr)
+		public override object getValue(Attribute attr)
 		{
 			if (attr == DrawAttr.PAINT_TYPE)
 			{
-				return (V) paintType;
+				return paintType;
 			}
 			else if (attr == DrawAttr.STROKE_COLOR)
 			{
-				return (V) strokeColor;
+				return strokeColor;
 			}
 			else if (attr == DrawAttr.FILL_COLOR)
 			{
-				return (V) fillColor;
+				return fillColor;
 			}
 			else if (attr == DrawAttr.STROKE_WIDTH)
 			{
-				return (V) Convert.ToInt32(strokeWidth);
+				return Convert.ToInt32(strokeWidth);
 			}
 			else
 			{
@@ -119,7 +117,7 @@ namespace draw.shapes
 			}
 		}
 
-		public override void updateValue<T1>(Attribute<T1> attr, object value)
+        protected internal override void updateValue(Attribute attr, object value)
 		{
 			if (attr == DrawAttr.PAINT_TYPE)
 			{

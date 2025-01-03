@@ -51,7 +51,7 @@ namespace com.connectina.swing.fontchooser
 
 		private Font selectedFont;
 
-		private IList<string> availableFontNames = new List<string>();
+		private List<string> availableFontNames = new List<string>();
 
 		/// <summary>
 		/// Creates a <code>DefaultFontSelectionModel</code> with the current font set to
@@ -71,7 +71,7 @@ namespace com.connectina.swing.fontchooser
 		public DefaultFontSelectionModel(Font font)
 		{
 			selectedFont = font;
-			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			JGraphicsEnvironment ge = JGraphicsEnvironment.getLocalJGraphicsEnvironment();
 			string[] families = ge.getAvailableFontFamilyNames();
 			for (int i = 0; i < families.Length; i++)
 			{
@@ -102,12 +102,12 @@ namespace com.connectina.swing.fontchooser
 
 		/// <summary>
 		/// Gets the available font names. Returns a list containing the names of all font families in this
-		/// <code>GraphicsEnvironment</code> localized for the default locale, as returned by
+		/// <code>JGraphicsEnvironment</code> localized for the default locale, as returned by
 		/// <code>Locale.getDefault()</code>.
 		/// </summary>
 		/// <returns> a list of String containing font family names localized for the default locale, or a suitable alternative
 		///         name if no name exists for this locale </returns>
-		public virtual IList<string> AvailableFontNames
+		public virtual List<string> AvailableFontNames
 		{
 			get
 			{

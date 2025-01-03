@@ -90,7 +90,7 @@ namespace logisim.gui.start
 
 			Project proj = new Project(file);
 			Circuit circuit = file.MainCircuit;
-			IDictionary<Instance, string> pinNames = Analyze.getPinLabels(circuit);
+			Dictionary<Instance, string> pinNames = Analyze.getPinLabels(circuit);
 			List<Instance> outputPins = new List<Instance>();
 			Instance haltPin = null;
 			foreach (KeyValuePair<Instance, string> entry in pinNames.SetOfKeyValuePairs())

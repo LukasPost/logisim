@@ -67,7 +67,7 @@ namespace draw.shapes
 			}
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: java.util.List<logisim.data.Attribute<?>> attrs = ret.getAttributes();
-			IList<Attribute<object>> attrs = ret.Attributes;
+			List<Attribute> attrs = ret.Attributes;
 			if (attrs.Contains(DrawAttr.PAINT_TYPE))
 			{
 				string stroke = elt.getAttribute("stroke");
@@ -210,7 +210,7 @@ namespace draw.shapes
 			return ret;
 		}
 
-		private static IList<Location> parsePoints(string points)
+		private static List<Location> parsePoints(string points)
 		{
 			Pattern patt = Pattern.compile("[ ,\n\r\t]+");
 			string[] toks = patt.split(points);
@@ -227,7 +227,7 @@ namespace draw.shapes
 		private static AbstractCanvasObject createPath(Element elt)
 		{
 			Matcher patt = PATH_REGEX.matcher(elt.getAttribute("d"));
-			IList<string> tokens = new List<string>();
+			List<string> tokens = new List<string>();
 			int type = -1; // -1 error, 0 start, 1 curve, 2 polyline
 			while (patt.find())
 			{
@@ -332,7 +332,7 @@ namespace draw.shapes
 			{
 				a = (int) (long)Math.Round(double.Parse(opacity) * 255, MidpointRounding.AwayFromZero);
 			}
-			return new Color(r, g, b, a);
+			return Color.FromArgb(255, r, g, b, a);
 		}
 	}
 

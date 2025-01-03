@@ -15,9 +15,10 @@ namespace logisim.std.gates
 	using Value = logisim.data.Value;
 	using InstancePainter = logisim.instance.InstancePainter;
 	using InstanceState = logisim.instance.InstanceState;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
+    using LogisimPlus.Java;
 
-	internal class OddParityGate : AbstractGate
+    internal class OddParityGate : AbstractGate
 	{
 		public static OddParityGate FACTORY = new OddParityGate();
 
@@ -34,13 +35,13 @@ namespace logisim.std.gates
 
 		public override void paintIconRectangular(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
-			g.setColor(Color.black);
+			JGraphics g = painter.Graphics;
+			g.setColor(Color.Black);
 			g.drawRect(1, 2, 16, 16);
 			Font old = g.getFont();
 			g.setFont(old.deriveFont(9.0f));
-			GraphicsUtil.drawCenteredText(g, "2k", 9, 6);
-			GraphicsUtil.drawCenteredText(g, "+1", 9, 13);
+			JGraphicsUtil.drawCenteredText(g, "2k", 9, 6);
+			JGraphicsUtil.drawCenteredText(g, "+1", 9, 13);
 			g.setFont(old);
 		}
 

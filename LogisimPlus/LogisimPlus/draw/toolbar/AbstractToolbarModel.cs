@@ -14,7 +14,7 @@ namespace draw.toolbar
 
 	public abstract class AbstractToolbarModel : ToolbarModel
 	{
-		private IList<ToolbarModelListener> listeners;
+		private List<ToolbarModelListener> listeners;
 
 		public AbstractToolbarModel()
 		{
@@ -49,7 +49,7 @@ namespace draw.toolbar
 			}
 		}
 
-		public abstract IList<ToolbarItem> Items {get;}
+		public abstract List<ToolbarItem> Items {get;}
 
 		public abstract bool isSelected(ToolbarItem item);
 

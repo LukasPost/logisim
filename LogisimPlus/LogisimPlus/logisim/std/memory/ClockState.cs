@@ -23,19 +23,12 @@ namespace logisim.std.memory
 			lastClock = Value.FALSE;
 		}
 
-		public override ClockState clone()
-		{
-			try
-			{
-				return (ClockState) base.clone();
-			}
-			catch (CloneNotSupportedException)
-			{
-				return null;
-			}
-		}
+        public virtual object Clone()
+        {
+            return MemberwiseClone();
+        }
 
-		public virtual bool updateClock(Value newClock, object trigger)
+        public virtual bool updateClock(Value newClock, object trigger)
 		{
 			Value oldClock = lastClock;
 			lastClock = newClock;

@@ -27,7 +27,7 @@ namespace logisim.std.memory
 	using Port = logisim.instance.Port;
 	using StdAttr = logisim.instance.StdAttr;
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using StringUtil = logisim.util.StringUtil;
 
 	public class Counter : InstanceFactory
@@ -37,8 +37,8 @@ namespace logisim.std.memory
 		internal static readonly AttributeOption ON_GOAL_CONT = new AttributeOption("continue", "continue", Strings.getter("counterGoalContinue"));
 		internal static readonly AttributeOption ON_GOAL_LOAD = new AttributeOption("load", "load", Strings.getter("counterGoalLoad"));
 
-		internal static readonly Attribute<int> ATTR_MAX = Attributes.forHexInteger("max", Strings.getter("counterMaxAttr"));
-		internal static readonly Attribute<AttributeOption> ATTR_ON_GOAL = Attributes.forOption("ongoal", Strings.getter("counterGoalAttr"), new AttributeOption[] {ON_GOAL_WRAP, ON_GOAL_STAY, ON_GOAL_CONT, ON_GOAL_LOAD});
+		internal static readonly Attribute ATTR_MAX = Attributes.forHexInteger("max", Strings.getter("counterMaxAttr"));
+		internal static readonly Attribute ATTR_ON_GOAL = Attributes.forOption("ongoal", Strings.getter("counterGoalAttr"), new AttributeOption[] {ON_GOAL_WRAP, ON_GOAL_STAY, ON_GOAL_CONT, ON_GOAL_LOAD});
 
 		private const int DELAY = 8;
 		private const int OUT = 0;
@@ -55,23 +55,23 @@ namespace logisim.std.memory
 			IconName = "counter.gif";
 			InstancePoker = typeof(RegisterPoker);
 			InstanceLogger = typeof(RegisterLogger);
-			KeyConfigurator = new BitWidthConfigurator(StdAttr.WIDTH);
+			KeyConfigurator = new BitWidthConfigurator(StdAttr.Width);
 
 			Port[] ps = new Port[7];
-			ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
-			ps[IN] = new Port(-30, 0, Port.INPUT, StdAttr.WIDTH);
+			ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.Width);
+			ps[IN] = new Port(-30, 0, Port.INPUT, StdAttr.Width);
 			ps[CK] = new Port(-20, 20, Port.INPUT, 1);
 			ps[CLR] = new Port(-10, 20, Port.INPUT, 1);
 			ps[LD] = new Port(-30, -10, Port.INPUT, 1);
 			ps[CT] = new Port(-30, 10, Port.INPUT, 1);
 			ps[CARRY] = new Port(0, 10, Port.OUTPUT, 1);
-			ps[OUT].setToolTip(Strings.getter("counterQTip"));
-			ps[IN].setToolTip(Strings.getter("counterDataTip"));
-			ps[CK].setToolTip(Strings.getter("counterClockTip"));
-			ps[CLR].setToolTip(Strings.getter("counterResetTip"));
-			ps[LD].setToolTip(Strings.getter("counterLoadTip"));
-			ps[CT].setToolTip(Strings.getter("counterEnableTip"));
-			ps[CARRY].setToolTip(Strings.getter("counterCarryTip"));
+			ps[OUT].ToolTip = Strings.getter("counterQTip");
+			ps[IN].ToolTip = Strings.getter("counterDataTip");
+			ps[CK].ToolTip = Strings.getter("counterClockTip");
+			ps[CLR].ToolTip = Strings.getter("counterResetTip");
+			ps[LD].ToolTip = Strings.getter("counterLoadTip");
+			ps[CT].ToolTip = Strings.getter("counterEnableTip");
+			ps[CARRY].ToolTip = Strings.getter("counterCarryTip");
 			setPorts(ps);
 		}
 
@@ -83,7 +83,7 @@ namespace logisim.std.memory
 		protected internal override void configureNewInstance(Instance instance)
 		{
 			Bounds bds = instance.Bounds;
-			instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, bds.X + bds.Width / 2, bds.Y - 3, GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
+			instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, bds.X + bds.Width / 2, bds.Y - 3, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_BASELINE);
 		}
 
 		public override void propagate(InstanceState state)
@@ -95,7 +95,7 @@ namespace logisim.std.memory
 				state.Data = data;
 			}
 
-			BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+			BitWidth dataWidth = state.getAttributeValue(StdAttr.Width);
 			object triggerType = state.getAttributeValue(StdAttr.EDGE_TRIGGER);
 			int max = (int)state.getAttributeValue(ATTR_MAX);
 			Value clock = state.getPort(CK);
@@ -188,10 +188,10 @@ namespace logisim.std.memory
 // ORIGINAL LINE: @SuppressWarnings("null") @Override public void paintInstance(logisim.instance.InstancePainter painter)
 		public override void paintInstance(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			Bounds bds = painter.Bounds;
 			RegisterData state = (RegisterData) painter.Data;
-			BitWidth widthVal = painter.getAttributeValue(StdAttr.WIDTH);
+			BitWidth widthVal = painter.getAttributeValue(StdAttr.Width);
 			int width = widthVal == null ? 8 : widthVal.Width;
 
 			// determine text to draw in label
@@ -233,23 +233,23 @@ namespace logisim.std.memory
 				painter.drawPort(IN);
 				painter.drawPort(OUT);
 			}
-			g.setColor(Color.GRAY);
+			g.setColor(Color.Gray);
 			painter.drawPort(LD);
 			painter.drawPort(CARRY);
 			painter.drawPort(CLR, "0", Direction.South);
 			painter.drawPort(CT, Strings.get("counterEnableLabel"), Direction.East);
-			g.setColor(Color.BLACK);
+			g.setColor(Color.Black);
 			painter.drawClock(CK, Direction.North);
 
 			// draw contents
 			if (string.ReferenceEquals(b, null))
 			{
-				GraphicsUtil.drawText(g, a, bds.X + 15, bds.Y + 4, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+				JGraphicsUtil.drawText(g, a, bds.X + 15, bds.Y + 4, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_TOP);
 			}
 			else
 			{
-				GraphicsUtil.drawText(g, a, bds.X + 15, bds.Y + 3, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
-				GraphicsUtil.drawText(g, b, bds.X + 15, bds.Y + 15, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+				JGraphicsUtil.drawText(g, a, bds.X + 15, bds.Y + 3, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_TOP);
+				JGraphicsUtil.drawText(g, b, bds.X + 15, bds.Y + 15, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_TOP);
 			}
 		}
 	}

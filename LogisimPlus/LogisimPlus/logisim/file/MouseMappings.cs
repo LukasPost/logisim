@@ -61,7 +61,7 @@ namespace logisim.file
 		//
 		// query methods
 		//
-		public virtual IDictionary<int, Tool> Mappings
+		public virtual Dictionary<int, Tool> Mappings
 		{
 			get
 			{
@@ -69,7 +69,7 @@ namespace logisim.file
 			}
 		}
 
-		public virtual ISet<int> MappedModifiers
+		public virtual HashSet<int> MappedModifiers
 		{
 			get
 			{
@@ -219,7 +219,7 @@ namespace logisim.file
 		//
 		// package-protected methods
 		//
-		internal virtual void replaceAll(IDictionary<Tool, Tool> toolMap)
+		internal virtual void replaceAll(Dictionary<Tool, Tool> toolMap)
 		{
 			bool changed = false;
 			foreach (KeyValuePair<int, Tool> entry in map.SetOfKeyValuePairs())

@@ -15,8 +15,9 @@ namespace draw.tools
 	using Canvas = draw.canvas.Canvas;
 	using CanvasTool = draw.canvas.CanvasTool;
 	using logisim.data;
+    using LogisimPlus.Java;
 
-	public abstract class AbstractTool : CanvasTool
+    public abstract class AbstractTool : CanvasTool
 	{
 		public static AbstractTool[] getTools(DrawingAttributeSet attrs)
 		{
@@ -37,7 +38,7 @@ namespace draw.tools
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public abstract java.util.List<logisim.data.Attribute<?>> getAttributes();
-		public abstract IList<Attribute<object>> Attributes {get;}
+		public abstract List<Attribute> Attributes {get;}
 
 		public virtual string Description
 		{
@@ -102,7 +103,7 @@ namespace draw.tools
 		{
 		}
 
-		public override void draw(Canvas canvas, Graphics g)
+		public override void draw(Canvas canvas, JGraphics g)
 		{
 		}
 	}

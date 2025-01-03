@@ -28,16 +28,16 @@ namespace logisim.std.arith
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
 	using IntegerConfigurator = logisim.tools.key.IntegerConfigurator;
 	using JoinedConfigurator = logisim.tools.key.JoinedConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	public class BitAdder : InstanceFactory
 	{
-		internal static readonly Attribute<int> NUM_INPUTS = Attributes.forIntegerRange("inputs", Strings.getter("gateInputsAttr"), 1, 32);
+		internal static readonly Attribute NUM_INPUTS = Attributes.forIntegerRange("inputs", Strings.getter("gateInputsAttr"), 1, 32);
 
 		public BitAdder() : base("BitAdder", Strings.getter("bitAdderComponent"))
 		{
-			setAttributes(new Attribute[] {StdAttr.WIDTH, NUM_INPUTS}, new object[] {BitWidth.create(8), Convert.ToInt32(1)});
-			KeyConfigurator = JoinedConfigurator.create(new IntegerConfigurator(NUM_INPUTS, 1, 32, 0), new BitWidthConfigurator(StdAttr.WIDTH));
+			setAttributes(new Attribute[] {StdAttr.Width, NUM_INPUTS}, new object[] {BitWidth.create(8), Convert.ToInt32(1)});
+			KeyConfigurator = JoinedConfigurator.create(new IntegerConfigurator(NUM_INPUTS, 1, 32, 0), new BitWidthConfigurator(StdAttr.Width));
 			IconName = "bitadder.gif";
 		}
 
@@ -55,9 +55,9 @@ namespace logisim.std.arith
 			instance.addAttributeListener();
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
-			if (attr == StdAttr.WIDTH)
+			if (attr == StdAttr.Width)
 			{
 				configurePorts(instance);
 			}
@@ -70,7 +70,7 @@ namespace logisim.std.arith
 
 		private void configurePorts(Instance instance)
 		{
-			BitWidth inWidth = instance.getAttributeValue(StdAttr.WIDTH);
+			BitWidth inWidth = instance.getAttributeValue(StdAttr.Width);
 			int inputs = (int)instance.getAttributeValue(NUM_INPUTS);
 			int outWidth = computeOutputBits(inWidth.Width, inputs);
 
@@ -117,7 +117,7 @@ namespace logisim.std.arith
 
 		public override void propagate(InstanceState state)
 		{
-			int width = state.getAttributeValue(StdAttr.WIDTH).getWidth();
+			int width = state.getAttributeValue(StdAttr.Width).getWidth();
 			int inputs = (int)state.getAttributeValue(NUM_INPUTS);
 
 			// compute the number of 1 bits
@@ -171,11 +171,11 @@ namespace logisim.std.arith
 
 		public override void paintInstance(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			painter.drawBounds();
 			painter.drawPorts();
 
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphicsUtil.switchToWidth(g, 2);
 			Location loc = painter.Location;
 			int x = loc.X - 10;
 			int y = loc.Y;

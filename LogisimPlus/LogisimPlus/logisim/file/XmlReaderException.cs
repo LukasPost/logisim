@@ -15,13 +15,13 @@ namespace logisim.file
 
 	internal class XmlReaderException : Exception
 	{
-		private IList<string> messages;
+		private List<string> messages;
 
 		public XmlReaderException(string message) : this(Collections.singletonList(message))
 		{
 		}
 
-		public XmlReaderException(IList<string> messages)
+		public XmlReaderException(List<string> messages)
 		{
 			this.messages = messages;
 		}
@@ -34,7 +34,7 @@ namespace logisim.file
 			}
 		}
 
-		public virtual IList<string> Messages
+		public virtual List<string> Messages
 		{
 			get
 			{

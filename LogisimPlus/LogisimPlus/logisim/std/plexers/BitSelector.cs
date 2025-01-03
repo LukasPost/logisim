@@ -26,16 +26,16 @@ namespace logisim.std.plexers
 	using StdAttr = logisim.instance.StdAttr;
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
 	using JoinedConfigurator = logisim.tools.key.JoinedConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	public class BitSelector : InstanceFactory
 	{
-		public static readonly Attribute<BitWidth> GROUP_ATTR = Attributes.forBitWidth("group", Strings.getter("bitSelectorGroupAttr"));
+		public static readonly Attribute GROUP_ATTR = Attributes.forBitWidth("group", Strings.getter("bitSelectorGroupAttr"));
 
 		public BitSelector() : base("BitSelector", Strings.getter("bitSelectorComponent"))
 		{
-			setAttributes(new Attribute[] {StdAttr.FACING, StdAttr.WIDTH, GROUP_ATTR}, new object[] {Direction.East, BitWidth.create(8), BitWidth.ONE});
-			KeyConfigurator = JoinedConfigurator.create(new BitWidthConfigurator(GROUP_ATTR, 1, Value.MAX_WIDTH, 0), new BitWidthConfigurator(StdAttr.WIDTH));
+			setAttributes(new Attribute[] {StdAttr.FACING, StdAttr.Width, GROUP_ATTR}, new object[] {Direction.East, BitWidth.create(8), BitWidth.ONE});
+			KeyConfigurator = JoinedConfigurator.create(new BitWidthConfigurator(GROUP_ATTR, 1, Value.MAX_WIDTH, 0), new BitWidthConfigurator(StdAttr.Width));
 
 			IconName = "bitSelector.gif";
 			FacingAttribute = StdAttr.FACING;
@@ -54,14 +54,14 @@ namespace logisim.std.plexers
 			updatePorts(instance);
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == StdAttr.FACING)
 			{
 				instance.recomputeBounds();
 				updatePorts(instance);
 			}
-			else if (attr == StdAttr.WIDTH || attr == GROUP_ATTR)
+			else if (attr == StdAttr.Width || attr == GROUP_ATTR)
 			{
 				updatePorts(instance);
 			}
@@ -70,7 +70,7 @@ namespace logisim.std.plexers
 		private void updatePorts(Instance instance)
 		{
 			Direction facing = instance.getAttributeValue(StdAttr.FACING);
-			BitWidth data = instance.getAttributeValue(StdAttr.WIDTH);
+			BitWidth data = instance.getAttributeValue(StdAttr.Width);
 			BitWidth group = instance.getAttributeValue(GROUP_ATTR);
 			int groups = (data.Width + group.Width - 1) / group.Width - 1;
 			int selectBits = 1;
@@ -111,10 +111,10 @@ namespace logisim.std.plexers
 			ps[0] = new Port(0, 0, Port.OUTPUT, group.Width);
 			ps[1] = new Port(inPt.X, inPt.Y, Port.INPUT, data.Width);
 			ps[2] = new Port(selPt.X, selPt.Y, Port.INPUT, select.Width);
-			ps[0].setToolTip(Strings.getter("bitSelectorOutputTip"));
-			ps[1].setToolTip(Strings.getter("bitSelectorDataTip"));
-			ps[2].setToolTip(Strings.getter("bitSelectorSelectTip"));
-			instance.setPorts(ps);
+			ps[0].ToolTip = Strings.getter("bitSelectorOutputTip");
+			ps[1].ToolTip = Strings.getter("bitSelectorDataTip");
+			ps[2].ToolTip = Strings.getter("bitSelectorSelectTip");
+			instance.Ports = ps;
 		}
 
 		public override void propagate(InstanceState state)
@@ -165,13 +165,13 @@ namespace logisim.std.plexers
 
 		public override void paintInstance(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			Direction facing = painter.getAttributeValue(StdAttr.FACING);
 
 			Plexers.drawTrapezoid(g, painter.Bounds, facing, 9);
 			Bounds bds = painter.Bounds;
-			g.setColor(Color.BLACK);
-			GraphicsUtil.drawCenteredText(g, "Sel", bds.X + bds.Width / 2, bds.Y + bds.Height / 2);
+			g.setColor(Color.Black);
+			JGraphicsUtil.drawCenteredText(g, "Sel", bds.X + bds.Width / 2, bds.Y + bds.Height / 2);
 			painter.drawPorts();
 		}
 	}

@@ -27,12 +27,13 @@ namespace logisim.std.memory
 	using Port = logisim.instance.Port;
 	using StdAttr = logisim.instance.StdAttr;
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using StringUtil = logisim.util.StringUtil;
+    using LogisimPlus.Java;
 
-	public class Random : InstanceFactory
+    public class Random : InstanceFactory
 	{
-		private static readonly Attribute<int> ATTR_SEED = Attributes.forInteger("seed", Strings.getter("randomSeedAttr"));
+		private static readonly Attribute ATTR_SEED = Attributes.forInteger("seed", Strings.getter("randomSeedAttr"));
 
 		private const int OUT = 0;
 		private const int CK = 1;
@@ -41,29 +42,29 @@ namespace logisim.std.memory
 
 		public Random() : base("Random", Strings.getter("randomComponent"))
 		{
-			setAttributes(new Attribute[] {StdAttr.WIDTH, ATTR_SEED, StdAttr.EDGE_TRIGGER, StdAttr.LABEL, StdAttr.LABEL_FONT}, new object[] {BitWidth.create(8), Convert.ToInt32(0), StdAttr.TRIG_RISING, "", StdAttr.DEFAULT_LABEL_FONT});
-			KeyConfigurator = new BitWidthConfigurator(StdAttr.WIDTH);
+			setAttributes(new Attribute[] {StdAttr.Width, ATTR_SEED, StdAttr.EDGE_TRIGGER, StdAttr.LABEL, StdAttr.LABEL_FONT}, new object[] {BitWidth.create(8), Convert.ToInt32(0), StdAttr.TRIG_RISING, "", StdAttr.DEFAULT_LABEL_FONT});
+			KeyConfigurator = new BitWidthConfigurator(StdAttr.Width);
 
 			OffsetBounds = Bounds.create(-30, -20, 30, 40);
 			IconName = "random.gif";
 			InstanceLogger = typeof(Logger);
 
 			Port[] ps = new Port[4];
-			ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
+			ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.Width);
 			ps[CK] = new Port(-30, -10, Port.INPUT, 1);
 			ps[NXT] = new Port(-30, 10, Port.INPUT, 1);
 			ps[RST] = new Port(-20, 20, Port.INPUT, 1);
-			ps[OUT].setToolTip(Strings.getter("randomQTip"));
-			ps[CK].setToolTip(Strings.getter("randomClockTip"));
-			ps[NXT].setToolTip(Strings.getter("randomNextTip"));
-			ps[RST].setToolTip(Strings.getter("randomResetTip"));
+			ps[OUT].ToolTip = Strings.getter("randomQTip");
+			ps[CK].ToolTip = Strings.getter("randomClockTip");
+			ps[NXT].ToolTip = Strings.getter("randomNextTip");
+			ps[RST].ToolTip = Strings.getter("randomResetTip");
 			setPorts(ps);
 		}
 
 		protected internal override void configureNewInstance(Instance instance)
 		{
 			Bounds bds = instance.Bounds;
-			instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, bds.X + bds.Width / 2, bds.Y - 3, GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
+			instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, bds.X + bds.Width / 2, bds.Y - 3, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_BASELINE);
 		}
 
 		public override void propagate(InstanceState state)
@@ -75,7 +76,7 @@ namespace logisim.std.memory
 				state.Data = data;
 			}
 
-			BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+			BitWidth dataWidth = (BitWidth)state.getAttributeValue(StdAttr.Width);
 			object triggerType = state.getAttributeValue(StdAttr.EDGE_TRIGGER);
 			bool triggered = data.updateClock(state.getPort(CK), triggerType);
 
@@ -93,10 +94,10 @@ namespace logisim.std.memory
 
 		public override void paintInstance(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			Bounds bds = painter.Bounds;
 			StateData state = (StateData) painter.Data;
-			BitWidth widthVal = painter.getAttributeValue(StdAttr.WIDTH);
+			BitWidth widthVal = (BitWidth)painter.getAttributeValue(StdAttr.Width);
 			int width = widthVal == null ? 8 : widthVal.Width;
 
 			// draw boundary, label
@@ -116,13 +117,13 @@ namespace logisim.std.memory
 				string str = StringUtil.toHexString(width, val);
 				if (str.Length <= 4)
 				{
-					GraphicsUtil.drawText(g, str, bds.X + 15, bds.Y + 4, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+					JGraphicsUtil.drawText(g, str, bds.X + 15, bds.Y + 4, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_TOP);
 				}
 				else
 				{
 					int split = str.Length - 4;
-					GraphicsUtil.drawText(g, str.Substring(0, split), bds.X + 15, bds.Y + 3, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
-					GraphicsUtil.drawText(g, str.Substring(split), bds.X + 15, bds.Y + 15, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+					JGraphicsUtil.drawText(g, str.Substring(0, split), bds.X + 15, bds.Y + 3, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_TOP);
+					JGraphicsUtil.drawText(g, str.Substring(split), bds.X + 15, bds.Y + 15, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_TOP);
 				}
 			}
 		}
@@ -174,13 +175,13 @@ namespace logisim.std.memory
 		{
 			public override string getLogName(InstanceState state, object option)
 			{
-				string ret = state.getAttributeValue(StdAttr.LABEL);
+				string ret = (string)state.getAttributeValue(StdAttr.LABEL);
 				return !string.ReferenceEquals(ret, null) && !ret.Equals("") ? ret : null;
 			}
 
 			public override Value getLogValue(InstanceState state, object option)
 			{
-				BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+				BitWidth dataWidth = (BitWidth)state.getAttributeValue(StdAttr.Width);
 				if (dataWidth == null)
 				{
 					dataWidth = BitWidth.create(0);

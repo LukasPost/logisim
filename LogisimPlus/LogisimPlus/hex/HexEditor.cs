@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -51,7 +52,7 @@ namespace hex
 			this.highlighter = new Highlighter(this);
 
 			setOpaque(true);
-			setBackground(Color.WHITE);
+			setBackground(Color.White);
 			if (model != null)
 			{
 				model.addHexModelListener(listener);
@@ -158,7 +159,7 @@ namespace hex
 			measures.widthChanged();
 		}
 
-		protected internal override void paintComponent(Graphics g)
+		protected internal override void paintComponent(JGraphics g)
 		{
 			measures.ensureComputed(g);
 
@@ -166,18 +167,18 @@ namespace hex
 			if (isOpaque())
 			{
 				g.setColor(getBackground());
-				g.fillRect(clip.x, clip.y, clip.width, clip.height);
+				g.fillRect(clip.X, clip.Y, clip.Width, clip.Height);
 			}
 
 			long addr0 = model.FirstOffset;
 			long addr1 = model.LastOffset;
 
-			long xaddr0 = measures.toAddress(0, clip.y);
+			long xaddr0 = measures.toAddress(0, clip.Y);
 			if (xaddr0 == addr0)
 			{
 				xaddr0 = measures.getBaseAddress(model);
 			}
-			long xaddr1 = measures.toAddress(getWidth(), clip.y + clip.height) + 1;
+			long xaddr1 = measures.toAddress(getWidth(), clip.Y + clip.Height) + 1;
 			highlighter.paint(g, xaddr0, xaddr1);
 
 			g.setColor(getForeground());
@@ -297,7 +298,7 @@ namespace hex
 			}
 			else
 			{
-				return Math.Max(1, vis.width / 20);
+				return Math.Max(1, vis.Width / 20);
 			}
 		}
 
@@ -312,15 +313,15 @@ namespace hex
 					height = measures.CellHeight;
 					if (height < 1)
 					{
-						return 19 * vis.height / 20;
+						return 19 * vis.Height / 20;
 					}
 				}
-				int lines = Math.Max(1, (vis.height / height) - 1);
+				int lines = Math.Max(1, (vis.Height / height) - 1);
 				return lines * height;
 			}
 			else
 			{
-				return 19 * vis.width / 20;
+				return 19 * vis.Width / 20;
 			}
 		}
 

@@ -39,7 +39,7 @@ namespace logisim.gui.menu
 		}
 
 		private Listener listener;
-		private IDictionary<LogisimMenuItem, JMenuItem> items;
+		private Dictionary<LogisimMenuItem, JMenuItem> items;
 
 		public EditPopup() : this(false)
 		{
@@ -74,7 +74,7 @@ namespace logisim.gui.menu
 			}
 			x |= add(LogisimMenuBar.RAISE, Strings.get("editRaiseItem"));
 			x |= add(LogisimMenuBar.LOWER, Strings.get("editLowerItem"));
-			x |= add(LogisimMenuBar.RAISE_TOP, Strings.get("editRaiseTopItem"));
+			x |= add(LogisimMenuBar.RAISE_TOP, Strings.get("editRaHashSetopItem"));
 			x |= add(LogisimMenuBar.LOWER_BOTTOM, Strings.get("editLowerBottomItem"));
 			if (x)
 			{

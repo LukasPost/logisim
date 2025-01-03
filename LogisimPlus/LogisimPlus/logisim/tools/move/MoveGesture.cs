@@ -28,7 +28,7 @@ namespace logisim.tools.move
 		private HashSet<Component> selected;
 
 		[NonSerialized]
-		private ISet<ConnectionData> connections;
+		private HashSet<ConnectionData> connections;
 		[NonSerialized]
 		private AvoidanceMap initAvoid;
 		private Dictionary<MoveRequest, MoveResult> cachedResults;
@@ -68,11 +68,11 @@ namespace logisim.tools.move
 			}
 		}
 
-		internal virtual ISet<ConnectionData> Connections
+		internal virtual HashSet<ConnectionData> Connections
 		{
 			get
 			{
-				ISet<ConnectionData> ret = connections;
+				HashSet<ConnectionData> ret = connections;
 				if (ret == null)
 				{
 					ret = computeConnections(circuit, selected);
@@ -146,7 +146,7 @@ namespace logisim.tools.move
 			}
 		}
 
-		private static ISet<ConnectionData> computeConnections(Circuit circuit, ISet<Component> selected)
+		private static HashSet<ConnectionData> computeConnections(Circuit circuit, HashSet<Component> selected)
 		{
 			if (selected == null || selected.Count == 0)
 			{
@@ -154,7 +154,7 @@ namespace logisim.tools.move
 			}
 
 			// first identify locations that might be connected
-			ISet<Location> locs = new HashSet<Location>();
+			HashSet<Location> locs = new HashSet<Location>();
 			foreach (Component comp in selected)
 			{
 				foreach (EndData end in comp.Ends)
@@ -164,7 +164,7 @@ namespace logisim.tools.move
 			}
 
 			// now see which of them require connection
-			ISet<ConnectionData> conns = new HashSet<ConnectionData>();
+			HashSet<ConnectionData> conns = new HashSet<ConnectionData>();
 			foreach (Location loc in locs)
 			{
 				bool found = false;
@@ -178,12 +178,12 @@ namespace logisim.tools.move
 				}
 				if (found)
 				{
-					IList<Wire> wirePath;
+					List<Wire> wirePath;
 					Location wirePathStart;
 					Wire lastOnPath = findWire(circuit, loc, selected, null);
 					if (lastOnPath == null)
 					{
-						wirePath = Collections.emptyList();
+						wirePath = [];
 						wirePathStart = loc;
 					}
 					else
@@ -220,7 +220,7 @@ namespace logisim.tools.move
 			return conns;
 		}
 
-		private static Wire findWire(Circuit circ, Location loc, ISet<Component> ignore, Wire ignoreW)
+		private static Wire findWire(Circuit circ, Location loc, HashSet<Component> ignore, Wire ignoreW)
 		{
 			Wire ret = null;
 			foreach (Component comp in circ.getComponents(loc))

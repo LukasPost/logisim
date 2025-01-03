@@ -92,26 +92,26 @@ namespace logisim.tools
 			listeners.Remove(l);
 		}
 
-		public virtual AttributeSet clone()
+		public virtual object Clone()
 		{
 			return (AttributeSet) Base.clone();
 		}
 
-		public virtual bool containsAttribute<T1>(Attribute<T1> attr)
+		public virtual bool containsAttribute(Attribute attr)
 		{
 			return Base.containsAttribute(attr);
 		}
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public logisim.data.Attribute<?> getAttribute(String name)
-		public virtual Attribute<object> getAttribute(string name)
+		public virtual Attribute getAttribute(string name)
 		{
 			return Base.getAttribute(name);
 		}
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public virtual IList<Attribute<object>> Attributes
+		public virtual List<Attribute> Attributes
 		{
 			get
 			{
@@ -119,27 +119,27 @@ namespace logisim.tools
 			}
 		}
 
-		public virtual V getValue<V>(Attribute<V> attr)
+		public virtual object getValue(Attribute attr)
 		{
 			return Base.getValue(attr);
 		}
 
-		public virtual bool isReadOnly<T1>(Attribute<T1> attr)
+		public virtual bool isReadOnly(Attribute attr)
 		{
 			return Base.isReadOnly(attr);
 		}
 
-		public virtual bool isToSave<T1>(Attribute<T1> attr)
+		public virtual bool isToSave(Attribute attr)
 		{
 			return Base.isToSave(attr);
 		}
 
-		public virtual void setReadOnly<T1>(Attribute<T1> attr, bool value)
+		public virtual void setReadOnly(Attribute attr, bool value)
 		{
 			Base.setReadOnly(attr, value);
 		}
 
-		public virtual void setValue<V>(Attribute<V> attr, V value)
+		public virtual void setValue(Attribute attr, object value)
 		{
 			Base.setValue(attr, value);
 		}

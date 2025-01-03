@@ -15,11 +15,11 @@ namespace logisim.tools.key
 	using logisim.data;
 	using AttributeSet = logisim.data.AttributeSet;
 
-	public abstract class NumericConfigurator<V> : KeyConfigurator, ICloneable
+	public abstract class NumericConfigurator : KeyConfigurator, ICloneable
 	{
 		private const int MAX_TIME_KEY_LASTS = 800;
 
-		private Attribute<V> attr;
+		private Attribute attr;
 		private int minValue;
 		private int maxValue;
 		private int curValue;
@@ -27,11 +27,11 @@ namespace logisim.tools.key
 		private int modsEx;
 		private long whenTyped;
 
-		public NumericConfigurator(Attribute<V> attr, int min, int max, int modifiersEx) : this(attr, min, max, modifiersEx, 10)
+		public NumericConfigurator(Attribute attr, int min, int max, int modifiersEx) : this(attr, min, max, modifiersEx, 10)
 		{
 		}
 
-		public NumericConfigurator(Attribute<V> attr, int min, int max, int modifiersEx, int radix)
+		public NumericConfigurator(Attribute attr, int min, int max, int modifiersEx, int radix)
 		{
 			this.attr = attr;
 			this.minValue = min;
@@ -42,23 +42,13 @@ namespace logisim.tools.key
 			this.whenTyped = 0;
 		}
 
-		public virtual NumericConfigurator<V> clone()
+        object ICloneable.Clone() => base.MemberwiseClone();
+		public virtual NumericConfigurator clone()
 		{
-			try
-			{
-// JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") NumericConfigurator<V> ret = (NumericConfigurator<V>) super.clone();
-				NumericConfigurator<V> ret = (NumericConfigurator<V>) base.clone();
-				ret.whenTyped = 0;
-				ret.curValue = 0;
-				return ret;
-			}
-			catch (CloneNotSupportedException e)
-			{
-				Console.WriteLine(e.ToString());
-				Console.Write(e.StackTrace);
-				return null;
-			}
+			NumericConfigurator ret = (NumericConfigurator)base.MemberwiseClone();
+			ret.whenTyped = 0;
+			ret.curValue = 0;
+			return ret;
 		}
 
 		protected internal virtual int getMinimumValue(AttributeSet attrs)
@@ -71,7 +61,7 @@ namespace logisim.tools.key
 			return maxValue;
 		}
 
-		protected internal abstract V createValue(int value);
+		protected internal abstract object createValue(int value);
 
 		public virtual KeyConfigurationResult keyEventReceived(KeyConfigurationEvent @event)
 		{
@@ -117,6 +107,7 @@ namespace logisim.tools.key
 			}
 			return null;
 		}
-	}
+
+    }
 
 }

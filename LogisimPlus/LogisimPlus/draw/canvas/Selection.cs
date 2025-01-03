@@ -26,9 +26,9 @@ namespace draw.canvas
 
 		private List<SelectionListener> listeners;
 		private HashSet<CanvasObject> selected;
-		private ISet<CanvasObject> selectedView;
+		private HashSet<CanvasObject> selectedView;
 		private Dictionary<CanvasObject, string> suppressed;
-		private ISet<CanvasObject> suppressedView;
+		private HashSet<CanvasObject> suppressedView;
 		private Handle selectedHandle;
 		private HandleGesture curHandleGesture;
 		private int moveDx;
@@ -79,7 +79,7 @@ namespace draw.canvas
 			return selected.Contains(shape);
 		}
 
-		public virtual ISet<CanvasObject> Selected
+		public virtual HashSet<CanvasObject> Selected
 		{
 			get
 			{
@@ -182,7 +182,7 @@ namespace draw.canvas
 			}
 		}
 
-		public virtual ISet<CanvasObject> DrawsSuppressed
+		public virtual HashSet<CanvasObject> DrawsSuppressed
 		{
 			get
 			{
@@ -283,7 +283,7 @@ namespace draw.canvas
 			moveDy = dy;
 		}
 
-		public virtual void drawSuppressed(Graphics g, CanvasObject shape)
+		public virtual void drawSuppressed(JGraphics g, CanvasObject shape)
 		{
 			string state = suppressed[shape];
 			if (string.ReferenceEquals(state, MOVING_HANDLE))

@@ -30,7 +30,7 @@ namespace logisim.std.arith
 	{
 		private static readonly AttributeOption SIGNED_OPTION = new AttributeOption("twosComplement", "twosComplement", Strings.getter("twosComplementOption"));
 		private static readonly AttributeOption UNSIGNED_OPTION = new AttributeOption("unsigned", "unsigned", Strings.getter("unsignedOption"));
-		private static readonly Attribute<AttributeOption> MODE_ATTRIBUTE = Attributes.forOption("mode", Strings.getter("comparatorType"), new AttributeOption[] {SIGNED_OPTION, UNSIGNED_OPTION});
+		private static readonly Attribute MODE_ATTRIBUTE = Attributes.forOption("mode", Strings.getter("comparatorType"), new AttributeOption[] {SIGNED_OPTION, UNSIGNED_OPTION});
 
 		private const int IN0 = 0;
 		private const int IN1 = 1;
@@ -40,14 +40,14 @@ namespace logisim.std.arith
 
 		public Comparator() : base("Comparator", Strings.getter("comparatorComponent"))
 		{
-			setAttributes(new Attribute[] {StdAttr.WIDTH, MODE_ATTRIBUTE}, new object[] {BitWidth.create(8), SIGNED_OPTION});
-			KeyConfigurator = new BitWidthConfigurator(StdAttr.WIDTH);
+			setAttributes(new Attribute[] {StdAttr.Width, MODE_ATTRIBUTE}, new object[] {BitWidth.create(8), SIGNED_OPTION});
+			KeyConfigurator = new BitWidthConfigurator(StdAttr.Width);
 			OffsetBounds = Bounds.create(-40, -20, 40, 40);
 			IconName = "comparator.gif";
 
 			Port[] ps = new Port[5];
-			ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.WIDTH);
-			ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.WIDTH);
+			ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.Width);
+			ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.Width);
 			ps[GT] = new Port(0, -10, Port.OUTPUT, 1);
 			ps[EQ] = new Port(0, 0, Port.OUTPUT, 1);
 			ps[LT] = new Port(0, 10, Port.OUTPUT, 1);
@@ -62,7 +62,7 @@ namespace logisim.std.arith
 		public override void propagate(InstanceState state)
 		{
 			// get attributes
-			BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+			BitWidth dataWidth = state.getAttributeValue(StdAttr.Width);
 
 			// compute outputs
 			Value gt = Value.FALSE;
@@ -143,7 +143,7 @@ namespace logisim.std.arith
 			instance.addAttributeListener();
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			instance.fireInvalidated();
 		}

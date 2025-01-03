@@ -116,7 +116,7 @@ namespace logisim.file
 		//
 		// query methods
 		//
-		public virtual IList<Tool> Contents
+		public virtual List<Tool> Contents
 		{
 			get
 			{
@@ -247,7 +247,7 @@ namespace logisim.file
 		//
 		// package-protected methods
 		//
-		internal virtual void replaceAll(IDictionary<Tool, Tool> toolMap)
+		internal virtual void replaceAll(Dictionary<Tool, Tool> toolMap)
 		{
 			bool changed = false;
 // JAVA TO C# CONVERTER WARNING: Unlike Java's ListIterator, enumerators in .NET do not allow altering the collection:

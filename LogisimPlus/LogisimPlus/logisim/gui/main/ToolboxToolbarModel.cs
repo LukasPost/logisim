@@ -23,7 +23,7 @@ namespace logisim.gui.main
 		private LogisimToolbarItem itemUp;
 		private LogisimToolbarItem itemDown;
 		private LogisimToolbarItem itemDelete;
-		private IList<ToolbarItem> items;
+		private List<ToolbarItem> items;
 
 		public ToolboxToolbarModel(MenuListener menu)
 		{
@@ -37,7 +37,7 @@ namespace logisim.gui.main
 			menu.addEnabledListener(this);
 		}
 
-		public override IList<ToolbarItem> Items
+		public override List<ToolbarItem> Items
 		{
 			get
 			{

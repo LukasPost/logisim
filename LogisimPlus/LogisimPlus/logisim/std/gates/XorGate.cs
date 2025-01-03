@@ -18,7 +18,7 @@ namespace logisim.std.gates
 	using InstancePainter = logisim.instance.InstancePainter;
 	using InstanceState = logisim.instance.InstanceState;
 	using WireRepairData = logisim.tools.WireRepairData;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	internal class XorGate : AbstractGate
 	{
@@ -31,7 +31,7 @@ namespace logisim.std.gates
 			PaintInputLines = true;
 		}
 
-		public override string getRectangularLabel(AttributeSet attrs)
+		protected override string getRectangularLabel(AttributeSet attrs)
 		{
 			if (attrs == null)
 			{
@@ -52,11 +52,11 @@ namespace logisim.std.gates
 
 		public override void paintIconShaped(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
-			GraphicsUtil.drawCenteredArc(g, 2, -5, 22, -90, 53);
-			GraphicsUtil.drawCenteredArc(g, 2, 23, 22, 90, -53);
-			GraphicsUtil.drawCenteredArc(g, -10, 9, 16, -30, 60);
-			GraphicsUtil.drawCenteredArc(g, -12, 9, 16, -30, 60);
+			JGraphics g = painter.Graphics;
+			JGraphicsUtil.drawCenteredArc(g, 2, -5, 22, -90, 53);
+			JGraphicsUtil.drawCenteredArc(g, 2, 23, 22, 90, -53);
+			JGraphicsUtil.drawCenteredArc(g, -10, 9, 16, -30, 60);
+			JGraphicsUtil.drawCenteredArc(g, -12, 9, 16, -30, 60);
 		}
 
 		protected internal override void paintShape(InstancePainter painter, int width, int height)

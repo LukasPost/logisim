@@ -95,7 +95,7 @@ namespace logisim.circuit
 			this.circuit = circuit;
 		}
 
-		protected internal override IDictionary<Circuit, int> AccessedCircuits
+		protected internal override Dictionary<Circuit, int> AccessedCircuits
 		{
 			get
 			{
@@ -215,7 +215,7 @@ namespace logisim.circuit
 			}
 
 			ReplacementMap replacements = new ReplacementMap();
-			ISet<Location> splitLocs = circuit.wires.points.getSplitLocations();
+			HashSet<Location> splitLocs = circuit.wires.points.getSplitLocations();
 			foreach (List<Wire> mergeSet in mergeSets.MergeSets)
 			{
 				if (mergeSet.Count > 1)
@@ -226,7 +226,7 @@ namespace logisim.circuit
 			mutator.replace(circuit, replacements);
 		}
 
-		private void doMergeSet(List<Wire> mergeSet, ReplacementMap replacements, ISet<Location> splitLocs)
+		private void doMergeSet(List<Wire> mergeSet, ReplacementMap replacements, HashSet<Location> splitLocs)
 		{
 			SortedSet<Location> ends = new SortedSet<Location>();
 			foreach (Wire w in mergeSet)

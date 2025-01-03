@@ -13,7 +13,7 @@ using System;
 namespace logisim.util
 {
 
-	public class GraphicsUtil
+	public class JGraphicsUtil
 	{
 		public const int H_LEFT = -1;
 		public const int H_CENTER = 0;
@@ -29,12 +29,12 @@ namespace logisim.util
 			g.setStroke(width);
 		}
 
-		public static void drawCenteredArc(Graphics g, int x, int y, int r, int start, int dist)
+		public static void drawCenteredArc(JGraphics g, int x, int y, int r, int start, int dist)
 		{
 			g.drawArc(x - r, y - r, 2 * r, 2 * r, start, dist);
 		}
 
-		public static Rectangle getTextBounds(Graphics g, Font font, string text, int x, int y, int halign, int valign)
+		public static Rectangle getTextBounds(JGraphics g, Font font, string text, int x, int y, int halign, int valign)
 		{
 			if (g == null)
 			{
@@ -53,7 +53,7 @@ namespace logisim.util
 			return ret;
 		}
 
-		public static Rectangle getTextBounds(Graphics g, string text, int x, int y, int halign, int valign)
+		public static Rectangle getTextBounds(JGraphics g, string text, int x, int y, int halign, int valign)
 		{
 			if (g == null)
 			{
@@ -101,7 +101,7 @@ namespace logisim.util
 			return ret;
 		}
 
-		public static void drawText(Graphics g, Font font, string text, int x, int y, int halign, int valign)
+		public static void drawText(JGraphics g, Font font, string text, int x, int y, int halign, int valign)
 		{
 			Font oldfont = g.getFont();
 			if (font != null)
@@ -115,7 +115,7 @@ namespace logisim.util
 			}
 		}
 
-		public static void drawText(Graphics g, string text, int x, int y, int halign, int valign)
+		public static void drawText(JGraphics g, string text, int x, int y, int halign, int valign)
 		{
 			if (text.Length == 0)
 			{
@@ -125,12 +125,12 @@ namespace logisim.util
 			g.drawString(text, bd.x, bd.y + g.getFontMetrics().getAscent());
 		}
 
-		public static void drawCenteredText(Graphics g, string text, int x, int y)
+		public static void drawCenteredText(JGraphics g, string text, int x, int y)
 		{
 			drawText(g, text, x, y, H_CENTER, V_CENTER);
 		}
 
-		public static void drawArrow(Graphics g, int x0, int y0, int x1, int y1, int headLength, int headAngle)
+		public static void drawArrow(JGraphics g, int x0, int y0, int x1, int y1, int headLength, int headAngle)
 		{
 			double offs = headAngle * Math.PI / 180.0;
 			double angle = Math.Atan2(y0 - y1, x0 - x1);

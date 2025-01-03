@@ -38,7 +38,7 @@ namespace logisim.gui.appear
 		private AppearanceCanvas canvas;
 		private CanvasModel canvasModel;
 		private ClipboardContents oldClipboard;
-		private IDictionary<CanvasObject, int> affected;
+		private Dictionary<CanvasObject, int> affected;
 		private ClipboardContents newClipboard;
 
 		private ClipboardActions(bool remove, AppearanceCanvas canvas)

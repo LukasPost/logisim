@@ -23,7 +23,7 @@ namespace logisim.analyze.gui
 	using TruthTableEvent = logisim.analyze.model.TruthTableEvent;
 	using TruthTableListener = logisim.analyze.model.TruthTableListener;
 	using VariableList = logisim.analyze.model.VariableList;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	internal class KarnaughMapPanel : JPanel, TruthTablePanel
 	{
@@ -38,10 +38,10 @@ namespace logisim.analyze.gui
 		private static readonly Font BODY_FONT = new Font("Serif", Font.PLAIN, 14);
 		private static readonly Color[] IMP_COLORS = new Color[]
 		{
-			new Color(255, 0, 0, 128),
-			new Color(0, 150, 0, 128),
-			new Color(0, 0, 255, 128),
-			new Color(255, 0, 255, 128)
+			Color.FromArgb(255, 255, 0, 0, 128),
+			Color.FromArgb(255, 0, 150, 0, 128),
+			Color.FromArgb(255, 0, 0, 255, 128),
+			Color.FromArgb(255, 255, 0, 255, 128)
 		};
 
 		private const int MAX_VARS = 4;
@@ -189,7 +189,7 @@ namespace logisim.analyze.gui
 
 		private void computePreferredSize()
 		{
-			Graphics g = getGraphics();
+			JGraphics g = getJGraphics();
 			TruthTable table = model.TruthTable;
 
 			string message = null;
@@ -244,7 +244,7 @@ namespace logisim.analyze.gui
 			repaint();
 		}
 
-		public override void paintComponent(Graphics g)
+		public override void paintComponent(JGraphics g)
 		{
 			base.paintComponent(g);
 
@@ -263,7 +263,7 @@ namespace logisim.analyze.gui
 			if (!string.ReferenceEquals(message, null))
 			{
 				g.setFont(BODY_FONT);
-				GraphicsUtil.drawCenteredText(g, message, sz.width / 2, sz.height / 2);
+				JGraphicsUtil.drawCenteredText(g, message, sz.width / 2, sz.height / 2);
 				return;
 			}
 
@@ -289,9 +289,9 @@ namespace logisim.analyze.gui
 				int headY = y + (tableHeight + headHeight + cellHeight + headFm.getAscent()) / 2;
 				g.drawString(rowHeader, headX, headY);
 			}
-			else if (g is Graphics2D)
+			else if (g is JGraphics2D)
 			{
-				Graphics2D g2 = (Graphics2D) g.create();
+				JGraphics2D g2 = (JGraphics2D) g.create();
 				int yoffs = (tableHeight + headHeight + cellHeight + headerWidth) / 2;
 				int headX = x + headFm.getAscent();
 				int headY = y + yoffs;
@@ -337,7 +337,7 @@ namespace logisim.analyze.gui
 				}
 			}
 
-			IList<Implicant> implicants = model.OutputExpressions.getMinimalImplicants(output);
+			List<Implicant> implicants = model.OutputExpressions.getMinimalImplicants(output);
 			if (implicants != null)
 			{
 				int index = 0;
@@ -349,7 +349,7 @@ namespace logisim.analyze.gui
 				}
 			}
 
-			g.setColor(Color.GRAY);
+			g.setColor(Color.Gray);
 			if (cols > 1 || inputCount == 0)
 			{
 				g.drawLine(x, y, left + tableWidth, y);
@@ -363,7 +363,7 @@ namespace logisim.analyze.gui
 				return;
 			}
 
-			g.setColor(Color.BLACK);
+			g.setColor(Color.Black);
 			for (int i = 0; i < rows; i++)
 			{
 				for (int j = 0; j < cols; j++)
@@ -374,7 +374,7 @@ namespace logisim.analyze.gui
 						string text = provisionalValue.Description;
 						g.setColor(Color.GREEN);
 						g.drawString(text, x + j * cellWidth + (cellWidth - fm.stringWidth(text)) / 2, y + i * cellHeight + dy);
-						g.setColor(Color.BLACK);
+						g.setColor(Color.Black);
 					}
 					else
 					{
@@ -386,7 +386,7 @@ namespace logisim.analyze.gui
 			}
 		}
 
-		private void paintImplicant(Graphics g, Implicant imp, int x, int y, int rows, int cols)
+		private void paintImplicant(JGraphics g, Implicant imp, int x, int y, int rows, int cols)
 		{
 			int rowMax = -1;
 			int rowMin = rows;

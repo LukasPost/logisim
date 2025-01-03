@@ -28,9 +28,10 @@ namespace logisim.circuit
 	using Location = logisim.data.Location;
 	using CustomHandles = logisim.tools.CustomHandles;
 	using Cache = logisim.util.Cache;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
+    using LogisimPlus.Java;
 
-	public sealed class Wire : Component, AttributeSet, CustomHandles, IEnumerable<Location>
+    public sealed class Wire : Component, AttributeSet, CustomHandles, IEnumerable<Location>
 	{
 		/// <summary>
 		/// Stroke width when drawing wires. </summary>
@@ -38,12 +39,12 @@ namespace logisim.circuit
 
 		public static readonly AttributeOption VALUE_HORZ = new AttributeOption("horz", Strings.getter("wireDirectionHorzOption"));
 		public static readonly AttributeOption VALUE_VERT = new AttributeOption("vert", Strings.getter("wireDirectionVertOption"));
-		public static readonly Attribute<AttributeOption> dir_attr = Attributes.forOption("direction", Strings.getter("wireDirectionAttr"), new AttributeOption[] {VALUE_HORZ, VALUE_VERT});
-		public static readonly Attribute<int> len_attr = Attributes.forInteger("length", Strings.getter("wireLengthAttr"));
+		public static readonly Attribute dir_attr = Attributes.forOption("direction", Strings.getter("wireDirectionAttr"), new AttributeOption[] {VALUE_HORZ, VALUE_VERT});
+		public static readonly Attribute len_attr = Attributes.forInteger("length", Strings.getter("wireLengthAttr"));
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private static final java.util.List<logisim.data.Attribute<?>> ATTRIBUTES = java.util.Arrays.asList(new logisim.data.Attribute<?>[] { dir_attr, len_attr });
-		private static readonly IList<Attribute<object>> ATTRIBUTES = new List<Attribute<object>> {dir_attr, len_attr};
+		private static readonly List<Attribute> ATTRIBUTES = new List<Attribute> {dir_attr, len_attr};
 		private static readonly Cache cache = new Cache();
 
 		public static Wire create(Location e0, Location e1)
@@ -181,7 +182,7 @@ namespace logisim.circuit
 			}
 		}
 
-		public Bounds getBounds(Graphics g)
+		public Bounds getBounds(JGraphics g)
 		{
 			return Bounds;
 		}
@@ -202,7 +203,7 @@ namespace logisim.circuit
 			}
 		}
 
-		public bool contains(Location pt, Graphics g)
+		public bool contains(Location pt, JGraphics g)
 		{
 			return contains(pt);
 		}
@@ -210,7 +211,7 @@ namespace logisim.circuit
 		//
 		// propagation methods
 		//
-		public IList<EndData> Ends
+		public List<EndData> Ends
 		{
 			get
 			{
@@ -251,9 +252,9 @@ namespace logisim.circuit
 		public void draw(ComponentDrawContext context)
 		{
 			CircuitState state = context.CircuitState;
-			Graphics g = context.Graphics;
+			JGraphics g = context.Graphics;
 
-			GraphicsUtil.switchToWidth(g, WIDTH);
+			JGraphicsUtil.switchToWidth(g, WIDTH);
 			g.setColor(state.getValue(e0).Color);
 			g.drawLine(e0.X, e0.Y, e1.X, e1.Y);
 		}
@@ -288,7 +289,7 @@ namespace logisim.circuit
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public IList<Attribute<object>> Attributes
+		public List<Attribute> Attributes
 		{
 			get
 			{
@@ -296,18 +297,18 @@ namespace logisim.circuit
 			}
 		}
 
-		public bool containsAttribute<T1>(Attribute<T1> attr)
+		public bool containsAttribute(Attribute attr)
 		{
 			return ATTRIBUTES.Contains(attr);
 		}
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public logisim.data.Attribute<?> getAttribute(String name)
-		public Attribute<object> getAttribute(string name)
+		public Attribute getAttribute(string name)
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: for (logisim.data.Attribute<?> attr : ATTRIBUTES)
-			foreach (Attribute<object> attr in ATTRIBUTES)
+			foreach (Attribute attr in ATTRIBUTES)
 			{
 				if (name.Equals(attr.Name))
 				{
@@ -317,32 +318,32 @@ namespace logisim.circuit
 			return null;
 		}
 
-		public bool isReadOnly<T1>(Attribute<T1> attr)
+		public bool isReadOnly(Attribute attr)
 		{
 			return true;
 		}
 
-		public void setReadOnly<T1>(Attribute<T1> attr, bool value)
+		public void setReadOnly(Attribute attr, bool value)
 		{
 			throw new System.NotSupportedException();
 		}
 
-		public bool isToSave<T1>(Attribute<T1> attr)
+		public bool isToSave(Attribute attr)
 		{
 			return false;
 		}
 
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
 // ORIGINAL LINE: @SuppressWarnings("unchecked") public <V> V getValue(logisim.data.Attribute<V> attr)
-		public V getValue<V>(Attribute<V> attr)
+		public object getValue(Attribute attr)
 		{
 			if (attr == dir_attr)
 			{
-				return (V)(is_x_equal ? VALUE_VERT : VALUE_HORZ);
+				return is_x_equal ? VALUE_VERT : VALUE_HORZ;
 			}
 			else if (attr == len_attr)
 			{
-				return (V) Convert.ToInt32(Length);
+				return Convert.ToInt32(Length);
 			}
 			else
 			{
@@ -350,7 +351,7 @@ namespace logisim.circuit
 			}
 		}
 
-		public void setValue<V>(Attribute<V> attr, V value)
+		public void setValue(Attribute attr, object value)
 		{
 			throw new System.ArgumentException("read only attribute");
 		}

@@ -150,7 +150,7 @@ namespace logisim.tools.move
 			avoid.Remove(loc);
 		}
 
-		public virtual void unmarkWire(Wire w, Location deletedEnd, ISet<Location> unmarkable)
+		public virtual void unmarkWire(Wire w, Location deletedEnd, HashSet<Location> unmarkable)
 		{
 			Location loc0 = w.End0;
 			Location loc1 = w.End1;

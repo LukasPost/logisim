@@ -31,14 +31,15 @@ namespace logisim.std.wiring
 	using Port = logisim.instance.Port;
 	using StdAttr = logisim.instance.StdAttr;
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using Icons = logisim.util.Icons;
+    using LogisimPlus.Java;
 
-	public class Transistor : InstanceFactory
+    public class Transistor : InstanceFactory
 	{
 		internal static readonly AttributeOption TYPE_P = new AttributeOption("p", Strings.getter("transistorTypeP"));
 		internal static readonly AttributeOption TYPE_N = new AttributeOption("n", Strings.getter("transistorTypeN"));
-		internal static readonly Attribute<AttributeOption> ATTR_TYPE = Attributes.forOption("type", Strings.getter("transistorTypeAttr"), new AttributeOption[] {TYPE_P, TYPE_N});
+		internal static readonly Attribute ATTR_TYPE = Attributes.forOption("type", Strings.getter("transistorTypeAttr"), new AttributeOption[] {TYPE_P, TYPE_N});
 
 		internal const int OUTPUT = 0;
 		internal const int INPUT = 1;
@@ -49,9 +50,9 @@ namespace logisim.std.wiring
 
 		public Transistor() : base("Transistor", Strings.getter("transistorComponent"))
 		{
-			setAttributes(new Attribute[] {ATTR_TYPE, StdAttr.FACING, Wiring.ATTR_GATE, StdAttr.WIDTH}, new object[] {TYPE_P, Direction.East, Wiring.GATE_TOP_LEFT, BitWidth.ONE});
+			setAttributes(new Attribute[] {ATTR_TYPE, StdAttr.FACING, Wiring.ATTR_GATE, StdAttr.Width}, new object[] {TYPE_P, Direction.East, Wiring.GATE_TOP_LEFT, BitWidth.ONE});
 			FacingAttribute = StdAttr.FACING;
-			KeyConfigurator = new BitWidthConfigurator(StdAttr.WIDTH);
+			KeyConfigurator = new BitWidthConfigurator(StdAttr.Width);
 		}
 
 		protected internal override void configureNewInstance(Instance instance)
@@ -60,14 +61,14 @@ namespace logisim.std.wiring
 			updatePorts(instance);
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == StdAttr.FACING || attr == Wiring.ATTR_GATE)
 			{
 				instance.recomputeBounds();
 				updatePorts(instance);
 			}
-			else if (attr == StdAttr.WIDTH)
+			else if (attr == StdAttr.Width)
 			{
 				updatePorts(instance);
 			}
@@ -79,7 +80,7 @@ namespace logisim.std.wiring
 
 		private void updatePorts(Instance instance)
 		{
-			Direction facing = instance.getAttributeValue(StdAttr.FACING);
+			Direction facing = (Direction)instance.getAttributeValue(StdAttr.FACING);
 			int dx = 0;
 			int dy = 0;
 			if (facing == Direction.North)
@@ -103,8 +104,8 @@ namespace logisim.std.wiring
 			bool flip = (facing == Direction.South || facing == Direction.West) == (powerLoc == Wiring.GATE_TOP_LEFT);
 
 			Port[] ports = new Port[3];
-			ports[OUTPUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
-			ports[INPUT] = new Port(40 * dx, 40 * dy, Port.INPUT, StdAttr.WIDTH);
+			ports[OUTPUT] = new Port(0, 0, Port.OUTPUT, StdAttr.Width);
+			ports[INPUT] = new Port(40 * dx, 40 * dy, Port.INPUT, StdAttr.Width);
 			if (flip)
 			{
 				ports[GATE] = new Port(20 * (dx + dy), 20 * (-dx + dy), Port.INPUT, 1);
@@ -113,12 +114,12 @@ namespace logisim.std.wiring
 			{
 				ports[GATE] = new Port(20 * (dx - dy), 20 * (dx + dy), Port.INPUT, 1);
 			}
-			instance.setPorts(ports);
+			instance.Ports = ports;
 		}
 
 		public override Bounds getOffsetBounds(AttributeSet attrs)
 		{
-			Direction facing = attrs.getValue(StdAttr.FACING);
+			Direction facing = (Direction)attrs.getValue(StdAttr.FACING);
 			object gateLoc = attrs.getValue(Wiring.ATTR_GATE);
 			int delta = gateLoc == Wiring.GATE_TOP_LEFT ? -20 : 0;
 			if (facing == Direction.North)
@@ -143,7 +144,7 @@ namespace logisim.std.wiring
 		{
 			if (base.contains(loc, attrs))
 			{
-				Direction facing = attrs.getValue(StdAttr.FACING);
+				Direction facing = (Direction)attrs.getValue(StdAttr.FACING);
 				Location center = (new Location(0, 0)).translate(facing, -20);
 				return center.manhattanDistanceTo(loc) < 24;
 			}
@@ -160,7 +161,7 @@ namespace logisim.std.wiring
 
 		private Value computeOutput(InstanceState state)
 		{
-			BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
+			BitWidth width = (BitWidth)state.getAttributeValue(StdAttr.Width);
 			Value gate = state.getPort(GATE);
 			Value input = state.getPort(INPUT);
 			Value desired = state.getAttributeValue(ATTR_TYPE) == TYPE_P ? Value.FALSE : Value.TRUE;
@@ -216,15 +217,15 @@ namespace logisim.std.wiring
 		{
 			object type = painter.getAttributeValue(ATTR_TYPE);
 			object powerLoc = painter.getAttributeValue(Wiring.ATTR_GATE);
-			Direction from = painter.getAttributeValue(StdAttr.FACING);
-			Direction facing = painter.getAttributeValue(StdAttr.FACING);
+			Direction from = (Direction)painter.getAttributeValue(StdAttr.FACING);
+			Direction facing = (Direction)painter.getAttributeValue(StdAttr.FACING);
 			bool flip = (facing == Direction.South || facing == Direction.West) == (powerLoc == Wiring.GATE_TOP_LEFT);
 
 			int degrees = Direction.East.toDegrees() - from.toDegrees();
-			double radians = Math.toRadians((degrees + 360) % 360);
+			double radians = (Math.PI / 180) * ((degrees + 360) % 360);
 			int m = flip ? 1 : -1;
 
-			Graphics2D g = (Graphics2D) painter.Graphics;
+			JGraphics g = painter.Graphics;
 			Location loc = painter.Location;
 			g.translate(loc.X, loc.Y);
 			g.rotate(radians);
@@ -251,7 +252,7 @@ namespace logisim.std.wiring
 			}
 
 			// input and output lines
-			GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+			JGraphicsUtil.switchToWidth(g, Wire.WIDTH);
 			g.setColor(output);
 			g.drawLine(0, 0, -11, 0);
 			g.drawLine(-11, m * 7, -11, 0);
@@ -265,13 +266,13 @@ namespace logisim.std.wiring
 			if (type == TYPE_P)
 			{
 				g.drawLine(-20, m * 20, -20, m * 15);
-				GraphicsUtil.switchToWidth(g, 1);
+				JGraphicsUtil.switchToWidth(g, 1);
 				g.drawOval(-22, m * 12 - 2, 4, 4);
 			}
 			else
 			{
 				g.drawLine(-20, m * 20, -20, m * 11);
-				GraphicsUtil.switchToWidth(g, 1);
+				JGraphicsUtil.switchToWidth(g, 1);
 			}
 
 			// draw platforms

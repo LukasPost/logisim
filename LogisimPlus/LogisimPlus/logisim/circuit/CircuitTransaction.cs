@@ -20,14 +20,14 @@ namespace logisim.circuit
 		public static readonly int READ_ONLY = Convert.ToInt32(1);
 		public static readonly int READ_WRITE = Convert.ToInt32(2);
 
-		protected internal abstract IDictionary<Circuit, int> AccessedCircuits {get;}
+		protected internal abstract Dictionary<Circuit, int> AccessedCircuits {get;}
 
 		protected internal abstract void run(CircuitMutator mutator);
 
 		public CircuitTransactionResult execute()
 		{
 			CircuitMutatorImpl mutator = new CircuitMutatorImpl();
-			IDictionary<Circuit, Lock> locks = CircuitLocker.acquireLocks(this, mutator);
+			Dictionary<Circuit, Lock> locks = CircuitLocker.acquireLocks(this, mutator);
 			CircuitTransactionResult result;
 			try
 			{

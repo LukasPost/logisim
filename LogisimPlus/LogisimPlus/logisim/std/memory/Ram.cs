@@ -39,11 +39,11 @@ namespace logisim.std.memory
 		internal static readonly AttributeOption BUS_ASYNCH = new AttributeOption("asynch", Strings.getter("ramBusAsynchCombined"));
 		internal static readonly AttributeOption BUS_SEPARATE = new AttributeOption("separate", Strings.getter("ramBusSeparate"));
 
-		internal static readonly Attribute<AttributeOption> ATTR_BUS = Attributes.forOption("bus", Strings.getter("ramBusAttr"), new AttributeOption[] {BUS_COMBINED, BUS_ASYNCH, BUS_SEPARATE});
+		internal static readonly Attribute ATTR_BUS = Attributes.forOption("bus", Strings.getter("ramBusAttr"), new AttributeOption[] {BUS_COMBINED, BUS_ASYNCH, BUS_SEPARATE});
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private static logisim.data.Attribute<?>[] ATTRIBUTES = { Mem.ADDR_ATTR, Mem.DATA_ATTR, ATTR_BUS };
-		private static Attribute<object>[] ATTRIBUTES = new Attribute<object>[] {Mem.ADDR_ATTR, Mem.DATA_ATTR, ATTR_BUS};
+		private static Attribute[] ATTRIBUTES = new Attribute[] {Mem.ADDR_ATTR, Mem.DATA_ATTR, ATTR_BUS};
 		private static object[] DEFAULTS = new object[] {BitWidth.create(8), BitWidth.create(8), BUS_COMBINED};
 
 		private static readonly int OE = MEM_INPUTS + 0;
@@ -66,7 +66,7 @@ namespace logisim.std.memory
 			instance.addAttributeListener();
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			base.instanceAttributeChanged(instance, attr);
 			configurePorts(instance);
@@ -99,26 +99,26 @@ namespace logisim.std.memory
 
 			configureStandardPorts(instance, ps);
 			ps[OE] = new Port(-50, 40, Port.INPUT, 1);
-			ps[OE].setToolTip(Strings.getter("ramOETip"));
+			ps[OE].ToolTip = Strings.getter("ramOETip");
 			ps[CLR] = new Port(-30, 40, Port.INPUT, 1);
-			ps[CLR].setToolTip(Strings.getter("ramClrTip"));
+			ps[CLR].ToolTip = Strings.getter("ramClrTip");
 			if (!asynch)
 			{
 				ps[CLK] = new Port(-70, 40, Port.INPUT, 1);
-				ps[CLK].setToolTip(Strings.getter("ramClkTip"));
+				ps[CLK].ToolTip = Strings.getter("ramClkTip");
 			}
 			if (separate)
 			{
 				ps[WE] = new Port(-110, 40, Port.INPUT, 1);
-				ps[WE].setToolTip(Strings.getter("ramWETip"));
+				ps[WE].ToolTip = Strings.getter("ramWETip");
 				ps[DIN] = new Port(-140, 20, Port.INPUT, DATA_ATTR);
-				ps[DIN].setToolTip(Strings.getter("ramInTip"));
+				ps[DIN].ToolTip = Strings.getter("ramInTip");
 			}
 			else
 			{
-				ps[DATA].setToolTip(Strings.getter("ramBusTip"));
+				ps[DATA].ToolTip = Strings.getter("ramBusTip");
 			}
-			instance.setPorts(ps);
+			instance.Ports = ps;
 		}
 
 		public override AttributeSet createAttributeSet()
@@ -254,7 +254,7 @@ namespace logisim.std.memory
 			if (separate)
 			{
 				painter.drawPort(WE, Strings.get("ramWELabel"), Direction.South);
-				painter.Graphics.setColor(Color.BLACK);
+				painter.Graphics.setColor(Color.Black);
 				painter.drawPort(DIN, Strings.get("ramDataLabel"), Direction.East);
 			}
 		}

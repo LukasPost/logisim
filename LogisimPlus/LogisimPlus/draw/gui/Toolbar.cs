@@ -15,9 +15,10 @@ namespace draw.gui
 	using CanvasTool = draw.canvas.CanvasTool;
 	using AbstractTool = draw.tools.AbstractTool;
 	using DrawingAttributeSet = draw.tools.DrawingAttributeSet;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
+    using LogisimPlus.Java;
 
-	internal class Toolbar : JComponent
+    internal class Toolbar : JComponent
 	{
 		private static int ICON_WIDTH = 16;
 		private static int ICON_HEIGHT = 16;
@@ -139,7 +140,7 @@ namespace draw.gui
 			}
 		}
 
-		public override void paintComponent(Graphics g)
+		public override void paintComponent(JGraphics g)
 		{
 			g.clearRect(0, 0, getWidth(), getHeight());
 			CanvasTool current = canvas.Tool;
@@ -153,7 +154,7 @@ namespace draw.gui
 					AbstractTool tool = column[j];
 					if (tool == listener.toolPressed && listener.inTool)
 					{
-						g.setColor(Color.darkGray);
+						g.setColor(Color.DarkGray);
 						g.fillRect(x, y, ICON_WIDTH, ICON_HEIGHT);
 					}
 					Icon icon = tool.Icon;
@@ -163,15 +164,15 @@ namespace draw.gui
 					}
 					if (tool == current)
 					{
-						GraphicsUtil.switchToWidth(g, 2);
-						g.setColor(Color.black);
+						JGraphicsUtil.switchToWidth(g, 2);
+						g.setColor(Color.Black);
 						g.drawRect(x - 1, y - 1, ICON_WIDTH + 2, ICON_HEIGHT + 2);
 					}
 					y += ICON_HEIGHT + ICON_SEP;
 				}
 			}
-			g.setColor(Color.black);
-			GraphicsUtil.switchToWidth(g, 1);
+			g.setColor(Color.Black);
+			JGraphicsUtil.switchToWidth(g, 1);
 		}
 	}
 

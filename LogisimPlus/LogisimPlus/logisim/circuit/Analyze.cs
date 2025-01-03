@@ -227,7 +227,7 @@ namespace logisim.circuit
 		/// </summary>
 // JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in C#:
 // ORIGINAL LINE: public static void computeExpression(logisim.analyze.model.AnalyzerModel model, Circuit circuit, java.util.Map<logisim.instance.Instance, String> pinNames) throws AnalyzeException
-		public static void computeExpression(AnalyzerModel model, Circuit circuit, IDictionary<Instance, string> pinNames)
+		public static void computeExpression(AnalyzerModel model, Circuit circuit, Dictionary<Instance, string> pinNames)
 		{
 			ExpressionMap expressionMap = new ExpressionMap(circuit);
 
@@ -285,8 +285,8 @@ namespace logisim.circuit
 		private class ExpressionMap : Dictionary<Location, Expression>
 		{
 			internal Circuit circuit;
-			internal ISet<Location> dirtyPoints = new HashSet<Location>();
-			internal IDictionary<Location, Component> causes = new Dictionary<Location, Component>();
+			internal HashSet<Location> dirtyPoints = new HashSet<Location>();
+			internal Dictionary<Location, Component> causes = new Dictionary<Location, Component>();
 			internal Component currentCause = null;
 
 			internal ExpressionMap(Circuit circuit)
@@ -347,7 +347,7 @@ namespace logisim.circuit
 		// computes outputs of affected components
 // JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in C#:
 // ORIGINAL LINE: private static java.util.HashSet<logisim.comp.Component> getDirtyComponents(Circuit circuit, java.util.Set<logisim.data.Location> pointsToProcess) throws AnalyzeException
-		private static HashSet<Component> getDirtyComponents(Circuit circuit, ISet<Location> pointsToProcess)
+		private static HashSet<Component> getDirtyComponents(Circuit circuit, HashSet<Location> pointsToProcess)
 		{
 			HashSet<Component> dirtyComponents = new HashSet<Component>();
 			foreach (Location point in pointsToProcess)
@@ -415,7 +415,7 @@ namespace logisim.circuit
 		//
 		/// <summary>
 		/// Returns a truth table corresponding to the circuit. </summary>
-		public static void computeTable(AnalyzerModel model, Project proj, Circuit circuit, IDictionary<Instance, string> pinLabels)
+		public static void computeTable(AnalyzerModel model, Project proj, Circuit circuit, Dictionary<Instance, string> pinLabels)
 		{
 			List<Instance> inputPins = new List<Instance>();
 			List<string> inputNames = new List<string>();

@@ -17,7 +17,7 @@ namespace logisim.data
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public Object getDefaultAttributeValue(Attribute<?> attr, logisim.LogisimVersion ver);
-		object getDefaultAttributeValue<T1>(Attribute<T1> attr, LogisimVersion ver);
+		object getDefaultAttributeValue<T1>(Attribute attr, LogisimVersion ver);
 	}
 
 }

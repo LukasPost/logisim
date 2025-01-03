@@ -9,8 +9,8 @@
 
 namespace logisim.instance
 {
-
-	using Bounds = logisim.data.Bounds;
+    using LogisimPlus.Java;
+    using Bounds = logisim.data.Bounds;
 
 	public abstract class InstancePoker
 	{

@@ -95,7 +95,7 @@ namespace logisim.prefs
 		public const string ACCEL_OPENGL = "opengl";
 		public const string ACCEL_D3D = "d3d";
 
-		public static readonly PrefMonitor<string> GRAPHICS_ACCELERATION = create(new PrefMonitorStringOpts("graphicsAcceleration", new string[] {ACCEL_DEFAULT, ACCEL_NONE, ACCEL_OPENGL, ACCEL_D3D}, ACCEL_DEFAULT));
+		public static readonly PrefMonitor<string> JGraphics_ACCELERATION = create(new PrefMonitorStringOpts("JGraphicsAcceleration", new string[] {ACCEL_DEFAULT, ACCEL_NONE, ACCEL_OPENGL, ACCEL_D3D}, ACCEL_DEFAULT));
 
 		// hidden window preferences - not part of the preferences dialog, changes
 		// to preference does not affect current windows, and the values are not
@@ -336,9 +336,9 @@ namespace logisim.prefs
 			}
 		}
 
-		public static void handleGraphicsAcceleration()
+		public static void handleJGraphicsAcceleration()
 		{
-			string accel = GRAPHICS_ACCELERATION.get();
+			string accel = JGraphics_ACCELERATION.get();
 			try
 			{
 				if (string.ReferenceEquals(accel, ACCEL_NONE))
@@ -480,7 +480,7 @@ namespace logisim.prefs
 		//
 		// recent projects
 		//
-		public static IList<File> RecentFiles
+		public static List<File> RecentFiles
 		{
 			get
 			{

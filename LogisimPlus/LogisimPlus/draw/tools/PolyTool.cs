@@ -22,8 +22,9 @@ namespace draw.tools
 	using logisim.data;
 	using Location = logisim.data.Location;
 	using Icons = logisim.util.Icons;
+    using LogisimPlus.Java;
 
-	public class PolyTool : AbstractTool
+    public class PolyTool : AbstractTool
 	{
 		// how close we need to be to the start point to count as "closing the loop"
 		private const int CLOSE_TOLERANCE = 2;
@@ -61,7 +62,7 @@ namespace draw.tools
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
@@ -242,11 +243,11 @@ namespace draw.tools
 			canvas.repaint();
 		}
 
-		public override void draw(Canvas canvas, Graphics g)
+		public override void draw(Canvas canvas, JGraphics g)
 		{
 			if (active)
 			{
-				g.setColor(Color.GRAY);
+				g.setColor(Color.Gray);
 				int size = locations.Count;
 				int[] xs = new int[size];
 				int[] ys = new int[size];

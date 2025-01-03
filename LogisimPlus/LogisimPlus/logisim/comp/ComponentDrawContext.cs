@@ -19,7 +19,7 @@ namespace logisim.comp
 	using Location = logisim.data.Location;
 	using InstancePainter = logisim.instance.InstancePainter;
 	using AppPreferences = logisim.prefs.AppPreferences;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
     using LogisimPlus.Java;
 
     public class ComponentDrawContext
@@ -161,11 +161,11 @@ namespace logisim.comp
 		//
 		public virtual void drawBounds(Component comp)
 		{
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphicsUtil.switchToWidth(g, 2);
 			g.setColor(Color.Black);
 			Bounds bds = comp.Bounds;
 			g.drawRect(bds.X, bds.Y, bds.Width, bds.Height);
-			GraphicsUtil.switchToWidth(g, 1);
+			JGraphicsUtil.switchToWidth(g, 1);
 		}
 
 		public virtual void drawRectangle(Component comp)
@@ -181,7 +181,7 @@ namespace logisim.comp
 
 		public virtual void drawRectangle(int x, int y, int width, int height, string label)
 		{
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphicsUtil.switchToWidth(g, 2);
 			g.drawRect(x, y, width, height);
 			if (!string.ReferenceEquals(label, null) && !label.Equals(""))
 			{
@@ -206,7 +206,7 @@ namespace logisim.comp
 
 		public virtual void drawRectangle(ComponentFactory source, int x, int y, int width, int height, string label)
 		{
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphicsUtil.switchToWidth(g, 2);
 			g.drawRect(x + 1, y + 1, width - 1, height - 1);
 			if (!string.ReferenceEquals(label, null) && !label.Equals(""))
 			{
@@ -225,7 +225,7 @@ namespace logisim.comp
 
 		public virtual void drawDongle(int x, int y)
 		{
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphicsUtil.switchToWidth(g, 2);
 			g.drawOval(x - 4, y - 4, 9, 9);
 		}
 
@@ -253,19 +253,19 @@ namespace logisim.comp
 			g.setColor(curColor);
 			if (dir == Direction.East)
 			{
-				GraphicsUtil.drawText(g, label, x + 3, y, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+				JGraphicsUtil.drawText(g, label, x + 3, y, JGraphicsUtil.H_LEFT, JGraphicsUtil.V_CENTER);
 			}
 			else if (dir == Direction.West)
 			{
-				GraphicsUtil.drawText(g, label, x - 3, y, GraphicsUtil.H_RIGHT, GraphicsUtil.V_CENTER);
+				JGraphicsUtil.drawText(g, label, x - 3, y, JGraphicsUtil.H_RIGHT, JGraphicsUtil.V_CENTER);
 			}
 			else if (dir == Direction.South)
 			{
-				GraphicsUtil.drawText(g, label, x, y - 3, GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
+				JGraphicsUtil.drawText(g, label, x, y - 3, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_BASELINE);
 			}
 			else if (dir == Direction.North)
 			{
-				GraphicsUtil.drawText(g, label, x, y + 3, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+				JGraphicsUtil.drawText(g, label, x, y + 3, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_TOP);
 			}
 		}
 
@@ -311,7 +311,7 @@ namespace logisim.comp
 		{
 			Color curColor = g.getColor();
 			g.setColor(Color.Black);
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphicsUtil.switchToWidth(g, 2);
 
 			EndData e = comp.getEnd(i);
 			Location pt = e.Location;
@@ -343,7 +343,7 @@ namespace logisim.comp
 			}
 
 			g.setColor(curColor);
-			GraphicsUtil.switchToWidth(g, 1);
+			JGraphicsUtil.switchToWidth(g, 1);
 		}
 
 		public virtual void drawHandles(Component comp)

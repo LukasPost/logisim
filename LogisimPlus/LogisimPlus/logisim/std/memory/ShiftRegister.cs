@@ -28,11 +28,11 @@ namespace logisim.std.memory
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
 	using IntegerConfigurator = logisim.tools.key.IntegerConfigurator;
 	using JoinedConfigurator = logisim.tools.key.JoinedConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	public class ShiftRegister : InstanceFactory
 	{
-		internal static readonly Attribute<int> ATTR_LENGTH = Attributes.forIntegerRange("length", Strings.getter("shiftRegLengthAttr"), 1, 32);
+		internal static readonly Attribute ATTR_LENGTH = Attributes.forIntegerRange("length", Strings.getter("shiftRegLengthAttr"), 1, 32);
 		internal static readonly Attribute<bool> ATTR_LOAD = Attributes.forBoolean("parallel", Strings.getter("shiftRegParallelAttr"));
 
 		private const int IN = 0;
@@ -44,8 +44,8 @@ namespace logisim.std.memory
 
 		public ShiftRegister() : base("Shift Register", Strings.getter("shiftRegisterComponent"))
 		{
-			setAttributes(new Attribute[] {StdAttr.WIDTH, ATTR_LENGTH, ATTR_LOAD, StdAttr.EDGE_TRIGGER, StdAttr.LABEL, StdAttr.LABEL_FONT}, new object[] {BitWidth.ONE, Convert.ToInt32(8), true, StdAttr.TRIG_RISING, "", StdAttr.DEFAULT_LABEL_FONT});
-			KeyConfigurator = JoinedConfigurator.create(new IntegerConfigurator(ATTR_LENGTH, 1, 32, 0), new BitWidthConfigurator(StdAttr.WIDTH));
+			setAttributes(new Attribute[] {StdAttr.Width, ATTR_LENGTH, ATTR_LOAD, StdAttr.EDGE_TRIGGER, StdAttr.LABEL, StdAttr.LABEL_FONT}, new object[] {BitWidth.ONE, Convert.ToInt32(8), true, StdAttr.TRIG_RISING, "", StdAttr.DEFAULT_LABEL_FONT});
+			KeyConfigurator = JoinedConfigurator.create(new IntegerConfigurator(ATTR_LENGTH, 1, 32, 0), new BitWidthConfigurator(StdAttr.Width));
 
 			IconName = "shiftreg.gif";
 			InstanceLogger = typeof(ShiftRegisterLogger);
@@ -72,9 +72,9 @@ namespace logisim.std.memory
 			instance.addAttributeListener();
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
-			if (attr == ATTR_LOAD || attr == ATTR_LENGTH || attr == StdAttr.WIDTH)
+			if (attr == ATTR_LOAD || attr == ATTR_LENGTH || attr == StdAttr.Width)
 			{
 				instance.recomputeBounds();
 				configurePorts(instance);
@@ -83,7 +83,7 @@ namespace logisim.std.memory
 
 		private void configurePorts(Instance instance)
 		{
-			BitWidth widthObj = instance.getAttributeValue(StdAttr.WIDTH);
+			BitWidth widthObj = instance.getAttributeValue(StdAttr.Width);
 			int width = widthObj.Width;
 			bool? parallelObj = instance.getAttributeValue(ATTR_LOAD);
 			Bounds bds = instance.Bounds;
@@ -94,7 +94,7 @@ namespace logisim.std.memory
 				int len = lenObj == null ? 8 : lenObj.Value;
 				ps = new Port[6 + 2 * len];
 				ps[LD] = new Port(10, -20, Port.INPUT, 1);
-				ps[LD].setToolTip(Strings.getter("shiftRegLoadTip"));
+				ps[LD].ToolTip = Strings.getter("shiftRegLoadTip");
 				for (int i = 0; i < len; i++)
 				{
 					ps[6 + 2 * i] = new Port(20 + 10 * i, -20, Port.INPUT, width);
@@ -110,19 +110,19 @@ namespace logisim.std.memory
 			ps[IN] = new Port(0, 0, Port.INPUT, width);
 			ps[CK] = new Port(0, 10, Port.INPUT, 1);
 			ps[CLR] = new Port(10, 20, Port.INPUT, 1);
-			ps[OUT].setToolTip(Strings.getter("shiftRegOutTip"));
-			ps[SH].setToolTip(Strings.getter("shiftRegShiftTip"));
-			ps[IN].setToolTip(Strings.getter("shiftRegInTip"));
-			ps[CK].setToolTip(Strings.getter("shiftRegClockTip"));
-			ps[CLR].setToolTip(Strings.getter("shiftRegClearTip"));
-			instance.setPorts(ps);
+			ps[OUT].ToolTip = Strings.getter("shiftRegOutTip");
+			ps[SH].ToolTip = Strings.getter("shiftRegShiftTip");
+			ps[IN].ToolTip = Strings.getter("shiftRegInTip");
+			ps[CK].ToolTip = Strings.getter("shiftRegClockTip");
+			ps[CLR].ToolTip = Strings.getter("shiftRegClearTip");
+			instance.Ports = ps;
 
-			instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, bds.X + bds.Width / 2, bds.Y + bds.Height / 4, GraphicsUtil.H_CENTER, GraphicsUtil.V_CENTER);
+			instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, bds.X + bds.Width / 2, bds.Y + bds.Height / 4, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_CENTER);
 		}
 
 		private ShiftRegisterData getData(InstanceState state)
 		{
-			BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
+			BitWidth width = state.getAttributeValue(StdAttr.Width);
 			int? lenObj = state.getAttributeValue(ATTR_LENGTH);
 			int length = lenObj == null ? 8 : lenObj.Value;
 			ShiftRegisterData data = (ShiftRegisterData) state.Data;
@@ -186,7 +186,7 @@ namespace logisim.std.memory
 			bool parallel = (bool)painter.getAttributeValue(ATTR_LOAD);
 			if (parallel)
 			{
-				BitWidth widObj = painter.getAttributeValue(StdAttr.WIDTH);
+				BitWidth widObj = painter.getAttributeValue(StdAttr.Width);
 				int wid = widObj.Width;
 				int? lenObj = painter.getAttributeValue(ATTR_LENGTH);
 				int len = lenObj == null ? 8 : lenObj.Value;
@@ -207,11 +207,11 @@ namespace logisim.std.memory
 						{
 							y += 3 * bds.Height / 4;
 						}
-						Graphics g = painter.Graphics;
+						JGraphics g = painter.Graphics;
 						for (int i = 0; i < len; i++)
 						{
 							string s = data.get(len - 1 - i).toHexString();
-							GraphicsUtil.drawCenteredText(g, s, x, y);
+							JGraphicsUtil.drawCenteredText(g, s, x, y);
 							x += 10;
 						}
 					}
@@ -222,15 +222,15 @@ namespace logisim.std.memory
 					int x = bds.X + bds.Width / 2;
 					int y = bds.Y;
 					int h = bds.Height;
-					Graphics g = painter.Graphics;
+					JGraphics g = painter.Graphics;
 					object label = painter.getAttributeValue(StdAttr.LABEL);
 					if (label == null || label.Equals(""))
 					{
 						string a = Strings.get("shiftRegisterLabel1");
-						GraphicsUtil.drawCenteredText(g, a, x, y + h / 4);
+						JGraphicsUtil.drawCenteredText(g, a, x, y + h / 4);
 					}
 					string b = Strings.get("shiftRegisterLabel2", "" + len, "" + wid);
-					GraphicsUtil.drawCenteredText(g, b, x, y + 3 * h / 4);
+					JGraphicsUtil.drawCenteredText(g, b, x, y + 3 * h / 4);
 				}
 			}
 

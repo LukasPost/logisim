@@ -18,14 +18,14 @@ namespace logisim.util
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: java.util.List<? extends E> a;
-			internal IList<E> a;
+			internal List<E> a;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: java.util.List<? extends E> b;
-			internal IList<E> b;
+			internal List<E> b;
 
 // JAVA TO C# CONVERTER TASK: Wildcard generics in method parameters are not converted:
 // ORIGINAL LINE: JoinedList(java.util.List<? extends E> a, java.util.List<? extends E> b)
-			internal JoinedList(IList<E> a, IList<E> b)
+			internal JoinedList(List<E> a, List<E> b)
 			{
 				this.a = a;
 				this.b = b;
@@ -59,7 +59,7 @@ namespace logisim.util
 		{
 		}
 
-		public static IList<E> joinImmutableLists<E, T1, T2>(IList<T1> a, IList<T2> b) where T1 : E where T2 : E
+		public static List<E> joinImmutableLists<E, T1, T2>(List<T1> a, List<T2> b) where T1 : E where T2 : E
 		{
 			return new JoinedList<E>(a, b);
 		}

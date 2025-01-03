@@ -26,7 +26,7 @@ namespace logisim.comp
 		private Location loc;
 		private AttributeSet attrs;
 		private List<EndData> ends;
-		private IList<EndData> endsView;
+		private List<EndData> endsView;
 		private Bounds bounds = null;
 
 		public ManagedComponent(Location loc, AttributeSet attrs, int num_ends)
@@ -59,13 +59,13 @@ namespace logisim.comp
 			{
 				if (copy == null)
 				{
-					copy = new ComponentEvent(e.Source, Collections.singletonList(e.OldData), Collections.singletonList(e.Data));
+					copy = new ComponentEvent(e.Source, new object[] { e.OldData }, new object[] { e.Data });
 				}
 				l.endChanged(copy);
 			}
 		}
 
-		protected internal virtual void fireEndsChanged(IList<EndData> oldEnds, IList<EndData> newEnds)
+		protected internal virtual void fireEndsChanged(List<EndData> oldEnds, List<EndData> newEnds)
 		{
 			ComponentEvent e = null;
 			foreach (ComponentListener l in listeners)
@@ -100,7 +100,7 @@ namespace logisim.comp
 			{
 				return attrs;
 			}
-			set
+			protected set
 			{
 				attrs = value;
 			}
@@ -129,7 +129,7 @@ namespace logisim.comp
 			bounds = null;
 		}
 
-		public override IList<EndData> Ends
+		public override List<EndData> Ends
 		{
 			get
 			{
@@ -137,8 +137,8 @@ namespace logisim.comp
 			}
 			set
 			{
-				IList<EndData> oldEnds = ends;
-				int minLen = Math.Min(oldEnds.Count, value.Length);
+				List<EndData> oldEnds = ends;
+				int minLen = Math.Min(oldEnds.Count, value.Count);
 				List<EndData> changesOld = new List<EndData>();
 				List<EndData> changesNew = new List<EndData>();
 				for (int i = 0; i < minLen; i++)
@@ -156,7 +156,7 @@ namespace logisim.comp
 					changesOld.Add(oldEnds.RemoveAndReturn(i));
 					changesNew.Add(null);
 				}
-				for (int i = minLen; i < value.Length; i++)
+				for (int i = minLen; i < value.Count; i++)
 				{
 					oldEnds.Add(value[i]);
 					changesOld.Add(null);

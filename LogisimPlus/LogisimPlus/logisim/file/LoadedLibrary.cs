@@ -109,7 +109,7 @@ namespace logisim.file
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<? extends logisim.tools.Tool> getTools()
-		public override IList<Tool> Tools
+		public override List<Tool> Tools
 		{
 			get
 			{
@@ -117,7 +117,7 @@ namespace logisim.file
 			}
 		}
 
-		public override IList<Library> Libraries
+		public override List<Library> Libraries
 		{
 			get
 			{
@@ -232,7 +232,7 @@ namespace logisim.file
 			}
 		}
 
-		private static void replaceAll(IDictionary<ComponentFactory, ComponentFactory> compMap, IDictionary<Tool, Tool> toolMap)
+		private static void replaceAll(Dictionary<ComponentFactory, ComponentFactory> compMap, Dictionary<Tool, Tool> toolMap)
 		{
 			foreach (Project proj in Projects.OpenProjects)
 			{
@@ -257,7 +257,7 @@ namespace logisim.file
 			}
 		}
 
-		private static void replaceAll(LogisimFile file, IDictionary<ComponentFactory, ComponentFactory> compMap, IDictionary<Tool, Tool> toolMap)
+		private static void replaceAll(LogisimFile file, Dictionary<ComponentFactory, ComponentFactory> compMap, Dictionary<Tool, Tool> toolMap)
 		{
 			file.Options.getToolbarData().replaceAll(toolMap);
 			file.Options.getMouseMappings().replaceAll(toolMap);
@@ -267,7 +267,7 @@ namespace logisim.file
 			}
 		}
 
-		private static void replaceAll(Circuit circuit, IDictionary<ComponentFactory, ComponentFactory> compMap)
+		private static void replaceAll(Circuit circuit, Dictionary<ComponentFactory, ComponentFactory> compMap)
 		{
 			List<Component> toReplace = null;
 			foreach (Component comp in circuit.NonWires)
@@ -309,16 +309,16 @@ namespace logisim.file
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: for (logisim.data.Attribute<?> destAttr : dest.getAttributes())
-			foreach (Attribute<object> destAttr in dest.Attributes)
+			foreach (Attribute destAttr in dest.Attributes)
 			{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?> srcAttr = src.getAttribute(destAttr.getName());
-				Attribute<object> srcAttr = src.getAttribute(destAttr.Name);
+				Attribute srcAttr = src.getAttribute(destAttr.Name);
 				if (srcAttr != null)
 				{
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<Object> destAttr2 = (logisim.data.Attribute<Object>) destAttr;
-					Attribute<object> destAttr2 = (Attribute<object>) destAttr;
+// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute destAttr2 = (logisim.data.Attribute) destAttr;
+					Attribute destAttr2 = (Attribute) destAttr;
 					dest.setValue(destAttr2, src.getValue(srcAttr));
 				}
 			}

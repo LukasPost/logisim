@@ -63,7 +63,7 @@ namespace draw.shapes
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
@@ -73,11 +73,11 @@ namespace draw.shapes
 
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
 // ORIGINAL LINE: @Override @SuppressWarnings("unchecked") public <V> V getValue(logisim.data.Attribute<V> attr)
-		public virtual V getValue<V>(Attribute<V> attr)
+		public virtual object getValue(Attribute attr)
 		{
 			if (attr == DrawAttr.CORNER_RADIUS)
 			{
-				return (V) Convert.ToInt32(radius);
+				return Convert.ToInt32(radius);
 			}
 			else
 			{
@@ -85,7 +85,7 @@ namespace draw.shapes
 			}
 		}
 
-		public override void updateValue<T1>(Attribute<T1> attr, object value)
+		public override void updateValue(Attribute attr, object value)
 		{
 			if (attr == DrawAttr.CORNER_RADIUS)
 			{
@@ -237,7 +237,7 @@ namespace draw.shapes
 			return sum <= 0.25;
 		}
 
-		public override void draw(Graphics g, int x, int y, int w, int h)
+		public override void draw(JGraphics g, int x, int y, int w, int h)
 		{
 			int diam = 2 * radius;
 			if (setForFill(g))

@@ -37,7 +37,7 @@ namespace logisim.std.gates
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
 	using IntegerConfigurator = logisim.tools.key.IntegerConfigurator;
 	using JoinedConfigurator = logisim.tools.key.JoinedConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using Icons = logisim.util.Icons;
 	using StringGetter = logisim.util.StringGetter;
 
@@ -59,7 +59,7 @@ namespace logisim.std.gates
 		{
 			this.isXor = isXor;
 			FacingAttribute = StdAttr.FACING;
-			KeyConfigurator = JoinedConfigurator.create(new IntegerConfigurator(GateAttributes.ATTR_INPUTS, 2, GateAttributes.MAX_INPUTS, 0), new BitWidthConfigurator(StdAttr.WIDTH));
+			KeyConfigurator = JoinedConfigurator.create(new IntegerConfigurator(GateAttributes.ATTR_INPUTS, 2, GateAttributes.MAX_INPUTS, 0), new BitWidthConfigurator(StdAttr.Width));
 		}
 
 		public override AttributeSet createAttributeSet()
@@ -67,7 +67,7 @@ namespace logisim.std.gates
 			return new GateAttributes(isXor);
 		}
 
-		public virtual object getDefaultAttributeValue<T1>(Attribute<T1> attr, LogisimVersion ver)
+		public virtual object getDefaultAttributeValue<T1>(Attribute attr, LogisimVersion ver)
 		{
 			if (attr is NegateAttribute)
 			{
@@ -210,7 +210,7 @@ namespace logisim.std.gates
 				width -= 10;
 			}
 
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			Color baseColor = g.getColor();
 			if (shape == AppPreferences.SHAPE_SHAPED && paintInputLines)
 			{
@@ -233,11 +233,10 @@ namespace logisim.std.gates
 			g.setColor(baseColor);
 			g.translate(loc.X, loc.Y);
 			double rotate = 0.0;
-			if (facing != Direction.East && g is Graphics2D)
+			if (facing != Direction.East)
 			{
 				rotate = -facing.toRadians();
-				Graphics2D g2 = (Graphics2D) g;
-				g2.rotate(rotate);
+				g.rotate(rotate);
 			}
 
 			if (shape == AppPreferences.SHAPE_RECTANGULAR)
@@ -265,7 +264,7 @@ namespace logisim.std.gates
 
 			if (rotate != 0.0)
 			{
-				((Graphics2D) g).rotate(-rotate);
+				g.rotate(-rotate);
 			}
 			g.translate(-loc.X, -loc.Y);
 
@@ -350,20 +349,20 @@ namespace logisim.std.gates
 
 		protected internal virtual void paintIconRectangular(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			g.drawRect(1, 2, 16, 16);
 			if (negateOutput)
 			{
 				g.drawOval(16, 8, 4, 4);
 			}
 			string label = getRectangularLabel(painter.AttributeSet);
-			GraphicsUtil.drawCenteredText(g, label, 9, 8);
+			JGraphicsUtil.drawCenteredText(g, label, 9, 8);
 		}
 
 		public override sealed void paintIcon(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
-			g.setColor(Color.black);
+			JGraphics g = painter.Graphics;
+			g.setColor(Color.Black);
 			if (painter.GateShape == AppPreferences.SHAPE_RECTANGULAR)
 			{
 				Icon iconRect = IconRectangular;
@@ -426,7 +425,7 @@ namespace logisim.std.gates
 			}
 		}
 
-		protected internal virtual string getRectangularLabel(AttributeSet attrs)
+		protected virtual string getRectangularLabel(AttributeSet attrs)
 		{
 			return rectLabel;
 		}
@@ -470,7 +469,7 @@ namespace logisim.std.gates
 			computeLabel(instance);
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == GateAttributes.ATTR_SIZE || attr == StdAttr.FACING)
 			{
@@ -533,11 +532,11 @@ namespace logisim.std.gates
 			int inputs = attrs.inputs;
 
 			Port[] ports = new Port[inputs + 1];
-			ports[0] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
+			ports[0] = new Port(0, 0, Port.OUTPUT, StdAttr.Width);
 			for (int i = 0; i < inputs; i++)
 			{
 				Location offs = getInputOffset(attrs, i);
-				ports[i + 1] = new Port(offs.X, offs.Y, Port.INPUT, StdAttr.WIDTH);
+				ports[i + 1] = new Port(offs.X, offs.Y, Port.INPUT, StdAttr.Width);
 			}
 			instance.setPorts(ports);
 		}
@@ -665,7 +664,7 @@ namespace logisim.std.gates
 				this.instance = instance;
 			}
 
-			public void computeExpression(IDictionary<Location, Expression> expressionMap)
+			public void computeExpression(Dictionary<Location, Expression> expressionMap)
 			{
 				GateAttributes attrs = (GateAttributes) instance.AttributeSet;
 				int inputCount = attrs.inputs;

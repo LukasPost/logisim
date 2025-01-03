@@ -82,23 +82,23 @@ namespace logisim.file
 
 		public static FileStatistics compute(LogisimFile file, Circuit circuit)
 		{
-			ISet<Circuit> include = new HashSet<Circuit>(file.Circuits);
-			IDictionary<Circuit, IDictionary<ComponentFactory, Count>> countMap;
-			countMap = new Dictionary<Circuit, IDictionary<ComponentFactory, Count>>();
+			HashSet<Circuit> include = new HashSet<Circuit>(file.Circuits);
+			Dictionary<Circuit, Dictionary<ComponentFactory, Count>> countMap;
+			countMap = new Dictionary<Circuit, Dictionary<ComponentFactory, Count>>();
 			doRecursiveCount(circuit, include, countMap);
 			doUniqueCounts(countMap[circuit], countMap);
-			IList<Count> countList = sortCounts(countMap[circuit], file);
+			List<Count> countList = sortCounts(countMap[circuit], file);
 			return new FileStatistics(countList, getTotal(countList, include), getTotal(countList, null));
 		}
 
-		private static IDictionary<ComponentFactory, Count> doRecursiveCount(Circuit circuit, ISet<Circuit> include, IDictionary<Circuit, IDictionary<ComponentFactory, Count>> countMap)
+		private static Dictionary<ComponentFactory, Count> doRecursiveCount(Circuit circuit, HashSet<Circuit> include, Dictionary<Circuit, Dictionary<ComponentFactory, Count>> countMap)
 		{
 			if (countMap.ContainsKey(circuit))
 			{
 				return countMap[circuit];
 			}
 
-			IDictionary<ComponentFactory, Count> counts = doSimpleCount(circuit);
+			Dictionary<ComponentFactory, Count> counts = doSimpleCount(circuit);
 			countMap[circuit] = counts;
 			foreach (Count count in counts.Values)
 			{
@@ -111,7 +111,7 @@ namespace logisim.file
 				if (counts.ContainsKey(subFactory))
 				{
 					int multiplier = counts[subFactory].simpleCount;
-					IDictionary<ComponentFactory, Count> subCount;
+					Dictionary<ComponentFactory, Count> subCount;
 					subCount = doRecursiveCount(sub, include, countMap);
 					foreach (Count subcount in subCount.Values)
 					{
@@ -130,9 +130,9 @@ namespace logisim.file
 			return counts;
 		}
 
-		private static IDictionary<ComponentFactory, Count> doSimpleCount(Circuit circuit)
+		private static Dictionary<ComponentFactory, Count> doSimpleCount(Circuit circuit)
 		{
-			IDictionary<ComponentFactory, Count> counts;
+			Dictionary<ComponentFactory, Count> counts;
 			counts = new Dictionary<ComponentFactory, Count>();
 			foreach (Component comp in circuit.NonWires)
 			{
@@ -148,7 +148,7 @@ namespace logisim.file
 			return counts;
 		}
 
-		private static void doUniqueCounts(IDictionary<ComponentFactory, Count> counts, IDictionary<Circuit, IDictionary<ComponentFactory, Count>> circuitCounts)
+		private static void doUniqueCounts(Dictionary<ComponentFactory, Count> counts, Dictionary<Circuit, Dictionary<ComponentFactory, Count>> circuitCounts)
 		{
 			foreach (Count count in counts.Values)
 			{
@@ -166,9 +166,9 @@ namespace logisim.file
 			}
 		}
 
-		private static IList<Count> sortCounts(IDictionary<ComponentFactory, Count> counts, LogisimFile file)
+		private static List<Count> sortCounts(Dictionary<ComponentFactory, Count> counts, LogisimFile file)
 		{
-			IList<Count> ret = new List<Count>();
+			List<Count> ret = new List<Count>();
 			foreach (AddTool tool in file.Tools)
 			{
 				ComponentFactory factory = tool.Factory;
@@ -198,7 +198,7 @@ namespace logisim.file
 			return ret;
 		}
 
-		private static Count getTotal(IList<Count> counts, ISet<Circuit> exclude)
+		private static Count getTotal(List<Count> counts, HashSet<Circuit> exclude)
 		{
 			Count ret = new Count(null);
 			foreach (Count count in counts)
@@ -219,18 +219,18 @@ namespace logisim.file
 			return ret;
 		}
 
-		private IList<Count> counts;
+		private List<Count> counts;
 		private Count totalWithout;
 		private Count totalWith;
 
-		private FileStatistics(IList<Count> counts, Count totalWithout, Count totalWith)
+		private FileStatistics(List<Count> counts, Count totalWithout, Count totalWith)
 		{
 			this.counts = counts.AsReadOnly();
 			this.totalWithout = totalWithout;
 			this.totalWith = totalWith;
 		}
 
-		public virtual IList<Count> Counts
+		public virtual List<Count> Counts
 		{
 			get
 			{

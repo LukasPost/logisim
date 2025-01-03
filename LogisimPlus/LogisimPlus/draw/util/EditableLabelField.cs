@@ -7,6 +7,8 @@
 /* Copyright (c) 2010, Carl Burch. License information is located in the
  * logisim.Main source code and at www.cburch.com/logisim/. */
 
+using LogisimPlus.Java;
+
 namespace draw.util
 {
 
@@ -17,12 +19,12 @@ namespace draw.util
 
 		public EditableLabelField() : base(10)
 		{
-			setBackground(new Color(255, 255, 255, 128));
+			setBackground(Color.FromArgb(255, 255, 255, 255, 128));
 			setOpaque(false);
-			setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK), BorderFactory.createEmptyBorder(1, 1, 1, 1)));
+			setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.Black), BorderFactory.createEmptyBorder(1, 1, 1, 1)));
 		}
 
-		protected internal override void paintComponent(Graphics g)
+		protected internal override void paintComponent(JGraphics g)
 		{
 			g.setColor(getBackground());
 			g.fillRect(0, 0, getWidth(), getHeight());

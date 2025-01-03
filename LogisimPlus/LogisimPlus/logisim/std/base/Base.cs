@@ -24,7 +24,7 @@ namespace logisim.std.@base
 
 	public class Base : Library
 	{
-		private IList<Tool> tools = null;
+		private List<Tool> tools = null;
 
 		public Base()
 		{
@@ -59,7 +59,7 @@ namespace logisim.std.@base
 			}
 		}
 
-		public override IList<Tool> Tools
+		public override List<Tool> Tools
 		{
 			get
 			{

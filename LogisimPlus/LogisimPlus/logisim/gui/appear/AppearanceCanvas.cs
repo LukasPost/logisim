@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 using System.Collections.Generic;
 
@@ -182,8 +183,8 @@ namespace logisim.gui.appear
 			{
 				int max = getMaxIndex(Model);
 				ModelReorderAction reorder = (ModelReorderAction) canvasAction;
-				IList<ReorderRequest> rs = reorder.ReorderRequests;
-				IList<ReorderRequest> mod = new List<ReorderRequest>(rs.Count);
+				List<ReorderRequest> rs = reorder.ReorderRequests;
+				List<ReorderRequest> mod = new List<ReorderRequest>(rs.Count);
 				bool changed = false;
 				bool movedToMax = false;
 				foreach (ReorderRequest r in rs)
@@ -275,19 +276,19 @@ namespace logisim.gui.appear
 			}
 		}
 
-		protected internal override void paintBackground(Graphics g)
+		protected internal override void paintBackground(JGraphics g)
 		{
 			base.paintBackground(g);
 			grid.paintGrid(g);
 		}
 
-		protected internal override void paintForeground(Graphics g)
+		protected internal override void paintForeground(JGraphics g)
 		{
 			double zoom = grid.ZoomFactor;
-			Graphics gScaled = g.create();
-			if (zoom != 1.0 && zoom != 0.0 && gScaled is Graphics2D)
+			JGraphics gScaled = g.create();
+			if (zoom != 1.0 && zoom != 0.0)
 			{
-				((Graphics2D) gScaled).scale(zoom, zoom);
+				gScaled.scale(zoom, zoom);
 			}
 			base.paintForeground(gScaled);
 			gScaled.dispose();
@@ -380,12 +381,12 @@ namespace logisim.gui.appear
 			if (!immediate)
 			{
 				Bounds old = oldPreferredSize;
-				if (old != null && Math.Abs(old.Width - dim.width) < THRESH_SIZE_UPDATE && Math.Abs(old.Height - dim.height) < THRESH_SIZE_UPDATE)
+				if (old != null && Math.Abs(old.Width - dim.Width) < THRESH_SIZE_UPDATE && Math.Abs(old.Height - dim.Height) < THRESH_SIZE_UPDATE)
 				{
 					return;
 				}
 			}
-			oldPreferredSize = Bounds.create(0, 0, dim.width, dim.height);
+			oldPreferredSize = Bounds.create(0, 0, dim.Width, dim.Height);
 			setPreferredSize(dim);
 			revalidate();
 		}
@@ -445,7 +446,7 @@ namespace logisim.gui.appear
 
 		internal static int getMaxIndex(CanvasModel model)
 		{
-			IList<CanvasObject> objects = model.ObjectsFromBottom;
+			List<CanvasObject> objects = model.ObjectsFromBottom;
 			for (int i = objects.Count - 1; i >= 0; i--)
 			{
 				if (!(objects[i] is AppearanceElement))

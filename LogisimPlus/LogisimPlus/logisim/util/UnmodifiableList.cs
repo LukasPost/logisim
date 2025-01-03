@@ -14,11 +14,11 @@ namespace logisim.util
 
 	public class UnmodifiableList<E> : System.Collections.ObjectModel.Collection<E>
 	{
-		public static IList<E> create<E>(E[] data)
+		public static List<E> create<E>(E[] data)
 		{
 			if (data.Length == 0)
 			{
-				return Collections.emptyList();
+				return [];
 			}
 			else
 			{

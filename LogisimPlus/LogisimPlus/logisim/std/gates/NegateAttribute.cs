@@ -14,9 +14,9 @@ namespace logisim.std.gates
 	using Direction = logisim.data.Direction;
 	using StringUtil = logisim.util.StringUtil;
 
-	internal class NegateAttribute : Attribute<bool>
+	internal class NegateAttribute : Attribute
 	{
-		private static Attribute<bool> BOOLEAN_ATTR = Attributes.forBoolean("negateDummy");
+		private static Attribute BOOLEAN_ATTR = Attributes.forBoolean("negateDummy");
 
 		internal int index;
 		private Direction side;

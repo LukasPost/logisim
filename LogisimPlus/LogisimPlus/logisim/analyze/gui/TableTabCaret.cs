@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -17,7 +18,7 @@ namespace logisim.analyze.gui
 	using TruthTable = logisim.analyze.model.TruthTable;
 	using TruthTableEvent = logisim.analyze.model.TruthTableEvent;
 	using TruthTableListener = logisim.analyze.model.TruthTableListener;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	internal class TableTabCaret
 	{
@@ -28,7 +29,7 @@ namespace logisim.analyze.gui
 			listener = new Listener(this);
 		}
 
-		private static Color SELECT_COLOR = new Color(192, 192, 255);
+		private static Color SELECT_COLOR = Color.FromArgb(255, 192, 192, 255);
 
 		private Listener listener;
 		private TableTab table;
@@ -204,7 +205,7 @@ namespace logisim.analyze.gui
 			}
 		}
 
-		internal virtual void paintBackground(Graphics g)
+		internal virtual void paintBackground(JGraphics g)
 		{
 			if (cursorRow >= 0 && cursorCol >= 0 && (cursorRow != markRow || cursorCol != markCol))
 			{
@@ -234,7 +235,7 @@ namespace logisim.analyze.gui
 			}
 		}
 
-		internal virtual void paintForeground(Graphics g)
+		internal virtual void paintForeground(JGraphics g)
 		{
 			if (!table.isFocusOwner())
 			{
@@ -244,9 +245,9 @@ namespace logisim.analyze.gui
 			{
 				int x = table.getX(cursorCol);
 				int y = table.getY(cursorRow);
-				GraphicsUtil.switchToWidth(g, 2);
+				JGraphicsUtil.switchToWidth(g, 2);
 				g.drawRect(x, y, table.CellWidth, table.CellHeight);
-				GraphicsUtil.switchToWidth(g, 2);
+				JGraphicsUtil.switchToWidth(g, 2);
 			}
 		}
 

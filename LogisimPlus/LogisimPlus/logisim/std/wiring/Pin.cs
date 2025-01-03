@@ -38,19 +38,20 @@ namespace logisim.std.wiring
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
 	using DirectionConfigurator = logisim.tools.key.DirectionConfigurator;
 	using JoinedConfigurator = logisim.tools.key.JoinedConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using Icons = logisim.util.Icons;
+    using LogisimPlus.Java;
 
-	public class Pin : InstanceFactory
+    public class Pin : InstanceFactory
 	{
-		public static readonly Attribute<bool> ATTR_TRISTATE = Attributes.forBoolean("tristate", Strings.getter("pinThreeStateAttr"));
-		public static readonly Attribute<bool> ATTR_TYPE = Attributes.forBoolean("output", Strings.getter("pinOutputAttr"));
-		public static readonly Attribute<Direction> ATTR_LABEL_LOC = Attributes.forDirection("labelloc", Strings.getter("pinLabelLocAttr"));
+		public static readonly Attribute ATTR_TRISTATE = Attributes.forBoolean("tristate", Strings.getter("pinThreeStateAttr"));
+		public static readonly Attribute ATTR_TYPE = Attributes.forBoolean("output", Strings.getter("pinOutputAttr"));
+		public static readonly Attribute ATTR_LABEL_LOC = Attributes.forDirection("labelloc", Strings.getter("pinLabelLocAttr"));
 
 		public static readonly AttributeOption PULL_NONE = new AttributeOption("none", Strings.getter("pinPullNoneOption"));
 		public static readonly AttributeOption PULL_UP = new AttributeOption("up", Strings.getter("pinPullUpOption"));
 		public static readonly AttributeOption PULL_DOWN = new AttributeOption("down", Strings.getter("pinPullDownOption"));
-		public static readonly Attribute<AttributeOption> ATTR_PULL = Attributes.forOption("pull", Strings.getter("pinPullAttr"), new AttributeOption[] {PULL_NONE, PULL_UP, PULL_DOWN});
+		public static readonly Attribute ATTR_PULL = Attributes.forOption("pull", Strings.getter("pinPullAttr"), new AttributeOption[] {PULL_NONE, PULL_UP, PULL_DOWN});
 
 		public static readonly Pin FACTORY = new Pin();
 
@@ -62,7 +63,7 @@ namespace logisim.std.wiring
 		public Pin() : base("Pin", Strings.getter("pinComponent"))
 		{
 			FacingAttribute = StdAttr.FACING;
-			KeyConfigurator = JoinedConfigurator.create(new BitWidthConfigurator(StdAttr.WIDTH), new DirectionConfigurator(ATTR_LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
+			KeyConfigurator = JoinedConfigurator.create(new BitWidthConfigurator(StdAttr.Width), new DirectionConfigurator(ATTR_LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
 			InstanceLogger = typeof(PinLogger);
 			InstancePoker = typeof(PinPoker);
 		}
@@ -74,25 +75,25 @@ namespace logisim.std.wiring
 
 		public override Bounds getOffsetBounds(AttributeSet attrs)
 		{
-			Direction facing = attrs.getValue(StdAttr.FACING);
-			BitWidth width = attrs.getValue(StdAttr.WIDTH);
+			Direction facing = (Direction)attrs.getValue(StdAttr.FACING);
+			BitWidth width = (BitWidth)attrs.getValue(StdAttr.Width);
 			return Probe.getOffsetBounds(facing, width, RadixOption.RADIX_2);
 		}
 
 		//
-		// graphics methods
+		// JGraphics methods
 		//
 		public override void paintIcon(InstancePainter painter)
 		{
 			paintIconBase(painter);
-			BitWidth w = painter.getAttributeValue(StdAttr.WIDTH);
+			BitWidth w = (BitWidth)painter.getAttributeValue(StdAttr.Width);
 			if (!w.Equals(BitWidth.ONE))
 			{
-				Graphics g = painter.Graphics;
+				JGraphics g = painter.Graphics;
 				g.setColor(ICON_WIDTH_COLOR);
 				g.setFont(ICON_WIDTH_FONT);
-				GraphicsUtil.drawCenteredText(g, "" + w.Width, 10, 9);
-				g.setColor(Color.BLACK);
+				JGraphicsUtil.drawCenteredText(g, "" + w.Width, 10, 9);
+				g.setColor(Color.Black);
 			}
 		}
 
@@ -101,7 +102,7 @@ namespace logisim.std.wiring
 			PinAttributes attrs = (PinAttributes) painter.AttributeSet;
 			Direction dir = attrs.facing;
 			bool output = attrs.Output;
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			if (output)
 			{
 				if (ICON_OUT != null)
@@ -138,7 +139,7 @@ namespace logisim.std.wiring
 				piny = 16;
 			}
 
-			g.setColor(Color.black);
+			g.setColor(Color.Black);
 			if (output)
 			{
 				g.drawOval(4, 4, 13, 13);
@@ -159,12 +160,12 @@ namespace logisim.std.wiring
 			Bounds bds = painter.OffsetBounds;
 			int x = loc.X;
 			int y = loc.Y;
-			Graphics g = painter.Graphics;
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphics g = painter.Graphics;
+			JGraphicsUtil.switchToWidth(g, 2);
 			bool output = attrs.Output;
 			if (output)
 			{
-				BitWidth width = attrs.getValue(StdAttr.WIDTH);
+				BitWidth width = attrs.getValue(StdAttr.Width);
 				if (width == BitWidth.ONE)
 				{
 					g.drawOval(x + bds.X + 1, y + bds.Y + 1, bds.Width - 1, bds.Height - 1);
@@ -183,13 +184,13 @@ namespace logisim.std.wiring
 		public override void paintInstance(InstancePainter painter)
 		{
 			PinAttributes attrs = (PinAttributes) painter.AttributeSet;
-			Graphics g = painter.Graphics;
-			Bounds bds = painter.getInstance().Bounds; // intentionally with no graphics object - we don't want label
+			JGraphics g = painter.Graphics;
+			Bounds bds = painter.getInstance().Bounds; // intentionally with no JGraphics object - we don't want label
 															// included
 			int x = bds.X;
 			int y = bds.Y;
-			GraphicsUtil.switchToWidth(g, 2);
-			g.setColor(Color.black);
+			JGraphicsUtil.switchToWidth(g, 2);
+			g.setColor(Color.Black);
 			if (attrs.type == EndData.OUTPUT_ONLY)
 			{
 				if (attrs.width.Width == 1)
@@ -210,8 +211,8 @@ namespace logisim.std.wiring
 
 			if (!painter.ShowState)
 			{
-				g.setColor(Color.BLACK);
-				GraphicsUtil.drawCenteredText(g, "x" + attrs.width.Width, bds.X + bds.Width / 2, bds.Y + bds.Height / 2);
+				g.setColor(Color.Black);
+				JGraphicsUtil.drawCenteredText(g, "x" + attrs.width.Width, bds.X + bds.Width / 2, bds.Y + bds.Height / 2);
 			}
 			else
 			{
@@ -224,8 +225,8 @@ namespace logisim.std.wiring
 
 					if (attrs.width.Width == 1)
 					{
-						g.setColor(Color.WHITE);
-						GraphicsUtil.drawCenteredText(g, state.sending.toDisplayString(), x + 11, y + 9);
+						g.setColor(Color.White);
+						JGraphicsUtil.drawCenteredText(g, state.sending.toDisplayString(), x + 11, y + 9);
 					}
 				}
 				else
@@ -248,13 +249,13 @@ namespace logisim.std.wiring
 			Probe.configureLabel(instance, attrs.labelloc, attrs.facing);
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == ATTR_TYPE)
 			{
 				configurePorts(instance);
 			}
-			else if (attr == StdAttr.WIDTH || attr == StdAttr.FACING || attr == Pin.ATTR_LABEL_LOC)
+			else if (attr == StdAttr.Width || attr == StdAttr.FACING || attr == Pin.ATTR_LABEL_LOC)
 			{
 				instance.recomputeBounds();
 				PinAttributes attrs = (PinAttributes) instance.AttributeSet;
@@ -266,16 +267,16 @@ namespace logisim.std.wiring
 		{
 			PinAttributes attrs = (PinAttributes) instance.AttributeSet;
 			string endType = attrs.Output ? Port.INPUT : Port.OUTPUT;
-			Port port = new Port(0, 0, endType, StdAttr.WIDTH);
+			Port port = new Port(0, 0, endType, StdAttr.Width);
 			if (attrs.Output)
 			{
-				port.setToolTip(Strings.getter("pinOutputToolTip"));
+				port.ToolTip = Strings.getter("pinOutputToolTip");
 			}
 			else
 			{
-				port.setToolTip(Strings.getter("pinInputToolTip"));
+				port.ToolTip = Strings.getter("pinInputToolTip");
 			}
-			instance.setPorts(new Port[] {port});
+			instance.Ports = [port];
 		}
 
 		public override void propagate(InstanceState state)
@@ -517,14 +518,14 @@ namespace logisim.std.wiring
 
 			internal virtual int getBit(InstanceState state, MouseEvent e)
 			{
-				BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
+				BitWidth width = state.getAttributeValue(StdAttr.Width);
 				if (width.Width == 1)
 				{
 					return 0;
 				}
 				else
 				{
-					Bounds bds = state.Instance.Bounds; // intentionally with no graphics object - we don't want
+					Bounds bds = state.Instance.Bounds; // intentionally with no JGraphics object - we don't want
 																	// label included
 					int i = (bds.X + bds.Width - e.getX()) / 10;
 					int j = (bds.Y + bds.Height - e.getY()) / 20;

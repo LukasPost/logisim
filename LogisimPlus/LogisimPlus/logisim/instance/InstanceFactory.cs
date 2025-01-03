@@ -31,13 +31,14 @@ namespace logisim.instance
 	using StringGetter = logisim.util.StringGetter;
 	using StringUtil = logisim.util.StringUtil;
 	using logisim.util;
+    using LogisimPlus.Java;
 
-	/// <summary>
-	/// Represents a category of components that appear in a circuit. This class and <code>Component</code> share the same
-	/// sort of relationship as the relation between <em>classes</em> and <em>instances</em> in Java. Normally, there is only
-	/// one ComponentFactory created for any particular category.
-	/// </summary>
-	public abstract class InstanceFactory : AbstractComponentFactory
+    /// <summary>
+    /// Represents a category of components that appear in a circuit. This class and <code>Component</code> share the same
+    /// sort of relationship as the relation between <em>classes</em> and <em>instances</em> in Java. Normally, there is only
+    /// one ComponentFactory created for any particular category.
+    /// </summary>
+    public abstract class InstanceFactory : AbstractComponentFactory
 	{
 		private string name;
 		private StringGetter displayName;
@@ -46,11 +47,11 @@ namespace logisim.instance
 		private Icon icon;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private logisim.data.Attribute<?>[] attrs;
-		private Attribute<object>[] attrs;
+		private Attribute[] attrs;
 		private object[] defaults;
 		private AttributeSet defaultSet;
 		private Bounds bounds;
-		private IList<Port> portList;
+		private List<Port> portList;
 		private Attribute<Direction> facingAttribute;
 		private bool? shouldSnap;
 		private KeyConfigurator keyConfigurator;
@@ -70,7 +71,7 @@ namespace logisim.instance
 			this.attrs = null;
 			this.defaults = null;
 			this.bounds = Bounds.EMPTY_BOUNDS;
-			this.portList = Collections.emptyList();
+			this.portList = [];
 			this.keyConfigurator = null;
 			this.facingAttribute = null;
 			this.shouldSnap = true;
@@ -122,7 +123,7 @@ namespace logisim.instance
 		{
 			InstancePainter painter = context.InstancePainter;
 			painter.setFactory(this, attrs);
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			g.translate(x, y);
 			paintIcon(painter);
 			g.translate(-x, -y);
@@ -188,7 +189,7 @@ namespace logisim.instance
 			return bds.contains(loc, 1);
 		}
 
-		public virtual Attribute<Direction> FacingAttribute
+		public virtual Attribute FacingAttribute
 		{
 			get
 			{
@@ -214,7 +215,7 @@ namespace logisim.instance
 		}
 
 
-		public virtual void setAttributes<T1>(Attribute<T1>[] attrs, object[] defaults)
+		public virtual void setAttributes(Attribute[] attrs, object[] defaults)
 		{
 			this.attrs = attrs;
 			this.defaults = defaults;
@@ -224,16 +225,16 @@ namespace logisim.instance
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?>[] as = attrs;
-			Attribute<object>[] @as = attrs;
+			Attribute[] @as = attrs;
 			AttributeSet ret = @as == null ? AttributeSets.EMPTY : AttributeSets.fixedSet(@as, defaults);
 			return ret;
 		}
 
-		public virtual object getDefaultAttributeValue<T1>(Attribute<T1> attr, LogisimVersion ver)
+		public virtual object getDefaultAttributeValue(Attribute attr, LogisimVersion ver)
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?>[] as = attrs;
-			Attribute<object>[] @as = attrs;
+			Attribute[] @as = attrs;
 			if (@as != null)
 			{
 				for (int i = 0; i < @as.Length; i++)
@@ -262,12 +263,12 @@ namespace logisim.instance
 			portList = new UnmodifiableList<Port>(ports);
 		}
 
-		public virtual void setPorts(IList<Port> ports)
+		public virtual void setPorts(List<Port> ports)
 		{
 			portList = ports.AsReadOnly();
 		}
 
-		public virtual IList<Port> Ports
+		public virtual List<Port> Ports
 		{
 			get
 			{
@@ -365,7 +366,7 @@ namespace logisim.instance
 		public override sealed void drawGhost(ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs)
 		{
 			InstancePainter painter = context.InstancePainter;
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			g.setColor(color);
 			g.translate(x, y);
 			painter.setFactory(this, attrs);
@@ -396,7 +397,7 @@ namespace logisim.instance
 		{
 		}
 
-		protected internal virtual void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal virtual void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 		}
 

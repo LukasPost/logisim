@@ -15,11 +15,11 @@ namespace logisim.tools.key
 
 	public class IntegerConfigurator : NumericConfigurator<int>
 	{
-		public IntegerConfigurator(Attribute<int> attr, int min, int max, int modifiersEx) : base(attr, min, max, modifiersEx)
+		public IntegerConfigurator(Attribute attr, int min, int max, int modifiersEx) : base(attr, min, max, modifiersEx)
 		{
 		}
 
-		public IntegerConfigurator(Attribute<int> attr, int min, int max, int modifiersEx, int radix) : base(attr, min, max, modifiersEx, radix)
+		public IntegerConfigurator(Attribute attr, int min, int max, int modifiersEx, int radix) : base(attr, min, max, modifiersEx, radix)
 		{
 		}
 

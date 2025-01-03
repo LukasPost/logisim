@@ -172,7 +172,7 @@ namespace logisim.proj
 			frame.addWindowListener(myListener);
 		}
 
-		public static IList<Project> OpenProjects
+		public static List<Project> OpenProjects
 		{
 			get
 			{

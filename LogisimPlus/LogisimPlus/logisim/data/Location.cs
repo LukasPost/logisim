@@ -128,7 +128,7 @@ namespace logisim.data
 
 		public override bool Equals(object other_obj)
 		{
-			return other_obj is Location other && this.x == other.x && this.y == other.y;
+			return other_obj is Location other && this.x == other.X && this.y == other.Y;
 		}
 
 		public override int GetHashCode()
@@ -138,13 +138,13 @@ namespace logisim.data
 
 		public int CompareTo(Location other)
 		{
-			if (this.x != other.x)
+			if (this.x != other.X)
 			{
-				return this.x - other.x;
+				return this.x - other.X;
 			}
 			else
 			{
-				return this.y - other.y;
+				return this.y - other.Y;
 			}
 		}
 

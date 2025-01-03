@@ -27,10 +27,10 @@ namespace logisim.tools
 	{
 		private StringGetter nameGetter;
 		private Circuit circuit;
-		private IList<Component> comps;
-		private IList<Attribute<object>> attrs;
-		private IList<object> values;
-		private IList<object> oldValues;
+		private List<Component> comps;
+		private List<Attribute> attrs;
+		private List<object> values;
+		private List<object> oldValues;
 		private CircuitTransaction xnReverse;
 
 		public SetAttributeAction(Circuit circuit, StringGetter nameGetter)
@@ -38,18 +38,17 @@ namespace logisim.tools
 			this.nameGetter = nameGetter;
 			this.circuit = circuit;
 			this.comps = new List<Component>();
-			this.attrs = new List<Attribute<object>>();
+			this.attrs = new List<Attribute>();
 			this.values = new List<object>();
 			this.oldValues = new List<object>();
 		}
 
-		public virtual void set<T1>(Component comp, Attribute<T1> attr, object value)
+		public virtual void set(Component comp, Attribute attr, object value)
 		{
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<Object> a = (logisim.data.Attribute<Object>) attr;
-			Attribute<object> a = (Attribute<object>) attr;
+// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute a = (logisim.data.Attribute) attr;
 			comps.Add(comp);
-			attrs.Add(a);
+			attrs.Add(attr);
 			values.Add(value);
 		}
 
@@ -77,7 +76,7 @@ namespace logisim.tools
 			for (int i = 0; i < len; i++)
 			{
 				Component comp = comps[i];
-				Attribute<object> attr = attrs[i];
+				Attribute attr = attrs[i];
 				object value = values[i];
 				if (circuit.contains(comp))
 				{
@@ -108,7 +107,7 @@ namespace logisim.tools
 			for (int i = oldValues.Count - 1; i >= 0; i--)
 			{
 				Component comp = comps[i];
-				Attribute<object> attr = attrs[i];
+				Attribute attr = attrs[i];
 				object value = oldValues[i];
 				if (value != null)
 				{

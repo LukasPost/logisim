@@ -19,10 +19,11 @@ namespace draw.actions
 
 	public class ModelReorderAction : ModelAction
 	{
-		public static ModelReorderAction createRaise<T1>(CanvasModel model, ICollection<T1> objects) where T1 : draw.model.CanvasObject
+		public static ModelReorderAction createRaise<T1>(CanvasModel model, IEnumerable<T1> objs) where T1 : draw.model.CanvasObject
 		{
-			IList<ReorderRequest> reqs = new List<ReorderRequest>();
-			IDictionary<CanvasObject, int> zmap = ZOrder.getZIndex(objects, model);
+			IEnumerable<CanvasObject> objects = objs.Cast<CanvasObject>();
+			List<ReorderRequest> reqs = new List<ReorderRequest>();
+			Dictionary<CanvasObject, int> zmap = ZOrder.getZIndex(objects, model);
 			foreach (KeyValuePair<CanvasObject, int> entry in zmap.SetOfKeyValuePairs())
 			{
 				CanvasObject obj = entry.Key;
@@ -50,10 +51,12 @@ namespace draw.actions
 			}
 		}
 
-		public static ModelReorderAction createLower<T1>(CanvasModel model, ICollection<T1> objects) where T1 : draw.model.CanvasObject
+		public static ModelReorderAction createLower<T1>(CanvasModel model, IEnumerable<T1> objs) where T1 : draw.model.CanvasObject
 		{
-			IList<ReorderRequest> reqs = new List<ReorderRequest>();
-			IDictionary<CanvasObject, int> zmap = ZOrder.getZIndex(objects, model);
+
+            IEnumerable<CanvasObject> objects = objs.Cast<CanvasObject>();
+            List<ReorderRequest> reqs = new List<ReorderRequest>();
+			Dictionary<CanvasObject, int> zmap = ZOrder.getZIndex(objects, model);
 			foreach (KeyValuePair<CanvasObject, int> entry in zmap.SetOfKeyValuePairs())
 			{
 				CanvasObject obj = entry.Key;
@@ -81,10 +84,10 @@ namespace draw.actions
 			}
 		}
 
-		public static ModelReorderAction createRaiseTop<T1>(CanvasModel model, ICollection<T1> objects) where T1 : draw.model.CanvasObject
+		public static ModelReorderAction createRaHashSetop<T1>(CanvasModel model, IEnumerable<T1> objects) where T1 : draw.model.CanvasObject
 		{
-			IList<ReorderRequest> reqs = new List<ReorderRequest>();
-			IDictionary<CanvasObject, int> zmap = ZOrder.getZIndex(objects, model);
+			List<ReorderRequest> reqs = new List<ReorderRequest>();
+			Dictionary<CanvasObject, int> zmap = ZOrder.getZIndex(objects, model);
 			int to = model.ObjectsFromBottom.Count - 1;
 			foreach (KeyValuePair<CanvasObject, int> entry in zmap.SetOfKeyValuePairs())
 			{
@@ -104,10 +107,10 @@ namespace draw.actions
 			}
 		}
 
-		public static ModelReorderAction createLowerBottom<T1>(CanvasModel model, ICollection<T1> objects) where T1 : draw.model.CanvasObject
+		public static ModelReorderAction createLowerBottom<T1>(CanvasModel model, IEnumerable<T1> objects) where T1 : draw.model.CanvasObject
 		{
-			IList<ReorderRequest> reqs = new List<ReorderRequest>();
-			IDictionary<CanvasObject, int> zmap = ZOrder.getZIndex(objects, model);
+			List<ReorderRequest> reqs = new List<ReorderRequest>();
+			Dictionary<CanvasObject, int> zmap = ZOrder.getZIndex(objects, model);
 			int to = 0;
 			foreach (KeyValuePair<CanvasObject, int> entry in zmap.SetOfKeyValuePairs())
 			{
@@ -127,7 +130,7 @@ namespace draw.actions
 			}
 		}
 
-		private static void repairRequests(IList<ReorderRequest> reqs)
+		private static void repairRequests(List<ReorderRequest> reqs)
 		{
 			for (int i = 0, n = reqs.Count; i < n; i++)
 			{
@@ -175,7 +178,7 @@ namespace draw.actions
 		private List<CanvasObject> objects;
 		private int type;
 
-		public ModelReorderAction(CanvasModel model, IList<ReorderRequest> requests) : base(model)
+		public ModelReorderAction(CanvasModel model, List<ReorderRequest> requests) : base(model)
 		{
 			this.requests = new List<ReorderRequest>(requests);
 			this.objects = new List<CanvasObject>(requests.Count);
@@ -214,7 +217,7 @@ namespace draw.actions
 			this.type = type;
 		}
 
-		public virtual IList<ReorderRequest> ReorderRequests
+		public virtual List<ReorderRequest> ReorderRequests
 		{
 			get
 			{

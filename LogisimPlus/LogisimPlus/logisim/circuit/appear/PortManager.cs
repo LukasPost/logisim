@@ -35,7 +35,7 @@ namespace logisim.circuit.appear
 			appearance.recomputePorts();
 		}
 
-		internal virtual void updatePorts(ISet<Instance> adds, ISet<Instance> removes, IDictionary<Instance, Instance> replaces, ICollection<Instance> allPins)
+		internal virtual void updatePorts(HashSet<Instance> adds, HashSet<Instance> removes, Dictionary<Instance, Instance> replaces, ICollection<Instance> allPins)
 		{
 			if (appearance.DefaultAppearance)
 			{
@@ -57,10 +57,10 @@ namespace logisim.circuit.appear
 			}
 		}
 
-		private void performUpdate(ISet<Instance> adds, ISet<Instance> removes, IDictionary<Instance, Instance> replaces, ICollection<Instance> allPins)
+		private void performUpdate(HashSet<Instance> adds, HashSet<Instance> removes, Dictionary<Instance, Instance> replaces, ICollection<Instance> allPins)
 		{
 			// Find the current objects corresponding to pins
-			IDictionary<Instance, AppearancePort> oldObjects;
+			Dictionary<Instance, AppearancePort> oldObjects;
 			oldObjects = new Dictionary<Instance, AppearancePort>();
 			AppearanceAnchor anchor = null;
 			foreach (CanvasObject o in appearance.ObjectsFromBottom)
@@ -143,13 +143,13 @@ namespace logisim.circuit.appear
 			appearance.replaceAutomatically(portRemoves, portAdds);
 		}
 
-		private static Location computeDefaultLocation(CircuitAppearance appear, Instance pin, IDictionary<Instance, AppearancePort> others)
+		private static Location computeDefaultLocation(CircuitAppearance appear, Instance pin, Dictionary<Instance, AppearancePort> others)
 		{
 			// Determine which locations are being used in canvas, and look for
 			// which instances facing the same way in layout
-			ISet<Location> usedLocs = new HashSet<Location>();
-			IList<Instance> sameWay = new List<Instance>();
-			Direction facing = pin.getAttributeValue(StdAttr.FACING);
+			HashSet<Location> usedLocs = new HashSet<Location>();
+			List<Instance> sameWay = new List<Instance>();
+			Direction facing = (Direction)pin.getAttributeValue(StdAttr.FACING);
 			foreach (KeyValuePair<Instance, AppearancePort> entry in others.SetOfKeyValuePairs())
 			{
 				Instance pin2 = entry.Key;

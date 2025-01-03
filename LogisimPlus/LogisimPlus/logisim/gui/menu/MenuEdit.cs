@@ -9,9 +9,8 @@
 
 namespace logisim.gui.menu
 {
-
-
-	using Action = logisim.proj.Action;
+    using LogisimPlus.Java;
+    using Action = logisim.proj.Action;
 	using Project = logisim.proj.Project;
 	using ProjectEvent = logisim.proj.ProjectEvent;
 	using ProjectListener = logisim.proj.ProjectListener;
@@ -31,7 +30,7 @@ namespace logisim.gui.menu
 			selall = new MenuItemImpl(this, LogisimMenuBar.SELECT_ALL);
 			raise = new MenuItemImpl(this, LogisimMenuBar.RAISE);
 			lower = new MenuItemImpl(this, LogisimMenuBar.LOWER);
-			raiseTop = new MenuItemImpl(this, LogisimMenuBar.RAISE_TOP);
+			raHashSetop = new MenuItemImpl(this, LogisimMenuBar.RAISE_TOP);
 			lowerBottom = new MenuItemImpl(this, LogisimMenuBar.LOWER_BOTTOM);
 			addCtrl = new MenuItemImpl(this, LogisimMenuBar.ADD_CONTROL);
 			remCtrl = new MenuItemImpl(this, LogisimMenuBar.REMOVE_CONTROL);
@@ -87,7 +86,7 @@ namespace logisim.gui.menu
 		private MenuItemImpl selall;
 		private MenuItemImpl raise;
 		private MenuItemImpl lower;
-		private MenuItemImpl raiseTop;
+		private MenuItemImpl raHashSetop;
 		private MenuItemImpl lowerBottom;
 		private MenuItemImpl addCtrl;
 		private MenuItemImpl remCtrl;
@@ -112,7 +111,7 @@ namespace logisim.gui.menu
 			selall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, menuMask));
 			raise.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, menuMask));
 			lower.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, menuMask));
-			raiseTop.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, menuMask | KeyEvent.SHIFT_DOWN_MASK));
+			raHashSetop.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, menuMask | KeyEvent.SHIFT_DOWN_MASK));
 			lowerBottom.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, menuMask | KeyEvent.SHIFT_DOWN_MASK));
 
 			add(undo);
@@ -127,7 +126,7 @@ namespace logisim.gui.menu
 			addSeparator();
 			add(raise);
 			add(lower);
-			add(raiseTop);
+			add(raHashSetop);
 			add(lowerBottom);
 			addSeparator();
 			add(addCtrl);
@@ -149,7 +148,7 @@ namespace logisim.gui.menu
 			menubar.registerItem(LogisimMenuBar.SELECT_ALL, selall);
 			menubar.registerItem(LogisimMenuBar.RAISE, raise);
 			menubar.registerItem(LogisimMenuBar.LOWER, lower);
-			menubar.registerItem(LogisimMenuBar.RAISE_TOP, raiseTop);
+			menubar.registerItem(LogisimMenuBar.RAISE_TOP, raHashSetop);
 			menubar.registerItem(LogisimMenuBar.LOWER_BOTTOM, lowerBottom);
 			menubar.registerItem(LogisimMenuBar.ADD_CONTROL, addCtrl);
 			menubar.registerItem(LogisimMenuBar.REMOVE_CONTROL, remCtrl);
@@ -168,7 +167,7 @@ namespace logisim.gui.menu
 			selall.setText(Strings.get("editSelectAllItem"));
 			raise.setText(Strings.get("editRaiseItem"));
 			lower.setText(Strings.get("editLowerItem"));
-			raiseTop.setText(Strings.get("editRaiseTopItem"));
+			raHashSetop.setText(Strings.get("editRaHashSetopItem"));
 			lowerBottom.setText(Strings.get("editLowerBottomItem"));
 			addCtrl.setText(Strings.get("editAddControlItem"));
 			remCtrl.setText(Strings.get("editRemoveControlItem"));
@@ -176,7 +175,7 @@ namespace logisim.gui.menu
 
 		internal override void computeEnabled()
 		{
-			setEnabled(menubar.Project != null || cut.hasListeners() || copy.hasListeners() || paste.hasListeners() || delete.hasListeners() || dup.hasListeners() || selall.hasListeners() || raise.hasListeners() || lower.hasListeners() || raiseTop.hasListeners() || lowerBottom.hasListeners() || addCtrl.hasListeners() || remCtrl.hasListeners());
+			setEnabled(menubar.Project != null || cut.hasListeners() || copy.hasListeners() || paste.hasListeners() || delete.hasListeners() || dup.hasListeners() || selall.hasListeners() || raise.hasListeners() || lower.hasListeners() || raHashSetop.hasListeners() || lowerBottom.hasListeners() || addCtrl.hasListeners() || remCtrl.hasListeners());
 		}
 	}
 

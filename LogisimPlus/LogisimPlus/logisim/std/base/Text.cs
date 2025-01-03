@@ -23,19 +23,19 @@ namespace logisim.std.@base
 	using InstanceFactory = logisim.instance.InstanceFactory;
 	using InstancePainter = logisim.instance.InstancePainter;
 	using InstanceState = logisim.instance.InstanceState;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	public class Text : InstanceFactory
 	{
 		public static Attribute<string> ATTR_TEXT = Attributes.forString("text", Strings.getter("textTextAttr"));
-		public static Attribute<Font> ATTR_FONT = Attributes.forFont("font", Strings.getter("textFontAttr"));
-		public static Attribute<AttributeOption> ATTR_HALIGN = Attributes.forOption("halign", Strings.getter("textHorzAlignAttr"), new AttributeOption[]
+		public static Attribute ATTR_FONT = Attributes.forFont("font", Strings.getter("textFontAttr"));
+		public static Attribute ATTR_HALIGN = Attributes.forOption("halign", Strings.getter("textHorzAlignAttr"), new AttributeOption[]
 		{
 			new AttributeOption(Convert.ToInt32(TextField.H_LEFT), "left", Strings.getter("textHorzAlignLeftOpt")),
 			new AttributeOption(Convert.ToInt32(TextField.H_RIGHT), "right", Strings.getter("textHorzAlignRightOpt")),
 			new AttributeOption(Convert.ToInt32(TextField.H_CENTER), "center", Strings.getter("textHorzAlignCenterOpt"))
 		});
-		public static Attribute<AttributeOption> ATTR_VALIGN = Attributes.forOption("valign", Strings.getter("textVertAlignAttr"), new AttributeOption[]
+		public static Attribute ATTR_VALIGN = Attributes.forOption("valign", Strings.getter("textVertAlignAttr"), new AttributeOption[]
 		{
 			new AttributeOption(Convert.ToInt32(TextField.V_TOP), "top", Strings.getter("textVertAlignTopOpt")),
 			new AttributeOption(Convert.ToInt32(TextField.V_BASELINE), "base", Strings.getter("textVertAlignBaseOpt")),
@@ -119,7 +119,7 @@ namespace logisim.std.@base
 		}
 
 		//
-		// graphics methods
+		// JGraphics methods
 		//
 		public override void paintGhost(InstancePainter painter)
 		{
@@ -132,10 +132,10 @@ namespace logisim.std.@base
 
 			int halign = attrs.HorizontalAlign;
 			int valign = attrs.VerticalAlign;
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			Font old = g.getFont();
 			g.setFont(attrs.Font);
-			GraphicsUtil.drawText(g, text, 0, 0, halign, valign);
+			JGraphicsUtil.drawText(g, text, 0, 0, halign, valign);
 
 			string textTrim = text.EndsWith(" ", StringComparison.Ordinal) ? text.Substring(0, text.Length - 1) : text;
 			Bounds newBds;
@@ -145,7 +145,7 @@ namespace logisim.std.@base
 			}
 			else
 			{
-				Rectangle bdsOut = GraphicsUtil.getTextBounds(g, textTrim, 0, 0, halign, valign);
+				Rectangle bdsOut = JGraphicsUtil.getTextBounds(g, textTrim, 0, 0, halign, valign);
 				newBds = Bounds.create(bdsOut).expand(4);
 			}
 			if (attrs.setOffsetBounds(newBds))
@@ -165,9 +165,9 @@ namespace logisim.std.@base
 			Location loc = painter.Location;
 			int x = loc.X;
 			int y = loc.Y;
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			g.translate(x, y);
-			g.setColor(Color.BLACK);
+			g.setColor(Color.Black);
 			paintGhost(painter);
 			g.translate(-x, -y);
 		}
@@ -181,7 +181,7 @@ namespace logisim.std.@base
 			instance.addAttributeListener();
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == ATTR_HALIGN || attr == ATTR_VALIGN)
 			{

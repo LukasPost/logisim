@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 using System.Collections.Generic;
 
@@ -209,7 +210,7 @@ namespace logisim.gui.main
 			return this.selected.Equals(otherSelection.selected) && this.lifted.Equals(otherSelection.lifted);
 		}
 
-		public virtual ISet<Component> Components
+		public virtual HashSet<Component> Components
 		{
 			get
 			{
@@ -246,7 +247,7 @@ namespace logisim.gui.main
 			return ret;
 		}
 
-		public virtual ICollection<Component> getComponentsContaining(Location query, Graphics g)
+		public virtual ICollection<Component> getComponentsContaining(Location query, JGraphics g)
 		{
 			HashSet<Component> ret = new HashSet<Component>();
 			foreach (Component comp in unionSet)
@@ -272,7 +273,7 @@ namespace logisim.gui.main
 			return ret;
 		}
 
-		public virtual ICollection<Component> getComponentsWithin(Bounds bds, Graphics g)
+		public virtual ICollection<Component> getComponentsWithin(Bounds bds, JGraphics g)
 		{
 			HashSet<Component> ret = new HashSet<Component>();
 			foreach (Component comp in unionSet)
@@ -291,11 +292,11 @@ namespace logisim.gui.main
 		}
 
 		//
-		// graphics methods
+		// JGraphics methods
 		//
-		public virtual void draw(ComponentDrawContext context, ISet<Component> hidden)
+		public virtual void draw(ComponentDrawContext context, HashSet<Component> hidden)
 		{
-			Graphics g = context.Graphics;
+			JGraphics g = context.Graphics;
 
 			foreach (Component c in lifted)
 			{
@@ -303,9 +304,9 @@ namespace logisim.gui.main
 				{
 					Location loc = c.Location;
 
-					Graphics g_new = g.create();
+					JGraphics g_new = g.create();
 					context.Graphics = g_new;
-					c.Factory.drawGhost(context, Color.GRAY, loc.X, loc.Y, c.AttributeSet);
+					c.Factory.drawGhost(context, Color.Gray, loc.X, loc.Y, c.AttributeSet);
 					g_new.dispose();
 				}
 			}
@@ -314,7 +315,7 @@ namespace logisim.gui.main
 			{
 				if (!suppressHandles.Contains(comp) && !hidden.Contains(comp))
 				{
-					Graphics g_new = g.create();
+					JGraphics g_new = g.create();
 					context.Graphics = g_new;
 					CustomHandles handler = (CustomHandles) comp.getFeature(typeof(CustomHandles));
 					if (handler == null)
@@ -339,7 +340,7 @@ namespace logisim.gui.main
 				dx = Canvas.snapXToGrid(dx);
 				dy = Canvas.snapYToGrid(dy);
 			}
-			Graphics g = context.Graphics;
+			JGraphics g = context.Graphics;
 			foreach (Component comp in unionSet)
 			{
 				AttributeSet attrs = comp.AttributeSet;
@@ -347,7 +348,7 @@ namespace logisim.gui.main
 				int x = loc.X + dx;
 				int y = loc.Y + dy;
 				context.Graphics = g.create();
-				comp.Factory.drawGhost(context, Color.gray, x, y, attrs);
+				comp.Factory.drawGhost(context, Color.Gray, x, y, attrs);
 				context.Graphics.dispose();
 			}
 			context.Graphics = g;

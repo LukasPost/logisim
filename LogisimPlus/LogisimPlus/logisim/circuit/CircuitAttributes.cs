@@ -35,15 +35,15 @@ namespace logisim.circuit
 
 		public static readonly Attribute<Direction> CIRCUIT_LABEL_FACING_ATTR = Attributes.forDirection("clabelup", Strings.getter("circuitLabelDirAttr"));
 
-		public static readonly Attribute<Font> CIRCUIT_LABEL_FONT_ATTR = Attributes.forFont("clabelfont", Strings.getter("circuitLabelFontAttr"));
+		public static readonly Attribute CIRCUIT_LABEL_FONT_ATTR = Attributes.forFont("clabelfont", Strings.getter("circuitLabelFontAttr"));
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private static final logisim.data.Attribute<?>[] STATIC_ATTRS = { NAME_ATTR, CIRCUIT_LABEL_ATTR, CIRCUIT_LABEL_FACING_ATTR, CIRCUIT_LABEL_FONT_ATTR};
-		private static readonly Attribute<object>[] STATIC_ATTRS = new Attribute<object>[] {NAME_ATTR, CIRCUIT_LABEL_ATTR, CIRCUIT_LABEL_FACING_ATTR, CIRCUIT_LABEL_FONT_ATTR};
+		private static readonly Attribute[] STATIC_ATTRS = new Attribute[] {NAME_ATTR, CIRCUIT_LABEL_ATTR, CIRCUIT_LABEL_FACING_ATTR, CIRCUIT_LABEL_FONT_ATTR};
 		private static readonly object[] STATIC_DEFAULTS = new object[] {"", "", Direction.East, StdAttr.DEFAULT_LABEL_FONT};
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private static final java.util.List<logisim.data.Attribute<?>> INSTANCE_ATTRS = java.util.Arrays.asList(new logisim.data.Attribute<?>[] { logisim.instance.StdAttr.FACING, logisim.instance.StdAttr.LABEL, LABEL_LOCATION_ATTR, logisim.instance.StdAttr.LABEL_FONT, CircuitAttributes.NAME_ATTR, CIRCUIT_LABEL_ATTR, CIRCUIT_LABEL_FACING_ATTR, CIRCUIT_LABEL_FONT_ATTR});
-		private static readonly IList<Attribute<object>> INSTANCE_ATTRS = new List<Attribute<object>> {StdAttr.FACING, StdAttr.LABEL, LABEL_LOCATION_ATTR, StdAttr.LABEL_FONT, CircuitAttributes.NAME_ATTR, CIRCUIT_LABEL_ATTR, CIRCUIT_LABEL_FACING_ATTR, CIRCUIT_LABEL_FONT_ATTR};
+		private static readonly List<Attribute> INSTANCE_ATTRS = new List<Attribute> {StdAttr.FACING, StdAttr.LABEL, LABEL_LOCATION_ATTR, StdAttr.LABEL_FONT, CircuitAttributes.NAME_ATTR, CIRCUIT_LABEL_ATTR, CIRCUIT_LABEL_FACING_ATTR, CIRCUIT_LABEL_FONT_ATTR};
 
 		private class StaticListener : AttributeListener
 		{
@@ -83,8 +83,8 @@ namespace logisim.circuit
 			public virtual void attributeValueChanged(AttributeEvent e)
 			{
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<Object> a = (logisim.data.Attribute<Object>) e.getAttribute();
-				Attribute<object> a = (Attribute<object>) e.Attribute;
+// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute a = (logisim.data.Attribute) e.getAttribute();
+				Attribute a = (Attribute) e.Attribute;
 				outerInstance.fireAttributeValueChanged(a, e.Value);
 			}
 
@@ -174,11 +174,11 @@ namespace logisim.circuit
 			other.listener = null;
 		}
 
-		public override bool isToSave<T1>(Attribute<T1> attr)
+		public override bool isToSave<T1>(Attribute attr)
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?>[] statics = STATIC_ATTRS;
-			Attribute<object>[] statics = STATIC_ATTRS;
+			Attribute[] statics = STATIC_ATTRS;
 			for (int i = 0; i < statics.Length; i++)
 			{
 				if (statics[i] == attr)
@@ -191,7 +191,7 @@ namespace logisim.circuit
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{

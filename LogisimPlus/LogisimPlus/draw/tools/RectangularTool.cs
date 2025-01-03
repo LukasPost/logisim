@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -19,7 +20,7 @@ namespace draw.tools
 	using Bounds = logisim.data.Bounds;
 	using Location = logisim.data.Location;
 
-	internal abstract class RectangularTool : AbstractTool
+	public abstract class RectangularTool : AbstractTool
 	{
 		private bool active;
 		private Location dragStart;
@@ -35,9 +36,9 @@ namespace draw.tools
 
 		public abstract CanvasObject createShape(int x, int y, int w, int h);
 
-		public abstract void drawShape(Graphics g, int x, int y, int w, int h);
+		public abstract void drawShape(JGraphics g, int x, int y, int w, int h);
 
-		public abstract void fillShape(Graphics g, int x, int y, int w, int h);
+		public abstract void fillShape(JGraphics g, int x, int y, int w, int h);
 
 		public override Cursor getCursor(Canvas canvas)
 		{
@@ -196,12 +197,12 @@ namespace draw.tools
 			 */
 		}
 
-		public override void draw(Canvas canvas, Graphics g)
+		public override void draw(Canvas canvas, JGraphics g)
 		{
 			Bounds bds = currentBounds;
 			if (active && bds != null && bds != Bounds.EMPTY_BOUNDS)
 			{
-				g.setColor(Color.GRAY);
+				g.setColor(Color.Gray);
 				drawShape(g, bds.X, bds.Y, bds.Width, bds.Height);
 			}
 		}

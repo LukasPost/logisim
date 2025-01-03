@@ -23,32 +23,33 @@ using System.Collections.Generic;
 namespace com.bric.swing
 {
 	using com.bric.awt;
+    using LogisimPlus.Java;
 
-	/// <summary>
-	/// This is the large graphic element in the <code>ColorPicker</code> that depicts a wide range of colors.
-	/// <P>
-	/// This panel can operate in 6 different modes. In each mode a different property is held constant: hue, saturation,
-	/// brightness, red, green, or blue. (Each property is identified with a constant in the <code>ColorPicker</code> class,
-	/// such as: <code>ColorPicker.HUE</code> or <code>ColorPicker.GREEN</code>.)
-	/// <P>
-	/// In saturation and brightness mode, a wheel is used. Although it doesn't use as many pixels as a square does: it is a
-	/// very aesthetic model since the hue can wrap around in a complete circle. (Also, on top of looks, this is how most
-	/// people learn to think the color spectrum, so it has that advantage, too). In all other modes a square is used.
-	/// <P>
-	/// The user can click in this panel to select a new color. The selected color is highlighted with a circle drawn around
-	/// it. Also once this component has the keyboard focus, the user can use the arrow keys to traverse the available
-	/// colors.
-	/// <P>
-	/// Note this component is public and exists independently of the <code>ColorPicker</code> class. The only way this class
-	/// is dependent on the <code>ColorPicker</code> class is when the constants for the modes are used.
-	/// <P>
-	/// The graphic in this panel will be based on either the width or the height of this component: depending on which is
-	/// smaller.
-	/// 
-	/// @version 1.0
-	/// @author Jeremy Wood
-	/// </summary>
-	public class ColorPickerPanel : JPanel
+    /// <summary>
+    /// This is the large graphic element in the <code>ColorPicker</code> that depicts a wide range of colors.
+    /// <P>
+    /// This panel can operate in 6 different modes. In each mode a different property is held constant: hue, saturation,
+    /// brightness, red, green, or blue. (Each property is identified with a constant in the <code>ColorPicker</code> class,
+    /// such as: <code>ColorPicker.HUE</code> or <code>ColorPicker.GREEN</code>.)
+    /// <P>
+    /// In saturation and brightness mode, a wheel is used. Although it doesn't use as many pixels as a square does: it is a
+    /// very aesthetic model since the hue can wrap around in a complete circle. (Also, on top of looks, this is how most
+    /// people learn to think the color spectrum, so it has that advantage, too). In all other modes a square is used.
+    /// <P>
+    /// The user can click in this panel to select a new color. The selected color is highlighted with a circle drawn around
+    /// it. Also once this component has the keyboard focus, the user can use the arrow keys to traverse the available
+    /// colors.
+    /// <P>
+    /// Note this component is public and exists independently of the <code>ColorPicker</code> class. The only way this class
+    /// is dependent on the <code>ColorPicker</code> class is when the constants for the modes are used.
+    /// <P>
+    /// The graphic in this panel will be based on either the width or the height of this component: depending on which is
+    /// smaller.
+    /// 
+    /// @version 1.0
+    /// @author Jeremy Wood
+    /// </summary>
+    public class ColorPickerPanel : JPanel
 	{
 		private const long serialVersionUID = 1L;
 
@@ -207,7 +208,7 @@ namespace com.bric.swing
 
 					int offsetX = getWidth() / 2 - size / 2;
 					int offsetY = getHeight() / 2 - size / 2;
-					outerInstance.mouseListener.mousePressed(new MouseEvent(outerInstance, MouseEvent.MOUSE_PRESSED, DateTimeHelper.CurrentUnixTimeMillis(), 0, outerInstance.point.x + multiplier * dx + offsetX, outerInstance.point.y + multiplier * dy + offsetY, 1, false));
+					outerInstance.mouseListener.mousePressed(new MouseEvent(outerInstance, MouseEvent.MOUSE_PRESSED, DateTimeHelper.CurrentUnixTimeMillis(), 0, outerInstance.point.X + multiplier * dx + offsetX, outerInstance.point.Y + multiplier * dy + offsetY, 1, false));
 				}
 			}
 		}
@@ -312,15 +313,14 @@ namespace com.bric.swing
 
 		internal Insets imagePadding = new Insets(6, 6, 6, 6);
 
-		public virtual void paint(Graphics g)
+		public virtual void paint(JGraphics g)
 		{
 			base.paint(g);
 
-			Graphics2D g2 = (Graphics2D) g;
 			int size = Math.Min(MAX_SIZE, Math.Min(getWidth() - imagePadding.left - imagePadding.right, getHeight() - imagePadding.top - imagePadding.bottom));
 
-			g2.translate(getWidth() / 2 - size / 2, getHeight() / 2 - size / 2);
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g.translate(getWidth() / 2 - size / 2, getHeight() / 2 - size / 2);
+			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 			Shape shape;
 
@@ -342,17 +342,17 @@ namespace com.bric.swing
 			if (!(shape is Rectangle))
 			{
 				// paint a circular shadow
-				g2.translate(2, 2);
-				g2.setColor(new Color(0, 0, 0, 20));
-				g2.fill(new Ellipse2D.Float(-2, -2, size + 4, size + 4));
-				g2.setColor(new Color(0, 0, 0, 40));
-				g2.fill(new Ellipse2D.Float(-1, -1, size + 2, size + 2));
-				g2.setColor(new Color(0, 0, 0, 80));
-				g2.fill(new Ellipse2D.Float(0, 0, size, size));
-				g2.translate(-2, -2);
+				g.translate(2, 2);
+				g.setColor(Color.FromArgb(255, 0, 0, 0, 20));
+				g.fill(new Ellipse2D.Float(-2, -2, size + 4, size + 4));
+				g.setColor(Color.FromArgb(255, 0, 0, 0, 40));
+				g.fill(new Ellipse2D.Float(-1, -1, size + 2, size + 2));
+				g.setColor(Color.FromArgb(255, 0, 0, 0, 80));
+				g.fill(new Ellipse2D.Float(0, 0, size, size));
+				g.translate(-2, -2);
 			}
 
-			g2.drawImage(image, 0, 0, size, size, 0, 0, size, size, null);
+			g.drawImage(image, 0, 0, size, size, 0, 0, size, size, null);
 
 			if (shape is Rectangle)
 			{
@@ -361,15 +361,15 @@ namespace com.bric.swing
 			}
 			else
 			{
-				g2.setColor(new Color(0, 0, 0, 120));
-				g2.draw(shape);
+				g.setColor(Color.FromArgb(255, 0, 0, 0, 120));
+				g.draw(shape);
 			}
 
-			g2.setColor(Color.white);
-			g2.setStroke(new BasicStroke(1));
-			g2.draw(new Ellipse2D.Float(point.x - 3, point.y - 3, 6, 6));
-			g2.setColor(Color.black);
-			g2.draw(new Ellipse2D.Float(point.x - 4, point.y - 4, 8, 8));
+			g.setColor(Color.White);
+			g.setStroke(new BasicStroke(1));
+			g.draw(new Ellipse2D.Float(point.X - 3, point.Y - 3, 6, 6));
+			g.setColor(Color.Black);
+			g.draw(new Ellipse2D.Float(point.X - 4, point.Y - 4, 8, 8));
 
 			g.translate(-imagePadding.left, -imagePadding.top);
 		}
@@ -560,15 +560,15 @@ namespace com.bric.swing
 				else
 				{
 
-					Color c = new Color(Color.HSBtoRGB(h, s, b));
-					setRGB(c.getRed(), c.getGreen(), c.getBlue());
+					Color c = Color.FromArgb(255, Color.HSBtoRGB(h, s, b));
+					setRGB(c.R, c.G, c.B);
 					return;
 				}
 
-				Color c = new Color(Color.HSBtoRGB(hue, sat, bri));
-				red = c.getRed();
-				green = c.getGreen();
-				blue = c.getBlue();
+				Color c = Color.FromArgb(255, Color.HSBtoRGB(hue, sat, bri));
+				red = c.R;
+				green = c.G;
+				blue = c.B;
 
 				regeneratePoint();
 				repaint();

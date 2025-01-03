@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 using System.Collections.Generic;
 
@@ -48,7 +49,7 @@ namespace logisim.gui.opts
 				setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), BorderFactory.createEtchedBorder()));
 			}
 
-			public override void paintComponent(Graphics g)
+			public override void paintComponent(JGraphics g)
 			{
 				base.paintComponent(g);
 				Size sz = getSize();
@@ -57,13 +58,13 @@ namespace logisim.gui.opts
 				string label2;
 				if (outerInstance.curTool == null)
 				{
-					g.setColor(Color.GRAY);
+					g.setColor(Color.Gray);
 					label1 = Strings.get("mouseMapNone");
 					label2 = null;
 				}
 				else
 				{
-					g.setColor(Color.BLACK);
+					g.setColor(Color.Black);
 					label1 = Strings.get("mouseMapText");
 					label2 = StringUtil.format(Strings.get("mouseMapText2"), outerInstance.curTool.DisplayName);
 				}

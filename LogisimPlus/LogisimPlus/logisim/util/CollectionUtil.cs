@@ -18,14 +18,14 @@ namespace logisim.util
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private java.util.Set<? extends E> a;
-			internal ISet<E> a;
+			internal HashSet<E> a;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private java.util.Set<? extends E> b;
-			internal ISet<E> b;
+			internal HashSet<E> b;
 
 // JAVA TO C# CONVERTER TASK: Wildcard generics in method parameters are not converted:
 // ORIGINAL LINE: UnionSet(java.util.Set<? extends E> a, java.util.Set<? extends E> b)
-			internal UnionSet(ISet<E> a, ISet<E> b)
+			internal UnionSet(HashSet<E> a, HashSet<E> b)
 			{
 				this.a = a;
 				this.b = b;
@@ -46,14 +46,14 @@ namespace logisim.util
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private java.util.List<? extends E> a;
-			internal IList<E> a;
+			internal List<E> a;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private java.util.List<? extends E> b;
-			internal IList<E> b;
+			internal List<E> b;
 
 // JAVA TO C# CONVERTER TASK: Wildcard generics in method parameters are not converted:
 // ORIGINAL LINE: UnionList(java.util.List<? extends E> a, java.util.List<? extends E> b)
-			internal UnionList(IList<E> a, IList<E> b)
+			internal UnionList(List<E> a, List<E> b)
 			{
 				this.a = a;
 				this.b = b;
@@ -83,12 +83,12 @@ namespace logisim.util
 		{
 		}
 
-		public static ISet<E> createUnmodifiableSetUnion<E, T1, T2>(ISet<T1> a, ISet<T2> b) where T1 : E where T2 : E
+		public static HashSet<E> createUnmodifiableSetUnion<E, T1, T2>(HashSet<T1> a, HashSet<T2> b) where T1 : E where T2 : E
 		{
 			return new UnionSet<E>(a, b);
 		}
 
-		public static IList<E> createUnmodifiableListUnion<E, T1, T2>(IList<T1> a, IList<T2> b) where T1 : E where T2 : E
+		public static List<E> createUnmodifiableListUnion<E, T1, T2>(List<T1> a, List<T2> b) where T1 : E where T2 : E
 		{
 			return new UnionList<E>(a, b);
 		}

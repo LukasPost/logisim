@@ -23,8 +23,9 @@ namespace logisim.tools
 	using Action = logisim.proj.Action;
 	using Project = logisim.proj.Project;
 	using Text = logisim.std.@base.Text;
+    using LogisimPlus.Java;
 
-	public class TextTool : Tool
+    public class TextTool : Tool
 	{
 		private bool instanceFieldsInitialized = false;
 
@@ -228,7 +229,7 @@ namespace logisim.tools
 			}
 		}
 
-		public override void mousePressed(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mousePressed(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			Project proj = canvas.Project;
 			Circuit circ = canvas.Circuit;
@@ -330,12 +331,12 @@ namespace logisim.tools
 			proj.repaintCanvas();
 		}
 
-		public override void mouseDragged(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseDragged(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			// TODO: enhance label editing
 		}
 
-		public override void mouseReleased(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseReleased(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			// TODO: enhance label editing
 		}

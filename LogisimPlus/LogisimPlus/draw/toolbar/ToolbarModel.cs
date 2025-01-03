@@ -18,7 +18,7 @@ namespace draw.toolbar
 
 		void removeToolbarModelListener(ToolbarModelListener listener);
 
-		IList<ToolbarItem> Items {get;}
+		List<ToolbarItem> Items {get;}
 
 		bool isSelected(ToolbarItem item);
 

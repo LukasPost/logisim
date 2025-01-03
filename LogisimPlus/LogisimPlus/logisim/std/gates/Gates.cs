@@ -18,7 +18,7 @@ namespace logisim.std.gates
 
 	public class Gates : Library
 	{
-		private IList<Tool> tools = null;
+		private List<Tool> tools = null;
 
 		public Gates()
 		{
@@ -55,7 +55,7 @@ namespace logisim.std.gates
 			}
 		}
 
-		public override IList<Tool> Tools
+		public override List<Tool> Tools
 		{
 			get
 			{

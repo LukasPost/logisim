@@ -14,11 +14,11 @@ namespace logisim.std.gates
 	using Direction = logisim.data.Direction;
 	using StdAttr = logisim.instance.StdAttr;
 
-	internal class GateAttributeList : System.Collections.ObjectModel.Collection<Attribute<JavaToCSharpGenericWildcard>>
+	internal class GateAttributeList : System.Collections.ObjectModel.Collection<Attribute>
 	{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
-// ORIGINAL LINE: private static final logisim.data.Attribute<?>[] BASE_ATTRIBUTES = { logisim.instance.StdAttr.FACING, logisim.instance.StdAttr.WIDTH, GateAttributes.ATTR_SIZE, GateAttributes.ATTR_INPUTS, GateAttributes.ATTR_OUTPUT, logisim.instance.StdAttr.LABEL, logisim.instance.StdAttr.LABEL_FONT};
-		private static readonly Attribute<object>[] BASE_ATTRIBUTES = new Attribute<object>[] {StdAttr.FACING, StdAttr.WIDTH, GateAttributes.ATTR_SIZE, GateAttributes.ATTR_INPUTS, GateAttributes.ATTR_OUTPUT, StdAttr.LABEL, StdAttr.LABEL_FONT};
+// ORIGINAL LINE: private static final logisim.data.Attribute<?>[] BASE_ATTRIBUTES = { logisim.instance.StdAttr.FACING, logisim.instance.StdAttr.Width, GateAttributes.ATTR_SIZE, GateAttributes.ATTR_INPUTS, GateAttributes.ATTR_OUTPUT, logisim.instance.StdAttr.LABEL, logisim.instance.StdAttr.LABEL_FONT};
+		private static readonly Attribute[] BASE_ATTRIBUTES = new Attribute[] {StdAttr.FACING, StdAttr.Width, GateAttributes.ATTR_SIZE, GateAttributes.ATTR_INPUTS, GateAttributes.ATTR_OUTPUT, StdAttr.LABEL, StdAttr.LABEL_FONT};
 
 		private GateAttributes attrs;
 
@@ -29,7 +29,7 @@ namespace logisim.std.gates
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public logisim.data.Attribute<?> get(int index)
-		public override Attribute<object> get(int index)
+		public override Attribute get(int index)
 		{
 			int len = BASE_ATTRIBUTES.Length;
 			if (index < len)

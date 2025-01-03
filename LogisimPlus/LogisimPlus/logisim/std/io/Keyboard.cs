@@ -25,8 +25,9 @@ namespace logisim.std.io
 	using InstanceState = logisim.instance.InstanceState;
 	using Port = logisim.instance.Port;
 	using StdAttr = logisim.instance.StdAttr;
+    using LogisimPlus.Java;
 
-	public class Keyboard : InstanceFactory
+    public class Keyboard : InstanceFactory
 	{
 		private const int CLR = 0;
 		private const int CK = 1;
@@ -43,7 +44,7 @@ namespace logisim.std.io
 		private static readonly Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
 		private const char FORM_FEED = '\u000c'; // control-L
 
-		private static readonly Attribute<int> ATTR_BUFFER = Attributes.forIntegerRange("buflen", Strings.getter("keybBufferLengthAttr"), 1, 256);
+		private static readonly Attribute ATTR_BUFFER = Attributes.forIntegerRange("buflen", Strings.getter("keybBufferLengthAttr"), 1, 256);
 
 		public Keyboard() : base("Keyboard", Strings.getter("keyboardComponent"))
 		{
@@ -58,11 +59,11 @@ namespace logisim.std.io
 			ps[RE] = new Port(10, 10, Port.INPUT, 1);
 			ps[AVL] = new Port(130, 10, Port.OUTPUT, 1);
 			ps[OUT] = new Port(140, 10, Port.OUTPUT, 7);
-			ps[CLR].setToolTip(Strings.getter("keybClearTip"));
-			ps[CK].setToolTip(Strings.getter("keybClockTip"));
-			ps[RE].setToolTip(Strings.getter("keybEnableTip"));
-			ps[AVL].setToolTip(Strings.getter("keybAvailTip"));
-			ps[OUT].setToolTip(Strings.getter("keybOutputTip"));
+			ps[CLR].ToolTip = Strings.getter("keybClearTip");
+			ps[CK].ToolTip = Strings.getter("keybClockTip");
+			ps[RE].ToolTip = Strings.getter("keybEnableTip");
+			ps[AVL].ToolTip = Strings.getter("keybAvailTip");
+			ps[OUT].ToolTip = Strings.getter("keybOutputTip");
 			setPorts(ps);
 		}
 
@@ -109,7 +110,7 @@ namespace logisim.std.io
 		public override void paintInstance(InstancePainter painter)
 		{
 			bool showState = painter.ShowState;
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			painter.drawClock(CK, Direction.East);
 			painter.drawBounds();
 			painter.drawPort(CLR);
@@ -160,7 +161,7 @@ namespace logisim.std.io
 			}
 		}
 
-		private void drawDots(Graphics g, int x, int y, int width, int ascent)
+		private void drawDots(JGraphics g, int x, int y, int width, int ascent)
 		{
 			int r = width / 10;
 			if (r < 1)
@@ -182,7 +183,7 @@ namespace logisim.std.io
 			}
 		}
 
-		private void drawBuffer(Graphics g, FontMetrics fm, string str, int dispStart, int dispEnd, List<int> specials, Bounds bds)
+		private void drawBuffer(JGraphics g, FontMetrics fm, string str, int dispStart, int dispEnd, List<int> specials, Bounds bds)
 		{
 			int x = bds.X;
 			int y = bds.Y;
@@ -228,7 +229,7 @@ namespace logisim.std.io
 			}
 		}
 
-		private void drawSpecials(List<int> specials, int x0, int xs, int ys, int asc, Graphics g, FontMetrics fm, string str, int dispStart, int dispEnd)
+		private void drawSpecials(List<int> specials, int x0, int xs, int ys, int asc, JGraphics g, FontMetrics fm, string str, int dispStart, int dispEnd)
 		{
 			int[] px = new int[3];
 			int[] py = new int[3];
@@ -397,7 +398,7 @@ namespace logisim.std.io
 			{
 				KeyboardData data = getKeyboardState(painter);
 				Bounds bds = painter.getInstance().Bounds;
-				Graphics g = painter.Graphics;
+				JGraphics g = painter.Graphics;
 				FontMetrics fm = g.getFontMetrics(DEFAULT_FONT);
 
 				string str;

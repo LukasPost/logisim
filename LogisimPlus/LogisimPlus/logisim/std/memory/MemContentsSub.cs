@@ -36,19 +36,12 @@ namespace logisim.std.memory
 
 		internal abstract class ContentsInterface : ICloneable
 		{
-			public override ContentsInterface clone()
-			{
-				try
-				{
-					return (ContentsInterface) base.clone();
-				}
-				catch (CloneNotSupportedException)
-				{
-					return this;
-				}
-			}
+            public virtual object Clone()
+            {
+                return MemberwiseClone();
+            }
 
-			internal abstract int Length {get;}
+            internal abstract int Length {get;}
 
 			internal abstract int get(int addr);
 

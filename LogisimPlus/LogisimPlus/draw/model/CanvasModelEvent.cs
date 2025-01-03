@@ -25,17 +25,17 @@ namespace draw.model
 		public const int ACTION_ATTRIBUTES_CHANGED = 7;
 		public const int ACTION_TEXT_CHANGED = 8;
 
-		public static CanvasModelEvent forAdd<T1>(CanvasModel source, ICollection<T1> affected) where T1 : CanvasObject
+		public static CanvasModelEvent forAdd<T1>(CanvasModel source, IEnumerable<T1> affected) where T1 : CanvasObject
 		{
-			return new CanvasModelEvent(source, ACTION_ADDED, affected);
+			return new CanvasModelEvent(source, ACTION_ADDED, affected.Cast<CanvasObject>());
 		}
 
-		public static CanvasModelEvent forRemove<T1>(CanvasModel source, ICollection<T1> affected) where T1 : CanvasObject
+		public static CanvasModelEvent forRemove<T1>(CanvasModel source, IEnumerable<T1> affected) where T1 : CanvasObject
 		{
 			return new CanvasModelEvent(source, ACTION_REMOVED, affected);
 		}
 
-		public static CanvasModelEvent forTranslate<T1>(CanvasModel source, ICollection<T1> affected, int dx, int dy) where T1 : CanvasObject
+		public static CanvasModelEvent forTranslate<T1>(CanvasModel source, IEnumerable<T1> affected, int dx, int dy) where T1 : CanvasObject
 		{
 			return new CanvasModelEvent(source, ACTION_TRANSLATED, affected, 0, 0);
 		}
@@ -60,24 +60,24 @@ namespace draw.model
 			return new CanvasModelEvent(source, ACTION_HANDLE_MOVED, gesture);
 		}
 
-		public static CanvasModelEvent forChangeAttributes(CanvasModel source, IDictionary<AttributeMapKey, object> oldValues, IDictionary<AttributeMapKey, object> newValues)
+		public static CanvasModelEvent forChangeAttributes(CanvasModel source, Dictionary<AttributeMapKey, object> oldValues, Dictionary<AttributeMapKey, object> newValues)
 		{
 			return new CanvasModelEvent(source, ACTION_ATTRIBUTES_CHANGED, oldValues, newValues);
 		}
 
 		public static CanvasModelEvent forChangeText(CanvasModel source, CanvasObject obj, string oldText, string newText)
 		{
-			return new CanvasModelEvent(source, ACTION_TEXT_CHANGED, Collections.singleton(obj), oldText, newText);
+			return new CanvasModelEvent(source, ACTION_TEXT_CHANGED, [obj], oldText, newText);
 		}
 
 		private int action;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private java.util.Collection<? extends CanvasObject> affected;
-		private ICollection<CanvasObject> affected;
+		private IEnumerable<CanvasObject> affected;
 		private int deltaX;
 		private int deltaY;
-		private IDictionary<AttributeMapKey, object> oldValues;
-		private IDictionary<AttributeMapKey, object> newValues;
+		private Dictionary<AttributeMapKey, object> oldValues;
+		private Dictionary<AttributeMapKey, object> newValues;
 		private ICollection<ReorderRequest> reorderRequests;
 		private Handle handle;
 		private HandleGesture gesture;
@@ -86,7 +86,7 @@ namespace draw.model
 
 // JAVA TO C# CONVERTER TASK: Wildcard generics in method parameters are not converted:
 // ORIGINAL LINE: private CanvasModelEvent(CanvasModel source, int action, java.util.Collection<? extends CanvasObject> affected)
-		private CanvasModelEvent(CanvasModel source, int action, ICollection<CanvasObject> affected) : base(source)
+		private CanvasModelEvent(CanvasModel source, int action, IEnumerable<CanvasObject> affected) : base(source)
 		{
 
 			this.action = action;
@@ -111,7 +111,7 @@ namespace draw.model
 			this.deltaY = dy;
 		}
 
-		private CanvasModelEvent(CanvasModel source, int action, Handle handle) : this(source, action, Collections.singleton(handle.Object))
+		private CanvasModelEvent(CanvasModel source, int action, Handle handle) : this(source, action, [handle.Object])
 		{
 
 			this.handle = handle;
@@ -123,7 +123,7 @@ namespace draw.model
 			this.gesture = gesture;
 		}
 
-		private CanvasModelEvent(CanvasModel source, int action, IDictionary<AttributeMapKey, object> oldValues, IDictionary<AttributeMapKey, object> newValues) : this(source, action, Enumerable.Empty<CanvasObject>())
+		private CanvasModelEvent(CanvasModel source, int action, Dictionary<AttributeMapKey, object> oldValues, Dictionary<AttributeMapKey, object> newValues) : this(source, action, Enumerable.Empty<CanvasObject>())
 		{
 
 			HashSet<CanvasObject> affected;
@@ -134,13 +134,13 @@ namespace draw.model
 			}
 			this.affected = affected;
 
-			IDictionary<AttributeMapKey, object> oldValuesCopy;
+			Dictionary<AttributeMapKey, object> oldValuesCopy;
 			oldValuesCopy = new Dictionary<AttributeMapKey, object>(oldValues);
-			IDictionary<AttributeMapKey, object> newValuesCopy;
+			Dictionary<AttributeMapKey, object> newValuesCopy;
 			newValuesCopy = new Dictionary<AttributeMapKey, object>(newValues);
 
-			this.oldValues = Collections.unmodifiableMap(oldValuesCopy);
-			this.newValues = Collections.unmodifiableMap(newValuesCopy);
+			this.oldValues = oldValuesCopy;
+			this.newValues = newValuesCopy;
 		}
 
 // JAVA TO C# CONVERTER TASK: Wildcard generics in method parameters are not converted:
@@ -164,7 +164,7 @@ namespace draw.model
 			}
 			this.affected = affected;
 
-			this.reorderRequests = Collections.unmodifiableCollection(requests);
+			this.reorderRequests = requests;
 		}
 
 		public virtual int Action
@@ -175,26 +175,22 @@ namespace draw.model
 			}
 		}
 
-// JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
-// ORIGINAL LINE: public java.util.Collection<? extends CanvasObject> getAffected()
-		public virtual ICollection<CanvasObject> Affected
+		public virtual IEnumerable<CanvasObject> Affected
 		{
 			get
 			{
-	// JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
-	// ORIGINAL LINE: java.util.Collection<? extends CanvasObject> ret = affected;
-				ICollection<CanvasObject> ret = affected;
+				IEnumerable<CanvasObject> ret = affected;
 				if (ret == null)
 				{
-					IDictionary<AttributeMapKey, object> newVals = newValues;
+					Dictionary<AttributeMapKey, object> newVals = newValues;
 					if (newVals != null)
 					{
-						HashSet<CanvasObject> keys = new HashSet<CanvasObject>();
+						List<CanvasObject> keys = new HashSet<CanvasObject>();
 						foreach (AttributeMapKey key in newVals.Keys)
 						{
 							keys.Add(key.Object);
 						}
-						ret = Collections.unmodifiableCollection(keys);
+						ret = keys;
 						affected = ret;
 					}
 				}
@@ -234,7 +230,7 @@ namespace draw.model
 			}
 		}
 
-		public virtual IDictionary<AttributeMapKey, object> OldValues
+		public virtual Dictionary<AttributeMapKey, object> OldValues
 		{
 			get
 			{
@@ -242,7 +238,7 @@ namespace draw.model
 			}
 		}
 
-		public virtual IDictionary<AttributeMapKey, object> NewValues
+		public virtual Dictionary<AttributeMapKey, object> NewValues
 		{
 			get
 			{

@@ -20,9 +20,9 @@ namespace logisim.std.wiring
 		{
 		}
 
-		public override int getMaximumValue(AttributeSet attrs)
+		protected internal override int getMaximumValue(AttributeSet attrs)
 		{
-			BitWidth width = attrs.getValue(StdAttr.WIDTH);
+			BitWidth width = (BitWidth)attrs.getValue(StdAttr.Width);
 			int ret = width.Mask;
 			if (ret >= 0)
 			{
@@ -34,9 +34,9 @@ namespace logisim.std.wiring
 			}
 		}
 
-		public override int getMinimumValue(AttributeSet attrs)
+		protected internal override int getMinimumValue(AttributeSet attrs)
 		{
-			BitWidth width = attrs.getValue(StdAttr.WIDTH);
+			BitWidth width = (BitWidth)attrs.getValue(StdAttr.Width);
 			if (width.Width < 32)
 			{
 				return 0;

@@ -9,8 +9,8 @@
 
 namespace logisim.tools
 {
-
-	using Bounds = logisim.data.Bounds;
+    using LogisimPlus.Java;
+    using Bounds = logisim.data.Bounds;
 
 	public interface Caret
 	{
@@ -19,12 +19,12 @@ namespace logisim.tools
 
 		void removeCaretListener(CaretListener e);
 
-		// query/Graphics methods
+		// query/JGraphics methods
 		string Text {get;}
 
-		Bounds getBounds(Graphics g);
+		Bounds getBounds(JGraphics g);
 
-		void draw(Graphics g);
+		void draw(JGraphics g);
 
 		// finishing
 		void commitText(string text);

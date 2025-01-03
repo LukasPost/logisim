@@ -14,7 +14,7 @@ namespace logisim.data
 
 	public interface AttributeSet
 	{
-		object clone();
+		object Clone();
 
 		void addAttributeListener(AttributeListener l);
 
@@ -22,7 +22,7 @@ namespace logisim.data
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public java.util.List<Attribute<?>> getAttributes();
-		IList<Attribute> Attributes {get;}
+		List<Attribute> Attributes {get;}
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public boolean containsAttribute(Attribute<?> attr);

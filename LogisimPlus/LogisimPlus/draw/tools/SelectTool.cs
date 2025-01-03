@@ -26,10 +26,11 @@ namespace draw.tools
 	using logisim.data;
 	using Bounds = logisim.data.Bounds;
 	using Location = logisim.data.Location;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using Icons = logisim.util.Icons;
+    using LogisimPlus.Java;
 
-	public class SelectTool : AbstractTool
+    public class SelectTool : AbstractTool
 	{
 		private const int IDLE = 0;
 		private const int MOVE_ALL = 1;
@@ -40,10 +41,10 @@ namespace draw.tools
 		private const int DRAG_TOLERANCE = 2;
 		private const int HANDLE_SIZE = 8;
 
-		private static readonly Color RECT_SELECT_BACKGROUND = new Color(0, 0, 0, 32);
+		private static readonly Color RECT_SELECT_BACKGROUND = Color.FromArgb(255, 0, 0, 0, 32);
 
 		private int curAction;
-		private IList<CanvasObject> beforePressSelection;
+		private List<CanvasObject> beforePressSelection;
 		private Handle beforePressHandle;
 		private Location dragStart;
 		private Location dragEnd;
@@ -75,11 +76,11 @@ namespace draw.tools
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
-				return Collections.emptyList();
+				return [];
 			}
 		}
 
@@ -123,7 +124,7 @@ namespace draw.tools
 			CanvasObject clicked = null;
 			foreach (CanvasObject shape in selection.Selected)
 			{
-				IList<Handle> handles = shape.getHandles(null);
+				List<Handle> handles = shape.getHandles(null);
 				foreach (Handle han in handles)
 				{
 					int dx = han.X - mx;
@@ -202,7 +203,7 @@ namespace draw.tools
 
 		public override void cancelMousePress(Canvas canvas)
 		{
-			IList<CanvasObject> before = beforePressSelection;
+			List<CanvasObject> before = beforePressSelection;
 			Handle handle = beforePressHandle;
 			beforePressSelection = null;
 			beforePressHandle = null;
@@ -232,7 +233,7 @@ namespace draw.tools
 
 			CanvasModel model = canvas.Model;
 			Selection selection = canvas.Selection;
-			ISet<CanvasObject> selected = selection.Selected;
+			HashSet<CanvasObject> selected = selection.Selected;
 			int action = curAction;
 			curAction = IDLE;
 
@@ -448,7 +449,7 @@ namespace draw.tools
 			canvas.repaint();
 		}
 
-		public override void draw(Canvas canvas, Graphics g)
+		public override void draw(Canvas canvas, JGraphics g)
 		{
 			Selection selection = canvas.Selection;
 			int action = curAction;
@@ -483,22 +484,19 @@ namespace draw.tools
 			{
 				// unscale the coordinate system so that the stroke width isn't scaled
 				double zoom = 1.0;
-				Graphics gCopy = g.create();
-				if (gCopy is Graphics2D)
-				{
+				JGraphics gCopy = g.create();
 					zoom = canvas.ZoomFactor;
 					if (zoom != 1.0)
 					{
-						((Graphics2D) gCopy).scale(1.0 / zoom, 1.0 / zoom);
+						gCopy.scale(1.0 / zoom, 1.0 / zoom);
 					}
-				}
-				GraphicsUtil.switchToWidth(gCopy, 1);
+				JGraphicsUtil.switchToWidth(gCopy, 1);
 
 				int size = (int) Math.Ceiling(HANDLE_SIZE * Math.Sqrt(zoom));
 				int offs = size / 2;
 				foreach (CanvasObject obj in selection.Selected)
 				{
-					IList<Handle> handles;
+					List<Handle> handles;
 					if (action == MOVE_HANDLE && obj == moveHandleObj)
 					{
 						handles = obj.getHandles(gesture);
@@ -538,9 +536,9 @@ namespace draw.tools
 					y = (int) (long)Math.Round(zoom * y, MidpointRounding.AwayFromZero);
 					int[] xs = new int[] {x - offs, x, x + offs, x};
 					int[] ys = new int[] {y, y - offs, y, y + offs};
-					gCopy.setColor(Color.WHITE);
+					gCopy.setColor(Color.White);
 					gCopy.fillPolygon(xs, ys, 4);
-					gCopy.setColor(Color.BLACK);
+					gCopy.setColor(Color.Black);
 					gCopy.drawPolygon(xs, ys, 4);
 				}
 			}
@@ -579,7 +577,7 @@ namespace draw.tools
 					g.fillRect(0, y1, w, h - y1);
 
 					// now draw the rectangle
-					g.setColor(Color.GRAY);
+					g.setColor(Color.Gray);
 					g.drawRect(x0, y0, x1 - x0, y1 - y0);
 				}
 				break;

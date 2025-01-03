@@ -19,8 +19,9 @@ namespace draw.shapes
 	using Bounds = logisim.data.Bounds;
 	using Location = logisim.data.Location;
 	using logisim.util;
+    using LogisimPlus.Java;
 
-	internal abstract class Rectangular : FillableCanvasObject
+    internal abstract class Rectangular : FillableCanvasObject
 	{
 		private Bounds bounds; // excluding the stroke's width
 
@@ -101,7 +102,7 @@ namespace draw.shapes
 			bounds = bounds.translate(dx, dy);
 		}
 
-		public override IList<Handle> getHandles(HandleGesture gesture)
+		public override List<Handle> getHandles(HandleGesture gesture)
 		{
 			return UnmodifiableList.create(getHandleArray(gesture));
 		}
@@ -279,7 +280,7 @@ namespace draw.shapes
 			return result;
 		}
 
-		public override void paint(Graphics g, HandleGesture gesture)
+		public override void paint(JGraphics g, HandleGesture gesture)
 		{
 			if (gesture == null)
 			{
@@ -357,7 +358,7 @@ namespace draw.shapes
 
 		protected internal abstract bool contains(int x, int y, int w, int h, Location q);
 
-		protected internal abstract void draw(Graphics g, int x, int y, int w, int h);
+		protected internal abstract void draw(JGraphics g, int x, int y, int w, int h);
 	}
 
 }

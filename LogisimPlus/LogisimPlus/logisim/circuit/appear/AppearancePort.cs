@@ -121,7 +121,7 @@ namespace logisim.circuit.appear
 			}
 		}
 
-		public override IList<Handle> getHandles(HandleGesture gesture)
+		public override List<Handle> getHandles(HandleGesture gesture)
 		{
 			Location loc = Location;
 
@@ -135,7 +135,7 @@ namespace logisim.circuit.appear
 			});
 		}
 
-		public override void paint(Graphics g, HandleGesture gesture)
+		public override void paint(JGraphics g, HandleGesture gesture)
 		{
 			Location location = Location;
 			int x = location.X;

@@ -24,8 +24,9 @@ namespace draw.tools
 	using Location = logisim.data.Location;
 	using Icons = logisim.util.Icons;
 	using logisim.util;
+    using LogisimPlus.Java;
 
-	public class LineTool : AbstractTool
+    public class LineTool : AbstractTool
 	{
 		private DrawingAttributeSet attrs;
 		private bool active;
@@ -55,7 +56,7 @@ namespace draw.tools
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
@@ -106,7 +107,7 @@ namespace draw.tools
 					active = false;
 					CanvasModel model = canvas.Model;
 					Location[] ends = new Location[] {start, end};
-					IList<Location> locs = UnmodifiableList.create(ends);
+					List<Location> locs = UnmodifiableList.create(ends);
 					add = attrs.applyTo(new Poly(false, locs));
 					add.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_STROKE);
 					canvas.doAction(new ModelAddAction(model, add));
@@ -169,13 +170,13 @@ namespace draw.tools
 			canvas.repaint();
 		}
 
-		public override void draw(Canvas canvas, Graphics g)
+		public override void draw(Canvas canvas, JGraphics g)
 		{
 			if (active)
 			{
 				Location start = mouseStart;
 				Location end = mouseEnd;
-				g.setColor(Color.GRAY);
+				g.setColor(Color.Gray);
 				g.drawLine(start.X, start.Y, end.X, end.Y);
 			}
 		}

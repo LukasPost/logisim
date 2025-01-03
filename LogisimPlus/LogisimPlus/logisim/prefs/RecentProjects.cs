@@ -61,7 +61,7 @@ namespace logisim.prefs
 			}
 		}
 
-		public virtual IList<File> RecentFiles
+		public virtual List<File> RecentFiles
 		{
 			get
 			{
@@ -82,7 +82,7 @@ namespace logisim.prefs
 				}
 				Array.Sort(toSort);
     
-				IList<File> ret = new List<File>();
+				List<File> ret = new List<File>();
 				foreach (long age in toSort)
 				{
 					if (age >= 0)

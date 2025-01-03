@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 using System.Collections.Generic;
 
@@ -59,7 +60,7 @@ namespace logisim.gui.appear
 			int act = e.Action;
 			if (act == SelectionEvent.ACTION_ADDED)
 			{
-				ISet<AppearancePort> ports = shouldShowPopup(e.Affected);
+				HashSet<AppearancePort> ports = shouldShowPopup(e.Affected);
 				if (ports == null)
 				{
 					hideCurrentPopup();
@@ -71,7 +72,7 @@ namespace logisim.gui.appear
 			}
 		}
 
-		private ISet<AppearancePort> shouldShowPopup(ICollection<CanvasObject> add)
+		private HashSet<AppearancePort> shouldShowPopup(ICollection<CanvasObject> add)
 		{
 			bool found = false;
 			foreach (CanvasObject o in add)
@@ -84,7 +85,7 @@ namespace logisim.gui.appear
 			}
 			if (found)
 			{
-				ISet<AppearancePort> ports = SelectedPorts;
+				HashSet<AppearancePort> ports = SelectedPorts;
 				if (ports.Count > 0 && isPortUnselected(ports))
 				{
 					return ports;
@@ -94,7 +95,7 @@ namespace logisim.gui.appear
 		}
 
 		// returns all the ports in the current selection
-		private ISet<AppearancePort> SelectedPorts
+		private HashSet<AppearancePort> SelectedPorts
 		{
 			get
 			{
@@ -111,7 +112,7 @@ namespace logisim.gui.appear
 		}
 
 		// returns true if the canvas contains any port not in the given set
-		private bool isPortUnselected(ISet<AppearancePort> selected)
+		private bool isPortUnselected(HashSet<AppearancePort> selected)
 		{
 			foreach (CanvasObject o in canvas.Model.ObjectsFromBottom)
 			{
@@ -126,7 +127,7 @@ namespace logisim.gui.appear
 			return false;
 		}
 
-		private void showPopup(ISet<AppearancePort> portObjects)
+		private void showPopup(HashSet<AppearancePort> portObjects)
 		{
 			dragStart = null;
 			CircuitState circuitState = canvas.CircuitState;
@@ -147,8 +148,8 @@ namespace logisim.gui.appear
 			Point ownerLoc = owner.getLocationOnScreen();
 			Size ownerDim = owner.getSize();
 			Size layoutDim = layout.getPreferredSize();
-			int x = ownerLoc.x + Math.Max(0, ownerDim.width - layoutDim.width - 5);
-			int y = ownerLoc.y + Math.Max(0, ownerDim.height - layoutDim.height - 5);
+			int x = ownerLoc.x + Math.Max(0, ownerdim.Width - layoutdim.Width - 5);
+			int y = ownerLoc.y + Math.Max(0, ownerdim.Height - layoutdim.Height - 5);
 			PopupFactory factory = PopupFactory.getSharedInstance();
 			Popup popup = factory.getPopup(canvasPane.getViewport(), layout, x, y);
 			popup.show();

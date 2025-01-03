@@ -39,8 +39,9 @@ namespace logisim.tools
 	using KeyConfigurator = logisim.tools.key.KeyConfigurator;
 	using KeyConfigurationResult = logisim.tools.key.KeyConfigurationResult;
 	using StringUtil = logisim.util.StringUtil;
+    using LogisimPlus.Java;
 
-	public class AddTool : Tool
+    public class AddTool : Tool
 	{
 		private static int INVALID_COORD = int.MinValue;
 
@@ -260,7 +261,7 @@ namespace logisim.tools
 			return this.attrs == attrs && attrs is FactoryAttributes && !((FactoryAttributes) attrs).FactoryInstantiated;
 		}
 
-		public virtual object getDefaultAttributeValue<T1>(Attribute<T1> attr, LogisimVersion ver)
+		public virtual object getDefaultAttributeValue<T1>(Attribute attr, LogisimVersion ver)
 		{
 			return Factory.getDefaultAttributeValue(attr, ver);
 		}
@@ -282,11 +283,11 @@ namespace logisim.tools
 			}
 			if (state == SHOW_GHOST)
 			{
-				source.drawGhost(context, Color.GRAY, x, y, BaseAttributes);
+				source.drawGhost(context, Color.Gray, x, y, BaseAttributes);
 			}
 			else if (state == SHOW_ADD)
 			{
-				source.drawGhost(context, Color.BLACK, x, y, BaseAttributes);
+				source.drawGhost(context, Color.Black, x, y, BaseAttributes);
 			}
 		}
 
@@ -316,12 +317,12 @@ namespace logisim.tools
 		public override void deselect(Canvas canvas)
 		{
 			setState(canvas, SHOW_GHOST);
-			moveTo(canvas, canvas.getGraphics(), INVALID_COORD, INVALID_COORD);
+			moveTo(canvas, canvas.getJGraphics(), INVALID_COORD, INVALID_COORD);
 			bounds = null;
 			lastAddition = null;
 		}
 
-		private void moveTo(Canvas canvas, Graphics g, int x, int y)
+		private void moveTo(Canvas canvas, JGraphics g, int x, int y)
 		{
 			lock (this)
 			{
@@ -338,7 +339,7 @@ namespace logisim.tools
 			}
 		}
 
-		public override void mouseEntered(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseEntered(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			if (state == SHOW_GHOST || state == SHOW_NONE)
 			{
@@ -352,21 +353,21 @@ namespace logisim.tools
 			}
 		}
 
-		public override void mouseExited(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseExited(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			if (state == SHOW_GHOST)
 			{
-				moveTo(canvas, canvas.getGraphics(), INVALID_COORD, INVALID_COORD);
+				moveTo(canvas, canvas.getJGraphics(), INVALID_COORD, INVALID_COORD);
 				setState(canvas, SHOW_NONE);
 			}
 			else if (state == SHOW_ADD)
 			{
-				moveTo(canvas, canvas.getGraphics(), INVALID_COORD, INVALID_COORD);
+				moveTo(canvas, canvas.getJGraphics(), INVALID_COORD, INVALID_COORD);
 				setState(canvas, SHOW_ADD_NO);
 			}
 		}
 
-		public override void mouseMoved(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseMoved(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			if (state != SHOW_NONE)
 			{
@@ -378,7 +379,7 @@ namespace logisim.tools
 			}
 		}
 
-		public override void mousePressed(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mousePressed(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			// verify the addition would be valid
 			Circuit circ = canvas.Circuit;
@@ -406,7 +407,7 @@ namespace logisim.tools
 			setState(canvas, SHOW_ADD);
 		}
 
-		public override void mouseDragged(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseDragged(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			if (state != SHOW_NONE)
 			{
@@ -418,7 +419,7 @@ namespace logisim.tools
 			}
 		}
 
-		public override void mouseReleased(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseReleased(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			Component added = null;
 			if (state == SHOW_ADD)

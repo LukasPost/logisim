@@ -478,14 +478,14 @@ namespace logisim.gui.log
 			}
 		}
 
-		public virtual IList<SelectionItem> SelectedItems
+		public virtual List<SelectionItem> SelectedItems
 		{
 			get
 			{
 				TreePath[] sel = getSelectionPaths();
 				if (sel == null || sel.Length == 0)
 				{
-					return Collections.emptyList();
+					return [];
 				}
     
 				List<SelectionItem> ret = new List<SelectionItem>();

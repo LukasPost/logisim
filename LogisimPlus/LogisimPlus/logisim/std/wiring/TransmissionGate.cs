@@ -29,9 +29,10 @@ namespace logisim.std.wiring
 	using Port = logisim.instance.Port;
 	using StdAttr = logisim.instance.StdAttr;
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
+    using LogisimPlus.Java;
 
-	public class TransmissionGate : InstanceFactory
+    public class TransmissionGate : InstanceFactory
 	{
 		internal const int OUTPUT = 0;
 		internal const int INPUT = 1;
@@ -41,9 +42,9 @@ namespace logisim.std.wiring
 		public TransmissionGate() : base("Transmission Gate", Strings.getter("transmissionGateComponent"))
 		{
 			IconName = "transmis.gif";
-			setAttributes(new Attribute[] {StdAttr.FACING, Wiring.ATTR_GATE, StdAttr.WIDTH}, new object[] {Direction.East, Wiring.GATE_TOP_LEFT, BitWidth.ONE});
+			setAttributes(new Attribute[] {StdAttr.FACING, Wiring.ATTR_GATE, StdAttr.Width}, new object[] {Direction.East, Wiring.GATE_TOP_LEFT, BitWidth.ONE});
 			FacingAttribute = StdAttr.FACING;
-			KeyConfigurator = new BitWidthConfigurator(StdAttr.WIDTH);
+			KeyConfigurator = new BitWidthConfigurator(StdAttr.Width);
 		}
 
 		protected internal override void configureNewInstance(Instance instance)
@@ -52,14 +53,14 @@ namespace logisim.std.wiring
 			updatePorts(instance);
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == StdAttr.FACING || attr == Wiring.ATTR_GATE)
 			{
 				instance.recomputeBounds();
 				updatePorts(instance);
 			}
-			else if (attr == StdAttr.WIDTH)
+			else if (attr == StdAttr.Width)
 			{
 				instance.fireInvalidated();
 			}
@@ -69,7 +70,7 @@ namespace logisim.std.wiring
 		{
 			int dx = 0;
 			int dy = 0;
-			Direction facing = instance.getAttributeValue(StdAttr.FACING);
+			Direction facing = (Direction)instance.getAttributeValue(StdAttr.FACING);
 			if (facing == Direction.North)
 			{
 				dy = 1;
@@ -91,8 +92,8 @@ namespace logisim.std.wiring
 			bool flip = (facing == Direction.South || facing == Direction.West) == (powerLoc == Wiring.GATE_TOP_LEFT);
 
 			Port[] ports = new Port[4];
-			ports[OUTPUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
-			ports[INPUT] = new Port(40 * dx, 40 * dy, Port.INPUT, StdAttr.WIDTH);
+			ports[OUTPUT] = new Port(0, 0, Port.OUTPUT, StdAttr.Width);
+			ports[INPUT] = new Port(40 * dx, 40 * dy, Port.INPUT, StdAttr.Width);
 			if (flip)
 			{
 				ports[GATE1] = new Port(20 * (dx - dy), 20 * (dx + dy), Port.INPUT, 1);
@@ -103,7 +104,7 @@ namespace logisim.std.wiring
 				ports[GATE0] = new Port(20 * (dx - dy), 20 * (dx + dy), Port.INPUT, 1);
 				ports[GATE1] = new Port(20 * (dx + dy), 20 * (-dx + dy), Port.INPUT, 1);
 			}
-			instance.setPorts(ports);
+			instance.Ports = ports;
 		}
 
 		public override Bounds getOffsetBounds(AttributeSet attrs)
@@ -133,7 +134,7 @@ namespace logisim.std.wiring
 
 		private Value computeOutput(InstanceState state)
 		{
-			BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
+			BitWidth width = state.getAttributeValue(StdAttr.Width);
 			Value input = state.getPort(INPUT);
 			Value gate0 = state.getPort(GATE0);
 			Value gate1 = state.getPort(GATE1);
@@ -185,7 +186,7 @@ namespace logisim.std.wiring
 		{
 			Bounds bds = painter.Bounds;
 			object powerLoc = painter.getAttributeValue(Wiring.ATTR_GATE);
-			Direction facing = painter.getAttributeValue(StdAttr.FACING);
+			Direction facing = (Direction)painter.getAttributeValue(StdAttr.FACING);
 			bool flip = (facing == Direction.South || facing == Direction.West) == (powerLoc == Wiring.GATE_TOP_LEFT);
 
 			int degrees = Direction.West.toDegrees() - facing.toDegrees();
@@ -195,10 +196,10 @@ namespace logisim.std.wiring
 			}
 			double radians = Math.toRadians((degrees + 360) % 360);
 
-			Graphics2D g = (Graphics2D) painter.Graphics.create();
+			JGraphics g = painter.Graphics;
 			g.rotate(radians, bds.X + 20, bds.Y + 20);
 			g.translate(bds.X, bds.Y);
-			GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+			JGraphicsUtil.switchToWidth(g, Wire.WIDTH);
 
 			Color gate0 = g.getColor();
 			Color gate1 = gate0;
@@ -224,14 +225,14 @@ namespace logisim.std.wiring
 
 			g.setColor(gate0);
 			g.drawLine(20, 35, 20, 40);
-			GraphicsUtil.switchToWidth(g, 1);
+			JGraphicsUtil.switchToWidth(g, 1);
 			g.drawOval(18, 30, 4, 4);
 			g.drawLine(10, 30, 30, 30);
-			GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+			JGraphicsUtil.switchToWidth(g, Wire.WIDTH);
 
 			g.setColor(gate1);
 			g.drawLine(20, 9, 20, 0);
-			GraphicsUtil.switchToWidth(g, 1);
+			JGraphicsUtil.switchToWidth(g, 1);
 			g.drawLine(10, 10, 30, 10);
 
 			g.setColor(platform);

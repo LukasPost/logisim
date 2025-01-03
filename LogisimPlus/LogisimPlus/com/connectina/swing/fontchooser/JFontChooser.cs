@@ -133,8 +133,8 @@ namespace com.connectina.swing.fontchooser
 		/// <param name="parent">      the parent <code>JFrame</code> for the dialog </param>
 		/// <param name="initialFont"> the initial Font set when the FontChooser is shown </param>
 		/// <returns> the selected Font or <code>null</code> if the user opted out </returns>
-		/// <exception cref="HeadlessException"> if GraphicsEnvironment.isHeadless() returns true. </exception>
-		/// <seealso cref="java.awt.GraphicsEnvironment.isHeadless"/>
+		/// <exception cref="HeadlessException"> if JGraphicsEnvironment.isHeadless() returns true. </exception>
+		/// <seealso cref="java.awt.JGraphicsEnvironment.isHeadless"/>
 // JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in C#:
 // ORIGINAL LINE: public static java.awt.Font showDialog(java.awt.Window parent, java.awt.Font initialFont) throws java.awt.HeadlessException
 		public static Font showDialog(Window parent, Font initialFont)
@@ -162,8 +162,8 @@ namespace com.connectina.swing.fontchooser
 		/// <param name="fontChooser"> the FontChooser to be use in this dialog </param>
 		/// <param name="initialFont"> the initial Font set when the FontChooser is shown </param>
 		/// <returns> the selected Font or <code>null</code> if the user opted out </returns>
-		/// <exception cref="HeadlessException"> if GraphicsEnvironment.isHeadless() returns true. </exception>
-		/// <seealso cref="java.awt.GraphicsEnvironment.isHeadless"/>
+		/// <exception cref="HeadlessException"> if JGraphicsEnvironment.isHeadless() returns true. </exception>
+		/// <seealso cref="java.awt.JGraphicsEnvironment.isHeadless"/>
 // JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in C#:
 // ORIGINAL LINE: public static java.awt.Font showDialog(java.awt.Window parent, JFontChooser fontChooser, java.awt.Font initialFont) throws java.awt.HeadlessException
 		public static Font showDialog(Window parent, JFontChooser fontChooser, Font initialFont)
@@ -189,8 +189,8 @@ namespace com.connectina.swing.fontchooser
 		/// <param name="chooserPane"> the Font-chooser to be placed inside the dialog </param>
 		/// <param name="okListener">  the ActionListener invoked when "OK" is pressed </param>
 		/// <returns> a new dialog containing the FontChooser pane </returns>
-		/// <exception cref="HeadlessException"> if GraphicsEnvironment.isHeadless() returns true. </exception>
-		/// <seealso cref="java.awt.GraphicsEnvironment.isHeadless"/>
+		/// <exception cref="HeadlessException"> if JGraphicsEnvironment.isHeadless() returns true. </exception>
+		/// <seealso cref="java.awt.JGraphicsEnvironment.isHeadless"/>
 // JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in C#:
 // ORIGINAL LINE: public static javax.swing.JDialog createDialog(java.awt.Window parent, boolean modal, JFontChooser chooserPane, java.awt.event.ActionListener okListener) throws java.awt.HeadlessException
 		public static JDialog createDialog(Window parent, bool modal, JFontChooser chooserPane, ActionListener okListener)

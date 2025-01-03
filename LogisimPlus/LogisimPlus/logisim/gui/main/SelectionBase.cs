@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 using System.Collections.Generic;
 
@@ -34,7 +35,7 @@ namespace logisim.gui.main
 			unionSet = CollectionUtil.createUnmodifiableSetUnion(selected, lifted);
 		}
 
-		internal static readonly ISet<Component> NO_COMPONENTS = Collections.emptySet();
+		internal static readonly HashSet<Component> NO_COMPONENTS = Collections.emptySet();
 
 		internal Project proj;
 		private List<Selection.Listener> listeners = new List<Selection.Listener>();
@@ -42,7 +43,7 @@ namespace logisim.gui.main
 		internal readonly HashSet<Component> selected = new HashSet<Component>(); // of selected Components in circuit
 		internal readonly HashSet<Component> lifted = new HashSet<Component>(); // of selected Components removed
 		internal readonly HashSet<Component> suppressHandles = new HashSet<Component>(); // of Components
-		internal ISet<Component> unionSet;
+		internal HashSet<Component> unionSet;
 
 		private Bounds bounds = Bounds.EMPTY_BOUNDS;
 // JAVA TO C# CONVERTER NOTE: Field name conflicts with a method name of the current type:
@@ -97,7 +98,7 @@ namespace logisim.gui.main
 			}
 		}
 
-		public virtual Bounds getBounds(Graphics g)
+		public virtual Bounds getBounds(JGraphics g)
 		{
 			IEnumerator<Component> it = unionSet.GetEnumerator();
 // JAVA TO C# CONVERTER TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
@@ -235,7 +236,7 @@ namespace logisim.gui.main
 		{
 			clear(xn);
 
-			IDictionary<Component, Component> newLifted = copyComponents(comps);
+			Dictionary<Component, Component> newLifted = copyComponents(comps);
 			lifted.addAll(newLifted.Values);
 			fireSelectionChanged();
 		}
@@ -253,13 +254,13 @@ namespace logisim.gui.main
 
 		internal virtual void translateHelper(CircuitMutation xn, int dx, int dy)
 		{
-			IDictionary<Component, Component> selectedAfter = copyComponents(selected, dx, dy);
+			Dictionary<Component, Component> selectedAfter = copyComponents(selected, dx, dy);
 			foreach (KeyValuePair<Component, Component> entry in selectedAfter.SetOfKeyValuePairs())
 			{
 				xn.replace(entry.Key, entry.Value);
 			}
 
-			IDictionary<Component, Component> liftedAfter = copyComponents(lifted, dx, dy);
+			Dictionary<Component, Component> liftedAfter = copyComponents(lifted, dx, dy);
 			lifted.Clear();
 			foreach (KeyValuePair<Component, Component> entry in liftedAfter.SetOfKeyValuePairs())
 			{

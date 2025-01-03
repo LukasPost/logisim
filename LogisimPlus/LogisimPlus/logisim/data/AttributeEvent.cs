@@ -14,12 +14,12 @@ namespace logisim.data
 		private AttributeSet source;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private Attribute<?> attr;
-		private Attribute<object> attr;
+		private Attribute attr;
 		private object value;
 
 // JAVA TO C# CONVERTER TASK: Wildcard generics in constructor parameters are not converted. Move the generic type parameter and constraint to the class header:
 // ORIGINAL LINE: public AttributeEvent(AttributeSet source, Attribute<?> attr, Object value)
-		public AttributeEvent(AttributeSet source, Attribute<T1> attr, object value)
+		public AttributeEvent(AttributeSet source, Attribute attr, object value)
 		{
 			this.source = source;
 			this.attr = attr;
@@ -32,7 +32,7 @@ namespace logisim.data
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public Attribute<?> getAttribute()
-		public virtual Attribute<object> Attribute
+		public virtual Attribute Attribute
 		{
 			get
 			{

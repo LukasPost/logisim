@@ -24,7 +24,7 @@ namespace gray
 		/// general concept than components; practically speaking, though, you'll most often want to create AddTools for new
 		/// components that can be added into the circuit.
 		/// </summary>
-		private IList<AddTool> tools;
+		private List<AddTool> tools;
 
 		/// <summary>
 		/// Constructs an instance of this library. This constructor is how Logisim accesses first when it opens the JAR
@@ -52,7 +52,7 @@ namespace gray
 
 		/// <summary>
 		/// Returns a list of all the tools available in this library. </summary>
-		public override IList<AddTool> Tools
+		public override List<AddTool> Tools
 		{
 			get
 			{

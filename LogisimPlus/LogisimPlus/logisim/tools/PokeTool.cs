@@ -26,11 +26,12 @@ namespace logisim.tools
 	using AppPreferences = logisim.prefs.AppPreferences;
 	using Project = logisim.proj.Project;
 	using Icons = logisim.util.Icons;
+    using LogisimPlus.Java;
 
-	public class PokeTool : Tool
+    public class PokeTool : Tool
 	{
 		private static readonly Icon toolIcon = Icons.getIcon("poke.gif");
-		private static readonly Color caretColor = new Color(255, 255, 150);
+		private static readonly Color caretColor = Color.FromArgb(255, 255, 255, 150);
 
 		private class WireCaret : AbstractCaret
 		{
@@ -47,7 +48,7 @@ namespace logisim.tools
 				this.y = y;
 			}
 
-			public override void draw(Graphics g)
+			public override void draw(JGraphics g)
 			{
 				Value v = canvas.CircuitState.getValue(wire.End0);
 				RadixOption radix1 = RadixOption.decode(AppPreferences.POKE_WIRE_RADIX1.get());
@@ -65,7 +66,7 @@ namespace logisim.tools
 				FontMetrics fm = g.getFontMetrics();
 				g.setColor(caretColor);
 				g.fillRect(x + 2, y + 2, fm.stringWidth(vStr) + 4, fm.getAscent() + fm.getDescent() + 4);
-				g.setColor(Color.BLACK);
+				g.setColor(Color.Black);
 				g.drawRect(x + 2, y + 2, fm.stringWidth(vStr) + 4, fm.getAscent() + fm.getDescent() + 4);
 				g.fillOval(x - 2, y - 2, 5, 5);
 				g.drawString(vStr, x + 4, y + 4 + fm.getAscent());
@@ -184,7 +185,7 @@ namespace logisim.tools
 			canvas.HighlightedWires = WireSet.EMPTY;
 		}
 
-		public override void mousePressed(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mousePressed(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			int x = e.getX();
 			int y = e.getY();
@@ -241,7 +242,7 @@ namespace logisim.tools
 			}
 		}
 
-		public override void mouseDragged(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseDragged(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			if (pokeCaret != null)
 			{
@@ -250,7 +251,7 @@ namespace logisim.tools
 			}
 		}
 
-		public override void mouseReleased(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseReleased(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			if (pokeCaret != null)
 			{
@@ -288,14 +289,14 @@ namespace logisim.tools
 
 		public override void paintIcon(ComponentDrawContext c, int x, int y)
 		{
-			Graphics g = c.Graphics;
+			JGraphics g = c.Graphics;
 			if (toolIcon != null)
 			{
 				toolIcon.paintIcon(c.Destination, g, x + 2, y + 2);
 			}
 			else
 			{
-				g.setColor(Color.black);
+				g.setColor(Color.Black);
 				g.drawLine(x + 4, y + 2, x + 4, y + 17);
 				g.drawLine(x + 4, y + 17, x + 1, y + 11);
 				g.drawLine(x + 4, y + 17, x + 7, y + 11);

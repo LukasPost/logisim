@@ -169,7 +169,7 @@ namespace hex
 			return ret;
 		}
 
-		internal virtual void ensureComputed(Graphics g)
+		internal virtual void ensureComputed(JGraphics g)
 		{
 			if (guessed || cellWidth < 0)
 			{
@@ -179,7 +179,7 @@ namespace hex
 
 		internal virtual void recompute()
 		{
-			computeCellSize(hex.getGraphics());
+			computeCellSize(hex.getJGraphics());
 		}
 
 		internal virtual void widthChanged()
@@ -221,7 +221,7 @@ namespace hex
 			}
 		}
 
-		private void computeCellSize(Graphics g)
+		private void computeCellSize(JGraphics g)
 		{
 			HexModel model = hex.Model;
 
@@ -305,10 +305,10 @@ namespace hex
 
 			// update preferred size
 			Size pref = hex.getPreferredSize();
-			if (pref.width != width || pref.height != height)
+			if (pref.Width != width || pref.Height != height)
 			{
-				pref.width = width;
-				pref.height = (int) height;
+				pref.Width = width;
+				pref.Height = (int) height;
 				hex.setPreferredSize(pref);
 				hex.revalidate();
 			}

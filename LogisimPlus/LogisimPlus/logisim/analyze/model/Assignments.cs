@@ -15,7 +15,7 @@ namespace logisim.analyze.model
 
 	internal class Assignments
 	{
-		private IDictionary<string, bool> map = new Dictionary<string, bool>();
+		private Dictionary<string, bool> map = new Dictionary<string, bool>();
 
 		public Assignments()
 		{

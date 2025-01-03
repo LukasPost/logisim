@@ -29,18 +29,18 @@ namespace logisim.std.gates
 		internal static readonly AttributeOption SIZE_NARROW = new AttributeOption(Convert.ToInt32(30), Strings.getter("gateSizeNarrowOpt"));
 		internal static readonly AttributeOption SIZE_MEDIUM = new AttributeOption(Convert.ToInt32(50), Strings.getter("gateSizeNormalOpt"));
 		internal static readonly AttributeOption SIZE_WIDE = new AttributeOption(Convert.ToInt32(70), Strings.getter("gateSizeWideOpt"));
-		public static readonly Attribute<AttributeOption> ATTR_SIZE = Attributes.forOption("size", Strings.getter("gateSizeAttr"), new AttributeOption[] {SIZE_NARROW, SIZE_MEDIUM, SIZE_WIDE});
+		public static readonly Attribute ATTR_SIZE = data.Attributes.forOption("size", Strings.getter("gateSizeAttr"), new AttributeOption[] {SIZE_NARROW, SIZE_MEDIUM, SIZE_WIDE});
 
-		public static readonly Attribute<int> ATTR_INPUTS = Attributes.forIntegerRange("inputs", Strings.getter("gateInputsAttr"), 2, MAX_INPUTS);
+		public static readonly Attribute ATTR_INPUTS = data.Attributes.forIntegerRange("inputs", Strings.getter("gateInputsAttr"), 2, MAX_INPUTS);
 
 		internal static readonly AttributeOption XOR_ONE = new AttributeOption("1", Strings.getter("xorBehaviorOne"));
 		internal static readonly AttributeOption XOR_ODD = new AttributeOption("odd", Strings.getter("xorBehaviorOdd"));
-		public static readonly Attribute<AttributeOption> ATTR_XOR = Attributes.forOption("xor", Strings.getter("xorBehaviorAttr"), new AttributeOption[] {XOR_ONE, XOR_ODD});
+		public static readonly Attribute ATTR_XOR = data.Attributes.forOption("xor", Strings.getter("xorBehaviorAttr"), new AttributeOption[] {XOR_ONE, XOR_ODD});
 
 		internal static readonly AttributeOption OUTPUT_01 = new AttributeOption("01", Strings.getter("gateOutput01"));
 		internal static readonly AttributeOption OUTPUT_0Z = new AttributeOption("0Z", Strings.getter("gateOutput0Z"));
 		internal static readonly AttributeOption OUTPUT_Z1 = new AttributeOption("Z1", Strings.getter("gateOutputZ1"));
-		public static readonly Attribute<AttributeOption> ATTR_OUTPUT = Attributes.forOption("out", Strings.getter("gateOutputAttr"), new AttributeOption[] {OUTPUT_01, OUTPUT_0Z, OUTPUT_Z1});
+		public static readonly Attribute ATTR_OUTPUT = data.Attributes.forOption("out", Strings.getter("gateOutputAttr"), new AttributeOption[] {OUTPUT_01, OUTPUT_0Z, OUTPUT_Z1});
 
 		internal Direction facing = Direction.East;
 		internal BitWidth width = BitWidth.ONE;
@@ -64,7 +64,7 @@ namespace logisim.std.gates
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
@@ -74,52 +74,52 @@ namespace logisim.std.gates
 
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
 // ORIGINAL LINE: @Override @SuppressWarnings("unchecked") public <V> V getValue(logisim.data.Attribute<V> attr)
-		public override V getValue<V>(Attribute<V> attr)
+		public override object getValue(Attribute attr)
 		{
 			if (attr == StdAttr.FACING)
 			{
-				return (V) facing;
+				return facing;
 			}
-			if (attr == StdAttr.WIDTH)
+			if (attr == StdAttr.Width)
 			{
-				return (V) width;
+				return width;
 			}
 			if (attr == StdAttr.LABEL)
 			{
-				return (V) label;
+				return label;
 			}
 			if (attr == StdAttr.LABEL_FONT)
 			{
-				return (V) labelFont;
+				return labelFont;
 			}
 			if (attr == ATTR_SIZE)
 			{
-				return (V) size;
+				return size;
 			}
 			if (attr == ATTR_INPUTS)
 			{
-				return (V) Convert.ToInt32(inputs);
+				return Convert.ToInt32(inputs);
 			}
 			if (attr == ATTR_OUTPUT)
 			{
-				return (V) @out;
+				return @out;
 			}
 			if (attr == ATTR_XOR)
 			{
-				return (V) xorBehave;
+				return xorBehave;
 			}
 			if (attr is NegateAttribute)
 			{
 				int index = ((NegateAttribute) attr).index;
 				int bit = (negated >> index) & 1;
-				return (V) Convert.ToBoolean(bit == 1);
+				return Convert.ToBoolean(bit == 1);
 			}
 			return null;
 		}
 
-		public override void setValue<V>(Attribute<V> attr, V value)
+		public override void setValue(Attribute attr, object value)
 		{
-			if (attr == StdAttr.WIDTH)
+			if (attr == StdAttr.Width)
 			{
 				width = (BitWidth) value;
 				int bits = width.Width;
@@ -155,9 +155,9 @@ namespace logisim.std.gates
 			{
 				@out = (AttributeOption) value;
 			}
-			else if (attr is NegateAttribute)
+			else if (attr is NegateAttribute na)
 			{
-				int index = ((NegateAttribute) attr).index;
+				int index = na.index;
 				if (((bool?) value).Value)
 				{
 					negated |= 1 << index;

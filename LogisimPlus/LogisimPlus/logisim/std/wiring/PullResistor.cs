@@ -26,12 +26,13 @@ namespace logisim.std.wiring
 	using Port = logisim.instance.Port;
 	using StdAttr = logisim.instance.StdAttr;
 	using AppPreferences = logisim.prefs.AppPreferences;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using Icons = logisim.util.Icons;
+    using LogisimPlus.Java;
 
-	public class PullResistor : InstanceFactory
+    public class PullResistor : InstanceFactory
 	{
-		public static readonly Attribute<AttributeOption> ATTR_PULL_TYPE = Attributes.forOption("pull", Strings.getter("pullTypeAttr"), new AttributeOption[]
+		public static readonly Attribute ATTR_PULL_TYPE = Attributes.forOption("pull", Strings.getter("pullTypeAttr"), new AttributeOption[]
 		{
 			new AttributeOption(Value.FALSE, "0", Strings.getter("pullZeroType")),
 			new AttributeOption(Value.TRUE, "1", Strings.getter("pullOneType")),
@@ -51,7 +52,7 @@ namespace logisim.std.wiring
 
 		public override Bounds getOffsetBounds(AttributeSet attrs)
 		{
-			Direction facing = attrs.getValue(StdAttr.FACING);
+			Direction facing = (Direction)attrs.getValue(StdAttr.FACING);
 			if (facing == Direction.East)
 			{
 				return Bounds.create(-42, -6, 42, 12);
@@ -71,7 +72,7 @@ namespace logisim.std.wiring
 		}
 
 		//
-		// graphics methods
+		// JGraphics methods
 		//
 		public override void paintIcon(InstancePainter painter)
 		{
@@ -98,7 +99,7 @@ namespace logisim.std.wiring
 			Location loc = painter.Location;
 			int x = loc.X;
 			int y = loc.Y;
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			g.translate(x, y);
 			Value pull = getPullValue(painter.AttributeSet);
 			Value actual = painter.getPort(0);
@@ -110,40 +111,37 @@ namespace logisim.std.wiring
 		private void paintBase(InstancePainter painter, Value pullValue, Color inColor, Color outColor)
 		{
 			bool color = painter.shouldDrawColor();
-			Direction facing = painter.getAttributeValue(StdAttr.FACING);
-			Graphics g = painter.Graphics;
+			Direction facing = (Direction)painter.getAttributeValue(StdAttr.FACING);
+			JGraphics g = painter.Graphics;
 			Color baseColor = g.getColor();
-			GraphicsUtil.switchToWidth(g, 3);
+			JGraphicsUtil.switchToWidth(g, 3);
 			if (color && inColor != null)
 			{
 				g.setColor(inColor);
 			}
 			if (facing == Direction.East)
 			{
-				GraphicsUtil.drawText(g, pullValue.toDisplayString(), -32, 0, GraphicsUtil.H_RIGHT, GraphicsUtil.V_CENTER);
+				JGraphicsUtil.drawText(g, pullValue.toDisplayString(), -32, 0, JGraphicsUtil.H_RIGHT, JGraphicsUtil.V_CENTER);
 			}
 			else if (facing == Direction.West)
 			{
-				GraphicsUtil.drawText(g, pullValue.toDisplayString(), 32, 0, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+				JGraphicsUtil.drawText(g, pullValue.toDisplayString(), 32, 0, JGraphicsUtil.H_LEFT, JGraphicsUtil.V_CENTER);
 			}
 			else if (facing == Direction.North)
 			{
-				GraphicsUtil.drawText(g, pullValue.toDisplayString(), 0, 32, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+				JGraphicsUtil.drawText(g, pullValue.toDisplayString(), 0, 32, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_TOP);
 			}
 			else
 			{
-				GraphicsUtil.drawText(g, pullValue.toDisplayString(), 0, -32, GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
+				JGraphicsUtil.drawText(g, pullValue.toDisplayString(), 0, -32, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_BASELINE);
 			}
 
 			double rotate = 0.0;
-			if (g is Graphics2D)
-			{
 				rotate = Direction.South.toRadians() - facing.toRadians();
 				if (rotate != 0.0)
 				{
-					((Graphics2D) g).rotate(rotate);
+					g.rotate(rotate);
 				}
-			}
 			g.drawLine(0, -30, 0, -26);
 			g.drawLine(-6, -30, 6, -30);
 			if (color && outColor != null)
@@ -152,7 +150,7 @@ namespace logisim.std.wiring
 			}
 			g.drawLine(0, -4, 0, 0);
 			g.setColor(baseColor);
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphicsUtil.switchToWidth(g, 2);
 			if (painter.GateShape == AppPreferences.SHAPE_SHAPED)
 			{
 				int[] xp = new int[] {0, -5, 5, -5, 5, -5, 0};
@@ -165,7 +163,7 @@ namespace logisim.std.wiring
 			}
 			if (rotate != 0.0)
 			{
-				((Graphics2D) g).rotate(-rotate);
+				g.rotate(-rotate);
 			}
 		}
 
@@ -175,10 +173,10 @@ namespace logisim.std.wiring
 		protected internal override void configureNewInstance(Instance instance)
 		{
 			instance.addAttributeListener();
-			instance.setPorts(new Port[] {new Port(0, 0, Port.INOUT, BitWidth.UNKNOWN)});
+			instance.Ports = new Port[] { new Port(0, 0, Port.INOUT, BitWidth.UNKNOWN) };
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == StdAttr.FACING)
 			{
@@ -202,7 +200,7 @@ namespace logisim.std.wiring
 
 		private static Value getPullValue(AttributeSet attrs)
 		{
-			AttributeOption opt = attrs.getValue(ATTR_PULL_TYPE);
+			AttributeOption opt = (AttributeOption)attrs.getValue(ATTR_PULL_TYPE);
 			return (Value) opt.Value;
 		}
 	}

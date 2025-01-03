@@ -42,10 +42,10 @@ namespace logisim.tools.move
 			List<ConnectionData> impossible = pruneImpossible(baseConnects, gesture.FixedAvoidanceMap, dx, dy);
 
 			AvoidanceMap selAvoid = AvoidanceMap.create(gesture.Selected, dx, dy);
-			Dictionary<ConnectionData, ISet<Location>> pathLocs;
-			pathLocs = new Dictionary<ConnectionData, ISet<Location>>();
-			Dictionary<ConnectionData, IList<SearchNode>> initNodes;
-			initNodes = new Dictionary<ConnectionData, IList<SearchNode>>();
+			Dictionary<ConnectionData, HashSet<Location>> pathLocs;
+			pathLocs = new Dictionary<ConnectionData, HashSet<Location>>();
+			Dictionary<ConnectionData, List<SearchNode>> initNodes;
+			initNodes = new Dictionary<ConnectionData, List<SearchNode>>();
 			foreach (ConnectionData conn in baseConnects)
 			{
 				HashSet<Location> connLocs = new HashSet<Location>();
@@ -261,7 +261,7 @@ namespace logisim.tools.move
 			}
 		}
 
-		private static MoveResult tryList(MoveRequest req, MoveGesture gesture, List<ConnectionData> connects, int dx, int dy, Dictionary<ConnectionData, ISet<Location>> pathLocs, Dictionary<ConnectionData, IList<SearchNode>> initNodes, long stopTime)
+		private static MoveResult tryList(MoveRequest req, MoveGesture gesture, List<ConnectionData> connects, int dx, int dy, Dictionary<ConnectionData, HashSet<Location>> pathLocs, Dictionary<ConnectionData, List<SearchNode>> initNodes, long stopTime)
 		{
 			AvoidanceMap avoid = gesture.FixedAvoidanceMap.cloneMap();
 			avoid.markAll(gesture.Selected, dx, dy);
@@ -280,8 +280,8 @@ namespace logisim.tools.move
 					unconnected.Add(conn);
 					continue;
 				}
-				IList<SearchNode> connNodes = initNodes[conn];
-				ISet<Location> connPathLocs = pathLocs[conn];
+				List<SearchNode> connNodes = initNodes[conn];
+				HashSet<Location> connPathLocs = pathLocs[conn];
 				SearchNode n = findShortestPath(connNodes, connPathLocs, avoid);
 				if (n != null)
 				{ // normal case - a path was found
@@ -301,7 +301,7 @@ namespace logisim.tools.move
 			return new MoveResult(req, replacements, unconnected, totalDistance);
 		}
 
-		private static SearchNode findShortestPath(IList<SearchNode> nodes, ISet<Location> pathLocs, AvoidanceMap avoid)
+		private static SearchNode findShortestPath(List<SearchNode> nodes, HashSet<Location> pathLocs, AvoidanceMap avoid)
 		{
 			PriorityQueue<SearchNode> q = new PriorityQueue<SearchNode>(nodes);
 			HashSet<SearchNode> visited = new HashSet<SearchNode>();
@@ -430,7 +430,7 @@ namespace logisim.tools.move
 			return ret;
 		}
 
-		private static void processPath(List<Location> path, ConnectionData conn, AvoidanceMap avoid, ReplacementMap repl, ISet<Location> unmarkable)
+		private static void processPath(List<Location> path, ConnectionData conn, AvoidanceMap avoid, ReplacementMap repl, HashSet<Location> unmarkable)
 		{
 			IEnumerator<Location> pathIt = path.GetEnumerator();
 // JAVA TO C# CONVERTER TASK: Java iterators are only converted within the context of 'while' and 'for' loops:

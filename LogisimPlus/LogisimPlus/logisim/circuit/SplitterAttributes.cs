@@ -35,7 +35,7 @@ namespace logisim.circuit
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private static final java.util.List<logisim.data.Attribute<?>> INIT_ATTRIBUTES = java.util.Arrays.asList(new logisim.data.Attribute<?>[] { logisim.instance.StdAttr.FACING, ATTR_FANOUT, ATTR_WIDTH, ATTR_APPEARANCE});
-		private static readonly IList<Attribute> INIT_ATTRIBUTES = new List<Attribute> {StdAttr.FACING, ATTR_FANOUT, ATTR_WIDTH, ATTR_APPEARANCE};
+		private static readonly List<Attribute> INIT_ATTRIBUTES = new List<Attribute> {StdAttr.FACING, ATTR_FANOUT, ATTR_WIDTH, ATTR_APPEARANCE};
 
 		private const string unchosen_val = "none";
 
@@ -209,7 +209,7 @@ namespace logisim.circuit
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{

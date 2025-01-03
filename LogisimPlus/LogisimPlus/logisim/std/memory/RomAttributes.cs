@@ -22,7 +22,7 @@ namespace logisim.std.memory
 	{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private static java.util.List<logisim.data.Attribute<?>> ATTRIBUTES = java.util.Arrays.asList(new logisim.data.Attribute<?>[] { Mem.ADDR_ATTR, Mem.DATA_ATTR, Rom.CONTENTS_ATTR });
-		private static IList<Attribute<object>> ATTRIBUTES = new List<Attribute<object>> {Mem.ADDR_ATTR, Mem.DATA_ATTR, Rom.CONTENTS_ATTR};
+		private static List<Attribute> ATTRIBUTES = new List<Attribute> {Mem.ADDR_ATTR, Mem.DATA_ATTR, Rom.CONTENTS_ATTR};
 
 		private static WeakHashMap<MemContents, RomContentsListener> listenerRegistry = new WeakHashMap<MemContents, RomContentsListener>();
 		private static WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<MemContents, HexFrame>();
@@ -79,7 +79,7 @@ namespace logisim.std.memory
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
@@ -89,24 +89,24 @@ namespace logisim.std.memory
 
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
 // ORIGINAL LINE: @Override @SuppressWarnings("unchecked") public <V> V getValue(logisim.data.Attribute<V> attr)
-		public override V getValue<V>(Attribute<V> attr)
+		public override object getValue(Attribute attr)
 		{
 			if (attr == Mem.ADDR_ATTR)
 			{
-				return (V) addrBits;
+				return addrBits;
 			}
 			if (attr == Mem.DATA_ATTR)
 			{
-				return (V) dataBits;
+				return dataBits;
 			}
 			if (attr == Rom.CONTENTS_ATTR)
 			{
-				return (V) contents;
+				return contents;
 			}
 			return null;
 		}
 
-		public override void setValue<V>(Attribute<V> attr, V value)
+		public override void setValue(Attribute attr, object value)
 		{
 			if (attr == Mem.ADDR_ATTR)
 			{

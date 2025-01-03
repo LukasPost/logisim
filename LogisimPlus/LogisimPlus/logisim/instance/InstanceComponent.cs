@@ -41,11 +41,11 @@ namespace logisim.instance
 		private Instance instance;
 		private Location loc;
 		private Bounds bounds;
-		private IList<Port> portList;
+		private List<Port> portList;
 		private EndData[] endArray;
-		private IList<EndData> endList;
+		private List<EndData> endList;
 		private bool hasToolTips;
-		private HashSet<Attribute<BitWidth>> widthAttrs;
+		private HashSet<Attribute> widthAttrs;
 		private AttributeSet attrs;
 		private bool attrListenRequested;
 		private InstanceTextField textField;
@@ -69,7 +69,7 @@ namespace logisim.instance
 
 		private void computeEnds()
 		{
-			IList<Port> ports = portList;
+			List<Port> ports = portList;
 			EndData[] esOld = endArray;
 			int esOldLength = esOld == null ? 0 : esOld.Length;
 			EndData[] es = esOld;
@@ -82,7 +82,7 @@ namespace logisim.instance
 					Array.Copy(esOld, 0, es, 0, toCopy);
 				}
 			}
-			HashSet<Attribute<BitWidth>> wattrs = null;
+			HashSet<Attribute> wattrs = null;
 			bool toolTipFound = false;
 			List<EndData> endsChangedOld = new List<EndData>();
 			List<EndData> endsChangedNew = new List<EndData>();
@@ -108,12 +108,12 @@ namespace logisim.instance
 
 				if (p != null)
 				{
-					Attribute<BitWidth> attr = p.WidthAttribute;
+					Attribute attr = p.WidthAttribute;
 					if (attr != null)
 					{
 						if (wattrs == null)
 						{
-							wattrs = new HashSet<Attribute<BitWidth>>();
+							wattrs = new HashSet<Attribute>();
 						}
 						wattrs.Add(attr);
 					}
@@ -126,7 +126,7 @@ namespace logisim.instance
 			}
 			if (!attrListenRequested)
 			{
-				HashSet<Attribute<BitWidth>> oldWattrs = widthAttrs;
+				HashSet<Attribute> oldWattrs = widthAttrs;
 				if (wattrs == null && oldWattrs != null)
 				{
 					AttributeSet.removeAttributeListener(this);
@@ -277,7 +277,7 @@ namespace logisim.instance
 			}
 		}
 
-		public virtual Bounds getBounds(Graphics g)
+		public virtual Bounds getBounds(JGraphics g)
 		{
 			Bounds ret = bounds;
 			InstanceTextField field = textField;
@@ -295,7 +295,7 @@ namespace logisim.instance
 			return factory.contains(translated, instance.AttributeSet);
 		}
 
-		public virtual bool contains(Location pt, Graphics g)
+		public virtual bool contains(Location pt, JGraphics g)
 		{
 			InstanceTextField field = textField;
 			if (field != null && field.getBounds(g).contains(pt))
@@ -311,7 +311,7 @@ namespace logisim.instance
 		//
 		// propagation methods
 		//
-		public virtual IList<EndData> Ends
+		public virtual List<EndData> Ends
 		{
 			get
 			{
@@ -387,7 +387,7 @@ namespace logisim.instance
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?> attr = e.getAttribute();
-			Attribute<object> attr = e.Attribute;
+			Attribute attr = e.Attribute;
 			if (widthAttrs != null && widthAttrs.Contains(attr))
 			{
 				computeEnds();
@@ -413,7 +413,7 @@ namespace logisim.instance
 		//
 		// methods for Instance
 		//
-		internal virtual Instance Instance
+		internal virtual InstanceComponent Instance
 		{
 			get
 			{
@@ -421,7 +421,7 @@ namespace logisim.instance
 			}
 		}
 
-		internal virtual IList<Port> Ports
+		internal virtual List<Port> Ports
 		{
 			get
 			{
@@ -429,7 +429,7 @@ namespace logisim.instance
 			}
 			set
 			{
-				Port[] portsCopy = (logisim.instance.Port[])value.Clone();
+				Port[] portsCopy = value.ToArray();
 				portList = new UnmodifiableList<Port>(portsCopy);
 				computeEnds();
 			}
@@ -454,7 +454,7 @@ namespace logisim.instance
 			}
 		}
 
-		internal virtual void setTextField(Attribute<string> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign)
+		internal virtual void setTextField(Attribute labelAttr, Attribute fontAttr, int x, int y, int halign, int valign)
 		{
 			InstanceTextField field = textField;
 			if (field == null)

@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System.Collections.Generic;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -147,7 +148,7 @@ namespace logisim.tools
 			}
 		}
 
-		public override void mousePressed(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mousePressed(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			int x = e.getX();
 			int y = e.getY();
@@ -201,10 +202,10 @@ namespace logisim.tools
 
 		public override void paintIcon(ComponentDrawContext c, int x, int y)
 		{
-			Graphics g = c.Graphics;
+			JGraphics g = c.Graphics;
 			g.fillRect(x + 2, y + 1, 9, 2);
 			g.drawRect(x + 2, y + 3, 15, 12);
-			g.setColor(Color.lightGray);
+			g.setColor(Color.LightGray);
 			g.drawLine(x + 4, y + 2, x + 8, y + 2);
 			for (int y_offs = y + 6; y_offs < y + 15; y_offs += 3)
 			{

@@ -27,18 +27,18 @@ namespace logisim.std.memory
 		public CounterAttributes()
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
-// ORIGINAL LINE: super = logisim.data.AttributeSets.fixedSet(new logisim.data.Attribute<?>[] { logisim.instance.StdAttr.WIDTH, Counter.ATTR_MAX, Counter.ATTR_ON_GOAL, logisim.instance.StdAttr.EDGE_TRIGGER, logisim.instance.StdAttr.LABEL, logisim.instance.StdAttr.LABEL_FONT }, new Object[] { logisim.data.BitWidth.create(8), System.Convert.ToInt32(0xFF), Counter.ON_GOAL_WRAP, logisim.instance.StdAttr.TRIG_RISING, "", logisim.instance.StdAttr.DEFAULT_LABEL_FONT });
-			@base = AttributeSets.fixedSet(new Attribute<object>[] {StdAttr.WIDTH, Counter.ATTR_MAX, Counter.ATTR_ON_GOAL, StdAttr.EDGE_TRIGGER, StdAttr.LABEL, StdAttr.LABEL_FONT}, new object[] {BitWidth.create(8), Convert.ToInt32(0xFF), Counter.ON_GOAL_WRAP, StdAttr.TRIG_RISING, "", StdAttr.DEFAULT_LABEL_FONT});
+// ORIGINAL LINE: super = logisim.data.AttributeSets.fixedSet(new logisim.data.Attribute<?>[] { logisim.instance.StdAttr.Width, Counter.ATTR_MAX, Counter.ATTR_ON_GOAL, logisim.instance.StdAttr.EDGE_TRIGGER, logisim.instance.StdAttr.LABEL, logisim.instance.StdAttr.LABEL_FONT }, new Object[] { logisim.data.BitWidth.create(8), System.Convert.ToInt32(0xFF), Counter.ON_GOAL_WRAP, logisim.instance.StdAttr.TRIG_RISING, "", logisim.instance.StdAttr.DEFAULT_LABEL_FONT });
+			@base = AttributeSets.fixedSet(new Attribute[] {StdAttr.Width, Counter.ATTR_MAX, Counter.ATTR_ON_GOAL, StdAttr.EDGE_TRIGGER, StdAttr.LABEL, StdAttr.LABEL_FONT}, new object[] {BitWidth.create(8), Convert.ToInt32(0xFF), Counter.ON_GOAL_WRAP, StdAttr.TRIG_RISING, "", StdAttr.DEFAULT_LABEL_FONT});
 		}
 
-		public override void copyInto(AbstractAttributeSet dest)
+		protected internal override void copyInto(AbstractAttributeSet dest)
 		{
 			((CounterAttributes) dest).@base = (AttributeSet) this.@base.clone();
 		}
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
@@ -46,12 +46,12 @@ namespace logisim.std.memory
 			}
 		}
 
-		public override V getValue<V>(Attribute<V> attr)
+		public override object getValue(Attribute attr)
 		{
 			return @base.getValue(attr);
 		}
 
-		public override void setValue<V>(Attribute<V> attr, V value)
+		public override void setValue(Attribute attr, object value)
 		{
 			object oldValue = @base.getValue(attr);
 			if (oldValue == null ? value == null : oldValue.Equals(value))
@@ -60,15 +60,15 @@ namespace logisim.std.memory
 			}
 
 			int? newMax = null;
-			if (attr == StdAttr.WIDTH)
+			if (attr == StdAttr.Width)
 			{
-				BitWidth oldWidth = @base.getValue(StdAttr.WIDTH);
+				BitWidth oldWidth = (BitWidth)@base.getValue(StdAttr.Width);
 				BitWidth newWidth = (BitWidth) value;
 				int oldW = oldWidth.Width;
 				int newW = newWidth.Width;
 				int? oldValObj = @base.getValue(Counter.ATTR_MAX);
 				int oldVal = oldValObj.Value;
-				@base.setValue(StdAttr.WIDTH, newWidth);
+				@base.setValue(StdAttr.Width, newWidth);
 				if (newW > oldW)
 				{
 					newMax = Convert.ToInt32(newWidth.Mask);
@@ -83,19 +83,18 @@ namespace logisim.std.memory
 						fireAttributeValueChanged(Counter.ATTR_MAX, newValObj);
 					}
 				}
-				fireAttributeValueChanged(StdAttr.WIDTH, newWidth);
+				fireAttributeValueChanged(StdAttr.Width, newWidth);
 			}
 			else if (attr == Counter.ATTR_MAX)
 			{
 				int oldVal = ((int?) value).Value;
-				BitWidth width = @base.getValue(StdAttr.WIDTH);
+				BitWidth width = (BitWidth)@base.getValue(StdAttr.Width);
 				int newVal = oldVal & width.Mask;
 				if (newVal != oldVal)
 				{
-// JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") V val = (V) System.Convert.ToInt32(newVal);
-					V val = (V) Convert.ToInt32(newVal);
-					value = val;
+                    // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
+                    // ORIGINAL LINE: @SuppressWarnings("unchecked") V val = (V) System.Convert.ToInt32(newVal);
+                    value = Convert.ToInt32(newVal);
 				}
 				fireAttributeValueChanged(attr, value);
 			}
@@ -107,24 +106,24 @@ namespace logisim.std.memory
 			}
 		}
 
-		public override bool containsAttribute<T1>(Attribute<T1> attr)
+		public override bool containsAttribute(Attribute attr)
 		{
 			return @base.containsAttribute(attr);
 		}
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public logisim.data.Attribute<?> getAttribute(String name)
-		public override Attribute<object> getAttribute(string name)
+		public override Attribute getAttribute(string name)
 		{
 			return @base.getAttribute(name);
 		}
 
-		public override bool isReadOnly<T1>(Attribute<T1> attr)
+		public override bool isReadOnly(Attribute attr)
 		{
 			return @base.isReadOnly(attr);
 		}
 
-		public override void setReadOnly<T1>(Attribute<T1> attr, bool value)
+		public override void setReadOnly(Attribute attr, bool value)
 		{
 			@base.setReadOnly(attr, value);
 		}

@@ -30,7 +30,7 @@ namespace draw.shapes
 	{
 		private EditableLabel label;
 
-		public Text(int x, int y, string text) : this(x, y, EditableLabel.LEFT, EditableLabel.BASELINE, text, DrawAttr.DEFAULT_FONT, Color.BLACK)
+		public Text(int x, int y, string text) : this(x, y, EditableLabel.LEFT, EditableLabel.BASELINE, text, DrawAttr.DEFAULT_FONT, Color.Black)
 		{
 		}
 
@@ -111,7 +111,7 @@ namespace draw.shapes
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
@@ -121,15 +121,15 @@ namespace draw.shapes
 
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
 // ORIGINAL LINE: @Override @SuppressWarnings("unchecked") public <V> V getValue(logisim.data.Attribute<V> attr)
-		public virtual V getValue<V>(Attribute<V> attr)
+		public virtual object getValue(Attribute attr)
 		{
 			if (attr == DrawAttr.FONT)
 			{
-				return (V) label.Font;
+				return label.Font;
 			}
 			else if (attr == DrawAttr.FILL_COLOR)
 			{
-				return (V) label.Color;
+				return label.Color;
 			}
 			else if (attr == DrawAttr.ALIGNMENT)
 			{
@@ -147,7 +147,7 @@ namespace draw.shapes
 				{
 					h = DrawAttr.ALIGN_CENTER;
 				}
-				return (V) h;
+				return h;
 			}
 			else
 			{
@@ -155,7 +155,7 @@ namespace draw.shapes
 			}
 		}
 
-		public override void updateValue<T1>(Attribute<T1> attr, object value)
+        protected internal override void updateValue(Attribute attr, object value)
 		{
 			if (attr == DrawAttr.FONT)
 			{
@@ -190,7 +190,7 @@ namespace draw.shapes
 			label.setLocation(label.X + dx, label.Y + dy);
 		}
 
-		public virtual IList<Handle> Handles
+		public virtual List<Handle> Handles
 		{
 			get
 			{
@@ -209,12 +209,12 @@ namespace draw.shapes
 			}
 		}
 
-		public override IList<Handle> getHandles(HandleGesture gesture)
+		public override List<Handle> getHandles(HandleGesture gesture)
 		{
 			return Handles;
 		}
 
-		public override void paint(Graphics g, HandleGesture gesture)
+		public override void paint(JGraphics g, HandleGesture gesture)
 		{
 			label.paint(g);
 		}

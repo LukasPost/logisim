@@ -26,7 +26,7 @@ namespace logisim.data
 
 		public override bool Equals(object other_obj)
 		{
-			return other_obj is Size other && width == other.width && height == other.height;
+			return other_obj is Size other && width == other.Width && height == other.Height;
 		}
 
 		public override string ToString()

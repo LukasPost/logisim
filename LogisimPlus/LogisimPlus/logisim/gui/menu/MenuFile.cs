@@ -17,8 +17,9 @@ namespace logisim.gui.menu
 	using Project = logisim.proj.Project;
 	using ProjectActions = logisim.proj.ProjectActions;
 	using MacCompatibility = logisim.util.MacCompatibility;
+    using LogisimPlus.Java;
 
-	internal class MenuFile : Menu, ActionListener
+    internal class MenuFile : Menu, ActionListener
 	{
 		private bool instanceFieldsInitialized = false;
 

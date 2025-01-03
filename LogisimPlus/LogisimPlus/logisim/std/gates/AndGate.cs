@@ -15,9 +15,10 @@ namespace logisim.std.gates
 	using Value = logisim.data.Value;
 	using InstancePainter = logisim.instance.InstancePainter;
 	using InstanceState = logisim.instance.InstanceState;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
+    using LogisimPlus.Java;
 
-	internal class AndGate : AbstractGate
+    internal class AndGate : AbstractGate
 	{
 		public static AndGate FACTORY = new AndGate();
 
@@ -29,11 +30,11 @@ namespace logisim.std.gates
 
 		protected internal override void paintIconShaped(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			int[] xp = new int[] {10, 2, 2, 10};
 			int[] yp = new int[] {2, 2, 18, 18};
 			g.drawPolyline(xp, yp, 4);
-			GraphicsUtil.drawCenteredArc(g, 10, 10, 8, -90, 180);
+			JGraphicsUtil.drawCenteredArc(g, 10, 10, 8, -90, 180);
 		}
 
 		protected internal override void paintShape(InstancePainter painter, int width, int height)

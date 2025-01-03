@@ -45,7 +45,7 @@ namespace draw.shapes
 			this.y1 = y1;
 			bounds = Bounds.create(x0, y0, 0, 0).add(x1, y1);
 			strokeWidth = 1;
-			strokeColor = Color.BLACK;
+			strokeColor = Color.Black;
 		}
 
 		public override bool matches(CanvasObject other)
@@ -101,7 +101,7 @@ namespace draw.shapes
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
@@ -111,15 +111,15 @@ namespace draw.shapes
 
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
 // ORIGINAL LINE: @Override @SuppressWarnings("unchecked") public <V> V getValue(logisim.data.Attribute<V> attr)
-		public virtual V getValue<V>(Attribute<V> attr)
+		public override object getValue(Attribute attr)
 		{
 			if (attr == DrawAttr.STROKE_COLOR)
 			{
-				return (V) strokeColor;
+				return strokeColor;
 			}
 			else if (attr == DrawAttr.STROKE_WIDTH)
 			{
-				return (V) Convert.ToInt32(strokeWidth);
+				return Convert.ToInt32(strokeWidth);
 			}
 			else
 			{
@@ -127,7 +127,7 @@ namespace draw.shapes
 			}
 		}
 
-		public override void updateValue<T1>(Attribute<T1> attr, object value)
+        protected internal override void updateValue(Attribute attr, object value)
 		{
 			if (attr == DrawAttr.STROKE_COLOR)
 			{
@@ -178,7 +178,7 @@ namespace draw.shapes
 			y1 += dy;
 		}
 
-		public virtual IList<Handle> Handles
+		public virtual List<Handle> Handles
 		{
 			get
 			{
@@ -186,7 +186,7 @@ namespace draw.shapes
 			}
 		}
 
-		public override IList<Handle> getHandles(HandleGesture gesture)
+		public override List<Handle> getHandles(HandleGesture gesture)
 		{
 			if (gesture == null)
 			{
@@ -235,7 +235,7 @@ namespace draw.shapes
 			return ret;
 		}
 
-		public override void paint(Graphics g, HandleGesture gesture)
+		public override void paint(JGraphics g, HandleGesture gesture)
 		{
 			if (setForStroke(g))
 			{

@@ -9,8 +9,8 @@
 
 namespace logisim.std.memory
 {
-
-	using Bounds = logisim.data.Bounds;
+    using LogisimPlus.Java;
+    using Bounds = logisim.data.Bounds;
 	using InstancePainter = logisim.instance.InstancePainter;
 	using InstancePoker = logisim.instance.InstancePoker;
 	using InstanceState = logisim.instance.InstanceState;
@@ -85,10 +85,10 @@ namespace logisim.std.memory
 			public override void paint(InstancePainter painter)
 			{
 				Bounds bds = getBounds(painter);
-				Graphics g = painter.Graphics;
-				g.setColor(Color.RED);
+				JGraphics g = painter.Graphics;
+				g.setColor(Color.Red);
 				g.drawRect(bds.X, bds.Y, bds.Width, bds.Height);
-				g.setColor(Color.BLACK);
+				g.setColor(Color.Black);
 			}
 
 			public override void stopEditing(InstanceState state)
@@ -145,10 +145,10 @@ namespace logisim.std.memory
 			public override void paint(InstancePainter painter)
 			{
 				Bounds bds = getBounds(painter);
-				Graphics g = painter.Graphics;
-				g.setColor(Color.RED);
+				JGraphics g = painter.Graphics;
+				g.setColor(Color.Red);
 				g.drawRect(bds.X, bds.Y, bds.Width, bds.Height);
-				g.setColor(Color.BLACK);
+				g.setColor(Color.Black);
 			}
 
 			public override void keyTyped(InstanceState state, KeyEvent e)

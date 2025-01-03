@@ -16,7 +16,7 @@ namespace logisim.std.wiring
 	using StringGetter = logisim.util.StringGetter;
 	using StringUtil = logisim.util.StringUtil;
 
-	public class DurationAttribute : Attribute<int>
+	public class DurationAttribute : Attribute
 	{
 		private int min;
 		private int max;

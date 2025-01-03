@@ -182,7 +182,7 @@ namespace logisim.gui.main
 				{
 					if (h != null)
 					{
-						h.raiseTop();
+						h.raHashSetop();
 					}
 				}
 				else if (src == LogisimMenuBar.LOWER_BOTTOM)
@@ -373,7 +373,7 @@ namespace logisim.gui.main
 				{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: java.util.List<?> tools = proj.getLogisimFile().getTools();
-					IList<object> tools = proj.LogisimFile.Tools;
+					List<object> tools = proj.LogisimFile.Tools;
 
 					canSetMain = proj.LogisimFile.MainCircuit != cur;
 					canMoveUp = curIndex > 0;

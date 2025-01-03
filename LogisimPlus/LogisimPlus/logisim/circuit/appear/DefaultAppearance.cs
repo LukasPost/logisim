@@ -65,7 +65,7 @@ namespace logisim.circuit.appear
 			}
 		}
 
-		internal static void sortPinList(IList<Instance> pins, Direction facing)
+		internal static void sortPinList(List<Instance> pins, Direction facing)
 		{
 			if (facing == Direction.North || facing == Direction.South)
 			{
@@ -79,10 +79,10 @@ namespace logisim.circuit.appear
 			}
 		}
 
-		public static IList<CanvasObject> build(ICollection<Instance> pins)
+		public static List<CanvasObject> build(ICollection<Instance> pins)
 		{
-			IDictionary<Direction, IList<Instance>> edge;
-			edge = new Dictionary<Direction, IList<Instance>>();
+			Dictionary<Direction, List<Instance>> edge;
+			edge = new Dictionary<Direction, List<Instance>>();
 			edge[Direction.North] = new List<Instance>();
 			edge[Direction.South] = new List<Instance>();
 			edge[Direction.East] = new List<Instance>();
@@ -91,11 +91,11 @@ namespace logisim.circuit.appear
 			{
 				Direction pinFacing = pin.getAttributeValue(StdAttr.FACING);
 				Direction pinEdge = pinFacing.reverse();
-				IList<Instance> e = edge[pinEdge];
+				List<Instance> e = edge[pinEdge];
 				e.Add(pin);
 			}
 
-			foreach (KeyValuePair<Direction, IList<Instance>> entry in edge.SetOfKeyValuePairs())
+			foreach (KeyValuePair<Direction, List<Instance>> entry in edge.SetOfKeyValuePairs())
 			{
 				sortPinList(entry.Value, entry.Key);
 			}
@@ -153,11 +153,11 @@ namespace logisim.circuit.appear
 			Location ct = new Location(rx + width / 2, ry + 11);
 			Curve notch = new Curve(e0, e1, ct);
 			notch.setValue(DrawAttr.STROKE_WIDTH, Convert.ToInt32(2));
-			notch.setValue(DrawAttr.STROKE_COLOR, Color.GRAY);
+			notch.setValue(DrawAttr.STROKE_COLOR, Color.Gray);
 			Rectangle rect = new Rectangle(rx, ry, width, height);
 			rect.setValue(DrawAttr.STROKE_WIDTH, Convert.ToInt32(2));
 
-			IList<CanvasObject> ret = new List<CanvasObject>();
+			List<CanvasObject> ret = new List<CanvasObject>();
 			ret.Add(notch);
 			ret.Add(rect);
 			placePins(ret, edge[Direction.West], rx, ry + offsWest, 0, 10);
@@ -204,7 +204,7 @@ namespace logisim.circuit.appear
 			return maxOffs + 10 * ((maxThis - numFacing) / 2);
 		}
 
-		private static void placePins(IList<CanvasObject> dest, IList<Instance> pins, int x, int y, int dx, int dy)
+		private static void placePins(List<CanvasObject> dest, List<Instance> pins, int x, int y, int dx, int dy)
 		{
 			foreach (Instance pin in pins)
 			{

@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -32,13 +33,13 @@ namespace logisim.std.memory
 
 		private int computeStage(InstanceState state, MouseEvent e)
 		{
-			int? lenObj = state.getAttributeValue(ShiftRegister.ATTR_LENGTH);
-			BitWidth widObj = state.getAttributeValue(StdAttr.WIDTH);
+			int? lenObj = (int?)state.getAttributeValue(ShiftRegister.ATTR_LENGTH);
+			BitWidth widObj = (BitWidth)state.getAttributeValue(StdAttr.Width);
 			bool? loadObj = state.getAttributeValue(ShiftRegister.ATTR_LOAD);
 			Bounds bds = state.Instance.Bounds;
 
 			int y = bds.Y;
-			string label = state.getAttributeValue(StdAttr.LABEL);
+			string label = (string)state.getAttributeValue(StdAttr.LABEL);
 			if (string.ReferenceEquals(label, null) || label.Equals(""))
 			{
 				y += bds.Height / 2;
@@ -84,8 +85,8 @@ namespace logisim.std.memory
 			{
 				y += 3 * bds.Height / 4;
 			}
-			Graphics g = painter.Graphics;
-			g.setColor(Color.RED);
+			JGraphics g = painter.Graphics;
+			g.setColor(Color.Red);
 			g.drawRect(x, y - 6, 10, 13);
 		}
 
@@ -101,7 +102,7 @@ namespace logisim.std.memory
 			{
 				return;
 			}
-			BitWidth widObj = state.getAttributeValue(StdAttr.WIDTH);
+			BitWidth widObj = state.getAttributeValue(StdAttr.Width);
 			if (widObj.Equals(BitWidth.ONE))
 			{
 				int newLoc = computeStage(state, e);
@@ -154,7 +155,7 @@ namespace logisim.std.memory
 				try
 				{
 					int val = Convert.ToInt32("" + e.getKeyChar(), 16);
-					BitWidth widObj = state.getAttributeValue(StdAttr.WIDTH);
+					BitWidth widObj = state.getAttributeValue(StdAttr.Width);
 					if ((val & ~widObj.Mask) != 0)
 					{
 						return;

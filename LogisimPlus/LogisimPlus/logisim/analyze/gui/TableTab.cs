@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -17,7 +18,7 @@ namespace logisim.analyze.gui
 	using TruthTable = logisim.analyze.model.TruthTable;
 	using TruthTableEvent = logisim.analyze.model.TruthTableEvent;
 	using TruthTableListener = logisim.analyze.model.TruthTableListener;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	internal class TableTab : JPanel, TruthTablePanel, TabInterface
 	{
@@ -169,7 +170,7 @@ namespace logisim.analyze.gui
 			return entry.ErrorMessage;
 		}
 
-		public override void paintComponent(Graphics g)
+		public override void paintComponent(JGraphics g)
 		{
 			base.paintComponent(g);
 
@@ -183,11 +184,11 @@ namespace logisim.analyze.gui
 			if (inputs == 0 && outputs == 0)
 			{
 				g.setFont(BODY_FONT);
-				GraphicsUtil.drawCenteredText(g, Strings.get("tableEmptyMessage"), sz.width / 2, sz.height / 2);
+				JGraphicsUtil.drawCenteredText(g, Strings.get("tableEmptyMessage"), sz.width / 2, sz.height / 2);
 				return;
 			}
 
-			g.setColor(Color.GRAY);
+			g.setColor(Color.Gray);
 			int lineX = left + (cellWidth + COLUMN_SEP) * inputs - COLUMN_SEP / 2;
 			if (inputs == 0)
 			{
@@ -197,7 +198,7 @@ namespace logisim.analyze.gui
 			g.drawLine(left, lineY, left + tableWidth, lineY);
 			g.drawLine(lineX, top, lineX, top + tableHeight);
 
-			g.setColor(Color.BLACK);
+			g.setColor(Color.Black);
 			g.setFont(HEAD_FONT);
 			FontMetrics headerMetric = g.getFontMetrics();
 			int x = left;
@@ -252,7 +253,7 @@ namespace logisim.analyze.gui
 					{
 						g.setColor(ERROR_COLOR);
 						g.fillRect(x, y, cellWidth, cellHeight);
-						g.setColor(Color.BLACK);
+						g.setColor(Color.Black);
 					}
 					string label = entry.Description;
 					int width = bodyMetric.stringWidth(label);
@@ -261,7 +262,7 @@ namespace logisim.analyze.gui
 						provisional = false;
 						g.setColor(Color.GREEN);
 						g.drawString(label, x + (cellWidth - width) / 2, y + bodyMetric.getAscent());
-						g.setColor(Color.BLACK);
+						g.setColor(Color.Black);
 					}
 					else
 					{
@@ -310,7 +311,7 @@ namespace logisim.analyze.gui
 			return top + cellHeight + HEADER_SEP + row * cellHeight;
 		}
 
-		private int paintHeader(string header, int x, int y, Graphics g, FontMetrics fm)
+		private int paintHeader(string header, int x, int y, JGraphics g, FontMetrics fm)
 		{
 			int width = fm.stringWidth(header);
 			g.drawString(header, x + (cellWidth - width) / 2, y);
@@ -327,7 +328,7 @@ namespace logisim.analyze.gui
 				return;
 			}
 
-			Graphics g = getGraphics();
+			JGraphics g = getJGraphics();
 			if (g == null)
 			{
 				cellHeight = 16;

@@ -108,7 +108,7 @@ namespace logisim.circuit
 			{
 				modified.Add(circuit);
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<Object> a = (logisim.data.Attribute<Object>) attr;
+// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute a = (logisim.data.Attribute) attr;
 				AttributeSet attrs = comp.AttributeSet;
 				object oldValue = attrs.getValue(attr);
 				log.Add(CircuitChange.set(circuit, comp, attr, oldValue, newValue));
@@ -119,7 +119,7 @@ namespace logisim.circuit
 		public virtual void setForCircuit(Circuit circuit, Attribute attr, object newValue)
 		{
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<Object> a = (logisim.data.Attribute<Object>) attr;
+// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute a = (logisim.data.Attribute) attr;
 			AttributeSet attrs = circuit.StaticAttributes;
 			object oldValue = attrs.getValue(attr);
 			log.Add(CircuitChange.setForCircuit(circuit, attr, oldValue, newValue));

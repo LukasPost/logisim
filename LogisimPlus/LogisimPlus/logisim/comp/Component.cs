@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System.Collections.Generic;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -27,18 +28,18 @@ namespace logisim.comp
 		// basic information methods
 		ComponentFactory Factory {get;}
 
-		AttributeSet AttributeSet {get;}
+		AttributeSet AttributeSet { get; protected set; }
 
 		// location/extent methods
 		Location Location {get;}
 
 		Bounds Bounds {get;}
 
-		Bounds getBounds(Graphics g);
+		Bounds getBounds(JGraphics g);
 
 		bool contains(Location pt);
 
-		bool contains(Location pt, Graphics g);
+		bool contains(Location pt, JGraphics g);
 
 		// user interface methods
 		void expose(ComponentDrawContext context);
@@ -63,7 +64,7 @@ namespace logisim.comp
 		object getFeature(object key);
 
 		// propagation methods
-		IList<EndData> Ends {get;}
+		List<EndData> Ends {get;}
 
 		EndData getEnd(int index);
 

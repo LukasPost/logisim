@@ -22,15 +22,15 @@ namespace logisim.file
 		public static readonly AttributeOption GATE_UNDEFINED_IGNORE = new AttributeOption("ignore", Strings.getter("gateUndefinedIgnore"));
 		public static readonly AttributeOption GATE_UNDEFINED_ERROR = new AttributeOption("error", Strings.getter("gateUndefinedError"));
 
-		public static readonly Attribute<int> sim_limit_attr = Attributes.forInteger("simlimit", Strings.getter("simLimitOption"));
-		public static readonly Attribute<int> sim_rand_attr = Attributes.forInteger("simrand", Strings.getter("simRandomOption"));
-		public static readonly Attribute<AttributeOption> ATTR_GATE_UNDEFINED = Attributes.forOption("gateUndefined", Strings.getter("gateUndefinedOption"), new AttributeOption[] {GATE_UNDEFINED_IGNORE, GATE_UNDEFINED_ERROR});
+		public static readonly Attribute sim_limit_attr = Attributes.forInteger("simlimit", Strings.getter("simLimitOption"));
+		public static readonly Attribute sim_rand_attr = Attributes.forInteger("simrand", Strings.getter("simRandomOption"));
+		public static readonly Attribute ATTR_GATE_UNDEFINED = Attributes.forOption("gateUndefined", Strings.getter("gateUndefinedOption"), new AttributeOption[] {GATE_UNDEFINED_IGNORE, GATE_UNDEFINED_ERROR});
 
 		public static readonly int sim_rand_dflt = Convert.ToInt32(32);
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private static final logisim.data.Attribute<?>[] ATTRIBUTES = { ATTR_GATE_UNDEFINED, sim_limit_attr, sim_rand_attr};
-		private static readonly Attribute<object>[] ATTRIBUTES = new Attribute<object>[] {ATTR_GATE_UNDEFINED, sim_limit_attr, sim_rand_attr};
+		private static readonly Attribute[] ATTRIBUTES = new Attribute[] {ATTR_GATE_UNDEFINED, sim_limit_attr, sim_rand_attr};
 		private static readonly object[] DEFAULTS = new object[] {GATE_UNDEFINED_IGNORE, Convert.ToInt32(1000), Convert.ToInt32(0)};
 
 		private AttributeSet attrs;

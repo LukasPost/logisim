@@ -56,15 +56,15 @@ namespace logisim.circuit.appear
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
-				return Collections.emptyList();
+				return [];
 			}
 		}
 
-		public override V getValue<V>(Attribute<V> attr)
+		public override object getValue(Attribute attr)
 		{
 			return null;
 		}
@@ -74,7 +74,7 @@ namespace logisim.circuit.appear
 			return false;
 		}
 
-		protected internal override void updateValue<T1>(Attribute<T1> attr, object value)
+		protected internal override void updateValue(Attribute attr, object value)
 		{
 			// nothing to do
 		}
@@ -91,7 +91,7 @@ namespace logisim.circuit.appear
 			return dx * dx + dy * dy < radius * radius;
 		}
 
-		public override Location getRandomPoint(Bounds bds, Random rand)
+		protected internal override Location getRandomPoint(Bounds bds, Random rand)
 		{
 			return null; // this is only used to determine what lies on top of what - but the elements will always be on top
 							// anyway

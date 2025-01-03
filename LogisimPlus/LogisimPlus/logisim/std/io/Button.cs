@@ -26,7 +26,7 @@ namespace logisim.std.io
 	using InstanceState = logisim.instance.InstanceState;
 	using Port = logisim.instance.Port;
 	using StdAttr = logisim.instance.StdAttr;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	public class Button : InstanceFactory
 	{
@@ -34,7 +34,7 @@ namespace logisim.std.io
 
 		public Button() : base("Button", Strings.getter("buttonComponent"))
 		{
-			setAttributes(new Attribute[] {StdAttr.FACING, Io.ATTR_COLOR, StdAttr.LABEL, Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, Io.ATTR_LABEL_COLOR}, new object[] {Direction.East, Color.WHITE, "", Io.LABEL_CENTER, StdAttr.DEFAULT_LABEL_FONT, Color.BLACK});
+			setAttributes(new Attribute[] {StdAttr.FACING, Io.ATTR_COLOR, StdAttr.LABEL, Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, Io.ATTR_LABEL_COLOR}, new object[] {Direction.East, Color.White, "", Io.LABEL_CENTER, StdAttr.DEFAULT_LABEL_FONT, Color.Black});
 			FacingAttribute = StdAttr.FACING;
 			IconName = "button.gif";
 			setPorts(new Port[] {new Port(0, 0, Port.OUTPUT, 1)});
@@ -54,7 +54,7 @@ namespace logisim.std.io
 			computeTextField(instance);
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == StdAttr.FACING)
 			{
@@ -75,8 +75,8 @@ namespace logisim.std.io
 			Bounds bds = instance.Bounds;
 			int x = bds.X + bds.Width / 2;
 			int y = bds.Y + bds.Height / 2;
-			int halign = GraphicsUtil.H_CENTER;
-			int valign = GraphicsUtil.V_CENTER;
+			int halign = JGraphicsUtil.H_CENTER;
+			int valign = JGraphicsUtil.V_CENTER;
 			if (labelLoc == Io.LABEL_CENTER)
 			{
 				x = bds.X + (bds.Width - DEPTH) / 2;
@@ -85,34 +85,34 @@ namespace logisim.std.io
 			else if (labelLoc == Direction.North)
 			{
 				y = bds.Y - 2;
-				valign = GraphicsUtil.V_BOTTOM;
+				valign = JGraphicsUtil.V_BOTTOM;
 			}
 			else if (labelLoc == Direction.South)
 			{
 				y = bds.Y + bds.Height + 2;
-				valign = GraphicsUtil.V_TOP;
+				valign = JGraphicsUtil.V_TOP;
 			}
 			else if (labelLoc == Direction.East)
 			{
 				x = bds.X + bds.Width + 2;
-				halign = GraphicsUtil.H_LEFT;
+				halign = JGraphicsUtil.H_LEFT;
 			}
 			else if (labelLoc == Direction.West)
 			{
 				x = bds.X - 2;
-				halign = GraphicsUtil.H_RIGHT;
+				halign = JGraphicsUtil.H_RIGHT;
 			}
 			if (labelLoc == facing)
 			{
 				if (labelLoc == Direction.North || labelLoc == Direction.South)
 				{
 					x += 2;
-					halign = GraphicsUtil.H_LEFT;
+					halign = JGraphicsUtil.H_LEFT;
 				}
 				else
 				{
 					y -= 2;
-					valign = GraphicsUtil.V_BOTTOM;
+					valign = JGraphicsUtil.V_BOTTOM;
 				}
 			}
 
@@ -148,11 +148,11 @@ namespace logisim.std.io
 			Color color = painter.getAttributeValue(Io.ATTR_COLOR);
 			if (!painter.shouldDrawColor())
 			{
-				int hue = (color.getRed() + color.getGreen() + color.getBlue()) / 3;
-				color = new Color(hue, hue, hue);
+				int hue = (color.R + color.G + color.B) / 3;
+				color = Color.FromArgb(255, hue, hue, hue);
 			}
 
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			int depress;
 			if (val == Value.TRUE)
 			{
@@ -174,7 +174,7 @@ namespace logisim.std.io
 					Location p = painter.Location;
 					int px = p.X;
 					int py = p.Y;
-					GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+					JGraphicsUtil.switchToWidth(g, Wire.WIDTH);
 					g.setColor(Value.TRUE_COLOR);
 					if (facing == Direction.North)
 					{
@@ -184,12 +184,12 @@ namespace logisim.std.io
 					{
 						g.drawLine(px, py, px + 10, py);
 					}
-					GraphicsUtil.switchToWidth(g, 1);
+					JGraphicsUtil.switchToWidth(g, 1);
 				}
 
 				g.setColor(color);
 				g.fillRect(x, y, w - DEPTH, h - DEPTH);
-				g.setColor(Color.BLACK);
+				g.setColor(Color.Black);
 				g.drawRect(x, y, w - DEPTH, h - DEPTH);
 			}
 			else
@@ -201,7 +201,7 @@ namespace logisim.std.io
 				g.fillPolygon(xp, yp, xp.Length);
 				g.setColor(color);
 				g.fillRect(x, y, w - DEPTH, h - DEPTH);
-				g.setColor(Color.BLACK);
+				g.setColor(Color.Black);
 				g.drawRect(x, y, w - DEPTH, h - DEPTH);
 				g.drawLine(x + w - DEPTH, y + h - DEPTH, x + w, y + h);
 				g.drawPolygon(xp, yp, xp.Length);

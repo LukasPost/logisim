@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -14,7 +15,7 @@ namespace logisim.gui.log
 
 
 	using Value = logisim.data.Value;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	internal class TablePanel : LogPanel
 	{
@@ -224,7 +225,7 @@ namespace logisim.gui.log
 			return ret >= 0 && ret < rowCount ? ret : -1;
 		}
 
-		public override void paintComponent(Graphics g)
+		public override void paintComponent(JGraphics g)
 		{
 			base.paintComponent(g);
 
@@ -241,15 +242,15 @@ namespace logisim.gui.log
 			if (columns == 0)
 			{
 				g.setFont(BODY_FONT);
-				GraphicsUtil.drawCenteredText(g, Strings.get("tableEmptyMessage"), sz.width / 2, sz.height / 2);
+				JGraphicsUtil.drawCenteredText(g, Strings.get("tableEmptyMessage"), sz.width / 2, sz.height / 2);
 				return;
 			}
 
-			g.setColor(Color.GRAY);
+			g.setColor(Color.Gray);
 			int lineY = top + cellHeight + HEADER_SEP / 2;
 			g.drawLine(left, lineY, left + tableWidth, lineY);
 
-			g.setColor(Color.BLACK);
+			g.setColor(Color.Black);
 			g.setFont(HEAD_FONT);
 			FontMetrics headerMetric = g.getFontMetrics();
 			int x = left;
@@ -285,7 +286,7 @@ namespace logisim.gui.log
 			}
 		}
 
-		private int paintHeader(string header, int x, int y, Graphics g, FontMetrics fm)
+		private int paintHeader(string header, int x, int y, JGraphics g, FontMetrics fm)
 		{
 			int width = fm.stringWidth(header);
 			g.drawString(header, x + (cellWidth - width) / 2, y);
@@ -303,7 +304,7 @@ namespace logisim.gui.log
 				return;
 			}
 
-			Graphics g = getGraphics();
+			JGraphics g = getJGraphics();
 			if (g == null)
 			{
 				cellHeight = 16;

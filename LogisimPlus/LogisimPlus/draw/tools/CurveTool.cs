@@ -23,8 +23,9 @@ namespace draw.tools
 	using logisim.data;
 	using Location = logisim.data.Location;
 	using Icons = logisim.util.Icons;
+    using LogisimPlus.Java;
 
-	public class CurveTool : AbstractTool
+    public class CurveTool : AbstractTool
 	{
 		private const int BEFORE_CREATION = 0;
 		private const int ENDPOINT_DRAG = 1;
@@ -221,24 +222,24 @@ namespace draw.tools
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
-				return DrawAttr.getFillAttributes(attrs.getValue(DrawAttr.PAINT_TYPE));
+				return DrawAttr.getFillAttributes((AttributeOption)attrs.getValue(DrawAttr.PAINT_TYPE));
 			}
 		}
 
-		public override void draw(Canvas canvas, Graphics g)
+		public override void draw(Canvas canvas, JGraphics g)
 		{
-			g.setColor(Color.GRAY);
+			g.setColor(Color.Gray);
 			switch (state)
 			{
 			case ENDPOINT_DRAG:
 				g.drawLine(end0.X, end0.Y, end1.X, end1.Y);
 				break;
 			case CONTROL_DRAG:
-				((Graphics2D) g).draw(curCurve.Curve2D);
+				g.draw(curCurve.Curve2D);
 				break;
 			}
 		}

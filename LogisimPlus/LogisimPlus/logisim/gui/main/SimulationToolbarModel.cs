@@ -27,7 +27,7 @@ namespace logisim.gui.main
 		private LogisimToolbarItem simStep;
 		private LogisimToolbarItem tickEnable;
 		private LogisimToolbarItem tickStep;
-		private IList<ToolbarItem> items;
+		private List<ToolbarItem> items;
 
 		public SimulationToolbarModel(Project project, MenuListener menu)
 		{
@@ -44,7 +44,7 @@ namespace logisim.gui.main
 			stateChanged(null);
 		}
 
-		public override IList<ToolbarItem> Items
+		public override List<ToolbarItem> Items
 		{
 			get
 			{
@@ -74,9 +74,9 @@ namespace logisim.gui.main
 			bool running = sim != null && sim.Running;
 			bool ticking = sim != null && sim.Ticking;
 			simEnable.Icon = running ? "simstop.png" : "simplay.png";
-			simEnable.setToolTip(running ? Strings.getter("simulateDisableStepsTip") : Strings.getter("simulateEnableStepsTip"));
+			simEnable.ToolTip = running ? Strings.getter("simulateDisableStepsTip") : Strings.getter("simulateEnableStepsTip");
 			tickEnable.Icon = ticking ? "simtstop.png" : "simtplay.png";
-			tickEnable.setToolTip(ticking ? Strings.getter("simulateDisableTicksTip") : Strings.getter("simulateEnableTicksTip"));
+			tickEnable.ToolTip = ticking ? Strings.getter("simulateDisableTicksTip") : Strings.getter("simulateEnableTicksTip");
 			fireToolbarAppearanceChanged();
 		}
 	}

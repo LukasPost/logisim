@@ -23,7 +23,7 @@ namespace logisim.circuit.appear
 
 	public class AppearanceSvgReader
 	{
-		public static AbstractCanvasObject createShape(Element elt, IDictionary<Location, Instance> pins)
+		public static AbstractCanvasObject createShape(Element elt, Dictionary<Location, Instance> pins)
 		{
 			string name = elt.getTagName();
 			if (name.Equals("circ-anchor") || name.Equals("circ-origin"))

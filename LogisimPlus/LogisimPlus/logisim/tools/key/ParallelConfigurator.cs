@@ -34,19 +34,9 @@ namespace logisim.tools.key
 			this.handlers = handlers;
 		}
 
-		public virtual ParallelConfigurator clone()
+		public virtual object Clone()
 		{
-			ParallelConfigurator ret;
-			try
-			{
-				ret = (ParallelConfigurator) base.clone();
-			}
-			catch (CloneNotSupportedException e)
-			{
-				Console.WriteLine(e.ToString());
-				Console.Write(e.StackTrace);
-				return null;
-			}
+			ParallelConfigurator ret = (ParallelConfigurator) base.MemberwiseClone();
 			int len = this.handlers.Length;
 			ret.handlers = new KeyConfigurator[len];
 			for (int i = 0; i < len; i++)
@@ -66,7 +56,7 @@ namespace logisim.tools.key
 			KeyConfigurationResult first = null;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: java.util.HashMap<logisim.data.Attribute<?>, Object> map = null;
-			Dictionary<Attribute<object>, object> map = null;
+			Dictionary<Attribute, object> map = null;
 			for (int i = 0; i < hs.Length; i++)
 			{
 				KeyConfigurationResult result = hs[i].keyEventReceived(@event);
@@ -80,7 +70,7 @@ namespace logisim.tools.key
 					{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: map = new java.util.HashMap<logisim.data.Attribute<?>, Object>(first.getAttributeValues());
-						map = new Dictionary<Attribute<object>, object>(first.AttributeValues);
+						map = new Dictionary<Attribute, object>(first.AttributeValues);
 						map.PutAll(result.AttributeValues);
 					}
 					else

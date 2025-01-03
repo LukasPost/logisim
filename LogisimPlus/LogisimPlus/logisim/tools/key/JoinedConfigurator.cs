@@ -30,27 +30,17 @@ namespace logisim.tools.key
 			this.handlers = handlers;
 		}
 
-		public virtual JoinedConfigurator clone()
-		{
-			JoinedConfigurator ret;
-			try
-			{
-				ret = (JoinedConfigurator) base.clone();
-			}
-			catch (CloneNotSupportedException e)
-			{
-				Console.WriteLine(e.ToString());
-				Console.Write(e.StackTrace);
-				return null;
-			}
-			int len = this.handlers.Length;
-			ret.handlers = new KeyConfigurator[len];
-			for (int i = 0; i < len; i++)
-			{
-				ret.handlers[i] = this.handlers[i].clone();
-			}
-			return ret;
-		}
+        public virtual object Clone()
+        {
+            JoinedConfigurator ret = (JoinedConfigurator)base.MemberwiseClone();
+            int len = this.handlers.Length;
+            ret.handlers = new KeyConfigurator[len];
+            for (int i = 0; i < len; i++)
+            {
+                ret.handlers[i] = this.handlers[i].clone();
+            }
+            return ret;
+        }
 
 		public virtual KeyConfigurationResult keyEventReceived(KeyConfigurationEvent @event)
 		{

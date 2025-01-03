@@ -16,10 +16,11 @@ namespace logisim.circuit
 	using AttributeSet = logisim.data.AttributeSet;
 	using Bounds = logisim.data.Bounds;
 	using Location = logisim.data.Location;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using StringGetter = logisim.util.StringGetter;
+    using LogisimPlus.Java;
 
-	internal class WireFactory : AbstractComponentFactory
+    internal class WireFactory : AbstractComponentFactory
 	{
 		public static readonly WireFactory instance = new WireFactory();
 
@@ -83,12 +84,12 @@ namespace logisim.circuit
 		//
 		public override void drawGhost(ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs)
 		{
-			Graphics g = context.Graphics;
+			JGraphics g = context.Graphics;
 			object dir = attrs.getValue(Wire.dir_attr);
 			int len = (int)attrs.getValue(Wire.len_attr);
 
 			g.setColor(color);
-			GraphicsUtil.switchToWidth(g, 3);
+			JGraphicsUtil.switchToWidth(g, 3);
 			if (dir == Wire.VALUE_HORZ)
 			{
 				g.drawLine(x, y, x + len, y);

@@ -29,23 +29,24 @@ namespace logisim.std.gates
 	using Port = logisim.instance.Port;
 	using StdAttr = logisim.instance.StdAttr;
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using Icons = logisim.util.Icons;
+    using LogisimPlus.Java;
 
-	internal class Buffer : InstanceFactory
+    internal class Buffer : InstanceFactory
 	{
 		public static InstanceFactory FACTORY = new Buffer();
 
 		private Buffer() : base("Buffer", Strings.getter("bufferComponent"))
 		{
-			setAttributes(new Attribute[] {StdAttr.FACING, StdAttr.WIDTH, GateAttributes.ATTR_OUTPUT, StdAttr.LABEL, StdAttr.LABEL_FONT}, new object[] {Direction.East, BitWidth.ONE, GateAttributes.OUTPUT_01, "", StdAttr.DEFAULT_LABEL_FONT});
+			setAttributes(new Attribute[] {StdAttr.FACING, StdAttr.Width, GateAttributes.ATTR_OUTPUT, StdAttr.LABEL, StdAttr.LABEL_FONT}, new object[] {Direction.East, BitWidth.ONE, GateAttributes.OUTPUT_01, "", StdAttr.DEFAULT_LABEL_FONT});
 			Icon = Icons.getIcon("bufferGate.gif");
 			FacingAttribute = StdAttr.FACING;
-			KeyConfigurator = new BitWidthConfigurator(StdAttr.WIDTH);
+			KeyConfigurator = new BitWidthConfigurator(StdAttr.Width);
 			setPorts(new Port[]
 			{
-				new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH),
-				new Port(0, -20, Port.INPUT, StdAttr.WIDTH)
+				new Port(0, 0, Port.OUTPUT, StdAttr.Width),
+				new Port(0, -20, Port.INPUT, StdAttr.Width)
 			});
 		}
 
@@ -84,7 +85,7 @@ namespace logisim.std.gates
 			NotGate.configureLabel(instance, false, null);
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == StdAttr.FACING)
 			{
@@ -99,10 +100,10 @@ namespace logisim.std.gates
 			Direction facing = instance.getAttributeValue(StdAttr.FACING);
 
 			Port[] ports = new Port[2];
-			ports[0] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
+			ports[0] = new Port(0, 0, Port.OUTPUT, StdAttr.Width);
 			Location @out = (new Location(0, 0)).translate(facing, -20);
-			ports[1] = new Port(@out.X, @out.Y, Port.INPUT, StdAttr.WIDTH);
-			instance.setPorts(ports);
+			ports[1] = new Port(@out.X, @out.Y, Port.INPUT, StdAttr.Width);
+			instance.Ports = ports;
 		}
 
 		public override object getInstanceFeature(in Instance instance, object key)
@@ -126,7 +127,7 @@ namespace logisim.std.gates
 				this.instance = instance;
 			}
 
-			public void computeExpression(IDictionary<Location, Expression> expressionMap)
+			public void computeExpression(Dictionary<Location, Expression> expressionMap)
 			{
 				Expression e = expressionMap[instance.getPortLocation(1)];
 				if (e != null)
@@ -146,8 +147,8 @@ namespace logisim.std.gates
 
 		public override void paintInstance(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
-			g.setColor(Color.BLACK);
+			JGraphics g = painter.Graphics;
+			g.setColor(Color.Black);
 			paintBase(painter);
 			painter.drawPorts();
 			painter.drawLabel();
@@ -155,20 +156,20 @@ namespace logisim.std.gates
 
 		private void paintBase(InstancePainter painter)
 		{
-			Direction facing = painter.getAttributeValue(StdAttr.FACING);
+			Direction facing = (Direction)painter.getAttributeValue(StdAttr.FACING);
 			Location loc = painter.Location;
 			int x = loc.X;
 			int y = loc.Y;
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			g.translate(x, y);
 			double rotate = 0.0;
-			if (facing != Direction.East && g is Graphics2D)
+			if (facing != Direction.East)
 			{
 				rotate = -facing.toRadians();
-				((Graphics2D) g).rotate(rotate);
+				g.rotate(rotate);
 			}
 
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphicsUtil.switchToWidth(g, 2);
 			int[] xp = new int[4];
 			int[] yp = new int[4];
 			xp[0] = 0;
@@ -183,7 +184,7 @@ namespace logisim.std.gates
 
 			if (rotate != 0.0)
 			{
-				((Graphics2D) g).rotate(-rotate);
+				g.rotate(-rotate);
 			}
 			g.translate(-x, -y);
 		}
@@ -200,7 +201,7 @@ namespace logisim.std.gates
 			if (errorIfUndefined)
 			{
 				int vw = v.Width;
-				BitWidth w = state.getAttributeValue(StdAttr.WIDTH);
+				BitWidth w = state.getAttributeValue(StdAttr.Width);
 				int ww = w.Width;
 				if (vw == ww && v.FullyDefined)
 				{

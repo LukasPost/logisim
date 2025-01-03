@@ -14,8 +14,9 @@ namespace draw.canvas
 	using CanvasModel = draw.model.CanvasModel;
 	using CanvasObject = draw.model.CanvasObject;
 	using Action = draw.undo.Action;
+    using LogisimPlus.Java;
 
-	public class Canvas : JComponent
+    public class Canvas : JComponent
 	{
 		public const string TOOL_PROPERTY = "tool";
 		public const string MODEL_PROPERTY = "model";
@@ -136,30 +137,30 @@ namespace draw.canvas
 			return y; // subclass will have to override this
 		}
 
-		public override void paintComponent(Graphics g)
+		public override void paintComponent(JGraphics g)
 		{
 			paintBackground(g);
 			paintForeground(g);
 		}
 
-		protected internal virtual void paintBackground(Graphics g)
+		protected internal virtual void paintBackground(JGraphics g)
 		{
 			g.clearRect(0, 0, getWidth(), getHeight());
 		}
 
-		protected internal virtual void paintForeground(Graphics g)
+		protected internal virtual void paintForeground(JGraphics g)
 		{
 			CanvasModel model = this.model;
 			CanvasTool tool = listener.Tool;
 			if (model != null)
 			{
-				Graphics dup = g.create();
+				JGraphics dup = g.create();
 				model.paint(g, selection);
 				dup.dispose();
 			}
 			if (tool != null)
 			{
-				Graphics dup = g.create();
+				JGraphics dup = g.create();
 				tool.draw(this, dup);
 				dup.dispose();
 			}

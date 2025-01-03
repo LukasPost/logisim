@@ -1,13 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Compile Update="draw\canvas\Canvas.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="draw\gui\Toolbar.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="draw\toolbar\ToolbarButton.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Update="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="hex\HexEditor.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="Java\JComponent.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="logisim\gui\appear\AppearanceCanvas.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="logisim\gui\appear\LayoutThumbnail.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="logisim\gui\start\AboutCredits.cs">
       <SubType>Component</SubType>
     </Compile>
   </ItemGroup>

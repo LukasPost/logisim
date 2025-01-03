@@ -34,14 +34,15 @@ namespace logisim.std.gates
 	using StdAttr = logisim.instance.StdAttr;
 	using AppPreferences = logisim.prefs.AppPreferences;
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using Icons = logisim.util.Icons;
+    using LogisimPlus.Java;
 
-	internal class NotGate : InstanceFactory
+    internal class NotGate : InstanceFactory
 	{
 		public static readonly AttributeOption SIZE_NARROW = new AttributeOption(Convert.ToInt32(20), Strings.getter("gateSizeNarrowOpt"));
 		public static readonly AttributeOption SIZE_WIDE = new AttributeOption(Convert.ToInt32(30), Strings.getter("gateSizeWideOpt"));
-		public static readonly Attribute<AttributeOption> ATTR_SIZE = Attributes.forOption("size", Strings.getter("gateSizeAttr"), new AttributeOption[] {SIZE_NARROW, SIZE_WIDE});
+		public static readonly Attribute ATTR_SIZE = Attributes.forOption("size", Strings.getter("gateSizeAttr"), new AttributeOption[] {SIZE_NARROW, SIZE_WIDE});
 
 		private const string RECT_LABEL = "1";
 		private static readonly Icon toolIcon = Icons.getIcon("notGate.gif");
@@ -52,9 +53,9 @@ namespace logisim.std.gates
 
 		private NotGate() : base("NOT Gate", Strings.getter("notGateComponent"))
 		{
-			setAttributes(new Attribute[] {StdAttr.FACING, StdAttr.WIDTH, ATTR_SIZE, GateAttributes.ATTR_OUTPUT, StdAttr.LABEL, StdAttr.LABEL_FONT}, new object[] {Direction.East, BitWidth.ONE, SIZE_WIDE, GateAttributes.OUTPUT_01, "", StdAttr.DEFAULT_LABEL_FONT});
+			setAttributes(new Attribute[] {StdAttr.FACING, StdAttr.Width, ATTR_SIZE, GateAttributes.ATTR_OUTPUT, StdAttr.LABEL, StdAttr.LABEL_FONT}, new object[] {Direction.East, BitWidth.ONE, SIZE_WIDE, GateAttributes.OUTPUT_01, "", StdAttr.DEFAULT_LABEL_FONT});
 			FacingAttribute = StdAttr.FACING;
-			KeyConfigurator = new BitWidthConfigurator(StdAttr.WIDTH);
+			KeyConfigurator = new BitWidthConfigurator(StdAttr.Width);
 		}
 
 		public override Bounds getOffsetBounds(AttributeSet attrs)
@@ -62,7 +63,7 @@ namespace logisim.std.gates
 			object value = attrs.getValue(ATTR_SIZE);
 			if (value == SIZE_NARROW)
 			{
-				Direction facing = attrs.getValue(StdAttr.FACING);
+				Direction facing = (Direction)attrs.getValue(StdAttr.FACING);
 				if (facing == Direction.South)
 				{
 					return Bounds.create(-9, -20, 18, 20);
@@ -79,7 +80,7 @@ namespace logisim.std.gates
 			}
 			else
 			{
-				Direction facing = attrs.getValue(StdAttr.FACING);
+				Direction facing = (Direction)attrs.getValue(StdAttr.FACING);
 				if (facing == Direction.South)
 				{
 					return Bounds.create(-9, -30, 18, 30);
@@ -115,7 +116,7 @@ namespace logisim.std.gates
 			configureLabel(instance, gateShape.Equals(AppPreferences.SHAPE_RECTANGULAR), null);
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == ATTR_SIZE || attr == StdAttr.FACING)
 			{
@@ -129,14 +130,14 @@ namespace logisim.std.gates
 		private void configurePorts(Instance instance)
 		{
 			object size = instance.getAttributeValue(ATTR_SIZE);
-			Direction facing = instance.getAttributeValue(StdAttr.FACING);
+			Direction facing = (Direction)instance.getAttributeValue(StdAttr.FACING);
 			int dx = size == SIZE_NARROW ? -20 : -30;
 
 			Port[] ports = new Port[2];
-			ports[0] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
+			ports[0] = new Port(0, 0, Port.OUTPUT, StdAttr.Width);
 			Location @out = (new Location(0, 0)).translate(facing, dx);
-			ports[1] = new Port(@out.X, @out.Y, Port.INPUT, StdAttr.WIDTH);
-			instance.setPorts(ports);
+			ports[1] = new Port(@out.X, @out.Y, Port.INPUT, StdAttr.Width);
+			instance.Ports = ports;
 		}
 
 		protected internal override object getInstanceFeature(in Instance instance, object key)
@@ -160,7 +161,7 @@ namespace logisim.std.gates
 				this.instance = instance;
 			}
 
-			public void computeExpression(IDictionary<Location, Expression> expressionMap)
+			public void computeExpression(Dictionary<Location, Expression> expressionMap)
 			{
 				Expression e = expressionMap[instance.getPortLocation(1)];
 				if (e != null)
@@ -175,8 +176,8 @@ namespace logisim.std.gates
 		//
 		public override void paintIcon(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
-			g.setColor(Color.black);
+			JGraphics g = painter.Graphics;
+			g.setColor(Color.Black);
 			if (painter.GateShape == AppPreferences.SHAPE_RECTANGULAR)
 			{
 				if (toolIconRect != null)
@@ -186,7 +187,7 @@ namespace logisim.std.gates
 				else
 				{
 					g.drawRect(0, 2, 16, 16);
-					GraphicsUtil.drawCenteredText(g, RECT_LABEL, 8, 8);
+					JGraphicsUtil.drawCenteredText(g, RECT_LABEL, 8, 8);
 					g.drawOval(16, 8, 4, 4);
 				}
 			}
@@ -199,7 +200,7 @@ namespace logisim.std.gates
 				else
 				{
 					g.drawRect(0, 2, 16, 16);
-					GraphicsUtil.drawCenteredText(g, RECT_LABEL, 8, 8);
+					JGraphicsUtil.drawCenteredText(g, RECT_LABEL, 8, 8);
 					g.drawOval(16, 8, 4, 4);
 				}
 			}
@@ -234,7 +235,7 @@ namespace logisim.std.gates
 
 		public override void paintInstance(InstancePainter painter)
 		{
-			painter.Graphics.setColor(Color.BLACK);
+			painter.Graphics.setColor(Color.Black);
 			paintBase(painter);
 			painter.drawPorts();
 			painter.drawLabel();
@@ -242,17 +243,17 @@ namespace logisim.std.gates
 
 		private void paintBase(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
-			Direction facing = painter.getAttributeValue(StdAttr.FACING);
+			JGraphics g = painter.Graphics;
+			Direction facing = (Direction)painter.getAttributeValue(StdAttr.FACING);
 			Location loc = painter.Location;
 			int x = loc.X;
 			int y = loc.Y;
 			g.translate(x, y);
 			double rotate = 0.0;
-			if (facing != null && facing != Direction.East && g is Graphics2D)
+			if (facing != null && facing != Direction.East)
 			{
 				rotate = -facing.toRadians();
-				((Graphics2D) g).rotate(rotate);
+				g.rotate(rotate);
 			}
 
 			object shape = painter.GateShape;
@@ -272,27 +273,27 @@ namespace logisim.std.gates
 
 			if (rotate != 0.0)
 			{
-				((Graphics2D) g).rotate(-rotate);
+				g.rotate(-rotate);
 			}
 			g.translate(-x, -y);
 		}
 
-		private void paintRectangularBase(Graphics g, InstancePainter painter)
+		private void paintRectangularBase(JGraphics g, InstancePainter painter)
 		{
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphicsUtil.switchToWidth(g, 2);
 			if (painter.getAttributeValue(ATTR_SIZE) == SIZE_NARROW)
 			{
 				g.drawRect(-20, -9, 14, 18);
-				GraphicsUtil.drawCenteredText(g, RECT_LABEL, -13, 0);
+				JGraphicsUtil.drawCenteredText(g, RECT_LABEL, -13, 0);
 				g.drawOval(-6, -3, 6, 6);
 			}
 			else
 			{
 				g.drawRect(-30, -9, 20, 18);
-				GraphicsUtil.drawCenteredText(g, RECT_LABEL, -20, 0);
+				JGraphicsUtil.drawCenteredText(g, RECT_LABEL, -20, 0);
 				g.drawOval(-10, -5, 9, 9);
 			}
-			GraphicsUtil.switchToWidth(g, 1);
+			JGraphicsUtil.switchToWidth(g, 1);
 		}
 
 		internal static void configureLabel(Instance instance, bool isRectangular, Location control)

@@ -17,8 +17,9 @@ namespace draw.tools
 	using RoundRectangle = draw.shapes.RoundRectangle;
 	using logisim.data;
 	using Icons = logisim.util.Icons;
+    using LogisimPlus.Java;
 
-	public class RoundRectangleTool : RectangularTool
+    public class RoundRectangleTool : RectangularTool
 	{
 		private DrawingAttributeSet attrs;
 
@@ -37,7 +38,7 @@ namespace draw.tools
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
@@ -50,13 +51,13 @@ namespace draw.tools
 			return attrs.applyTo(new RoundRectangle(x, y, w, h));
 		}
 
-		public override void drawShape(Graphics g, int x, int y, int w, int h)
+		public override void drawShape(JGraphics g, int x, int y, int w, int h)
 		{
 			int r = 2 * (int)attrs.getValue(DrawAttr.CORNER_RADIUS);
 			g.drawRoundRect(x, y, w, h, r, r);
 		}
 
-		public override void fillShape(Graphics g, int x, int y, int w, int h)
+		public override void fillShape(JGraphics g, int x, int y, int w, int h)
 		{
 			int r = 2 * (int)attrs.getValue(DrawAttr.CORNER_RADIUS);
 			g.fillRoundRect(x, y, w, h, r, r);

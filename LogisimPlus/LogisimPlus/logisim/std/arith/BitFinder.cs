@@ -24,7 +24,7 @@ namespace logisim.std.arith
 	using Port = logisim.instance.Port;
 	using StdAttr = logisim.instance.StdAttr;
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	public class BitFinder : InstanceFactory
 	{
@@ -32,12 +32,12 @@ namespace logisim.std.arith
 		internal static readonly AttributeOption HIGH_ONE = new AttributeOption("high1", Strings.getter("bitFinderHighOption", "1"));
 		internal static readonly AttributeOption LOW_ZERO = new AttributeOption("low0", Strings.getter("bitFinderLowOption", "0"));
 		internal static readonly AttributeOption HIGH_ZERO = new AttributeOption("high0", Strings.getter("bitFinderHighOption", "0"));
-		internal static readonly Attribute<AttributeOption> TYPE = Attributes.forOption("type", Strings.getter("bitFinderTypeAttr"), new AttributeOption[] {LOW_ONE, HIGH_ONE, LOW_ZERO, HIGH_ZERO});
+		internal static readonly Attribute TYPE = Attributes.forOption("type", Strings.getter("bitFinderTypeAttr"), new AttributeOption[] {LOW_ONE, HIGH_ONE, LOW_ZERO, HIGH_ZERO});
 
 		public BitFinder() : base("BitFinder", Strings.getter("bitFinderComponent"))
 		{
-			setAttributes(new Attribute[] {StdAttr.WIDTH, TYPE}, new object[] {BitWidth.create(8), LOW_ONE});
-			KeyConfigurator = new BitWidthConfigurator(StdAttr.WIDTH);
+			setAttributes(new Attribute[] {StdAttr.Width, TYPE}, new object[] {BitWidth.create(8), LOW_ONE});
+			KeyConfigurator = new BitWidthConfigurator(StdAttr.Width);
 			IconName = "bitfindr.gif";
 		}
 
@@ -52,9 +52,9 @@ namespace logisim.std.arith
 			instance.addAttributeListener();
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
-			if (attr == StdAttr.WIDTH)
+			if (attr == StdAttr.Width)
 			{
 				configurePorts(instance);
 			}
@@ -66,7 +66,7 @@ namespace logisim.std.arith
 
 		private void configurePorts(Instance instance)
 		{
-			BitWidth inWidth = instance.getAttributeValue(StdAttr.WIDTH);
+			BitWidth inWidth = instance.getAttributeValue(StdAttr.Width);
 			int outWidth = computeOutputBits(inWidth.Width - 1);
 
 			Port[] ps = new Port[3];
@@ -111,7 +111,7 @@ namespace logisim.std.arith
 
 		public override void propagate(InstanceState state)
 		{
-			int width = state.getAttributeValue(StdAttr.WIDTH).getWidth();
+			int width = state.getAttributeValue(StdAttr.Width).getWidth();
 			int outWidth = computeOutputBits(width - 1);
 			object type = state.getAttributeValue(TYPE);
 
@@ -172,7 +172,7 @@ namespace logisim.std.arith
 
 		public override void paintInstance(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			painter.drawBounds();
 			painter.drawPorts();
 
@@ -204,9 +204,9 @@ namespace logisim.std.arith
 			Bounds bds = painter.Bounds;
 			int x = bds.X + bds.Width / 2;
 			int y0 = bds.Y;
-			GraphicsUtil.drawCenteredText(g, top, x, y0 + 8);
-			GraphicsUtil.drawCenteredText(g, mid, x, y0 + 20);
-			GraphicsUtil.drawCenteredText(g, bot, x, y0 + 32);
+			JGraphicsUtil.drawCenteredText(g, top, x, y0 + 8);
+			JGraphicsUtil.drawCenteredText(g, mid, x, y0 + 20);
+			JGraphicsUtil.drawCenteredText(g, bot, x, y0 + 32);
 		}
 	}
 

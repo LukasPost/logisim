@@ -28,23 +28,23 @@ namespace logisim.std.arith
 
 		public Negator() : base("Negator", Strings.getter("negatorComponent"))
 		{
-			setAttributes(new Attribute[] {StdAttr.WIDTH}, new object[] {BitWidth.create(8)});
-			KeyConfigurator = new BitWidthConfigurator(StdAttr.WIDTH);
+			setAttributes(new Attribute[] {StdAttr.Width}, new object[] {BitWidth.create(8)});
+			KeyConfigurator = new BitWidthConfigurator(StdAttr.Width);
 			OffsetBounds = Bounds.create(-40, -20, 40, 40);
 			IconName = "negator.gif";
 
 			Port[] ps = new Port[2];
-			ps[IN] = new Port(-40, 0, Port.INPUT, StdAttr.WIDTH);
-			ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
-			ps[IN].setToolTip(Strings.getter("negatorInputTip"));
-			ps[OUT].setToolTip(Strings.getter("negatorOutputTip"));
+			ps[IN] = new Port(-40, 0, Port.INPUT, StdAttr.Width);
+			ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.Width);
+			ps[IN].ToolTip = Strings.getter("negatorInputTip");
+			ps[OUT].ToolTip = Strings.getter("negatorOutputTip");
 			setPorts(ps);
 		}
 
 		public override void propagate(InstanceState state)
 		{
 			// get attributes
-			BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+			BitWidth dataWidth = state.getAttributeValue(StdAttr.Width);
 
 			// compute outputs
 			Value @in = state.getPort(IN);

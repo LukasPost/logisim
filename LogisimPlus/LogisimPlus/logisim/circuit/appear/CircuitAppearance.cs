@@ -22,8 +22,9 @@ namespace logisim.circuit.appear
 	using Location = logisim.data.Location;
 	using Instance = logisim.instance.Instance;
 	using logisim.util;
+    using LogisimPlus.Java;
 
-	public class CircuitAppearance : Drawing
+    public class CircuitAppearance : Drawing
 	{
 		private class MyListener : CanvasModelListener
 		{
@@ -92,7 +93,7 @@ namespace logisim.circuit.appear
 			}
 		}
 
-		internal virtual void replaceAutomatically(IList<AppearancePort> removes, IList<AppearancePort> adds)
+		internal virtual void replaceAutomatically(List<AppearancePort> removes, List<AppearancePort> adds)
 		{
 			// this should be called only when substituting ports via PortManager
 			bool oldSuppress = suppressRecompute;
@@ -146,7 +147,7 @@ namespace logisim.circuit.appear
 		{
 			if (isDefault)
 			{
-				IList<CanvasObject> shapes;
+				List<CanvasObject> shapes;
 				shapes = logisim.circuit.appear.DefaultAppearance.build(circuitPins.Pins);
 				ObjectsForce = shapes;
 			}
@@ -172,7 +173,7 @@ namespace logisim.circuit.appear
 		{
 			// This shouldn't ever be an issue, but just to make doubly sure, we'll
 			// check that the anchor and all ports are in their proper places.
-			IList<CanvasObject> shapes = value.Cast<CanvasObject>().ToList();
+			List<CanvasObject> shapes = value.Cast<CanvasObject>().ToList();
 			int n = shapes.Count;
 			int ports = 0;
 			for (int i = n - 1; i >= 0; i--)
@@ -215,14 +216,14 @@ namespace logisim.circuit.appear
 			fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
 		}
 
-		public virtual void paintSubcircuit(Graphics g, Direction facing)
+		public virtual void paintSubcircuit(JGraphics g, Direction facing)
 		{
 			Direction defaultFacing = Facing;
 			double rotate = 0.0;
-			if (facing != defaultFacing && g is Graphics2D)
+			if (facing != defaultFacing)
 			{
 				rotate = defaultFacing.toRadians() - facing.toRadians();
-				((Graphics2D) g).rotate(rotate);
+				g.rotate(rotate);
 			}
 			Location offset = findAnchorLocation();
 			g.translate(-offset.X, -offset.Y);
@@ -230,7 +231,7 @@ namespace logisim.circuit.appear
 			{
 				if (!(shape is AppearanceElement))
 				{
-					Graphics dup = g.create();
+					JGraphics dup = g.create();
 					shape.paint(dup, null);
 					dup.dispose();
 				}
@@ -238,7 +239,7 @@ namespace logisim.circuit.appear
 			g.translate(offset.X, offset.Y);
 			if (rotate != 0.0)
 			{
-				((Graphics2D) g).rotate(-rotate);
+				g.rotate(-rotate);
 			}
 		}
 
@@ -335,7 +336,7 @@ namespace logisim.circuit.appear
 		{
 			Location anchor = null;
 			Direction defaultFacing = Direction.East;
-			IList<AppearancePort> ports = new List<AppearancePort>();
+			List<AppearancePort> ports = new List<AppearancePort>();
 			foreach (CanvasObject shape in ObjectsFromBottom)
 			{
 				if (shape is AppearancePort)
@@ -373,7 +374,7 @@ namespace logisim.circuit.appear
 			checkToFirePortsChanged(shapes);
 		}
 
-		public override void addObjects<T1>(IDictionary<T1> shapes) where T1 : draw.model.CanvasObject
+		public override void addObjects<T1>(Dictionary<T1> shapes) where T1 : draw.model.CanvasObject
 		{
 			base.addObjects(shapes);
 			checkToFirePortsChanged(shapes.Keys);

@@ -22,7 +22,7 @@ namespace logisim.gui.main
 
 	public class ToolAttributeAction : Action
 	{
-		public static Action create<T1>(Tool tool, Attribute<T1> attr, object value)
+		public static Action create(Tool tool, Attribute attr, object value)
 		{
 			AttributeSet attrs = tool.AttributeSet;
 			KeyConfigurationEvent e = new KeyConfigurationEvent(0, attrs, null, null);
@@ -38,14 +38,14 @@ namespace logisim.gui.main
 		private KeyConfigurationResult config;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private java.util.Map<logisim.data.Attribute<?>, Object> oldValues;
-		private IDictionary<Attribute<object>, object> oldValues;
+		private Dictionary<Attribute, object> oldValues;
 
 		private ToolAttributeAction(KeyConfigurationResult config)
 		{
 			this.config = config;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: this.oldValues = new java.util.HashMap<logisim.data.Attribute<?>, Object>(2);
-			this.oldValues = new Dictionary<Attribute<object>, object>(2);
+			this.oldValues = new Dictionary<Attribute, object>(2);
 		}
 
 		public override string Name
@@ -61,17 +61,17 @@ namespace logisim.gui.main
 			AttributeSet attrs = config.Event.AttributeSet;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: java.util.Map<logisim.data.Attribute<?>, Object> newValues = config.getAttributeValues();
-			IDictionary<Attribute<object>, object> newValues = config.AttributeValues;
+			Dictionary<Attribute, object> newValues = config.AttributeValues;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: java.util.Map<logisim.data.Attribute<?>, Object> oldValues = new java.util.HashMap<logisim.data.Attribute<?>, Object>(newValues.size());
-			IDictionary<Attribute<object>, object> oldValues = new Dictionary<Attribute<object>, object>(newValues.Count);
+			Dictionary<Attribute, object> oldValues = new Dictionary<Attribute, object>(newValues.Count);
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: for (java.util.Map.Entry<logisim.data.Attribute<?>, Object> entry : newValues.entrySet())
-			foreach (KeyValuePair<Attribute<object>, object> entry in newValues.SetOfKeyValuePairs())
+			foreach (KeyValuePair<Attribute, object> entry in newValues.SetOfKeyValuePairs())
 			{
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<Object> attr = (logisim.data.Attribute<Object>) entry.getKey();
-				Attribute<object> attr = (Attribute<object>) entry.Key;
+// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute attr = (logisim.data.Attribute) entry.getKey();
+				Attribute attr = (Attribute) entry.Key;
 				oldValues[attr] = attrs.getValue(attr);
 				attrs.setValue(attr, entry.Value);
 			}
@@ -83,14 +83,14 @@ namespace logisim.gui.main
 			AttributeSet attrs = config.Event.AttributeSet;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: java.util.Map<logisim.data.Attribute<?>, Object> oldValues = this.oldValues;
-			IDictionary<Attribute<object>, object> oldValues = this.oldValues;
+			Dictionary<Attribute, object> oldValues = this.oldValues;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: for (java.util.Map.Entry<logisim.data.Attribute<?>, Object> entry : oldValues.entrySet())
-			foreach (KeyValuePair<Attribute<object>, object> entry in oldValues.SetOfKeyValuePairs())
+			foreach (KeyValuePair<Attribute, object> entry in oldValues.SetOfKeyValuePairs())
 			{
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<Object> attr = (logisim.data.Attribute<Object>) entry.getKey();
-				Attribute<object> attr = (Attribute<object>) entry.Key;
+// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute attr = (logisim.data.Attribute) entry.getKey();
+				Attribute attr = (Attribute) entry.Key;
 				attrs.setValue(attr, entry.Value);
 			}
 		}

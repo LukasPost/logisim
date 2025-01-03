@@ -28,14 +28,15 @@ namespace logisim.instance
 	using Caret = logisim.tools.Caret;
 	using SetAttributeAction = logisim.tools.SetAttributeAction;
 	using TextEditable = logisim.tools.TextEditable;
+    using LogisimPlus.Java;
 
-	public class InstanceTextField : AttributeListener, TextFieldListener, TextEditable
+    public class InstanceTextField : AttributeListener, TextFieldListener, TextEditable
 	{
 		private Canvas canvas;
 		private InstanceComponent comp;
 		private TextField field;
-		private Attribute<string> labelAttr;
-		private Attribute<Font> fontAttr;
+		private Attribute labelAttr;
+		private Attribute fontAttr;
 		private int fieldX;
 		private int fieldY;
 		private int halign;
@@ -49,7 +50,7 @@ namespace logisim.instance
 			this.fontAttr = null;
 		}
 
-		internal virtual void update(Attribute<string> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign)
+		internal virtual void update(Attribute labelAttr, Attribute fontAttr, int x, int y, int halign, int valign)
 		{
 			bool wasReg = shouldRegister();
 			this.labelAttr = labelAttr;
@@ -74,7 +75,7 @@ namespace logisim.instance
 
 		private void updateField(AttributeSet attrs)
 		{
-			string text = attrs.getValue(labelAttr);
+			string text = (string)attrs.getValue(labelAttr);
 			if (string.ReferenceEquals(text, null) || text.Equals(""))
 			{
 				if (field != null)
@@ -91,7 +92,7 @@ namespace logisim.instance
 				}
 				else
 				{
-					Font font = attrs.getValue(fontAttr);
+					Font font = (Font)attrs.getValue(fontAttr);
 					if (font != null)
 					{
 						field.Font = font;
@@ -104,7 +105,7 @@ namespace logisim.instance
 
 		private void createField(AttributeSet attrs, string text)
 		{
-			Font font = attrs.getValue(fontAttr);
+			Font font = (Font)attrs.getValue(fontAttr);
 			field = new TextField(fieldX, fieldY, halign, valign, font);
 			field.Text = text;
 			field.addTextFieldListener(this);
@@ -115,7 +116,7 @@ namespace logisim.instance
 			return labelAttr != null || fontAttr != null;
 		}
 
-		internal virtual Bounds getBounds(Graphics g)
+		internal virtual Bounds getBounds(JGraphics g)
 		{
 			return field == null ? Bounds.EMPTY_BOUNDS : field.getBounds(g);
 		}
@@ -124,7 +125,7 @@ namespace logisim.instance
 		{
 			if (field != null)
 			{
-				Graphics g = context.Graphics.create();
+				JGraphics g = context.Graphics;
 				field.draw(g);
 				g.dispose();
 			}
@@ -138,7 +139,7 @@ namespace logisim.instance
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?> attr = e.getAttribute();
-			Attribute<object> attr = e.Attribute;
+			Attribute attr = e.Attribute;
 			if (attr == labelAttr)
 			{
 				updateField(comp.AttributeSet);
@@ -172,7 +173,7 @@ namespace logisim.instance
 		public virtual Caret getTextCaret(ComponentUserEvent @event)
 		{
 			canvas = @event.Canvas;
-			Graphics g = canvas.getGraphics();
+			JGraphics g = canvas.getJGraphics();
 
 			// if field is absent, create it empty
 			// and if it is empty, just return a caret at its beginning

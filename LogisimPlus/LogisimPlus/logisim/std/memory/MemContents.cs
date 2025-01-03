@@ -16,7 +16,7 @@ namespace logisim.std.memory
 	using HexModelListener = hex.HexModelListener;
 	using logisim.util;
 
-	internal class MemContents : Cloneable, HexModel
+	internal class MemContents : ICloneable, HexModel
 	{
 		private const int PAGE_SIZE_BITS = 12;
 		private static readonly int PAGE_SIZE = 1 << PAGE_SIZE_BITS;
@@ -100,30 +100,23 @@ namespace logisim.std.memory
 			}
 		}
 
-		//
-		// other methods
-		//
-		public override MemContents clone()
-		{
-			try
-			{
-				MemContents ret = (MemContents) base.clone();
-				ret.listeners = null;
-				ret.pages = new MemContentsSub.ContentsInterface[this.pages.Length];
-				for (int i = 0; i < ret.pages.Length; i++)
-				{
-					if (this.pages[i] != null)
-					{
-						ret.pages[i] = this.pages[i].clone();
-					}
-				}
-				return ret;
-			}
-			catch (CloneNotSupportedException)
-			{
-				return this;
-			}
-		}
+        //
+        // other methods
+        //
+        public virtual object Clone()
+        {
+            MemContents ret = (MemContents)base.MemberwiseClone();
+            ret.listeners = null;
+            ret.pages = new MemContentsSub.ContentsInterface[this.pages.Length];
+            for (int i = 0; i < ret.pages.Length; i++)
+            {
+                if (this.pages[i] != null)
+                {
+                    ret.pages[i] = this.pages[i].clone();
+                }
+            }
+            return ret;
+        }
 
 		public virtual int LogLength
 		{

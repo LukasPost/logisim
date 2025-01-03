@@ -43,7 +43,7 @@ namespace gray
 			 * one for "bit width." It's best to use those StdAttr attributes when appropriate: A user can then select
 			 * several components (even from differing factories) with the same attribute and modify them all at once.
 			 */
-			setAttributes(new Attribute[] {StdAttr.WIDTH}, new object[] {BitWidth.create(4)});
+			setAttributes(new Attribute[] {StdAttr.Width}, new object[] {BitWidth.create(4)});
 
 			/*
 			 * The "offset bounds" is the location of the bounding rectangle relative to the mouse location. Here, we're
@@ -61,8 +61,8 @@ namespace gray
 			 */
 			setPorts(new Port[]
 			{
-				new Port(-30, 0, Port.INPUT, StdAttr.WIDTH),
-				new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH)
+				new Port(-30, 0, Port.INPUT, StdAttr.Width),
+				new Port(0, 0, Port.OUTPUT, StdAttr.Width)
 			});
 		}
 
@@ -97,7 +97,7 @@ namespace gray
 		{
 			// As it happens, InstancePainter contains several convenience methods
 			// for drawing, and we'll use those here. Frequently, you'd want to
-			// retrieve its Graphics object (painter.getGraphics) so you can draw
+			// retrieve its JGraphics object (painter.getJGraphics) so you can draw
 			// directly onto the canvas.
 			painter.drawRectangle(painter.Bounds, "G+1");
 			painter.drawPorts();

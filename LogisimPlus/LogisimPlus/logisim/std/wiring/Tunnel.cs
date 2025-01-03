@@ -25,9 +25,10 @@ namespace logisim.std.wiring
 	using Port = logisim.instance.Port;
 	using StdAttr = logisim.instance.StdAttr;
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
+    using LogisimPlus.Java;
 
-	public class Tunnel : InstanceFactory
+    public class Tunnel : InstanceFactory
 	{
 		public static readonly Tunnel FACTORY = new Tunnel();
 
@@ -41,7 +42,7 @@ namespace logisim.std.wiring
 		{
 			IconName = "tunnel.gif";
 			FacingAttribute = StdAttr.FACING;
-			KeyConfigurator = new BitWidthConfigurator(StdAttr.WIDTH);
+			KeyConfigurator = new BitWidthConfigurator(StdAttr.Width);
 		}
 
 		public override AttributeSet createAttributeSet()
@@ -68,7 +69,7 @@ namespace logisim.std.wiring
 		}
 
 		//
-		// graphics methods
+		// JGraphics methods
 		//
 		public override void paintGhost(InstancePainter painter)
 		{
@@ -76,7 +77,7 @@ namespace logisim.std.wiring
 			Direction facing = attrs.Facing;
 			string label = attrs.Label;
 
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			g.setFont(attrs.Font);
 			FontMetrics fm = g.getFontMetrics();
 			Bounds bds = computeBounds(attrs, fm.stringWidth(label), fm.getAscent() + fm.getDescent(), g, label);
@@ -152,7 +153,7 @@ namespace logisim.std.wiring
 					yp = new int[] {y0, y0, y1, y1, mw, 0, -mw};
 				}
 			}
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphicsUtil.switchToWidth(g, 2);
 			g.drawPolygon(xp, yp, xp.Length);
 		}
 
@@ -161,9 +162,9 @@ namespace logisim.std.wiring
 			Location loc = painter.Location;
 			int x = loc.X;
 			int y = loc.Y;
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			g.translate(x, y);
-			g.setColor(Color.BLACK);
+			g.setColor(Color.Black);
 			paintGhost(painter);
 			g.translate(-x, -y);
 			painter.drawPorts();
@@ -175,11 +176,11 @@ namespace logisim.std.wiring
 		protected internal override void configureNewInstance(Instance instance)
 		{
 			instance.addAttributeListener();
-			instance.setPorts(new Port[] {new Port(0, 0, Port.INOUT, StdAttr.WIDTH)});
+			instance.Ports = new Port[] { new Port(0, 0, Port.INOUT, StdAttr.Width) };
 			configureLabel(instance);
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == StdAttr.FACING)
 			{
@@ -207,7 +208,7 @@ namespace logisim.std.wiring
 			instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, loc.X + attrs.LabelX, loc.Y + attrs.LabelY, attrs.LabelHAlign, attrs.LabelVAlign);
 		}
 
-		private Bounds computeBounds(TunnelAttributes attrs, int textWidth, int textHeight, Graphics g, string label)
+		private Bounds computeBounds(TunnelAttributes attrs, int textWidth, int textHeight, JGraphics g, string label)
 		{
 			int x = attrs.LabelX;
 			int y = attrs.LabelY;
@@ -246,7 +247,7 @@ namespace logisim.std.wiring
 
 			if (g != null)
 			{
-				GraphicsUtil.drawText(g, label, bx + bw / 2, by + bh / 2, GraphicsUtil.H_CENTER, GraphicsUtil.V_CENTER_OVERALL);
+				JGraphicsUtil.drawText(g, label, bx + bw / 2, by + bh / 2, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_CENTER_OVERALL);
 			}
 
 			return Bounds.create(bx, by, bw, bh).expand(MARGIN).add(0, 0);

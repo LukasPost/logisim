@@ -76,7 +76,7 @@ namespace logisim.gui.opts
 			{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?> attr = e.getAttribute();
-				Attribute<object> attr = e.Attribute;
+				Attribute attr = e.Attribute;
 				object val = e.Value;
 				if (attr == Options.sim_limit_attr)
 				{

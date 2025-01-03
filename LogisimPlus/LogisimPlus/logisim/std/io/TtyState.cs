@@ -35,20 +35,12 @@ namespace logisim.std.io
 			sendStdout = false;
 			clear();
 		}
-
-		public virtual TtyState clone()
-		{
-			try
-			{
-				TtyState ret = (TtyState) base.clone();
-				ret.rowData = (string[])this.rowData.Clone();
-				return ret;
-			}
-			catch (CloneNotSupportedException)
-			{
-				return null;
-			}
-		}
+        public virtual object Clone()
+        {
+            TtyState ret = (TtyState)base.MemberwiseClone();
+            ret.rowData = (string[])this.rowData.Clone();
+            return ret;
+        }
 
 		public virtual Value setLastClock(Value newClock)
 		{

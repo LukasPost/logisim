@@ -25,7 +25,7 @@ namespace logisim.gui.main
 		private LogisimToolbarItem itemSimulation;
 		private LogisimToolbarItem itemLayout;
 		private LogisimToolbarItem itemAppearance;
-		private IList<ToolbarItem> items;
+		private List<ToolbarItem> items;
 
 		public ExplorerToolbarModel(Frame frame, MenuListener menu)
 		{
@@ -41,7 +41,7 @@ namespace logisim.gui.main
 			menu.addEnabledListener(this);
 		}
 
-		public override IList<ToolbarItem> Items
+		public override List<ToolbarItem> Items
 		{
 			get
 			{

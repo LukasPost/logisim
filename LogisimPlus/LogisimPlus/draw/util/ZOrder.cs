@@ -28,7 +28,7 @@ namespace draw.util
 			return getIndex(query, model.ObjectsFromBottom);
 		}
 
-		public static IDictionary<CanvasObject, int> getZIndex<T1>(ICollection<T1> query, CanvasModel model) where T1 : draw.model.CanvasObject
+		public static Dictionary<CanvasObject, int> getZIndex<T1>(IEnumerable<T1> query, CanvasModel model) where T1 : draw.model.CanvasObject
 		{
 			// returns 0 for bottommost element, large number for topmost, ordered
 			// from the bottom up.
@@ -39,8 +39,8 @@ namespace draw.util
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: java.util.Set<? extends draw.model.CanvasObject> querySet = toSet(query);
-			ISet<CanvasObject> querySet = toSet(query);
-			IDictionary<CanvasObject, int> ret;
+			HashSet<CanvasObject> querySet = toSet(query);
+			Dictionary<CanvasObject, int> ret;
 			ret = new LinkedHashMap<CanvasObject, int>(query.Count);
 			int z = -1;
 			foreach (CanvasObject o in model.ObjectsFromBottom)
@@ -54,19 +54,19 @@ namespace draw.util
 			return ret;
 		}
 
-		public static IList<E> sortTopFirst<E>(ICollection<E> objects, CanvasModel model) where E : draw.model.CanvasObject
+		public static List<E> sortTopFirst<E>(ICollection<E> objects, CanvasModel model) where E : draw.model.CanvasObject
 		{
 			return sortXFirst(objects, model, model.ObjectsFromBottom);
 		}
 
-		public static IList<E> sortBottomFirst<E>(ICollection<E> objects, CanvasModel model) where E : draw.model.CanvasObject
+		public static List<E> sortBottomFirst<E>(ICollection<E> objects, CanvasModel model) where E : draw.model.CanvasObject
 		{
 			return sortXFirst(objects, model, model.ObjectsFromTop);
 		}
 
-		private static IList<E> sortXFirst<E>(ICollection<E> objects, CanvasModel model, ICollection<CanvasObject> objs) where E : draw.model.CanvasObject
+		private static List<E> sortXFirst<E>(ICollection<E> objects, CanvasModel model, ICollection<CanvasObject> objs) where E : draw.model.CanvasObject
 		{
-			ISet<E> set = toSet(objects);
+			HashSet<E> set = toSet(objects);
 			List<E> ret = new List<E>(objects.Count);
 			foreach (CanvasObject o in objs)
 			{
@@ -81,11 +81,11 @@ namespace draw.util
 			return ret;
 		}
 
-		private static ISet<E> toSet<E>(ICollection<E> objects)
+		private static HashSet<E> toSet<E>(ICollection<E> objects)
 		{
-			if (objects is ISet<object>)
+			if (objects is HashSet<object>)
 			{
-				return (ISet<E>) objects;
+				return (HashSet<E>) objects;
 			}
 			else
 			{
@@ -94,7 +94,7 @@ namespace draw.util
 		}
 
 		// returns first object above query in the z-order that overlaps query
-		public static CanvasObject getObjectAbove<T1>(CanvasObject query, CanvasModel model, ICollection<T1> ignore) where T1 : draw.model.CanvasObject
+		public static CanvasObject getObjectAbove<T1>(CanvasObject query, CanvasModel model, IEnumerable<T1> ignore) where T1 : draw.model.CanvasObject
 		{
 			return getPrevious(query, model.ObjectsFromTop, model, ignore);
 		}
@@ -105,7 +105,7 @@ namespace draw.util
 			return getPrevious(query, model.ObjectsFromBottom, model, ignore);
 		}
 
-		private static CanvasObject getPrevious<T1>(CanvasObject query, IList<CanvasObject> objs, CanvasModel model, ICollection<T1> ignore) where T1 : draw.model.CanvasObject
+		private static CanvasObject getPrevious<T1>(CanvasObject query, List<CanvasObject> objs, CanvasModel model, ICollection<T1> ignore) where T1 : draw.model.CanvasObject
 		{
 			int index = getIndex(query, objs);
 			if (index <= 0)
@@ -114,7 +114,7 @@ namespace draw.util
 			}
 			else
 			{
-				ISet<CanvasObject> set = toSet(model.getObjectsOverlapping(query));
+				HashSet<CanvasObject> set = toSet(model.getObjectsOverlapping(query));
 				IEnumerator<CanvasObject> it = objs.listIterator(index);
 				while (it.hasPrevious())
 				{
@@ -128,7 +128,7 @@ namespace draw.util
 			}
 		}
 
-		private static int getIndex(CanvasObject query, IList<CanvasObject> objs)
+		private static int getIndex(CanvasObject query, List<CanvasObject> objs)
 		{
 			int index = -1;
 			foreach (CanvasObject o in objs)

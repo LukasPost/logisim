@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -16,7 +17,7 @@ namespace logisim.std.memory
 	using HexModelListener = hex.HexModelListener;
 	using Bounds = logisim.data.Bounds;
 	using InstanceData = logisim.instance.InstanceData;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using StringUtil = logisim.util.StringUtil;
 
 	internal class MemState : InstanceData, Cloneable, HexModelListener
@@ -277,7 +278,7 @@ namespace logisim.std.memory
 			}
 		}
 
-		public virtual void paint(Graphics g, int leftX, int topY)
+		public virtual void paint(JGraphics g, int leftX, int topY)
 		{
 			int addrBits = AddrBits;
 			int dataBits = contents.Width;
@@ -286,7 +287,7 @@ namespace logisim.std.memory
 			int boxW = addrBits <= 12 ? TABLE_WIDTH12 : TABLE_WIDTH32;
 			int boxH = ROWS * ENTRY_HEIGHT;
 
-			GraphicsUtil.switchToWidth(g, 1);
+			JGraphicsUtil.switchToWidth(g, 1);
 			g.drawRect(boxX, boxY, boxW, boxH);
 			int entryWidth = boxW / columns;
 			for (int row = 0; row < ROWS; row++)
@@ -297,23 +298,23 @@ namespace logisim.std.memory
 				int yoffs = ENTRY_HEIGHT - 3;
 				if (isValidAddr(addr))
 				{
-					g.setColor(Color.GRAY);
-					GraphicsUtil.drawText(g, StringUtil.toHexString(AddrBits, (int) addr), x - 2, y + yoffs, GraphicsUtil.H_RIGHT, GraphicsUtil.V_BASELINE);
+					g.setColor(Color.Gray);
+					JGraphicsUtil.drawText(g, StringUtil.toHexString(AddrBits, (int) addr), x - 2, y + yoffs, JGraphicsUtil.H_RIGHT, JGraphicsUtil.V_BASELINE);
 				}
-				g.setColor(Color.BLACK);
+				g.setColor(Color.Black);
 				for (int col = 0; col < columns && isValidAddr(addr); col++)
 				{
 					int val = contents.get(addr);
 					if (addr == curAddr)
 					{
 						g.fillRect(x, y, entryWidth, ENTRY_HEIGHT);
-						g.setColor(Color.WHITE);
-						GraphicsUtil.drawText(g, StringUtil.toHexString(dataBits, val), x + entryWidth / 2, y + yoffs, GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
-						g.setColor(Color.BLACK);
+						g.setColor(Color.White);
+						JGraphicsUtil.drawText(g, StringUtil.toHexString(dataBits, val), x + entryWidth / 2, y + yoffs, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_BASELINE);
+						g.setColor(Color.Black);
 					}
 					else
 					{
-						GraphicsUtil.drawText(g, StringUtil.toHexString(dataBits, val), x + entryWidth / 2, y + yoffs, GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
+						JGraphicsUtil.drawText(g, StringUtil.toHexString(dataBits, val), x + entryWidth / 2, y + yoffs, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_BASELINE);
 					}
 					addr++;
 					x += entryWidth;

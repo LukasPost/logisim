@@ -9,9 +9,9 @@
 
 namespace logisim.comp
 {
-	public interface ComponentState
+	public interface ComponentState : ICloneable
 	{
-		object clone();
+
 	}
 
 }

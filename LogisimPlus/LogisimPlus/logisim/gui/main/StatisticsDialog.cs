@@ -80,7 +80,7 @@ namespace logisim.gui.main
 
 			public virtual object getValueAt(int row, int column)
 			{
-				IList<FileStatistics.Count> counts = stats.Counts;
+				List<FileStatistics.Count> counts = stats.Counts;
 				int countsLen = counts.Count;
 				if (row < 0 || row >= countsLen + 2)
 				{
@@ -186,7 +186,7 @@ namespace logisim.gui.main
 					for (int i = 0; i < getColumnModel().getColumnCount(); i++)
 					{
 						TableColumn column = getColumnModel().getColumn(i);
-						double width = tableDim.width * (value[i] / total);
+						double width = tabledim.Width * (value[i] / total);
 						column.setPreferredWidth((int) width);
 					}
 				}

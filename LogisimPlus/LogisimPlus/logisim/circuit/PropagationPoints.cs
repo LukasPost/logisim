@@ -16,7 +16,7 @@ namespace logisim.circuit
 	using ComponentDrawContext = logisim.comp.ComponentDrawContext;
 	using Bounds = logisim.data.Bounds;
 	using Location = logisim.data.Location;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	internal class PropagationPoints
 	{
@@ -87,7 +87,7 @@ namespace logisim.circuit
 			}
 
 			JGraphics g = context.Graphics;
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphicsUtil.switchToWidth(g, 2);
 			foreach (Entry e in data)
 			{
 				if (e.state == state)
@@ -103,7 +103,7 @@ namespace logisim.circuit
 					g.drawRect(b.X, b.Y, b.Width, b.Height);
 				}
 			}
-			GraphicsUtil.switchToWidth(g, 1);
+			JGraphicsUtil.switchToWidth(g, 1);
 		}
 
 		private void addSubstates(Dictionary<CircuitState, CircuitState> map, CircuitState source, CircuitState value)

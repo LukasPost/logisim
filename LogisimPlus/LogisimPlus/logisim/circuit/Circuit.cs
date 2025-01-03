@@ -27,8 +27,9 @@ namespace logisim.circuit
 	using Clock = logisim.std.wiring.Clock;
 	using CollectionUtil = logisim.util.CollectionUtil;
 	using logisim.util;
+    using LogisimPlus.Java;
 
-	public class Circuit
+    public class Circuit
 	{
 		private bool instanceFieldsInitialized = false;
 
@@ -42,10 +43,10 @@ namespace logisim.circuit
 			private readonly Circuit outerInstance;
 
 			internal Component comp;
-			internal IDictionary<Location, EndData> toRemove;
-			internal IDictionary<Location, EndData> toAdd;
+			internal Dictionary<Location, EndData> toRemove;
+			internal Dictionary<Location, EndData> toAdd;
 
-			internal EndChangedTransaction(Circuit outerInstance, Component comp, IDictionary<Location, EndData> toRemove, IDictionary<Location, EndData> toAdd)
+			internal EndChangedTransaction(Circuit outerInstance, Component comp, Dictionary<Location, EndData> toRemove, Dictionary<Location, EndData> toAdd)
 			{
 				this.outerInstance = outerInstance;
 				this.comp = comp;
@@ -53,7 +54,7 @@ namespace logisim.circuit
 				this.toAdd = toAdd;
 			}
 
-			protected internal override IDictionary<Circuit, int> AccessedCircuits
+			protected internal override Dictionary<Circuit, int> AccessedCircuits
 			{
 				get
 				{
@@ -107,11 +108,11 @@ namespace logisim.circuit
 			internal virtual Dictionary<Location, EndData> toMap(object val)
 			{
 				Dictionary<Location, EndData> map = new Dictionary<Location, EndData>();
-				if (val is System.Collections.IList)
+				if (val is System.Collections.List)
 				{
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
 // ORIGINAL LINE: @SuppressWarnings("unchecked") java.util.List<logisim.comp.EndData> valList = (java.util.List<logisim.comp.EndData>) val;
-					IList<EndData> valList = (IList<EndData>) val;
+					List<EndData> valList = (List<EndData>) val;
 					foreach (EndData end in valList)
 					{
 						if (end != null)
@@ -180,7 +181,7 @@ namespace logisim.circuit
 		{
 			locker.checkForWritePermission("clear");
 
-			ISet<Component> oldComps = comps;
+			HashSet<Component> oldComps = comps;
 			comps = new HashSet<Component>();
 			wires = new CircuitWires();
 			clocks.Clear();
@@ -265,7 +266,7 @@ namespace logisim.circuit
 			}
 		}
 
-		public virtual ISet<WidthIncompatibilityData> WidthIncompatibilityData
+		public virtual HashSet<WidthIncompatibilityData> WidthIncompatibilityData
 		{
 			get
 			{
@@ -293,7 +294,7 @@ namespace logisim.circuit
 			return wires.points.getExclusive(loc);
 		}
 
-		private ISet<Component> Components
+		private HashSet<Component> Components
 		{
 			get
 			{
@@ -306,7 +307,7 @@ namespace logisim.circuit
 			return comps.Contains(c) || wires.Wires.Contains(c);
 		}
 
-		public virtual ISet<Wire> Wires
+		public virtual HashSet<Wire> Wires
 		{
 			get
 			{
@@ -314,7 +315,7 @@ namespace logisim.circuit
 			}
 		}
 
-		public virtual ISet<Component> NonWires
+		public virtual HashSet<Component> NonWires
 		{
 			get
 			{
@@ -360,7 +361,7 @@ namespace logisim.circuit
 			return false;
 		}
 
-		public virtual ISet<Location> SplitLocations
+		public virtual HashSet<Location> SplitLocations
 		{
 			get
 			{
@@ -381,7 +382,7 @@ namespace logisim.circuit
 			return ret;
 		}
 
-		public virtual ICollection<Component> getAllContaining(Location pt, Graphics g)
+		public virtual ICollection<Component> getAllContaining(Location pt, JGraphics g)
 		{
 			HashSet<Component> ret = new HashSet<Component>();
 			foreach (Component comp in Components)
@@ -407,7 +408,7 @@ namespace logisim.circuit
 			return ret;
 		}
 
-		public virtual ICollection<Component> getAllWithin(Bounds bds, Graphics g)
+		public virtual ICollection<Component> getAllWithin(Bounds bds, JGraphics g)
 		{
 			HashSet<Component> ret = new HashSet<Component>();
 			foreach (Component comp in Components)
@@ -480,7 +481,7 @@ namespace logisim.circuit
 			}
 		}
 
-		public virtual Bounds getBounds(Graphics g)
+		public virtual Bounds getBounds(JGraphics g)
 		{
 			Bounds ret = wires.WireBounds;
 			int xMin = ret.X;
@@ -607,12 +608,12 @@ namespace logisim.circuit
 		}
 
 		//
-		// Graphics methods
+		// JGraphics methods
 		//
 		public virtual void draw(ComponentDrawContext context, ICollection<Component> hidden)
 		{
-			Graphics g = context.Graphics;
-			Graphics g_copy = g.create();
+			JGraphics g = context.Graphics;
+			JGraphics g_copy = g.create();
 			context.Graphics = g_copy;
 			wires.draw(context, hidden);
 
@@ -620,7 +621,7 @@ namespace logisim.circuit
 			{
 				foreach (Component c in comps)
 				{
-					Graphics g_new = g.create();
+					JGraphics g_new = g.create();
 					context.Graphics = g_new;
 					g_copy.dispose();
 					g_copy = g_new;
@@ -634,7 +635,7 @@ namespace logisim.circuit
 				{
 					if (!hidden.Contains(c))
 					{
-						Graphics g_new = g.create();
+						JGraphics g_new = g.create();
 						context.Graphics = g_new;
 						g_copy.dispose();
 						g_copy = g_new;

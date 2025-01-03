@@ -29,7 +29,7 @@ namespace logisim.analyze.model
 			internal int format;
 			internal Expression expr = null;
 			internal string exprString = null;
-			internal IList<Implicant> minimalImplicants = null;
+			internal List<Implicant> minimalImplicants = null;
 			internal Expression minimalExpr = null;
 
 			internal OutputData(OutputExpressions outerInstance, string output)
@@ -83,7 +83,7 @@ namespace logisim.analyze.model
 				}
 			}
 
-			internal virtual IList<Implicant> MinimalImplicants
+			internal virtual List<Implicant> MinimalImplicants
 			{
 				get
 				{
@@ -198,7 +198,7 @@ namespace logisim.analyze.model
 				invalidating = true;
 				try
 				{
-					IList<Implicant> oldImplicants = minimalImplicants;
+					List<Implicant> oldImplicants = minimalImplicants;
 					Expression oldMinExpr = minimalExpr;
 					minimalImplicants = Implicant.computeMinimal(format, outerInstance.model, output);
 					minimalExpr = Implicant.toExpression(format, outerInstance.model, minimalImplicants);
@@ -432,7 +432,7 @@ namespace logisim.analyze.model
 			return getOutputData(output, true).MinimalExpression;
 		}
 
-		public virtual IList<Implicant> getMinimalImplicants(string output)
+		public virtual List<Implicant> getMinimalImplicants(string output)
 		{
 			if (string.ReferenceEquals(output, null))
 			{
@@ -561,7 +561,7 @@ namespace logisim.analyze.model
 			return true;
 		}
 
-		private static bool implicantsSame(IList<Implicant> a, IList<Implicant> b)
+		private static bool implicantsSame(List<Implicant> a, List<Implicant> b)
 		{
 			if (a == null)
 			{

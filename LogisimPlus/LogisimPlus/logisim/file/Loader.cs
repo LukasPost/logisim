@@ -65,7 +65,7 @@ namespace logisim.file
 		// to be cleared with each new file
 		private File mainFile = null;
 		private Stack<File> filesOpening = new Stack<File>();
-		private IDictionary<File, File> substitutions = new Dictionary<File, File>();
+		private Dictionary<File, File> substitutions = new Dictionary<File, File>();
 
 		public Loader(Component parent)
 		{
@@ -145,7 +145,7 @@ namespace logisim.file
 
 // JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in C#:
 // ORIGINAL LINE: public LogisimFile openLogisimFile(java.io.File file, java.util.Map<java.io.File, java.io.File> substitutions) throws LoadFailedException
-		public virtual LogisimFile openLogisimFile(File file, IDictionary<File, File> substitutions)
+		public virtual LogisimFile openLogisimFile(File file, Dictionary<File, File> substitutions)
 		{
 			this.substitutions = substitutions;
 			try

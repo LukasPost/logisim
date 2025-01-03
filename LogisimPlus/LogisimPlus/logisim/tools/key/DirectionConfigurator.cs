@@ -17,27 +17,18 @@ namespace logisim.tools.key
 
 	public class DirectionConfigurator : KeyConfigurator, ICloneable
 	{
-		private Attribute<Direction> attr;
+		private Attribute attr;
 		private int modsEx;
 
-		public DirectionConfigurator(Attribute<Direction> attr, int modifiersEx)
+		public DirectionConfigurator(Attribute attr, int modifiersEx)
 		{
 			this.attr = attr;
 			this.modsEx = modifiersEx;
 		}
 
-		public virtual DirectionConfigurator clone()
+		public virtual object Clone()
 		{
-			try
-			{
-				return (DirectionConfigurator) base.clone();
-			}
-			catch (CloneNotSupportedException e)
-			{
-				Console.WriteLine(e.ToString());
-				Console.Write(e.StackTrace);
-				return null;
-			}
+			return base.MemberwiseClone();
 		}
 
 		public virtual KeyConfigurationResult keyEventReceived(KeyConfigurationEvent @event)

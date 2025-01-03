@@ -78,7 +78,7 @@ namespace logisim.gui.start
 			contents.add(imagePanel, BorderLayout.NORTH);
 			contents.add(progress, BorderLayout.CENTER);
 			contents.add(buttonPanel, BorderLayout.SOUTH);
-			contents.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+			contents.setBorder(BorderFactory.createLineBorder(Color.Black, 2));
 
 			Color bg = imagePanel.getBackground();
 			contents.setBackground(bg);

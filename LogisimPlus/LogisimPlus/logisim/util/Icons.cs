@@ -9,9 +9,8 @@
 
 namespace logisim.util
 {
-
-
-	using Direction = logisim.data.Direction;
+    using LogisimPlus.Java;
+    using Direction = logisim.data.Direction;
 
 	public class Icons
 	{
@@ -31,35 +30,34 @@ namespace logisim.util
 			return new ImageIcon(url);
 		}
 
-		public static void paintRotated(Graphics g, int x, int y, Direction dir, Icon icon, Component dest)
+		public static void paintRotated(JGraphics g, int x, int y, Direction dir, Icon icon, JComponent dest)
 		{
-			if (!(g is Graphics2D) || dir == Direction.East)
+			if (!(g is JGraphics2D) || dir == Direction.East)
 			{
 				icon.paintIcon(dest, g, x, y);
 				return;
 			}
 
-			Graphics2D g2 = (Graphics2D) g.create();
 			double cx = x + icon.getIconWidth() / 2.0;
 			double cy = y + icon.getIconHeight() / 2.0;
 			if (dir == Direction.West)
 			{
-				g2.rotate(Math.PI, cx, cy);
+				g.rotate(Math.PI, cx, cy);
 			}
 			else if (dir == Direction.North)
 			{
-				g2.rotate(-Math.PI / 2.0, cx, cy);
+				g.rotate(-Math.PI / 2.0, cx, cy);
 			}
 			else if (dir == Direction.South)
 			{
-				g2.rotate(Math.PI / 2.0, cx, cy);
+				g.rotate(Math.PI / 2.0, cx, cy);
 			}
 			else
 			{
-				g2.translate(-x, -y);
+				g.translate(-x, -y);
 			}
-			icon.paintIcon(dest, g2, x, y);
-			g2.dispose();
+			icon.paintIcon(dest, g, x, y);
+			g.dispose();
 		}
 	}
 

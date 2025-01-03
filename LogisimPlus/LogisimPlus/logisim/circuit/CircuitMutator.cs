@@ -26,11 +26,11 @@ namespace logisim.circuit
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public void set(Circuit circuit, logisim.comp.Component comp, logisim.data.Attribute<?> attr, Object value);
-		void set<T1>(Circuit circuit, Component comp, Attribute<T1> attr, object value);
+		void set<T1>(Circuit circuit, Component comp, Attribute attr, object value);
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public void setForCircuit(Circuit circuit, logisim.data.Attribute<?> attr, Object value);
-		void setForCircuit<T1>(Circuit circuit, Attribute<T1> attr, object value);
+		void setForCircuit<T1>(Circuit circuit, Attribute attr, object value);
 	}
 
 }

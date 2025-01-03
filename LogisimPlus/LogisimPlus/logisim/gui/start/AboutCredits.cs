@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 using System.Collections.Generic;
 
@@ -77,9 +78,9 @@ namespace logisim.gui.start
 
 			colorBase = new Color[]
 			{
-				new Color(143, 0, 0),
-				new Color(48, 0, 96),
-				new Color(48, 0, 96)
+				Color.FromArgb(255, 143, 0, 0),
+				Color.FromArgb(255, 48, 0, 96),
+				Color.FromArgb(255, 48, 0, 96)
 			};
 			font = new Font[]
 			{
@@ -151,10 +152,10 @@ namespace logisim.gui.start
 
 		private Color derive(Color @base, int alpha)
 		{
-			return new Color(@base.getRed(), @base.getGreen(), @base.getBlue(), alpha);
+			return Color.FromArgb(alpha, @base.R, @base.G, @base.B);
 		}
 
-		protected internal override void paintComponent(Graphics g)
+		protected internal override void paintComponent(JGraphics g)
 		{
 			FontMetrics[] fms = new FontMetrics[font.Length];
 			for (int i = 0; i < fms.Length; i++)
@@ -254,7 +255,7 @@ namespace logisim.gui.start
 				}
 				else
 				{
-					((Graphics2D) g).setPaint(paint[type]);
+					g.setPaint(paint[type]);
 				}
 				g.setFont(font[type]);
 				int textWidth = fms[type].stringWidth(line.text);

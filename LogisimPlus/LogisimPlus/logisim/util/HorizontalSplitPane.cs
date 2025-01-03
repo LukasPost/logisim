@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -16,7 +17,7 @@ namespace logisim.util
 	public class HorizontalSplitPane : JPanel
 	{
 		internal const int DRAG_TOLERANCE = 3;
-		private static readonly Color DRAG_COLOR = new Color(0, 0, 0, 128);
+		private static readonly Color DRAG_COLOR = Color.FromArgb(255, 0, 0, 0, 128);
 
 		internal abstract class Dragbar : JComponent, MouseListener, MouseMotionListener
 		{
@@ -33,7 +34,7 @@ namespace logisim.util
 
 			internal abstract int DragValue {set;}
 
-			public override void paintComponent(Graphics g)
+			public override void paintComponent(JGraphics g)
 			{
 				if (dragging)
 				{

@@ -18,8 +18,9 @@ namespace draw.model
 	using logisim.data;
 	using Bounds = logisim.data.Bounds;
 	using logisim.util;
+    using LogisimPlus.Java;
 
-	public class Drawing : CanvasModel
+    public class Drawing : CanvasModel
 	{
 		private EventSourceWeakSupport<CanvasModelListener> listeners;
 		private List<CanvasObject> canvasObjects;
@@ -55,12 +56,12 @@ namespace draw.model
 			}
 		}
 
-		public virtual void paint(Graphics g, Selection selection)
+		public virtual void paint(JGraphics g, Selection selection)
 		{
-			ISet<CanvasObject> suppressed = selection.DrawsSuppressed;
+			HashSet<CanvasObject> suppressed = selection.DrawsSuppressed;
 			foreach (CanvasObject shape in ObjectsFromBottom)
 			{
-				Graphics dup = g.create();
+				JGraphics dup = g.create();
 				if (suppressed.Contains(shape))
 				{
 					selection.drawSuppressed(dup, shape);
@@ -73,7 +74,7 @@ namespace draw.model
 			}
 		}
 
-		public virtual IList<CanvasObject> ObjectsFromTop
+		public virtual List<CanvasObject> ObjectsFromTop
 		{
 			get
 			{
@@ -83,7 +84,7 @@ namespace draw.model
 			}
 		}
 
-		public virtual IList<CanvasObject> ObjectsFromBottom
+		public virtual List<CanvasObject> ObjectsFromBottom
 		{
 			get
 			{
@@ -107,7 +108,7 @@ namespace draw.model
 			}
 			if (ret == null)
 			{
-				return Collections.emptyList();
+				return [];
 			}
 			else
 			{
@@ -122,8 +123,8 @@ namespace draw.model
 
 		public virtual void addObjects<T1>(int index, ICollection<T1> shapes) where T1 : CanvasObject
 		{
-			LinkedHashMap<CanvasObject, int> indexes;
-			indexes = new LinkedHashMap<CanvasObject, int>();
+			Dictionary<CanvasObject, int> indexes;
+			indexes = new Dictionary<CanvasObject, int>();
 			int i = index;
 			foreach (CanvasObject shape in shapes)
 			{
@@ -133,12 +134,12 @@ namespace draw.model
 			addObjectsHelp(indexes);
 		}
 
-		public virtual void addObjects<T1>(IDictionary<T1> shapes) where T1 : CanvasObject
+		public virtual void addObjects<T1>(Dictionary<T1> shapes) where T1 : CanvasObject
 		{
 			addObjectsHelp(shapes);
 		}
 
-		private void addObjectsHelp<T1>(IDictionary<T1> shapes) where T1 : CanvasObject
+		private void addObjectsHelp<T1>(Dictionary<T1> shapes) where T1 : CanvasObject
 		{
 			// this is separate method so that subclass can call super.add to either
 			// of the add methods, and it won't get redirected into the subclass
@@ -161,7 +162,7 @@ namespace draw.model
 
 		public virtual void removeObjects<T1>(ICollection<T1> shapes) where T1 : CanvasObject
 		{
-			IList<CanvasObject> found = restrict(shapes);
+			List<CanvasObject> found = restrict(shapes);
 			CanvasModelEvent e = CanvasModelEvent.forRemove(this, found);
 			if (found.Count > 0 && isChangeAllowed(e))
 			{
@@ -176,7 +177,7 @@ namespace draw.model
 
 		public virtual void translateObjects<T1>(ICollection<T1> shapes, int dx, int dy) where T1 : CanvasObject
 		{
-			IList<CanvasObject> found = restrict(shapes);
+			List<CanvasObject> found = restrict(shapes);
 			CanvasModelEvent e = CanvasModelEvent.forTranslate(this, found, dx, dy);
 			if (found.Count > 0 && (dx != 0 || dy != 0) && isChangeAllowed(e))
 			{
@@ -189,7 +190,7 @@ namespace draw.model
 			}
 		}
 
-		public virtual void reorderObjects(IList<ReorderRequest> requests)
+		public virtual void reorderObjects(List<ReorderRequest> requests)
 		{
 			bool hasEffect = false;
 			foreach (ReorderRequest r in requests)
@@ -262,7 +263,7 @@ namespace draw.model
 			}
 		}
 
-		public virtual IDictionary<AttributeMapKey, object> AttributeValues
+		public virtual Dictionary<AttributeMapKey, object> AttributeValues
 		{
 			set
 			{
@@ -271,8 +272,8 @@ namespace draw.model
 				foreach (AttributeMapKey key in value.Keys)
 				{
 	// JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-	// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<Object> attr = (logisim.data.Attribute<Object>) key.getAttribute();
-					Attribute<object> attr = (Attribute<object>) key.Attribute;
+	// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute attr = (logisim.data.Attribute) key.getAttribute();
+					Attribute attr = (Attribute) key.Attribute;
 					object oldValue = key.Object.getValue(attr);
 					oldValues[key] = oldValue;
 				}
@@ -284,8 +285,8 @@ namespace draw.model
 						AttributeMapKey key = entry.Key;
 						CanvasObject shape = key.Object;
 	// JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-	// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<Object> attr = (logisim.data.Attribute<Object>) key.getAttribute();
-						Attribute<object> attr = (Attribute<object>) key.Attribute;
+	// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute attr = (logisim.data.Attribute) key.getAttribute();
+						Attribute attr = (Attribute) key.Attribute;
 						shape.setValue(attr, entry.Value);
 						overlaps.invalidateShape(shape);
 					}

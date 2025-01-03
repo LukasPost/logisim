@@ -14,7 +14,8 @@ namespace logisim.gui.generic
 {
 
 	using logisim.data;
-	using AttributeEvent = logisim.data.AttributeEvent;
+    using LogisimPlus.Java;
+    using AttributeEvent = logisim.data.AttributeEvent;
 	using AttributeListener = logisim.data.AttributeListener;
 	using AttributeSet = logisim.data.AttributeSet;
 
@@ -24,17 +25,16 @@ namespace logisim.gui.generic
 		{
 			private readonly AttributeSetTableModel outerInstance;
 
-			internal Attribute<object> attr;
+			internal Attribute attr;
 
 // JAVA TO C# CONVERTER TASK: Wildcard generics in constructor parameters are not converted. Move the generic type parameter and constraint to the class header:
 // ORIGINAL LINE: AttrRow(logisim.data.Attribute<?> attr)
-			internal AttrRow(AttributeSetTableModel outerInstance, Attribute<T1> attr)
+			internal AttrRow(AttributeSetTableModel outerInstance, Attribute attr)
 			{
 				this.outerInstance = outerInstance;
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<Object> objAttr = (logisim.data.Attribute<Object>) attr;
-				Attribute<object> objAttr = (Attribute<object>) attr;
-				this.attr = objAttr;
+// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute objAttr = (logisim.data.Attribute) attr;
+				this.attr = attr;
 			}
 
 			public virtual string Label
@@ -66,9 +66,10 @@ namespace logisim.gui.generic
 						}
 					}
 				}
+				[MustRefactor]
 				set
 				{
-					Attribute<object> attr = this.attr;
+					Attribute attr = this.attr;
 					if (attr == null || value == null)
 					{
 						return;
@@ -78,7 +79,9 @@ namespace logisim.gui.generic
 					{
 						if (value is string)
 						{
-							value = attr.parse((string) value);
+							//Qickfix
+							// please fixme
+							value = attr.parse(value).ToString();
 						}
 						outerInstance.setValueRequested(attr, value);
 					}
@@ -121,7 +124,7 @@ namespace logisim.gui.generic
 		private AttributeSet attrs;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private java.util.HashMap<logisim.data.Attribute<?>, AttrRow> rowMap;
-		private Dictionary<Attribute<object>, AttrRow> rowMap;
+		private Dictionary<Attribute, AttrRow> rowMap;
 		private List<AttrRow> rows;
 
 		public AttributeSetTableModel(AttributeSet attrs)
@@ -130,13 +133,13 @@ namespace logisim.gui.generic
 			this.listeners = new List<AttrTableModelListener>();
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: this.rowMap = new java.util.HashMap<logisim.data.Attribute<?>, AttrRow>();
-			this.rowMap = new Dictionary<Attribute<object>, AttrRow>();
+			this.rowMap = new Dictionary<Attribute, AttrRow>();
 			this.rows = new List<AttrRow>();
 			if (attrs != null)
 			{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: for (logisim.data.Attribute<?> attr : attrs.getAttributes())
-				foreach (Attribute<object> attr in attrs.Attributes)
+				foreach (Attribute attr in attrs.Attributes)
 				{
 					AttrRow row = new AttrRow(this, attr);
 					rowMap[attr] = row;
@@ -231,8 +234,8 @@ namespace logisim.gui.generic
 		}
 
 // JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in C#:
-// ORIGINAL LINE: protected abstract void setValueRequested(logisim.data.Attribute<Object> attr, Object value) throws AttrTableSetException;
-		protected internal abstract void setValueRequested(Attribute<object> attr, object value);
+// ORIGINAL LINE: protected abstract void setValueRequested(logisim.data.Attribute attr, Object value) throws AttrTableSetException;
+		protected internal abstract void setValueRequested(Attribute attr, object value);
 
 		//
 		// AttributeListener methods
@@ -245,7 +248,7 @@ namespace logisim.gui.generic
 			int rowsSize = rows.Count;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: for (logisim.data.Attribute<?> attr : attrs.getAttributes())
-			foreach (Attribute<object> attr in attrs.Attributes)
+			foreach (Attribute attr in attrs.Attributes)
 			{
 				if (index >= rowsSize || rows[index].attr != attr)
 				{
@@ -263,10 +266,10 @@ namespace logisim.gui.generic
 			List<AttrRow> newRows = new List<AttrRow>();
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: java.util.HashSet<logisim.data.Attribute<?>> missing = new java.util.HashSet<logisim.data.Attribute<?>>(rowMap.keySet());
-			Dictionary<Attribute<object>, AttrRow>.KeyCollection missing = new HashSet<Attribute<object>>(rowMap.Keys);
+			Dictionary<Attribute, AttrRow>.KeyCollection missing = new HashSet<Attribute>(rowMap.Keys);
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: for (logisim.data.Attribute<?> attr : attrs.getAttributes())
-			foreach (Attribute<object> attr in attrs.Attributes)
+			foreach (Attribute attr in attrs.Attributes)
 			{
 				AttrRow row = rowMap[attr];
 				if (row == null)
@@ -283,7 +286,7 @@ namespace logisim.gui.generic
 			rows = newRows;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: for (logisim.data.Attribute<?> attr : missing)
-			foreach (Attribute<object> attr in missing)
+			foreach (Attribute attr in missing)
 			{
 				rowMap.Remove(attr);
 			}
@@ -295,7 +298,7 @@ namespace logisim.gui.generic
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?> attr = e.getAttribute();
-			Attribute<object> attr = e.Attribute;
+			Attribute attr = e.Attribute;
 			AttrTableModelRow row = rowMap[attr];
 			if (row != null)
 			{

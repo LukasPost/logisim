@@ -272,7 +272,7 @@ namespace logisim.circuit
 				}
 				return false;
 			case SET:
-				return comp.Factory is Pin && (attr == StdAttr.WIDTH || attr == Pin.ATTR_TYPE);
+				return comp.Factory is Pin && (attr == StdAttr.Width || attr == Pin.ATTR_TYPE);
 			default:
 				return false;
 			}

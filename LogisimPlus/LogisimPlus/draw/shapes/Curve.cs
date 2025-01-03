@@ -23,8 +23,9 @@ namespace draw.shapes
 	using Bounds = logisim.data.Bounds;
 	using Location = logisim.data.Location;
 	using logisim.util;
+    using LogisimPlus.Java;
 
-	public class Curve : FillableCanvasObject
+    public class Curve : FillableCanvasObject
 	{
 		private Location p0;
 		private Location p1;
@@ -108,7 +109,7 @@ namespace draw.shapes
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
@@ -177,7 +178,7 @@ namespace draw.shapes
 			bounds = bounds.translate(dx, dy);
 		}
 
-		public virtual IList<Handle> Handles
+		public virtual List<Handle> Handles
 		{
 			get
 			{
@@ -185,7 +186,7 @@ namespace draw.shapes
 			}
 		}
 
-		public override IList<Handle> getHandles(HandleGesture gesture)
+		public override List<Handle> getHandles(HandleGesture gesture)
 		{
 			return UnmodifiableList.create(getHandleArray(gesture));
 		}
@@ -295,16 +296,16 @@ namespace draw.shapes
 			return ret;
 		}
 
-		public override void paint(Graphics g, HandleGesture gesture)
+		public override void paint(JGraphics g, HandleGesture gesture)
 		{
 			QuadCurve2D curve = getCurve(gesture);
 			if (setForFill(g))
 			{
-				((Graphics2D) g).fill(curve);
+				g.fill(curve);
 			}
 			if (setForStroke(g))
 			{
-				((Graphics2D) g).draw(curve);
+				g.draw(curve);
 			}
 		}
 

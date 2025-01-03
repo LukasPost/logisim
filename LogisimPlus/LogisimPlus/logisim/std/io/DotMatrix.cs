@@ -25,11 +25,12 @@ namespace logisim.std.io
 	using InstanceState = logisim.instance.InstanceState;
 	using Port = logisim.instance.Port;
 	using DurationAttribute = logisim.std.wiring.DurationAttribute;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
+    using LogisimPlus.Java;
 
-	// TODO repropagate when rows/cols change
+    // TODO repropagate when rows/cols change
 
-	public class DotMatrix : InstanceFactory
+    public class DotMatrix : InstanceFactory
 	{
 		internal static readonly AttributeOption INPUT_SELECT = new AttributeOption("select", Strings.getter("ioInputSelect"));
 		internal static readonly AttributeOption INPUT_COLUMN = new AttributeOption("column", Strings.getter("ioInputColumn"));
@@ -38,17 +39,17 @@ namespace logisim.std.io
 		internal static readonly AttributeOption SHAPE_CIRCLE = new AttributeOption("circle", Strings.getter("ioShapeCircle"));
 		internal static readonly AttributeOption SHAPE_SQUARE = new AttributeOption("square", Strings.getter("ioShapeSquare"));
 
-		internal static readonly Attribute<AttributeOption> ATTR_INPUT_TYPE = Attributes.forOption("inputtype", Strings.getter("ioMatrixInput"), new AttributeOption[] {INPUT_COLUMN, INPUT_ROW, INPUT_SELECT});
-		internal static readonly Attribute<int> ATTR_MATRIX_COLS = Attributes.forIntegerRange("matrixcols", Strings.getter("ioMatrixCols"), 1, Value.MAX_WIDTH);
-		internal static readonly Attribute<int> ATTR_MATRIX_ROWS = Attributes.forIntegerRange("matrixrows", Strings.getter("ioMatrixRows"), 1, Value.MAX_WIDTH);
-		internal static readonly Attribute<AttributeOption> ATTR_DOT_SHAPE = Attributes.forOption("dotshape", Strings.getter("ioMatrixShape"), new AttributeOption[] {SHAPE_CIRCLE, SHAPE_SQUARE});
-		internal static readonly Attribute<int> ATTR_PERSIST = new DurationAttribute("persist", Strings.getter("ioMatrixPersistenceAttr"), 0, int.MaxValue);
+		internal static readonly Attribute ATTR_INPUT_TYPE = Attributes.forOption("inputtype", Strings.getter("ioMatrixInput"), new AttributeOption[] {INPUT_COLUMN, INPUT_ROW, INPUT_SELECT});
+		internal static readonly Attribute ATTR_MATRIX_COLS = Attributes.forIntegerRange("matrixcols", Strings.getter("ioMatrixCols"), 1, Value.MAX_WIDTH);
+		internal static readonly Attribute ATTR_MATRIX_ROWS = Attributes.forIntegerRange("matrixrows", Strings.getter("ioMatrixRows"), 1, Value.MAX_WIDTH);
+		internal static readonly Attribute ATTR_DOT_SHAPE = Attributes.forOption("dotshape", Strings.getter("ioMatrixShape"), new AttributeOption[] {SHAPE_CIRCLE, SHAPE_SQUARE});
+		internal static readonly Attribute ATTR_PERSIST = new DurationAttribute("persist", Strings.getter("ioMatrixPersistenceAttr"), 0, int.MaxValue);
 
 		public DotMatrix() : base("DotMatrix", Strings.getter("dotMatrixComponent"))
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: setAttributes(new logisim.data.Attribute<?>[] { ATTR_INPUT_TYPE, ATTR_MATRIX_COLS, ATTR_MATRIX_ROWS, Io.ATTR_ON_COLOR, Io.ATTR_OFF_COLOR, ATTR_PERSIST, ATTR_DOT_SHAPE }, new Object[] { INPUT_COLUMN, System.Convert.ToInt32(5), System.Convert.ToInt32(7), java.awt.Color.GREEN, java.awt.Color.DARK_GRAY, System.Convert.ToInt32(0), SHAPE_SQUARE });
-			setAttributes(new Attribute<object>[] {ATTR_INPUT_TYPE, ATTR_MATRIX_COLS, ATTR_MATRIX_ROWS, Io.ATTR_ON_COLOR, Io.ATTR_OFF_COLOR, ATTR_PERSIST, ATTR_DOT_SHAPE}, new object[] {INPUT_COLUMN, Convert.ToInt32(5), Convert.ToInt32(7), Color.GREEN, Color.DARK_GRAY, Convert.ToInt32(0), SHAPE_SQUARE});
+			setAttributes(new Attribute[] {ATTR_INPUT_TYPE, ATTR_MATRIX_COLS, ATTR_MATRIX_ROWS, Io.ATTR_ON_COLOR, Io.ATTR_OFF_COLOR, ATTR_PERSIST, ATTR_DOT_SHAPE}, new object[] {INPUT_COLUMN, Convert.ToInt32(5), Convert.ToInt32(7), Color.GREEN, Color.DARK_GRAY, Convert.ToInt32(0), SHAPE_SQUARE});
 			IconName = "dotmat.gif";
 		}
 
@@ -84,7 +85,7 @@ namespace logisim.std.io
 			updatePorts(instance);
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == ATTR_MATRIX_ROWS || attr == ATTR_MATRIX_COLS || attr == ATTR_INPUT_TYPE)
 			{
@@ -134,7 +135,7 @@ namespace logisim.std.io
 					};
 				}
 			}
-			instance.setPorts(ps);
+			instance.Ports = ps;
 		}
 
 		private State getState(InstanceState state)
@@ -191,15 +192,15 @@ namespace logisim.std.io
 
 		public override void paintInstance(InstancePainter painter)
 		{
-			Color onColor = painter.getAttributeValue(Io.ATTR_ON_COLOR);
-			Color offColor = painter.getAttributeValue(Io.ATTR_OFF_COLOR);
+			Color onColor = (Color)painter.getAttributeValue(Io.ATTR_ON_COLOR);
+			Color offColor = (Color)painter.getAttributeValue(Io.ATTR_OFF_COLOR);
 			bool drawSquare = painter.getAttributeValue(ATTR_DOT_SHAPE) == SHAPE_SQUARE;
 
 			State data = getState(painter);
 			long ticks = painter.TickCount;
 			Bounds bds = painter.Bounds;
 			bool showState = painter.ShowState;
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			int rows = data.rows;
 			int cols = data.cols;
 			for (int j = 0; j < rows; j++)
@@ -237,15 +238,15 @@ namespace logisim.std.io
 					}
 					else
 					{
-						g.setColor(Color.GRAY);
+						g.setColor(Color.Gray);
 						g.fillOval(x + 1, y + 1, 8, 8);
 					}
 				}
 			}
-			g.setColor(Color.BLACK);
-			GraphicsUtil.switchToWidth(g, 2);
+			g.setColor(Color.Black);
+			JGraphicsUtil.switchToWidth(g, 2);
 			g.drawRect(bds.X, bds.Y, bds.Width, bds.Height);
-			GraphicsUtil.switchToWidth(g, 1);
+			JGraphicsUtil.switchToWidth(g, 1);
 			painter.drawPorts();
 		}
 
@@ -263,19 +264,12 @@ namespace logisim.std.io
 				updateSize(rows, cols, curClock);
 			}
 
-			public virtual object clone()
+			public virtual object Clone()
 			{
-				try
-				{
-					State ret = (State) base.clone();
-					ret.grid = (Value[])this.grid.Clone();
-					ret.persistTo = (long[])this.persistTo.Clone();
-					return ret;
-				}
-				catch (CloneNotSupportedException)
-				{
-					return null;
-				}
+				State ret = (State)base.MemberwiseClone();
+				ret.grid = (Value[])this.grid.Clone();
+				ret.persistTo = (long[])this.persistTo.Clone();
+				return ret;
 			}
 
 			internal virtual void updateSize(int rows, int cols, long curClock)

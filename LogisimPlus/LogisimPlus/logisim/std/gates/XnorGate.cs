@@ -18,7 +18,7 @@ namespace logisim.std.gates
 	using InstancePainter = logisim.instance.InstancePainter;
 	using InstanceState = logisim.instance.InstanceState;
 	using WireRepairData = logisim.tools.WireRepairData;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	internal class XnorGate : AbstractGate
 	{
@@ -39,11 +39,11 @@ namespace logisim.std.gates
 
 		public override void paintIconShaped(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
-			GraphicsUtil.drawCenteredArc(g, 0, -5, 22, -90, 53);
-			GraphicsUtil.drawCenteredArc(g, 0, 23, 22, 90, -53);
-			GraphicsUtil.drawCenteredArc(g, -8, 9, 16, -30, 60);
-			GraphicsUtil.drawCenteredArc(g, -10, 9, 16, -30, 60);
+			JGraphics g = painter.Graphics;
+			JGraphicsUtil.drawCenteredArc(g, 0, -5, 22, -90, 53);
+			JGraphicsUtil.drawCenteredArc(g, 0, 23, 22, 90, -53);
+			JGraphicsUtil.drawCenteredArc(g, -8, 9, 16, -30, 60);
+			JGraphicsUtil.drawCenteredArc(g, -10, 9, 16, -30, 60);
 			g.drawOval(16, 8, 4, 4);
 		}
 

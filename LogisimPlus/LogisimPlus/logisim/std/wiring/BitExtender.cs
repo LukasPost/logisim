@@ -26,13 +26,14 @@ namespace logisim.std.wiring
 	using StdAttr = logisim.instance.StdAttr;
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
 	using JoinedConfigurator = logisim.tools.key.JoinedConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
+    using LogisimPlus.Java;
 
-	public class BitExtender : InstanceFactory
+    public class BitExtender : InstanceFactory
 	{
-		private static readonly Attribute<BitWidth> ATTR_IN_WIDTH = Attributes.forBitWidth("in_width", Strings.getter("extenderInAttr"));
-		private static readonly Attribute<BitWidth> ATTR_OUT_WIDTH = Attributes.forBitWidth("out_width", Strings.getter("extenderOutAttr"));
-		private static readonly Attribute<AttributeOption> ATTR_TYPE = Attributes.forOption("type", Strings.getter("extenderTypeAttr"), new AttributeOption[]
+		private static readonly Attribute ATTR_IN_WIDTH = Attributes.forBitWidth("in_width", Strings.getter("extenderInAttr"));
+		private static readonly Attribute ATTR_OUT_WIDTH = Attributes.forBitWidth("out_width", Strings.getter("extenderOutAttr"));
+		private static readonly Attribute ATTR_TYPE = Attributes.forOption("type", Strings.getter("extenderTypeAttr"), new AttributeOption[]
 		{
 			new AttributeOption("zero", "zero", Strings.getter("extenderZeroType")),
 			new AttributeOption("one", "one", Strings.getter("extenderOneType")),
@@ -52,11 +53,11 @@ namespace logisim.std.wiring
 		}
 
 		//
-		// graphics methods
+		// JGraphics methods
 		//
 		public override void paintInstance(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			FontMetrics fm = g.getFontMetrics();
 			int asc = fm.getAscent();
 
@@ -89,11 +90,11 @@ namespace logisim.std.wiring
 			int x = bds.X + bds.Width / 2;
 			int y0 = bds.Y + (bds.Height / 2 + asc) / 2;
 			int y1 = bds.Y + (3 * bds.Height / 2 + asc) / 2;
-			GraphicsUtil.drawText(g, s0, x, y0, GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
-			GraphicsUtil.drawText(g, s1, x, y1, GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
+			JGraphicsUtil.drawText(g, s0, x, y0, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_BASELINE);
+			JGraphicsUtil.drawText(g, s1, x, y1, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_BASELINE);
 
-			BitWidth w0 = painter.getAttributeValue(ATTR_OUT_WIDTH);
-			BitWidth w1 = painter.getAttributeValue(ATTR_IN_WIDTH);
+			BitWidth w0 = (BitWidth)painter.getAttributeValue(ATTR_OUT_WIDTH);
+			BitWidth w1 = (BitWidth)painter.getAttributeValue(ATTR_IN_WIDTH);
 			painter.drawPort(0, "" + w0.Width, Direction.West);
 			painter.drawPort(1, "" + w1.Width, Direction.East);
 			if (type.Equals("input"))
@@ -111,7 +112,7 @@ namespace logisim.std.wiring
 			instance.addAttributeListener();
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == ATTR_TYPE)
 			{
@@ -131,18 +132,18 @@ namespace logisim.std.wiring
 			string type = getType(instance.AttributeSet);
 			if (type.Equals("input"))
 			{
-				instance.setPorts(new Port[] {p0, p1, new Port(-20, -20, Port.INPUT, 1)});
+				instance.Ports = new Port[] {p0, p1, new Port(-20, -20, Port.INPUT, 1)};
 			}
 			else
 			{
-				instance.setPorts(new Port[] {p0, p1});
+				instance.Ports = new Port[] { p0, p1 };
 			}
 		}
 
 		public override void propagate(InstanceState state)
 		{
 			Value @in = state.getPort(1);
-			BitWidth wout = state.getAttributeValue(ATTR_OUT_WIDTH);
+			BitWidth wout = (BitWidth)state.getAttributeValue(ATTR_OUT_WIDTH);
 			string type = getType(state.AttributeSet);
 			Value extend;
 			if (type.Equals("one"))
@@ -173,7 +174,7 @@ namespace logisim.std.wiring
 
 		private string getType(AttributeSet attrs)
 		{
-			AttributeOption topt = attrs.getValue(ATTR_TYPE);
+			AttributeOption topt = (AttributeOption)attrs.getValue(ATTR_TYPE);
 			return (string) topt.Value;
 		}
 	}

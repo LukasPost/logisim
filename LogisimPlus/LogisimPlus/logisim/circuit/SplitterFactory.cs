@@ -121,7 +121,7 @@ namespace logisim.circuit
 
 		public override void paintIcon(ComponentDrawContext c, int x, int y, AttributeSet attrs)
 		{
-			Graphics g = c.Graphics;
+			JGraphics g = c.Graphics;
 			if (toolIcon != null)
 			{
 				toolIcon.paintIcon(c.Destination, g, x + 2, y + 2);

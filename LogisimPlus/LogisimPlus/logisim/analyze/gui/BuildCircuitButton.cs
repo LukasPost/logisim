@@ -62,7 +62,7 @@ namespace logisim.analyze.gui
 			internal DialogPanel(BuildCircuitButton outerInstance)
 			{
 				this.outerInstance = outerInstance;
-				IList<Project> projects = Projects.OpenProjects;
+				List<Project> projects = Projects.OpenProjects;
 				object[] options = new object[projects.Count];
 				object initialSelection = null;
 				for (int i = 0; i < options.Length; i++)

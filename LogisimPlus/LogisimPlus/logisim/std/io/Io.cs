@@ -24,15 +24,15 @@ namespace logisim.std.io
 	{
 		internal static readonly AttributeOption LABEL_CENTER = new AttributeOption("center", "center", Strings.getter("ioLabelCenter"));
 
-		internal static readonly Attribute<Color> ATTR_COLOR = Attributes.forColor("color", Strings.getter("ioColorAttr"));
-		internal static readonly Attribute<Color> ATTR_ON_COLOR = Attributes.forColor("color", Strings.getter("ioOnColor"));
-		internal static readonly Attribute<Color> ATTR_OFF_COLOR = Attributes.forColor("offcolor", Strings.getter("ioOffColor"));
-		internal static readonly Attribute<Color> ATTR_BACKGROUND = Attributes.forColor("bg", Strings.getter("ioBackgroundColor"));
-		internal static readonly Attribute<object> ATTR_LABEL_LOC = Attributes.forOption("labelloc", Strings.getter("ioLabelLocAttr"), new object[] {LABEL_CENTER, Direction.North, Direction.South, Direction.East, Direction.West});
-		internal static readonly Attribute<Color> ATTR_LABEL_COLOR = Attributes.forColor("labelcolor", Strings.getter("ioLabelColorAttr"));
-		internal static readonly Attribute<bool> ATTR_ACTIVE = Attributes.forBoolean("active", Strings.getter("ioActiveAttr"));
+		internal static readonly Attribute ATTR_COLOR = Attributes.forColor("color", Strings.getter("ioColorAttr"));
+		internal static readonly Attribute ATTR_ON_COLOR = Attributes.forColor("color", Strings.getter("ioOnColor"));
+		internal static readonly Attribute ATTR_OFF_COLOR = Attributes.forColor("offcolor", Strings.getter("ioOffColor"));
+		internal static readonly Attribute ATTR_BACKGROUND = Attributes.forColor("bg", Strings.getter("ioBackgroundColor"));
+		internal static readonly Attribute ATTR_LABEL_LOC = Attributes.forOption("labelloc", Strings.getter("ioLabelLocAttr"), new object[] {LABEL_CENTER, Direction.North, Direction.South, Direction.East, Direction.West});
+		internal static readonly Attribute ATTR_LABEL_COLOR = Attributes.forColor("labelcolor", Strings.getter("ioLabelColorAttr"));
+		internal static readonly Attribute ATTR_ACTIVE = Attributes.forBoolean("active", Strings.getter("ioActiveAttr"));
 
-		internal static readonly Color DEFAULT_BACKGROUND = new Color(255, 255, 255, 0);
+		internal static readonly Color DEFAULT_BACKGROUND = Color.FromArgb(0, 255, 255, 255);
 
 		private static FactoryDescription[] DESCRIPTIONS = new FactoryDescription[]
 		{
@@ -46,7 +46,7 @@ namespace logisim.std.io
 			new FactoryDescription("TTY", Strings.getter("ttyComponent"), "tty.gif", "Tty")
 		};
 
-		private IList<Tool> tools = null;
+		private List<Tool> tools = null;
 
 		public Io()
 		{
@@ -68,7 +68,7 @@ namespace logisim.std.io
 			}
 		}
 
-		public override IList<Tool> Tools
+		public override List<Tool> Tools
 		{
 			get
 			{

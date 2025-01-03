@@ -24,6 +24,12 @@ public class JComponent : Control
 
     }
 
+    public virtual void paintComponent(JGraphics g)
+    {
+
+    }
+
+    #region MouseListener
     MouseListener listener;
     protected void addMouseListener(MouseListener l)
     {
@@ -60,10 +66,11 @@ public class JComponent : Control
         if (listener != null)
             listener.mousePressed(new MouseEvent(e));
     }
+    #endregion
 
-
-    public virtual void paintComponent(JGraphics g)
-    {
-
-    }
+    public int getX() => Location.X;
+    public int getY() => Location.Y;
+    public int getWidth() => Size.Width;
+    public int getHeight() => Size.Height;
+    public Size getSize() => Size;
 }

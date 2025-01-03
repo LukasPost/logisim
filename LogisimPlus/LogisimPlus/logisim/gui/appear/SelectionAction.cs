@@ -28,7 +28,7 @@ namespace logisim.gui.appear
 		private StringGetter displayName;
 		private AppearanceCanvas canvas;
 		private CanvasModel canvasModel;
-		private IDictionary<CanvasObject, int> toRemove;
+		private Dictionary<CanvasObject, int> toRemove;
 		private ICollection<CanvasObject> toAdd;
 		private ICollection<CanvasObject> oldSelection;
 		private ICollection<CanvasObject> newSelection;

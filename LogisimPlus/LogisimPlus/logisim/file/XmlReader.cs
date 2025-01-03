@@ -43,8 +43,8 @@ namespace logisim.file
 		{
 			internal Element circuitElement;
 			internal Circuit circuit;
-			internal IDictionary<Element, Component> knownComponents;
-			internal IList<AbstractCanvasObject> appearance;
+			internal Dictionary<Element, Component> knownComponents;
+			internal List<AbstractCanvasObject> appearance;
 
 			public CircuitData(Element circuitElement, Circuit circuit)
 			{
@@ -106,7 +106,7 @@ namespace logisim.file
 				}
 
 				// second, create the circuits - empty for now
-				IList<CircuitData> circuitsData = new List<CircuitData>();
+				List<CircuitData> circuitsData = new List<CircuitData>();
 				foreach (Element circElt in XmlIterator.forChildElements(elt, "circuit"))
 				{
 					string name = circElt.getAttribute("name");
@@ -218,9 +218,9 @@ namespace logisim.file
 				return ret;
 			}
 
-			internal virtual IDictionary<Element, Component> loadKnownComponents(Element elt)
+			internal virtual Dictionary<Element, Component> loadKnownComponents(Element elt)
 			{
-				IDictionary<Element, Component> known = new Dictionary<Element, Component>();
+				Dictionary<Element, Component> known = new Dictionary<Element, Component>();
 				foreach (Element sub in XmlIterator.forChildElements(elt, "comp"))
 				{
 					try
@@ -237,7 +237,7 @@ namespace logisim.file
 
 			internal virtual void loadAppearance(Element appearElt, CircuitData circData, string context)
 			{
-				IDictionary<Location, Instance> pins = new Dictionary<Location, Instance>();
+				Dictionary<Location, Instance> pins = new Dictionary<Location, Instance>();
 				foreach (Component comp in circData.knownComponents.Values)
 				{
 					if (comp.Factory == Pin.FACTORY)
@@ -247,7 +247,7 @@ namespace logisim.file
 					}
 				}
 
-				IList<AbstractCanvasObject> shapes = new List<AbstractCanvasObject>();
+				List<AbstractCanvasObject> shapes = new List<AbstractCanvasObject>();
 				foreach (Element sub in XmlIterator.forChildElements(appearElt))
 				{
 					try
@@ -430,14 +430,14 @@ namespace logisim.file
 				{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: java.util.List<logisim.data.Attribute<?>> attrList = attrs.getAttributes();
-					IList<Attribute<object>> attrList = attrs.Attributes;
+					List<Attribute> attrList = attrs.Attributes;
 					if (i >= attrList.Count)
 					{
 						break;
 					}
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<Object> attr = (logisim.data.Attribute<Object>) attrList.get(i);
-					Attribute<object> attr = (Attribute<object>) attrList[i];
+// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute attr = (logisim.data.Attribute) attrList.get(i);
+					Attribute attr = (Attribute) attrList[i];
 					string attrName = attr.Name;
 					string attrVal = attrsDefined[attrName];
 					if (string.ReferenceEquals(attrVal, null))

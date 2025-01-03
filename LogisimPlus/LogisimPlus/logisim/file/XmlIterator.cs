@@ -72,24 +72,14 @@ namespace logisim.file
 			index = 0;
 		}
 
-		public override XmlIterator<E> clone()
+		public override object Clone()
 		{
-			try
-			{
-// JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") XmlIterator<E> ret = (XmlIterator<E>) super.clone();
-				XmlIterator<E> ret = (XmlIterator<E>) base.clone();
-				return ret;
-			}
-			catch (CloneNotSupportedException)
-			{
-				return this;
-			}
+			return MemberwiseClone();
 		}
 
 		public virtual IEnumerator<E> GetEnumerator()
 		{
-			XmlIterator<E> ret = this.clone();
+			XmlIterator<E> ret = (XmlIterator<E>)this.Clone();
 			ret.index = 0;
 			return ret;
 		}

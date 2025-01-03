@@ -37,12 +37,12 @@ namespace logisim.tools
 	using MoveResult = logisim.tools.move.MoveResult;
 	using MoveGesture = logisim.tools.move.MoveGesture;
 	using MoveRequestListener = logisim.tools.move.MoveRequestListener;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using Icons = logisim.util.Icons;
 	using StringGetter = logisim.util.StringGetter;
+    using LogisimPlus.Java;
 
-
-	public class SelectTool : Tool
+    public class SelectTool : Tool
 	{
 		private static readonly Cursor selectCursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
 		private static readonly Cursor rectSelectCursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
@@ -53,10 +53,10 @@ namespace logisim.tools
 		private const int RECT_SELECT = 2;
 		private static readonly Icon toolIcon = Icons.getIcon("select.gif");
 
-		private static readonly Color COLOR_UNMATCHED = new Color(192, 0, 0);
-		private static readonly Color COLOR_COMPUTING = new Color(96, 192, 96);
-		private static readonly Color COLOR_RECT_SELECT = new Color(0, 64, 128, 255);
-		private static readonly Color BACKGROUND_RECT_SELECT = new Color(192, 192, 255, 192);
+		private static readonly Color COLOR_UNMATCHED = Color.FromArgb(255, 192, 0, 0);
+		private static readonly Color COLOR_COMPUTING = Color.FromArgb(255, 96, 192, 96);
+		private static readonly Color COLOR_RECT_SELECT = Color.FromArgb(255, 0, 64, 128, 255);
+		private static readonly Color BACKGROUND_RECT_SELECT = Color.FromArgb(255, 192, 192, 255, 192);
 
 		private class MoveRequestHandler : MoveRequestListener
 		{
@@ -167,16 +167,16 @@ namespace logisim.tools
 					if (result != null)
 					{
 						ICollection<Wire> wiresToAdd = result.WiresToAdd;
-						Graphics g = context.Graphics;
-						GraphicsUtil.switchToWidth(g, 3);
-						g.setColor(Color.GRAY);
+						JGraphics g = context.Graphics;
+						JGraphicsUtil.switchToWidth(g, 3);
+						g.setColor(Color.Gray);
 						foreach (Wire w in wiresToAdd)
 						{
 							Location loc0 = w.End0;
 							Location loc1 = w.End1;
 							g.drawLine(loc0.X, loc0.Y, loc1.X, loc1.Y);
 						}
-						GraphicsUtil.switchToWidth(g, 1);
+						JGraphicsUtil.switchToWidth(g, 1);
 						g.setColor(COLOR_UNMATCHED);
 						foreach (Location conn in result.UnconnectedLocations)
 						{
@@ -207,7 +207,7 @@ namespace logisim.tools
 					bot = i;
 				}
 
-				Graphics gBase = context.Graphics;
+				JGraphics gBase = context.Graphics;
 				int w = right - left - 1;
 				int h = bot - top - 1;
 				if (w > 2 && h > 2)
@@ -221,14 +221,14 @@ namespace logisim.tools
 				foreach (Component c in circ.getAllWithin(bds))
 				{
 					Location cloc = c.Location;
-					Graphics gDup = gBase.create();
+					JGraphics gDup = gBase.create();
 					context.Graphics = gDup;
 					c.Factory.drawGhost(context, COLOR_RECT_SELECT, cloc.X, cloc.Y, c.AttributeSet);
 					gDup.dispose();
 				}
 
 				gBase.setColor(COLOR_RECT_SELECT);
-				GraphicsUtil.switchToWidth(gBase, 2);
+				JGraphicsUtil.switchToWidth(gBase, 2);
 				if (w < 0)
 				{
 					w = 0;
@@ -255,12 +255,12 @@ namespace logisim.tools
 			moveGesture = null;
 		}
 
-		public override void mouseEntered(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseEntered(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			canvas.requestFocusInWindow();
 		}
 
-		public override void mousePressed(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mousePressed(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			Project proj = canvas.Project;
 			Selection sel = proj.Selection;
@@ -333,7 +333,7 @@ namespace logisim.tools
 			proj.repaintCanvas();
 		}
 
-		public override void mouseDragged(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseDragged(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			if (state == MOVING)
 			{
@@ -395,7 +395,7 @@ namespace logisim.tools
 			}
 		}
 
-		public override void mouseReleased(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseReleased(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			Project proj = canvas.Project;
 			if (state == MOVING)
@@ -558,10 +558,10 @@ namespace logisim.tools
 						Component comp = (Component) result.Event.Data;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: java.util.Map<logisim.data.Attribute<?>, Object> newValues = result.getAttributeValues();
-						IDictionary<Attribute<object>, object> newValues = result.AttributeValues;
+						Dictionary<Attribute, object> newValues = result.AttributeValues;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: for (java.util.Map.Entry<logisim.data.Attribute<?>, Object> entry : newValues.entrySet())
-						foreach (KeyValuePair<Attribute<object>, object> entry in newValues.SetOfKeyValuePairs())
+						foreach (KeyValuePair<Attribute, object> entry in newValues.SetOfKeyValuePairs())
 						{
 							act.set(comp, entry.Key, entry.Value);
 						}
@@ -574,20 +574,20 @@ namespace logisim.tools
 			}
 		}
 
-		private void computeDxDy(Project proj, MouseEvent e, Graphics g)
+		private void computeDxDy(Project proj, MouseEvent e, JGraphics g)
 		{
 			Bounds bds = proj.Selection.getBounds(g);
 			int dx;
 			int dy;
 			if (bds == Bounds.EMPTY_BOUNDS)
 			{
-				dx = e.getX() - start.X;
-				dy = e.getY() - start.Y;
+				dx = e.x - start.X;
+				dy = e.y - start.Y;
 			}
 			else
 			{
-				dx = Math.Max(e.getX() - start.X, -bds.X);
-				dy = Math.Max(e.getY() - start.Y, -bds.Y);
+				dx = Math.Max(e.x - start.X, -bds.X);
+				dy = Math.Max(e.y - start.Y, -bds.Y);
 			}
 
 			Selection sel = proj.Selection;
@@ -602,7 +602,7 @@ namespace logisim.tools
 
 		public override void paintIcon(ComponentDrawContext c, int x, int y)
 		{
-			Graphics g = c.Graphics;
+			JGraphics g = c.Graphics;
 			if (toolIcon != null)
 			{
 				toolIcon.paintIcon(c.Destination, g, x + 2, y + 2);
@@ -611,7 +611,7 @@ namespace logisim.tools
 			{
 				int[] xp = new int[] {x + 5, x + 5, x + 9, x + 12, x + 14, x + 11, x + 16};
 				int[] yp = new int[] {y, y + 17, y + 12, y + 18, y + 18, y + 12, y + 12};
-				g.setColor(Color.black);
+				g.setColor(Color.Black);
 				g.fillPolygon(xp, yp, xp.Length);
 			}
 		}
@@ -624,7 +624,7 @@ namespace logisim.tools
 			}
 		}
 
-		public override ISet<Component> getHiddenComponents(Canvas canvas)
+		public override HashSet<Component> getHiddenComponents(Canvas canvas)
 		{
 			if (state == MOVING)
 			{
@@ -635,15 +635,14 @@ namespace logisim.tools
 					return null;
 				}
 
-				ISet<Component> sel = canvas.Selection.Components;
+				HashSet<Component> sel = canvas.Selection.Components;
 				MoveGesture gesture = moveGesture;
 				if (gesture != null && drawConnections)
 				{
 					MoveResult result = gesture.findResult(dx, dy);
 					if (result != null)
 					{
-						HashSet<Component> ret = new HashSet<Component>(sel);
-						ret.addAll(result.ReplacementMap.Removals);
+						HashSet<Component> ret = new HashSet<Component>(sel.Concat((result.ReplacementMap.Removals);
 						return ret;
 					}
 				}

@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -147,7 +148,7 @@ namespace logisim.instance
 			}
 		}
 
-		public override Bounds getBounds(Graphics g)
+		public override Bounds getBounds(JGraphics g)
 		{
 			if (poker != null)
 			{
@@ -161,7 +162,7 @@ namespace logisim.instance
 			}
 		}
 
-		public override void draw(Graphics g)
+		public override void draw(JGraphics g)
 		{
 			if (poker != null)
 			{

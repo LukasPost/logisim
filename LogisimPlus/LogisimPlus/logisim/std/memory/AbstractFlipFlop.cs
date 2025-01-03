@@ -27,14 +27,15 @@ namespace logisim.std.memory
 	using InstanceState = logisim.instance.InstanceState;
 	using Port = logisim.instance.Port;
 	using StdAttr = logisim.instance.StdAttr;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using StringGetter = logisim.util.StringGetter;
+    using LogisimPlus.Java;
 
-	internal abstract class AbstractFlipFlop : InstanceFactory
+    internal abstract class AbstractFlipFlop : InstanceFactory
 	{
 		private const int STD_PORTS = 6;
 
-		private Attribute<AttributeOption> triggerAttribute;
+		private Attribute triggerAttribute;
 
 		protected internal AbstractFlipFlop(string name, string iconName, StringGetter desc, int numInputs, bool allowLevelTriggers) : base(name, desc)
 		{
@@ -66,12 +67,12 @@ namespace logisim.std.memory
 			ps[numInputs + 3] = new Port(-10, 30, Port.INPUT, 1);
 			ps[numInputs + 4] = new Port(-30, 30, Port.INPUT, 1);
 			ps[numInputs + 5] = new Port(-20, 30, Port.INPUT, 1);
-			ps[numInputs].setToolTip(Strings.getter("flipFlopClockTip"));
-			ps[numInputs + 1].setToolTip(Strings.getter("flipFlopQTip"));
-			ps[numInputs + 2].setToolTip(Strings.getter("flipFlopNotQTip"));
-			ps[numInputs + 3].setToolTip(Strings.getter("flipFlopResetTip"));
-			ps[numInputs + 4].setToolTip(Strings.getter("flipFlopPresetTip"));
-			ps[numInputs + 5].setToolTip(Strings.getter("flipFlopEnableTip"));
+			ps[numInputs].ToolTip = Strings.getter("flipFlopClockTip");
+			ps[numInputs + 1].ToolTip = Strings.getter("flipFlopQTip");
+			ps[numInputs + 2].ToolTip = Strings.getter("flipFlopNotQTip");
+			ps[numInputs + 3].ToolTip = Strings.getter("flipFlopResetTip");
+			ps[numInputs + 4].ToolTip = Strings.getter("flipFlopPresetTip");
+			ps[numInputs + 5].ToolTip = Strings.getter("flipFlopEnableTip");
 			setPorts(ps);
 		}
 
@@ -88,7 +89,7 @@ namespace logisim.std.memory
 		protected internal override void configureNewInstance(Instance instance)
 		{
 			Bounds bds = instance.Bounds;
-			instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, bds.X + bds.Width / 2, bds.Y - 3, GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
+			instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, bds.X + bds.Width / 2, bds.Y - 3, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_BASELINE);
 		}
 
 		public override void propagate(InstanceState state)
@@ -134,7 +135,7 @@ namespace logisim.std.memory
 
 		public override void paintInstance(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			painter.drawBounds();
 			painter.drawLabel();
 			if (painter.ShowState)
@@ -147,18 +148,18 @@ namespace logisim.std.memory
 					int y = loc.Y;
 					g.setColor(myState.curValue.Color);
 					g.fillOval(x - 26, y + 4, 13, 13);
-					g.setColor(Color.WHITE);
-					GraphicsUtil.drawCenteredText(g, myState.curValue.toDisplayString(), x - 19, y + 9);
-					g.setColor(Color.BLACK);
+					g.setColor(Color.White);
+					JGraphicsUtil.drawCenteredText(g, myState.curValue.toDisplayString(), x - 19, y + 9);
+					g.setColor(Color.Black);
 				}
 			}
 
 			int n = Ports.Count - STD_PORTS;
-			g.setColor(Color.GRAY);
+			g.setColor(Color.Gray);
 			painter.drawPort(n + 3, "0", Direction.South);
 			painter.drawPort(n + 4, "1", Direction.South);
 			painter.drawPort(n + 5, Strings.get("memEnableLabel"), Direction.South);
-			g.setColor(Color.BLACK);
+			g.setColor(Color.Black);
 			for (int i = 0; i < n; i++)
 			{
 				painter.drawPort(i, getInputName(i), Direction.East);
@@ -177,7 +178,7 @@ namespace logisim.std.memory
 		{
 			public override string getLogName(InstanceState state, object option)
 			{
-				string ret = state.getAttributeValue(StdAttr.LABEL);
+				string ret = (string)state.getAttributeValue(StdAttr.LABEL);
 				return !string.ReferenceEquals(ret, null) && !ret.Equals("") ? ret : null;
 			}
 

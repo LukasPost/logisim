@@ -33,19 +33,20 @@ namespace logisim.std.wiring
 	using StdAttr = logisim.instance.StdAttr;
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
 	using JoinedConfigurator = logisim.tools.key.JoinedConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
+    using LogisimPlus.Java;
 
-	public class Constant : InstanceFactory
+    public class Constant : InstanceFactory
 	{
-		public static readonly Attribute<int> ATTR_VALUE = Attributes.forHexInteger("value", Strings.getter("constantValueAttr"));
+		public static readonly Attribute ATTR_VALUE = Attributes.forHexInteger("value", Strings.getter("constantValueAttr"));
 
 		public static InstanceFactory FACTORY = new Constant();
 
-		private static readonly Color BACKGROUND_COLOR = new Color(230, 230, 230);
+		private static readonly Color BACKGROUND_COLOR = Color.FromArgb(255, 230, 230, 230);
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
-// ORIGINAL LINE: private static final java.util.List<logisim.data.Attribute<?>> ATTRIBUTES = java.util.Arrays.asList(new logisim.data.Attribute<?>[] { logisim.instance.StdAttr.FACING, logisim.instance.StdAttr.WIDTH, ATTR_VALUE });
-		private static readonly IList<Attribute<object>> ATTRIBUTES = new List<Attribute<object>> {StdAttr.FACING, StdAttr.WIDTH, ATTR_VALUE};
+// ORIGINAL LINE: private static final java.util.List<logisim.data.Attribute<?>> ATTRIBUTES = java.util.Arrays.asList(new logisim.data.Attribute<?>[] { logisim.instance.StdAttr.FACING, logisim.instance.StdAttr.Width, ATTR_VALUE });
+		private static readonly List<Attribute> ATTRIBUTES = new List<Attribute> {StdAttr.FACING, StdAttr.Width, ATTR_VALUE};
 
 		private class ConstantAttributes : AbstractAttributeSet
 		{
@@ -63,7 +64,7 @@ namespace logisim.std.wiring
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-			public override IList<Attribute<object>> Attributes
+			public override List<Attribute> Attributes
 			{
 				get
 				{
@@ -73,30 +74,30 @@ namespace logisim.std.wiring
 
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
 // ORIGINAL LINE: @Override @SuppressWarnings("unchecked") public <V> V getValue(logisim.data.Attribute<V> attr)
-			public override V getValue<V>(Attribute<V> attr)
+			public override object getValue(Attribute attr)
 			{
 				if (attr == StdAttr.FACING)
 				{
-					return (V) facing;
+					return facing;
 				}
-				if (attr == StdAttr.WIDTH)
+				if (attr == StdAttr.Width)
 				{
-					return (V) width;
+					return width;
 				}
 				if (attr == ATTR_VALUE)
 				{
-					return (V) Convert.ToInt32(value.toIntValue());
+					return Convert.ToInt32(value.toIntValue());
 				}
 				return null;
 			}
 
-			public override void setValue<V>(Attribute<V> attr, V value)
+			public override void setValue(Attribute attr, object value)
 			{
 				if (attr == StdAttr.FACING)
 				{
 					facing = (Direction) value;
 				}
-				else if (attr == StdAttr.WIDTH)
+				else if (attr == StdAttr.Width)
 				{
 					width = (BitWidth) value;
 					this.value = this.value.extendWidth(width.Width, this.value.get(this.value.Width - 1));
@@ -123,7 +124,7 @@ namespace logisim.std.wiring
 				this.instance = instance;
 			}
 
-			public virtual void computeExpression(IDictionary<Location, Expression> expressionMap)
+			public virtual void computeExpression(Dictionary<Location, Expression> expressionMap)
 			{
 				AttributeSet attrs = instance.AttributeSet;
 				int intValue = (int)attrs.getValue(ATTR_VALUE);
@@ -135,7 +136,7 @@ namespace logisim.std.wiring
 		public Constant() : base("Constant", Strings.getter("constantComponent"))
 		{
 			FacingAttribute = StdAttr.FACING;
-			KeyConfigurator = JoinedConfigurator.create(new ConstantConfigurator(), new BitWidthConfigurator(StdAttr.WIDTH));
+			KeyConfigurator = JoinedConfigurator.create(new ConstantConfigurator(), new BitWidthConfigurator(StdAttr.Width));
 		}
 
 		public override AttributeSet createAttributeSet()
@@ -151,13 +152,13 @@ namespace logisim.std.wiring
 
 		private void updatePorts(Instance instance)
 		{
-			Port[] ps = new Port[] {new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH)};
-			instance.setPorts(ps);
+			Port[] ps = new Port[] {new Port(0, 0, Port.OUTPUT, StdAttr.Width)};
+			instance.Ports = ps;
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
-			if (attr == StdAttr.WIDTH)
+			if (attr == StdAttr.Width)
 			{
 				instance.recomputeBounds();
 				updatePorts(instance);
@@ -183,15 +184,15 @@ namespace logisim.std.wiring
 
 		public override void propagate(InstanceState state)
 		{
-			BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
+			BitWidth width = (BitWdth)state.getAttributeValue(StdAttr.Width);
 			int value = (int)state.getAttributeValue(ATTR_VALUE);
 			state.setPort(0, Value.createKnown(width, value), 1);
 		}
 
 		public override Bounds getOffsetBounds(AttributeSet attrs)
 		{
-			Direction facing = attrs.getValue(StdAttr.FACING);
-			BitWidth width = attrs.getValue(StdAttr.WIDTH);
+			Direction facing = (Direction)attrs.getValue(StdAttr.FACING);
+			BitWidth width = (BitWdth)attrs.getValue(StdAttr.Width);
 			int chars = (width.Width + 3) / 4;
 
 			Bounds ret = null;
@@ -327,10 +328,10 @@ namespace logisim.std.wiring
 		//
 		public override void paintIcon(InstancePainter painter)
 		{
-			int w = painter.getAttributeValue(StdAttr.WIDTH).getWidth();
+			int w = (int)painter.getAttributeValue(StdAttr.Width).getWidth();
 			int pinx = 16;
 			int piny = 9;
-			Direction dir = painter.getAttributeValue(StdAttr.FACING);
+			Direction dir = (Direction)painter.getAttributeValue(StdAttr.FACING);
 			if (dir == Direction.East)
 			{
 			} // keep defaults
@@ -349,18 +350,18 @@ namespace logisim.std.wiring
 				piny = 16;
 			}
 
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			if (w == 1)
 			{
 				int v = (int)painter.getAttributeValue(ATTR_VALUE);
 				Value val = v == 1 ? Value.TRUE : Value.FALSE;
 				g.setColor(val.Color);
-				GraphicsUtil.drawCenteredText(g, "" + v, 10, 9);
+				JGraphicsUtil.drawCenteredText(g, "" + v, 10, 9);
 			}
 			else
 			{
 				g.setFont(g.getFont().deriveFont(9.0f));
-				GraphicsUtil.drawCenteredText(g, "x" + w, 10, 9);
+				JGraphicsUtil.drawCenteredText(g, "x" + w, 10, 9);
 			}
 			g.fillOval(pinx, piny, 3, 3);
 		}
@@ -371,23 +372,23 @@ namespace logisim.std.wiring
 			string vStr = Convert.ToString(v, 16);
 			Bounds bds = getOffsetBounds(painter.AttributeSet);
 
-			Graphics g = painter.Graphics;
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphics g = painter.Graphics;
+			JGraphicsUtil.switchToWidth(g, 2);
 			g.fillOval(-2, -2, 5, 5);
-			GraphicsUtil.drawCenteredText(g, vStr, bds.X + bds.Width / 2, bds.Y + bds.Height / 2);
+			JGraphicsUtil.drawCenteredText(g, vStr, bds.X + bds.Width / 2, bds.Y + bds.Height / 2);
 		}
 
 		public override void paintInstance(InstancePainter painter)
 		{
 			Bounds bds = painter.OffsetBounds;
-			BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
+			BitWidth width = (BitWdth)painter.getAttributeValue(StdAttr.Width);
 			int intValue = (int)painter.getAttributeValue(ATTR_VALUE);
 			Value v = Value.createKnown(width, intValue);
 			Location loc = painter.Location;
 			int x = loc.X;
 			int y = loc.Y;
 
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			if (painter.shouldDrawColor())
 			{
 				g.setColor(BACKGROUND_COLOR);
@@ -399,12 +400,12 @@ namespace logisim.std.wiring
 				{
 					g.setColor(v.Color);
 				}
-				GraphicsUtil.drawCenteredText(g, v.ToString(), x + bds.X + bds.Width / 2, y + bds.Y + bds.Height / 2 - 2);
+				JGraphicsUtil.drawCenteredText(g, v.ToString(), x + bds.X + bds.Width / 2, y + bds.Y + bds.Height / 2 - 2);
 			}
 			else
 			{
-				g.setColor(Color.BLACK);
-				GraphicsUtil.drawCenteredText(g, v.toHexString(), x + bds.X + bds.Width / 2, y + bds.Y + bds.Height / 2 - 2);
+				g.setColor(Color.Black);
+				JGraphicsUtil.drawCenteredText(g, v.toHexString(), x + bds.X + bds.Width / 2, y + bds.Y + bds.Height / 2 - 2);
 			}
 			painter.drawPorts();
 		}

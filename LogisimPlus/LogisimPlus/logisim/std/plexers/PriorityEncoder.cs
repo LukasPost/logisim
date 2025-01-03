@@ -23,7 +23,7 @@ namespace logisim.std.plexers
 	using Port = logisim.instance.Port;
 	using StdAttr = logisim.instance.StdAttr;
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	public class PriorityEncoder : InstanceFactory
 	{
@@ -71,7 +71,7 @@ namespace logisim.std.plexers
 			updatePorts(instance);
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == StdAttr.FACING || attr == Plexers.ATTR_SELECT)
 			{
@@ -123,14 +123,14 @@ namespace logisim.std.plexers
 
 			for (int i = 0; i < n; i++)
 			{
-				ps[i].setToolTip(Strings.getter("priorityEncoderInTip", "" + i));
+				ps[i].ToolTip = Strings.getter("priorityEncoderInTip", "" + i);
 			}
-			ps[n + OUT].setToolTip(Strings.getter("priorityEncoderOutTip"));
-			ps[n + EN_IN].setToolTip(Strings.getter("priorityEncoderEnableInTip"));
-			ps[n + EN_OUT].setToolTip(Strings.getter("priorityEncoderEnableOutTip"));
-			ps[n + GS].setToolTip(Strings.getter("priorityEncoderGroupSignalTip"));
+			ps[n + OUT].ToolTip = Strings.getter("priorityEncoderOutTip");
+			ps[n + EN_IN].ToolTip = Strings.getter("priorityEncoderEnableInTip");
+			ps[n + EN_OUT].ToolTip = Strings.getter("priorityEncoderEnableOutTip");
+			ps[n + GS].ToolTip = Strings.getter("priorityEncoderGroupSignalTip");
 
-			instance.setPorts(ps);
+			instance.Ports = ps;
 		}
 
 		public override void propagate(InstanceState state)
@@ -175,12 +175,12 @@ namespace logisim.std.plexers
 
 		public override void paintInstance(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			Direction facing = painter.getAttributeValue(StdAttr.FACING);
 
 			painter.drawBounds();
 			Bounds bds = painter.Bounds;
-			g.setColor(Color.GRAY);
+			g.setColor(Color.Gray);
 			int x0;
 			int y0;
 			int halign;
@@ -188,29 +188,29 @@ namespace logisim.std.plexers
 			{
 				x0 = bds.X + bds.Width - 3;
 				y0 = bds.Y + 15;
-				halign = GraphicsUtil.H_RIGHT;
+				halign = JGraphicsUtil.H_RIGHT;
 			}
 			else if (facing == Direction.North)
 			{
 				x0 = bds.X + 10;
 				y0 = bds.Y + bds.Height - 2;
-				halign = GraphicsUtil.H_CENTER;
+				halign = JGraphicsUtil.H_CENTER;
 			}
 			else if (facing == Direction.South)
 			{
 				x0 = bds.X + 10;
 				y0 = bds.Y + 12;
-				halign = GraphicsUtil.H_CENTER;
+				halign = JGraphicsUtil.H_CENTER;
 			}
 			else
 			{
 				x0 = bds.X + 3;
 				y0 = bds.Y + 15;
-				halign = GraphicsUtil.H_LEFT;
+				halign = JGraphicsUtil.H_LEFT;
 			}
-			GraphicsUtil.drawText(g, "0", x0, y0, halign, GraphicsUtil.V_BASELINE);
-			g.setColor(Color.BLACK);
-			GraphicsUtil.drawCenteredText(g, "Pri", bds.X + bds.Width / 2, bds.Y + bds.Height / 2);
+			JGraphicsUtil.drawText(g, "0", x0, y0, halign, JGraphicsUtil.V_BASELINE);
+			g.setColor(Color.Black);
+			JGraphicsUtil.drawCenteredText(g, "Pri", bds.X + bds.Width / 2, bds.Y + bds.Height / 2);
 			painter.drawPorts();
 		}
 	}

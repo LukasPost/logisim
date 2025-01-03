@@ -46,18 +46,18 @@ namespace logisim.gui.main
 			setVisibleRowCount(Math.Min(6, options.Count));
 		}
 
-		public virtual IList<Circuit> SelectedCircuits
+		public virtual List<Circuit> SelectedCircuits
 		{
 			get
 			{
-				IList<Circuit> selected = getSelectedValuesList();
+				List<Circuit> selected = getSelectedValuesList();
 				if (selected != null)
 				{
 					return selected;
 				}
 				else
 				{
-					return Collections.emptyList();
+					return [];
 				}
 			}
 		}

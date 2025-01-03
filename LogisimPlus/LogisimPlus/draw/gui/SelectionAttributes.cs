@@ -38,8 +38,8 @@ namespace draw.gui
 			//
 			public virtual void selectionChanged(SelectionEvent ex)
 			{
-				IDictionary<AttributeSet, CanvasObject> oldSel = outerInstance.selected;
-				IDictionary<AttributeSet, CanvasObject> newSel = new Dictionary<AttributeSet, CanvasObject>();
+				Dictionary<AttributeSet, CanvasObject> oldSel = outerInstance.selected;
+				Dictionary<AttributeSet, CanvasObject> newSel = new Dictionary<AttributeSet, CanvasObject>();
 				foreach (CanvasObject o in outerInstance.selection.Selected)
 				{
 					newSel[o.AttributeSet] = o;
@@ -69,11 +69,11 @@ namespace draw.gui
 				}
 			}
 
-			internal virtual void computeAttributeList(ISet<AttributeSet> attrsSet)
+			internal virtual void computeAttributeList(IEnumerable<AttributeSet> attrsSet)
 			{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: java.util.Set<logisim.data.Attribute<?>> attrSet = new java.util.LinkedHashSet<logisim.data.Attribute<?>>();
-				ISet<Attribute<object>> attrSet = new LinkedHashSet<Attribute<object>>();
+				HashSet<Attribute> attrSet = new HashSet<Attribute>();
 				IEnumerator<AttributeSet> sit = attrsSet.GetEnumerator();
 // JAVA TO C# CONVERTER TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
 				if (sit.hasNext())
@@ -86,11 +86,11 @@ namespace draw.gui
 						AttributeSet next = sit.Current;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: for (java.util.Iterator<logisim.data.Attribute<?>> ait = attrSet.iterator(); ait.hasNext();)
-						for (IEnumerator<Attribute<object>> ait = attrSet.GetEnumerator(); ait.MoveNext();)
+						for (IEnumerator<Attribute> ait = attrSet.GetEnumerator(); ait.MoveNext();)
 						{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?> attr = ait.Current;
-							Attribute<object> attr = ait.Current;
+							Attribute attr = ait.Current;
 							if (!next.containsAttribute(attr))
 							{
 // JAVA TO C# CONVERTER TASK: .NET enumerators are read-only:
@@ -102,12 +102,12 @@ namespace draw.gui
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?>[] attrs = new logisim.data.Attribute[attrSet.size()];
-				Attribute<object>[] attrs = new Attribute[attrSet.Count];
+				Attribute[] attrs = new Attribute[attrSet.Count];
 				object[] values = new object[attrs.Length];
 				int i = 0;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: for (logisim.data.Attribute<?> attr : attrSet)
-				foreach (Attribute<object> attr in attrSet)
+				foreach (Attribute attr in attrSet)
 				{
 					attrs[i] = attr;
 					values[i] = getSelectionValue(attr, attrsSet);
@@ -117,7 +117,7 @@ namespace draw.gui
 				outerInstance.selValues = values;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: SelectionAttributes.this.attrsView = java.util.Collections.unmodifiableList(java.util.Arrays.asList(attrs));
-				outerInstance.attrsView = new List<Attribute<object>> {attrs};
+				outerInstance.attrsView = attrs.ToList();
 				outerInstance.fireAttributeListChanged();
 			}
 
@@ -135,11 +135,11 @@ namespace draw.gui
 				if (outerInstance.selected.ContainsKey(e.Source))
 				{
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<Object> attr = (logisim.data.Attribute<Object>) e.getAttribute();
-					Attribute<object> attr = (Attribute<object>) e.Attribute;
+// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute attr = (logisim.data.Attribute) e.getAttribute();
+					Attribute attr = (Attribute) e.Attribute;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?>[] attrs = SelectionAttributes.this.selAttrs;
-					Attribute<object>[] attrs = outerInstance.selAttrs;
+					Attribute[] attrs = outerInstance.selAttrs;
 					object[] values = outerInstance.selValues;
 					for (int i = 0; i < attrs.Length; i++)
 					{
@@ -154,25 +154,25 @@ namespace draw.gui
 
 		private Selection selection;
 		private Listener listener;
-		private IDictionary<AttributeSet, CanvasObject> selected;
+		private Dictionary<AttributeSet, CanvasObject> selected;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private logisim.data.Attribute<?>[] selAttrs;
-		private Attribute<object>[] selAttrs;
+		private Attribute[] selAttrs;
 		private object[] selValues;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private java.util.List<logisim.data.Attribute<?>> attrsView;
-		private IList<Attribute<object>> attrsView;
+		private List<Attribute> attrsView;
 
 		public SelectionAttributes(Selection selection)
 		{
 			this.selection = selection;
 			this.listener = new Listener(this);
-			this.selected = Collections.emptyMap();
+			this.selected = [];
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: this.selAttrs = new logisim.data.Attribute<?>[0];
-			this.selAttrs = new Attribute<object>[0];
+			this.selAttrs = new Attribute[0];
 			this.selValues = new object[0];
-			this.attrsView = selAttrs.AsReadOnly();
+			this.attrsView = selAttrs.ToList();
 
 			selection.addSelectionListener(listener);
 			listener.selectionChanged(null);
@@ -180,7 +180,7 @@ namespace draw.gui
 
 		public virtual IEnumerable<KeyValuePair<AttributeSet, CanvasObject>> entries()
 		{
-			ISet<KeyValuePair<AttributeSet, CanvasObject>> raw = selected.SetOfKeyValuePairs();
+			HashSet<KeyValuePair<AttributeSet, CanvasObject>> raw = selected.SetOfKeyValuePairs();
 			List<KeyValuePair<AttributeSet, CanvasObject>> ret;
 			ret = new List<KeyValuePair<AttributeSet, CanvasObject>>(raw);
 			return ret;
@@ -197,7 +197,7 @@ namespace draw.gui
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
@@ -205,30 +205,29 @@ namespace draw.gui
 			}
 		}
 
-		public override V getValue<V>(Attribute<V> attr)
+		public override object getValue(Attribute attr)
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?>[] attrs = this.selAttrs;
-			Attribute<object>[] attrs = this.selAttrs;
+			Attribute[] attrs = this.selAttrs;
 			object[] values = this.selValues;
 			for (int i = 0; i < attrs.Length; i++)
 			{
-				if (attrs[i] == attr)
+				if (attrs[i].Equals(attr))
 				{
-// JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") V ret = (V) values[i];
-					V ret = (V) values[i];
-					return ret;
+                    // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
+                    // ORIGINAL LINE: @SuppressWarnings("unchecked") V ret = (V) values[i];
+                    return values[i];
 				}
 			}
 			return null;
 		}
 
-		public override void setValue<V>(Attribute<V> attr, V value)
+		public override void setValue(Attribute attr, object value)
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?>[] attrs = this.selAttrs;
-			Attribute<object>[] attrs = this.selAttrs;
+			Attribute[] attrs = this.selAttrs;
 			object[] values = this.selValues;
 			for (int i = 0; i < attrs.Length; i++)
 			{
@@ -248,7 +247,7 @@ namespace draw.gui
 			}
 		}
 
-		private static object getSelectionValue<T1>(Attribute<T1> attr, ISet<AttributeSet> sel)
+		private static object getSelectionValue(Attribute attr, IEnumerable<AttributeSet> sel)
 		{
 			object ret = null;
 			foreach (AttributeSet attrs in sel)

@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 using System.Collections.Generic;
 
@@ -124,8 +125,8 @@ namespace logisim.util
 		private JTableHeader tableHeader;
 		private MouseListener mouseListener;
 		private TableModelListener tableModelListener;
-		private IDictionary<Type, IComparer<object>> columnComparators = new Dictionary<Type, IComparer<object>>();
-		private IList<Directive> sortingColumns = new List<Directive>();
+		private Dictionary<Type, IComparer<object>> columnComparators = new Dictionary<Type, IComparer<object>>();
+		private List<Directive> sortingColumns = new List<Directive>();
 
 		public TableSorter()
 		{
@@ -545,9 +546,9 @@ namespace logisim.util
 				this.priority = priority;
 			}
 
-			public virtual void paintIcon(Component c, Graphics g, int x, int y)
+			public virtual void paintIcon(Component c, JGraphics g, int x, int y)
 			{
-				Color color = c == null ? Color.GRAY : c.getBackground();
+				Color color = c == null ? Color.Gray : c.getBackground();
 				// In a compound sort, make each succesive triangle 20%
 				// smaller than the previous one.
 				int dx = (int)(size / 2 * Math.Pow(0.8, priority));

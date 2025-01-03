@@ -131,7 +131,7 @@ namespace logisim.gui.main
 			; // not yet supported in layout mode
 		}
 
-		public override void raiseTop()
+		public override void raHashSetop()
 		{
 			; // not yet supported in layout mode
 		}

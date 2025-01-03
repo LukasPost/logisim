@@ -34,7 +34,7 @@ namespace logisim.std.memory
 			new FactoryDescription("ROM", Strings.getter("romComponent"), "rom.gif", "Rom")
 		};
 
-		private IList<Tool> tools = null;
+		private List<Tool> tools = null;
 
 		public Memory()
 		{
@@ -56,7 +56,7 @@ namespace logisim.std.memory
 			}
 		}
 
-		public override IList<Tool> Tools
+		public override List<Tool> Tools
 		{
 			get
 			{

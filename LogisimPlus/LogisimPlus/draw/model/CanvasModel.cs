@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System.Collections.Generic;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -24,11 +25,11 @@ namespace draw.model
 		void removeCanvasModelListener(CanvasModelListener l);
 
 		// methods that don't change any data in the model
-		void paint(Graphics g, Selection selection);
+		void paint(JGraphics g, Selection selection);
 
-		IList<CanvasObject> ObjectsFromTop {get;}
+		List<CanvasObject> ObjectsFromTop {get;}
 
-		IList<CanvasObject> ObjectsFromBottom {get;}
+		List<CanvasObject> ObjectsFromBottom {get;}
 
 		ICollection<CanvasObject> getObjectsIn(Bounds bds);
 
@@ -41,7 +42,7 @@ namespace draw.model
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public void addObjects(java.util.Map<? extends CanvasObject, int> shapes);
-		void addObjects<T1>(IDictionary<T1> shapes);
+		void addObjects<T1>(Dictionary<T1> shapes);
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public void removeObjects(java.util.Collection<? extends CanvasObject> shapes);
@@ -51,7 +52,7 @@ namespace draw.model
 // ORIGINAL LINE: public void translateObjects(java.util.Collection<? extends CanvasObject> shapes, int dx, int dy);
 		void translateObjects<T1>(ICollection<T1> shapes, int dx, int dy);
 
-		void reorderObjects(IList<ReorderRequest> requests);
+		void reorderObjects(List<ReorderRequest> requests);
 
 		Handle moveHandle(HandleGesture gesture);
 
@@ -59,7 +60,7 @@ namespace draw.model
 
 		Handle deleteHandle(Handle handle);
 
-		IDictionary<AttributeMapKey, object> AttributeValues {set;}
+		Dictionary<AttributeMapKey, object> AttributeValues {set;}
 
 		void setText(Text text, string value);
 	}

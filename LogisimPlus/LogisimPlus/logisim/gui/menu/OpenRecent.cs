@@ -45,7 +45,7 @@ namespace logisim.gui.menu
 		}
 
 		private LogisimMenuBar menubar;
-		private IList<RecentItem> recentItems;
+		private List<RecentItem> recentItems;
 
 		internal OpenRecent(LogisimMenuBar menubar)
 		{
@@ -64,7 +64,7 @@ namespace logisim.gui.menu
 			}
 			recentItems.Clear();
 
-			IList<File> files = AppPreferences.RecentFiles;
+			List<File> files = AppPreferences.RecentFiles;
 			if (files.Count == 0)
 			{
 				recentItems.Add(new RecentItem(this, null));

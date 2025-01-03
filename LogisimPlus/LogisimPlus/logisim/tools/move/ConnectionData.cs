@@ -25,11 +25,11 @@ namespace logisim.tools.move
 		/// <summary>
 		/// The list of wires leading up to this point - we may well want to truncate this path somewhat.
 		/// </summary>
-		private IList<Wire> wirePath;
+		private List<Wire> wirePath;
 
 		private Location wirePathStart;
 
-		public ConnectionData(Location loc, Direction dir, IList<Wire> wirePath, Location wirePathStart)
+		public ConnectionData(Location loc, Direction dir, List<Wire> wirePath, Location wirePathStart)
 		{
 			this.loc = loc;
 			this.dir = dir;
@@ -53,7 +53,7 @@ namespace logisim.tools.move
 			}
 		}
 
-		public virtual IList<Wire> WirePath
+		public virtual List<Wire> WirePath
 		{
 			get
 			{

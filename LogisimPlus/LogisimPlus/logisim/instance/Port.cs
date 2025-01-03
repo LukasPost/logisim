@@ -29,7 +29,7 @@ namespace logisim.instance
 		private int dy;
 		private int type;
 		private BitWidth widthFixed;
-		private Attribute<BitWidth> widthAttr;
+		private Attribute widthAttr;
 		private bool exclude;
 		private StringGetter toolTip;
 
@@ -56,11 +56,11 @@ namespace logisim.instance
 			this.toolTip = null;
 		}
 
-		public Port(int dx, int dy, string type, Attribute<BitWidth> attr) : this(dx, dy, type, attr, defaultExclusive(type))
+		public Port(int dx, int dy, string type, Attribute attr) : this(dx, dy, type, attr, defaultExclusive(type))
 		{
 		}
 
-		public Port(int dx, int dy, string type, Attribute<BitWidth> attr, string exclude)
+		public Port(int dx, int dy, string type, Attribute attr, string exclude)
 		{
 			this.dx = dx;
 			this.dy = dy;
@@ -85,7 +85,7 @@ namespace logisim.instance
 		}
 
 
-		public virtual Attribute<BitWidth> WidthAttribute
+		public virtual Attribute WidthAttribute
 		{
 			get
 			{

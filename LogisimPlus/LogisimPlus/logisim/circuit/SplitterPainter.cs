@@ -14,9 +14,10 @@ namespace logisim.circuit
 	using Direction = logisim.data.Direction;
 	using Location = logisim.data.Location;
 	using Value = logisim.data.Value;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
+    using LogisimPlus.Java;
 
-	internal class SplitterPainter
+    internal class SplitterPainter
 	{
 		private static readonly int SPINE_WIDTH = Wire.WIDTH + 2;
 		private static readonly int SPINE_DOT = Wire.WIDTH + 4;
@@ -40,9 +41,9 @@ namespace logisim.circuit
 			int dxEndSpine = parms.EndToSpineDeltaX;
 			int dyEndSpine = parms.EndToSpineDeltaY;
 
-			Graphics g = context.Graphics;
+			JGraphics g = context.Graphics;
 			Color oldColor = g.getColor();
-			GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+			JGraphicsUtil.switchToWidth(g, Wire.WIDTH);
 			for (int i = 0, n = attrs.fanout; i < n; i++)
 			{
 				if (showState)
@@ -56,7 +57,7 @@ namespace logisim.circuit
 				x += dx;
 				y += dy;
 			}
-			GraphicsUtil.switchToWidth(g, SPINE_WIDTH);
+			JGraphicsUtil.switchToWidth(g, SPINE_WIDTH);
 			g.setColor(oldColor);
 			int spine0x = x0 + parms.Spine0X;
 			int spine0y = y0 + parms.Spine0Y;
@@ -157,7 +158,7 @@ namespace logisim.circuit
 				}
 			}
 
-			Graphics g = context.Graphics.create();
+			JGraphics g = context.Graphics.create();
 			Font font = g.getFont();
 			g.setFont(font.deriveFont(7.0f));
 
@@ -168,7 +169,7 @@ namespace logisim.circuit
 			int dy = parms.EndToEndDeltaY;
 			if (parms.TextAngle != 0)
 			{
-				((Graphics2D) g).rotate(Math.PI / 2.0);
+				g.rotate(Math.PI / 2.0);
 				int t;
 				t = -x;
 				x = y;
@@ -179,14 +180,14 @@ namespace logisim.circuit
 			}
 			int halign = parms.TextHorzAlign;
 			int valign = parms.TextVertAlign;
-			x += (halign == GraphicsUtil.H_RIGHT ? -1 : 1) * (SPINE_WIDTH / 2 + 1);
-			y += valign == GraphicsUtil.V_TOP ? 0 : -3;
+			x += (halign == JGraphicsUtil.H_RIGHT ? -1 : 1) * (SPINE_WIDTH / 2 + 1);
+			y += valign == JGraphicsUtil.V_TOP ? 0 : -3;
 			for (int i = 0, n = attrs.fanout; i < n; i++)
 			{
 				string text = ends[i + 1];
 				if (!string.ReferenceEquals(text, null))
 				{
-					GraphicsUtil.drawText(g, text, x, y, halign, valign);
+					JGraphicsUtil.drawText(g, text, x, y, halign, valign);
 				}
 				x += dx;
 				y += dy;
@@ -197,13 +198,13 @@ namespace logisim.circuit
 
 		internal static void drawLegacy(ComponentDrawContext context, SplitterAttributes attrs, Location origin)
 		{
-			Graphics g = context.Graphics;
+			JGraphics g = context.Graphics;
 			CircuitState state = context.CircuitState;
 			Direction facing = attrs.facing;
 			int fanout = attrs.fanout;
 			SplitterParameters parms = attrs.Parameters;
 
-			g.setColor(Color.BLACK);
+			g.setColor(Color.Black);
 			int x0 = origin.X;
 			int y0 = origin.Y;
 			int x1 = x0 + parms.End0X;
@@ -213,7 +214,7 @@ namespace logisim.circuit
 			if (facing == Direction.North || facing == Direction.South)
 			{
 				int ySpine = (y0 + y1) / 2;
-				GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+				JGraphicsUtil.switchToWidth(g, Wire.WIDTH);
 				g.drawLine(x0, y0, x0, ySpine);
 				int xi = x1;
 				int yi = y1;
@@ -230,20 +231,20 @@ namespace logisim.circuit
 				}
 				if (fanout > 3)
 				{
-					GraphicsUtil.switchToWidth(g, SPINE_WIDTH);
-					g.setColor(Color.BLACK);
+					JGraphicsUtil.switchToWidth(g, SPINE_WIDTH);
+					g.setColor(Color.Black);
 					g.drawLine(x1 + dx, ySpine, x1 + (fanout - 2) * dx, ySpine);
 				}
 				else
 				{
-					g.setColor(Color.BLACK);
+					g.setColor(Color.Black);
 					g.fillOval(x0 - SPINE_DOT / 2, ySpine - SPINE_DOT / 2, SPINE_DOT, SPINE_DOT);
 				}
 			}
 			else
 			{
 				int xSpine = (x0 + x1) / 2;
-				GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+				JGraphicsUtil.switchToWidth(g, Wire.WIDTH);
 				g.drawLine(x0, y0, xSpine, y0);
 				int xi = x1;
 				int yi = y1;
@@ -260,17 +261,17 @@ namespace logisim.circuit
 				}
 				if (fanout >= 3)
 				{
-					GraphicsUtil.switchToWidth(g, SPINE_WIDTH);
-					g.setColor(Color.BLACK);
+					JGraphicsUtil.switchToWidth(g, SPINE_WIDTH);
+					g.setColor(Color.Black);
 					g.drawLine(xSpine, y1 + dy, xSpine, y1 + (fanout - 2) * dy);
 				}
 				else
 				{
-					g.setColor(Color.BLACK);
+					g.setColor(Color.Black);
 					g.fillOval(xSpine - SPINE_DOT / 2, y0 - SPINE_DOT / 2, SPINE_DOT, SPINE_DOT);
 				}
 			}
-			GraphicsUtil.switchToWidth(g, 1);
+			JGraphicsUtil.switchToWidth(g, 1);
 		}
 	}
 }

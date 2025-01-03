@@ -23,13 +23,13 @@ namespace logisim.data
 
 		public const int MAX_WIDTH = 32;
 
-		public static readonly Color NIL_COLOR = Color.GRAY;
-		public static readonly Color FALSE_COLOR = new Color(0, 100, 0);
-		public static readonly Color TRUE_COLOR = new Color(0, 210, 0);
-		public static readonly Color UNKNOWN_COLOR = new Color(40, 40, 255);
-		public static readonly Color ERROR_COLOR = new Color(192, 0, 0);
-		public static readonly Color WIDTH_ERROR_COLOR = new Color(255, 123, 0);
-		public static readonly Color MULTI_COLOR = Color.BLACK;
+		public static readonly Color NIL_COLOR = Color.Gray;
+		public static readonly Color FALSE_COLOR = Color.FromArgb(255, 0, 100, 0);
+		public static readonly Color TRUE_COLOR = Color.FromArgb(255, 0, 210, 0);
+		public static readonly Color UNKNOWN_COLOR = Color.FromArgb(255, 40, 40, 255);
+		public static readonly Color ERROR_COLOR = Color.FromArgb(255, 192, 0, 0);
+		public static readonly Color WIDTH_ERROR_COLOR = Color.FromArgb(255, 255, 123, 0);
+		public static readonly Color MULTI_COLOR = Color.Black;
 
 		public static Value create(Value[] values)
 		{
@@ -301,7 +301,7 @@ namespace logisim.data
 				return false;
 			}
 			Value other = (Value) other_obj;
-			bool ret = this.width == other.width && this.error == other.error && this.unknown == other.unknown && this.value == other.value;
+			bool ret = this.width == other.Width && this.error == other.error && this.unknown == other.unknown && this.value == other.value;
 			return ret;
 		}
 
@@ -560,7 +560,7 @@ namespace logisim.data
 			{
 				return this;
 			}
-			if (this.width == 1 && other.width == 1)
+			if (this.width == 1 && other.Width == 1)
 			{
 				if (this == other)
 				{
@@ -579,7 +579,7 @@ namespace logisim.data
 			else
 			{
 				int disagree = (this.value ^ other.value) & ~(this.unknown | other.unknown);
-				return Value.create(Math.Max(this.width, other.width), this.error | other.error | disagree, this.unknown & other.unknown, (this.value & ~this.unknown) | (other.value & ~other.unknown));
+				return Value.create(Math.Max(this.width, other.Width), this.error | other.error | disagree, this.unknown & other.unknown, (this.value & ~this.unknown) | (other.value & ~other.unknown));
 			}
 		}
 
@@ -589,7 +589,7 @@ namespace logisim.data
 			{
 				return this;
 			}
-			if (this.width == 1 && other.width == 1)
+			if (this.width == 1 && other.Width == 1)
 			{
 				if (this == FALSE || other == FALSE)
 				{
@@ -606,7 +606,7 @@ namespace logisim.data
 				int false0 = ~this.value & ~this.error & ~this.unknown;
 				int false1 = ~other.value & ~other.error & ~other.unknown;
 				int falses = false0 | false1;
-				return Value.create(Math.Max(this.width, other.width), (this.error | other.error | this.unknown | other.unknown) & ~falses, 0, this.value & other.value);
+				return Value.create(Math.Max(this.width, other.Width), (this.error | other.error | this.unknown | other.unknown) & ~falses, 0, this.value & other.value);
 			}
 		}
 
@@ -616,7 +616,7 @@ namespace logisim.data
 			{
 				return this;
 			}
-			if (this.width == 1 && other.width == 1)
+			if (this.width == 1 && other.Width == 1)
 			{
 				if (this == TRUE || other == TRUE)
 				{
@@ -633,7 +633,7 @@ namespace logisim.data
 				int true0 = this.value & ~this.error & ~this.unknown;
 				int true1 = other.value & ~other.error & ~other.unknown;
 				int trues = true0 | true1;
-				return Value.create(Math.Max(this.width, other.width), (this.error | other.error | this.unknown | other.unknown) & ~trues, 0, this.value | other.value);
+				return Value.create(Math.Max(this.width, other.Width), (this.error | other.error | this.unknown | other.unknown) & ~trues, 0, this.value | other.value);
 			}
 		}
 
@@ -643,7 +643,7 @@ namespace logisim.data
 			{
 				return this;
 			}
-			if (this.width <= 1 && other.width <= 1)
+			if (this.width <= 1 && other.Width <= 1)
 			{
 				if (this == ERROR || other == ERROR)
 				{
@@ -665,7 +665,7 @@ namespace logisim.data
 			}
 			else
 			{
-				return Value.create(Math.Max(this.width, other.width), this.error | other.error | this.unknown | other.unknown, 0, this.value ^ other.value);
+				return Value.create(Math.Max(this.width, other.Width), this.error | other.error | this.unknown | other.unknown, 0, this.value ^ other.value);
 			}
 		}
 

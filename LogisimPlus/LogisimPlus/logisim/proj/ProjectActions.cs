@@ -218,7 +218,7 @@ namespace logisim.proj
 
 // JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in C#:
 // ORIGINAL LINE: public static Project doOpen(logisim.gui.start.SplashScreen monitor, java.io.File source, java.util.Map<java.io.File, java.io.File> substitutions) throws logisim.file.LoadFailedException
-		public static Project doOpen(SplashScreen monitor, File source, IDictionary<File, File> substitutions)
+		public static Project doOpen(SplashScreen monitor, File source, Dictionary<File, File> substitutions)
 		{
 			if (monitor != null)
 			{

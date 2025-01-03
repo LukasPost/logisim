@@ -21,7 +21,7 @@ namespace logisim.gui.prefs
 		public ExperimentalOptions(PreferencesFrame window) : base(window)
 		{
 
-			accel = new PrefOptionList(AppPreferences.GRAPHICS_ACCELERATION, Strings.getter("accelLabel"), new PrefOption[]
+			accel = new PrefOptionList(AppPreferences.JGraphics_ACCELERATION, Strings.getter("accelLabel"), new PrefOption[]
 			{
 				new PrefOption(AppPreferences.ACCEL_DEFAULT, Strings.get("accelDefault")),
 				new PrefOption(AppPreferences.ACCEL_NONE, Strings.get("accelNone")),

@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -44,7 +45,7 @@ namespace logisim.gui.main
 			{
 				return;
 			}
-			IList<Circuit> circuits = list.SelectedCircuits;
+			List<Circuit> circuits = list.SelectedCircuits;
 			if (circuits.Count == 0)
 			{
 				return;
@@ -152,12 +153,12 @@ namespace logisim.gui.main
 		private class MyPrintable : Printable
 		{
 			internal Project proj;
-			internal IList<Circuit> circuits;
+			internal List<Circuit> circuits;
 			internal string header;
 			internal bool rotateToFit;
 			internal bool printerView;
 
-			internal MyPrintable(Project proj, IList<Circuit> circuits, string header, bool rotateToFit, bool printerView)
+			internal MyPrintable(Project proj, List<Circuit> circuits, string header, bool rotateToFit, bool printerView)
 			{
 				this.proj = proj;
 				this.circuits = circuits;
@@ -166,7 +167,7 @@ namespace logisim.gui.main
 				this.printerView = printerView;
 			}
 
-			public virtual int print(Graphics @base, PageFormat format, int pageIndex)
+			public virtual int print(JGraphics @base, PageFormat format, int pageIndex)
 			{
 				if (pageIndex >= circuits.Count)
 				{
@@ -175,8 +176,7 @@ namespace logisim.gui.main
 
 				Circuit circ = circuits[pageIndex];
 				CircuitState circState = proj.getCircuitState(circ);
-				Graphics g = @base.create();
-				Graphics2D g2 = g is Graphics2D ? (Graphics2D) g : null;
+				JGraphics g = @base.create();
 				FontMetrics fm = g.getFontMetrics();
 				string head = (!string.ReferenceEquals(header, null) && !header.Equals("")) ? Print.format(header, pageIndex + 1, circuits.Count, circ.Name) : null;
 				int headHeight = (string.ReferenceEquals(head, null) ? 0 : fm.getHeight());
@@ -189,9 +189,9 @@ namespace logisim.gui.main
 				// translation and possible rotation.
 				Bounds bds = circ.getBounds(g).expand(4);
 				double scale = Math.Min(imWidth / bds.Width, (imHeight - headHeight) / bds.Height);
-				if (g2 != null)
+				if (g != null)
 				{
-					g2.translate(format.getImageableX(), format.getImageableY());
+					g.translate(format.getImageableX(), format.getImageableY());
 					if (rotateToFit && scale < 1.0 / 1.1)
 					{
 						double scale2 = Math.Min(imHeight / bds.Width, (imWidth - headHeight) / bds.Height);
@@ -200,13 +200,13 @@ namespace logisim.gui.main
 							scale = scale2;
 							if (imHeight > imWidth)
 							{ // portrait -> landscape
-								g2.translate(0, imHeight);
-								g2.rotate(-Math.PI / 2);
+								g.translate(0, imHeight);
+								g.rotate(-Math.PI / 2);
 							}
 							else
 							{ // landscape -> portrait
-								g2.translate(imWidth, 0);
-								g2.rotate(Math.PI / 2);
+								g.translate(imWidth, 0);
+								g.rotate(Math.PI / 2);
 							}
 							double t = imHeight;
 							imHeight = imWidth;
@@ -219,25 +219,25 @@ namespace logisim.gui.main
 				if (!string.ReferenceEquals(head, null))
 				{
 					g.drawString(head, (int) (long)Math.Round((imWidth - fm.stringWidth(head)) / 2, MidpointRounding.AwayFromZero), fm.getAscent());
-					if (g2 != null)
+					if (g != null)
 					{
 						imHeight -= headHeight;
-						g2.translate(0, headHeight);
+						g.translate(0, headHeight);
 					}
 				}
 
 				// Now change coordinate system for circuit, including
 				// translation and possible scaling
-				if (g2 != null)
+				if (g != null)
 				{
 					if (scale < 1.0)
 					{
-						g2.scale(scale, scale);
+						g.scale(scale, scale);
 						imWidth /= scale;
 						imHeight /= scale;
 					}
-					double dx = Math.Max(0.0, (imWidth - bds.Width) / 2);
-					g2.translate(-bds.X + dx, -bds.Y);
+					int dx = (int)Math.Max(0.0, (imWidth - bds.Width) / 2);
+					g.translate(-bds.X + dx, -bds.Y);
 				}
 
 				// Ensure that the circuit is eligible to be drawn
@@ -248,7 +248,7 @@ namespace logisim.gui.main
 
 				// And finally draw the circuit onto the page
 				ComponentDrawContext context = new ComponentDrawContext(proj.Frame.getCanvas(), circ, circState, @base, g, printerView);
-				ICollection<Component> noComps = Collections.emptySet();
+				List<Component> noComps =[];
 				circ.draw(context, noComps);
 				g.dispose();
 				return Printable.PAGE_EXISTS;

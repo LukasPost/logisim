@@ -25,14 +25,14 @@ namespace logisim.data
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: Attribute<?> attr;
-			internal Attribute<object> attr;
+			internal Attribute attr;
 			internal object value;
 			internal bool is_read_only;
 			internal Node next;
 
 // JAVA TO C# CONVERTER TASK: Wildcard generics in constructor parameters are not converted. Move the generic type parameter and constraint to the class header:
 // ORIGINAL LINE: Node(Attribute<?> attr, Object value, boolean is_read_only, Node next)
-			internal Node(Attribute<T1> attr, object value, bool is_read_only, Node next)
+			internal Node(Attribute attr, object value, bool is_read_only, Node next)
 			{
 				this.attr = attr;
 				this.value = value;
@@ -49,7 +49,7 @@ namespace logisim.data
 			}
 		}
 
-		private class AttrIterator : IEnumerator<Attribute<JavaToCSharpGenericWildcard>>
+		private class AttrIterator : IEnumerator<Attribute>
 		{
 			private readonly AttributeSetImpl outerInstance;
 
@@ -68,7 +68,7 @@ namespace logisim.data
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public Attribute<?> next()
-			public virtual Attribute<object> next()
+			public virtual Attribute next()
 			{
 				Node ret = n;
 				n = n.next;
@@ -81,7 +81,7 @@ namespace logisim.data
 			}
 		}
 
-		private class AttrList : System.Collections.ObjectModel.Collection<Attribute<JavaToCSharpGenericWildcard>>
+		private class AttrList : System.Collections.ObjectModel.Collection<Attribute>
 		{
 			private readonly AttributeSetImpl outerInstance;
 
@@ -92,14 +92,14 @@ namespace logisim.data
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.Iterator<Attribute<?>> iterator()
-			public override IEnumerator<Attribute<object>> iterator()
+			public override IEnumerator<Attribute> iterator()
 			{
 				return new AttrIterator(outerInstance, outerInstance.head);
 			}
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public Attribute<?> get(int i)
-			public override Attribute<object> get(int i)
+			public override Attribute get(int i)
 			{
 				Node n = outerInstance.head;
 				int remaining = i;
@@ -156,7 +156,7 @@ namespace logisim.data
 			}
 		}
 
-		public AttributeSetImpl(Attribute<object>[] attrs, object[] values)
+		public AttributeSetImpl(Attribute[] attrs, object[] values)
 		{
 			if (!instanceFieldsInitialized)
 			{
@@ -199,7 +199,7 @@ namespace logisim.data
 		//
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
@@ -209,7 +209,7 @@ namespace logisim.data
 
 // JAVA TO C# CONVERTER TASK: There is no C# equivalent to the Java 'super' constraint:
 // ORIGINAL LINE: public <V> void addAttribute(Attribute<? super V> attr, V value)
-		public virtual void addAttribute<V, T1>(Attribute<T1> attr, V value)
+		public virtual void addAttribute(Attribute attr, object value)
 		{
 			if (attr == null)
 			{
@@ -234,7 +234,7 @@ namespace logisim.data
 			fireAttributeListChanged();
 		}
 
-		public virtual void removeAttribute<T1>(Attribute<T1> attr)
+		public virtual void removeAttribute(Attribute attr)
 		{
 			Node prev = null;
 			Node n = head;
@@ -267,7 +267,7 @@ namespace logisim.data
 		//
 		// read-only methods
 		//
-		public virtual bool isReadOnly<T1>(Attribute<T1> attr)
+		public virtual bool isReadOnly(Attribute attr)
 		{
 			Node n = findNode(attr);
 			if (n == null)
@@ -277,7 +277,7 @@ namespace logisim.data
 			return n.is_read_only;
 		}
 
-		public virtual void setReadOnly<T1>(Attribute<T1> attr, bool value)
+		public virtual void setReadOnly(Attribute attr, bool value)
 		{
 			Node n = findNode(attr);
 			if (n == null)
@@ -290,7 +290,7 @@ namespace logisim.data
 		//
 		// value access methods
 		//
-		public override V getValue<V>(Attribute<V> attr)
+		public override object getValue(Attribute attr)
 		{
 			Node n = findNode(attr);
 			if (n == null)
@@ -303,7 +303,7 @@ namespace logisim.data
 			return ret;
 		}
 
-		public override void setValue<V>(Attribute<V> attr, V value)
+		public override void setValue(Attribute attr, object value)
 		{
 			if (value is string)
 			{
@@ -333,7 +333,7 @@ namespace logisim.data
 		//
 		// private helper methods
 		//
-		private Node findNode<T1>(Attribute<T1> attr)
+		private Node findNode(Attribute attr)
 		{
 			for (Node n = head; n != null; n = n.next)
 			{

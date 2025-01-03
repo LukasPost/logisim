@@ -20,7 +20,7 @@ namespace logisim.circuit
 	public sealed class CircuitMutation : CircuitTransaction
 	{
 		private Circuit primary;
-		private IList<CircuitChange> changes;
+		private List<CircuitChange> changes;
 
 		public CircuitMutation(Circuit circuit)
 		{
@@ -80,12 +80,12 @@ namespace logisim.circuit
 			}
 		}
 
-		public void set<T1>(Component comp, Attribute<T1> attr, object value)
+		public void set(Component comp, Attribute attr, object value)
 		{
 			changes.Add(CircuitChange.set(primary, comp, attr, value));
 		}
 
-		public void setForCircuit<T1>(Attribute<T1> attr, object value)
+		public void setForCircuit(Attribute attr, object value)
 		{
 			changes.Add(CircuitChange.setForCircuit(primary, attr, value));
 		}
@@ -104,7 +104,7 @@ namespace logisim.circuit
 			return new CircuitAction(name, this);
 		}
 
-		protected internal override IDictionary<Circuit, int> AccessedCircuits
+		protected internal override Dictionary<Circuit, int> AccessedCircuits
 		{
 			get
 			{

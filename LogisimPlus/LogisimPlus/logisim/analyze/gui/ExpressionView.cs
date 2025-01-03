@@ -53,7 +53,7 @@ namespace logisim.analyze.gui
 				int width = getWidth();
 				if (outerInstance.renderData != null && Math.Abs(outerInstance.renderData.width - width) > 2)
 				{
-					Graphics g = getGraphics();
+					JGraphics g = getJGraphics();
 					FontMetrics fm = g == null ? null : g.getFontMetrics();
 					outerInstance.renderData = new RenderData(outerInstance.renderData.exprData, width, fm);
 					setPreferredSize(outerInstance.renderData.PreferredSize);
@@ -94,7 +94,7 @@ namespace logisim.analyze.gui
 			set
 			{
 				ExpressionData exprData = new ExpressionData(value);
-				Graphics g = getGraphics();
+				JGraphics g = getJGraphics();
 				FontMetrics fm = g == null ? null : g.getFontMetrics();
 				renderData = new RenderData(exprData, getWidth(), fm);
 				setPreferredSize(renderData.PreferredSize);
@@ -103,7 +103,7 @@ namespace logisim.analyze.gui
 			}
 		}
 
-		public override void paintComponent(Graphics g)
+		public override void paintComponent(JGraphics g)
 		{
 			base.paintComponent(g);
 
@@ -497,7 +497,7 @@ namespace logisim.analyze.gui
 				}
 			}
 
-			public virtual void paint(Graphics g, int x, int y)
+			public virtual void paint(JGraphics g, int x, int y)
 			{
 				FontMetrics fm = g.getFontMetrics();
 				int i = -1;

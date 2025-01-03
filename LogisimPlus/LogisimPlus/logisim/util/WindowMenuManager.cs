@@ -51,7 +51,7 @@ namespace logisim.util
 			managers.Remove(manager);
 		}
 
-		internal static IList<WindowMenu> Menus
+		internal static List<WindowMenu> Menus
 		{
 			get
 			{

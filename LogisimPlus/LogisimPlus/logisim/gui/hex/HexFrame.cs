@@ -247,10 +247,10 @@ namespace logisim.gui.hex
 
 			Size size = getSize();
 			Size screen = getToolkit().getScreenSize();
-			if (size.width > screen.width || size.height > screen.height)
+			if (size.Width > screen.width || size.Height > screen.height)
 			{
-				size.width = Math.Min(size.width, screen.width);
-				size.height = Math.Min(size.height, screen.height);
+				size.Width = Math.Min(size.Width, screen.width);
+				size.Height = Math.Min(size.Height, screen.height);
 				setSize(size);
 			}
 

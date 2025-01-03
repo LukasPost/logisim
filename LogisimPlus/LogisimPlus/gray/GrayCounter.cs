@@ -20,7 +20,7 @@ namespace gray
 	using InstanceState = logisim.instance.InstanceState;
 	using Port = logisim.instance.Port;
 	using StdAttr = logisim.instance.StdAttr;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using StringUtil = logisim.util.StringUtil;
 
 	/// <summary>
@@ -35,14 +35,14 @@ namespace gray
 			setPorts(new Port[]
 			{
 				new Port(-30, 0, Port.INPUT, 1),
-				new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH)
+				new Port(0, 0, Port.OUTPUT, StdAttr.Width)
 			});
 
 			// We'll have width, label, and label font attributes. The latter two
 			// attributes allow us to associate a label with the component (though
 			// we'll also need configureNewInstance to configure the label's
 			// location).
-			setAttributes(new Attribute[] {StdAttr.WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT}, new object[] {BitWidth.create(4), "", StdAttr.DEFAULT_LABEL_FONT});
+			setAttributes(new Attribute[] {StdAttr.Width, StdAttr.LABEL, StdAttr.LABEL_FONT}, new object[] {BitWidth.create(4), "", StdAttr.DEFAULT_LABEL_FONT});
 
 			// The following method invocation sets things up so that the instance's
 			// state can be manipulated using the Poke Tool.
@@ -67,14 +67,14 @@ namespace gray
 		protected internal override void configureNewInstance(Instance instance)
 		{
 			Bounds bds = instance.Bounds;
-			instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, bds.X + bds.Width / 2, bds.Y - 3, GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
+			instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, bds.X + bds.Width / 2, bds.Y - 3, JGraphicsUtil.H_CENTER, JGraphicsUtil.V_BASELINE);
 		}
 
 		public override void propagate(InstanceState state)
 		{
 			// This is the same as with SimpleGrayCounter, except that we use the
-			// StdAttr.WIDTH attribute to determine the bit width to work with.
-			BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
+			// StdAttr.Width attribute to determine the bit width to work with.
+			BitWidth width = state.getAttributeValue(StdAttr.Width);
 			CounterData cur = CounterData.get(state, width);
 			bool trigger = cur.updateClock(state.getPort(0));
 			if (trigger)
@@ -95,10 +95,10 @@ namespace gray
 
 			if (painter.ShowState)
 			{
-				BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
+				BitWidth width = painter.getAttributeValue(StdAttr.Width);
 				CounterData state = CounterData.get(painter, width);
 				Bounds bds = painter.Bounds;
-				GraphicsUtil.drawCenteredText(painter.Graphics, StringUtil.toHexString(width.Width, state.Value.toIntValue()), bds.X + bds.Width / 2, bds.Y + bds.Height / 2);
+				JGraphicsUtil.drawCenteredText(painter.Graphics, StringUtil.toHexString(width.Width, state.Value.toIntValue()), bds.X + bds.Width / 2, bds.Y + bds.Height / 2);
 			}
 		}
 	}

@@ -7,6 +7,8 @@
 /* Copyright (c) 2010, Carl Burch. License information is located in the
  * logisim.Main source code and at www.cburch.com/logisim/. */
 
+using LogisimPlus.Java;
+
 namespace draw.canvas
 {
 
@@ -14,7 +16,7 @@ namespace draw.canvas
 	{
 		public abstract Cursor getCursor(Canvas canvas);
 
-		public virtual void draw(Canvas canvas, Graphics g)
+		public virtual void draw(Canvas canvas, JGraphics g)
 		{
 		}
 

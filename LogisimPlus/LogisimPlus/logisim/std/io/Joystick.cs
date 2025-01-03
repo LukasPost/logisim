@@ -25,15 +25,16 @@ namespace logisim.std.io
 	using InstanceState = logisim.instance.InstanceState;
 	using Port = logisim.instance.Port;
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
+    using LogisimPlus.Java;
 
-	public class Joystick : InstanceFactory
+    public class Joystick : InstanceFactory
 	{
-		internal static readonly Attribute<BitWidth> ATTR_WIDTH = Attributes.forBitWidth("bits", Strings.getter("ioBitWidthAttr"), 2, 5);
+		internal static readonly Attribute ATTR_WIDTH = Attributes.forBitWidth("bits", Strings.getter("ioBitWidthAttr"), 2, 5);
 
 		public Joystick() : base("Joystick", Strings.getter("joystickComponent"))
 		{
-			setAttributes(new Attribute[] {ATTR_WIDTH, Io.ATTR_COLOR}, new object[] {BitWidth.create(4), Color.RED});
+			setAttributes(new Attribute[] {ATTR_WIDTH, Io.ATTR_COLOR}, new object[] {BitWidth.create(4), Color.Red});
 			KeyConfigurator = new BitWidthConfigurator(ATTR_WIDTH, 2, 5);
 			OffsetBounds = Bounds.create(-30, -10, 30, 30);
 			IconName = "joystick.gif";
@@ -47,7 +48,7 @@ namespace logisim.std.io
 
 		public override void propagate(InstanceState state)
 		{
-			BitWidth bits = state.getAttributeValue(ATTR_WIDTH);
+			BitWidth bits = (BitWidth)state.getAttributeValue(ATTR_WIDTH);
 			int dx;
 			int dy;
 			State s = (State) state.Data;
@@ -82,8 +83,8 @@ namespace logisim.std.io
 
 		public override void paintGhost(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphics g = painter.Graphics;
+			JGraphicsUtil.switchToWidth(g, 2);
 			g.drawRoundRect(-30, -10, 30, 30, 8, 8);
 		}
 
@@ -93,27 +94,27 @@ namespace logisim.std.io
 			int x = loc.X;
 			int y = loc.Y;
 
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			g.drawRoundRect(x - 30, y - 10, 30, 30, 8, 8);
 			g.drawRoundRect(x - 28, y - 8, 26, 26, 4, 4);
 			drawBall(g, x - 15, y + 5, painter.getAttributeValue(Io.ATTR_COLOR), painter.shouldDrawColor());
 			painter.drawPorts();
 		}
 
-		private static void drawBall(Graphics g, int x, int y, Color c, bool inColor)
+		private static void drawBall(JGraphics g, int x, int y, Color c, bool inColor)
 		{
 			if (inColor)
 			{
-				g.setColor(c == null ? Color.RED : c);
+				g.setColor(c == null ? Color.Red : c);
 			}
 			else
 			{
-				int hue = c == null ? 128 : (c.getRed() + c.getGreen() + c.getBlue()) / 3;
-				g.setColor(new Color(hue, hue, hue));
+				int hue = c == null ? 128 : (c.R + c.G + c.B) / 3;
+				g.setColor(Color.FromArgb(255, hue, hue, hue));
 			}
-			GraphicsUtil.switchToWidth(g, 1);
+			JGraphicsUtil.switchToWidth(g, 1);
 			g.fillOval(x - 4, y - 4, 8, 8);
-			g.setColor(Color.BLACK);
+			g.setColor(Color.Black);
 			g.drawOval(x - 4, y - 4, 8, 8);
 		}
 
@@ -128,16 +129,9 @@ namespace logisim.std.io
 				yPos = y;
 			}
 
-			public virtual object clone()
+			public virtual object Clone()
 			{
-				try
-				{
-					return base.clone();
-				}
-				catch (CloneNotSupportedException)
-				{
-					return null;
-				}
+				return base.MemberwiseClone();
 			}
 		}
 
@@ -158,7 +152,7 @@ namespace logisim.std.io
 				Location loc = state.Instance.Location;
 				int cx = loc.X - 15;
 				int cy = loc.Y + 5;
-				updateState(state, e.getX() - cx, e.getY() - cy);
+				updateState(state, e.x- cx, e.y - cy);
 			}
 
 			internal virtual void updateState(InstanceState state, int dx, int dy)
@@ -204,11 +198,11 @@ namespace logisim.std.io
 				Location loc = painter.Location;
 				int x = loc.X;
 				int y = loc.Y;
-				Graphics g = painter.Graphics;
-				g.setColor(Color.WHITE);
+				JGraphics g = painter.Graphics;
+				g.setColor(Color.White);
 				g.fillRect(x - 20, y, 10, 10);
-				GraphicsUtil.switchToWidth(g, 3);
-				g.setColor(Color.BLACK);
+				JGraphicsUtil.switchToWidth(g, 3);
+				g.setColor(Color.Black);
 				int dx = state.xPos;
 				int dy = state.yPos;
 				int x0 = x - 15 + (dx > 5 ? 1 : dx < -5 ? -1 : 0);
@@ -216,7 +210,7 @@ namespace logisim.std.io
 				int x1 = x - 15 + dx;
 				int y1 = y + 5 + dy;
 				g.drawLine(x0, y0, x1, y1);
-				Color ballColor = painter.getAttributeValue(Io.ATTR_COLOR);
+				Color ballColor = (Color)painter.getAttributeValue(Io.ATTR_COLOR);
 				Joystick.drawBall(g, x1, y1, ballColor, true);
 			}
 		}

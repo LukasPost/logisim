@@ -13,7 +13,7 @@ namespace logisim.instance
 
 	public interface InstanceData : ComponentState
 	{
-		object clone();
+
 	}
 
 }

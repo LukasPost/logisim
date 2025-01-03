@@ -290,10 +290,10 @@ namespace logisim.file
 		private class RevertAttributeValue
 		{
 			internal AttributeSet attrs;
-			internal Attribute<object> attr;
+			internal Attribute attr;
 			internal object value;
 
-			internal RevertAttributeValue(AttributeSet attrs, Attribute<object> attr, object value)
+			internal RevertAttributeValue(AttributeSet attrs, Attribute attr, object value)
 			{
 				this.attrs = attrs;
 				this.attr = attr;
@@ -361,11 +361,11 @@ namespace logisim.file
 						AttributeSet dstAttrs = dstTool.AttributeSet;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: for (logisim.data.Attribute<?> attrBase : srcAttrs.getAttributes())
-						foreach (Attribute<object> attrBase in srcAttrs.Attributes)
+						foreach (Attribute attrBase in srcAttrs.Attributes)
 						{
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<Object> attr = (logisim.data.Attribute<Object>) attrBase;
-							Attribute<object> attr = (Attribute<object>) attrBase;
+// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute attr = (logisim.data.Attribute) attrBase;
+							Attribute attr = (Attribute) attrBase;
 							object srcValue = srcAttrs.getValue(attr);
 							object dstValue = dstAttrs.getValue(attr);
 							if (!dstValue.Equals(srcValue))

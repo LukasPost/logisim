@@ -98,7 +98,7 @@ namespace logisim.analyze.model
 			currentCircuit = circuit;
 		}
 
-		public virtual void setVariables(IList<string> inputs, IList<string> outputs)
+		public virtual void setVariables(List<string> inputs, List<string> outputs)
 		{
 			this.inputs.All = inputs;
 			this.outputs.All = outputs;

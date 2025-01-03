@@ -34,7 +34,7 @@ namespace logisim.std.arith
 		internal static readonly AttributeOption SHIFT_ARITHMETIC_RIGHT = new AttributeOption("ar", Strings.getter("shiftArithmeticRight"));
 		internal static readonly AttributeOption SHIFT_ROLL_LEFT = new AttributeOption("rl", Strings.getter("shiftRollLeft"));
 		internal static readonly AttributeOption SHIFT_ROLL_RIGHT = new AttributeOption("rr", Strings.getter("shiftRollRight"));
-		internal static readonly Attribute<AttributeOption> ATTR_SHIFT = Attributes.forOption("shift", Strings.getter("shifterShiftAttr"), new AttributeOption[] {SHIFT_LOGICAL_LEFT, SHIFT_LOGICAL_RIGHT, SHIFT_ARITHMETIC_RIGHT, SHIFT_ROLL_LEFT, SHIFT_ROLL_RIGHT});
+		internal static readonly Attribute ATTR_SHIFT = Attributes.forOption("shift", Strings.getter("shifterShiftAttr"), new AttributeOption[] {SHIFT_LOGICAL_LEFT, SHIFT_LOGICAL_RIGHT, SHIFT_ARITHMETIC_RIGHT, SHIFT_ROLL_LEFT, SHIFT_ROLL_RIGHT});
 
 		private const int IN0 = 0;
 		private const int IN1 = 1;
@@ -42,8 +42,8 @@ namespace logisim.std.arith
 
 		public Shifter() : base("Shifter", Strings.getter("shifterComponent"))
 		{
-			setAttributes(new Attribute[] {StdAttr.WIDTH, ATTR_SHIFT}, new object[] {BitWidth.create(8), SHIFT_LOGICAL_LEFT});
-			KeyConfigurator = new BitWidthConfigurator(StdAttr.WIDTH);
+			setAttributes(new Attribute[] {StdAttr.Width, ATTR_SHIFT}, new object[] {BitWidth.create(8), SHIFT_LOGICAL_LEFT});
+			KeyConfigurator = new BitWidthConfigurator(StdAttr.Width);
 			OffsetBounds = Bounds.create(-40, -20, 40, 40);
 			IconName = "shifter.gif";
 		}
@@ -54,9 +54,9 @@ namespace logisim.std.arith
 			instance.addAttributeListener();
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
-			if (attr == StdAttr.WIDTH)
+			if (attr == StdAttr.Width)
 			{
 				configurePorts(instance);
 			}
@@ -64,7 +64,7 @@ namespace logisim.std.arith
 
 		private void configurePorts(Instance instance)
 		{
-			BitWidth dataWid = instance.getAttributeValue(StdAttr.WIDTH);
+			BitWidth dataWid = instance.getAttributeValue(StdAttr.Width);
 			int data = dataWid == null ? 32 : dataWid.Width;
 			int shift = 1;
 			while ((1 << shift) < data)
@@ -76,16 +76,16 @@ namespace logisim.std.arith
 			ps[IN0] = new Port(-40, -10, Port.INPUT, data);
 			ps[IN1] = new Port(-40, 10, Port.INPUT, shift);
 			ps[OUT] = new Port(0, 0, Port.OUTPUT, data);
-			ps[IN0].setToolTip(Strings.getter("shifterInputTip"));
-			ps[IN1].setToolTip(Strings.getter("shifterDistanceTip"));
-			ps[OUT].setToolTip(Strings.getter("shifterOutputTip"));
-			instance.setPorts(ps);
+			ps[IN0].ToolTip = Strings.getter("shifterInputTip");
+			ps[IN1].ToolTip = Strings.getter("shifterDistanceTip");
+			ps[OUT].ToolTip = Strings.getter("shifterOutputTip");
+			instance.Ports = ps;
 		}
 
 		public override void propagate(InstanceState state)
 		{
 			// compute output
-			BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+			BitWidth dataWidth = state.getAttributeValue(StdAttr.Width);
 			int bits = dataWidth.Width;
 			Value vx = state.getPort(IN0);
 			Value vd = state.getPort(IN1);
@@ -200,7 +200,7 @@ namespace logisim.std.arith
 
 		public override void paintInstance(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			painter.drawBounds();
 
 			painter.drawPorts();
@@ -209,7 +209,7 @@ namespace logisim.std.arith
 			int x = loc.X - 15;
 			int y = loc.Y;
 			object shift = painter.getAttributeValue(ATTR_SHIFT);
-			g.setColor(Color.BLACK);
+			g.setColor(Color.Black);
 			if (shift == SHIFT_LOGICAL_RIGHT)
 			{
 				g.fillRect(x, y - 1, 8, 3);
@@ -244,7 +244,7 @@ namespace logisim.std.arith
 			}
 		}
 
-		private void drawArrow(Graphics g, int x, int y, int d)
+		private void drawArrow(JGraphics g, int x, int y, int d)
 		{
 			int[] px = new int[] {x + d, x, x + d};
 			int[] py = new int[] {y + d, y, y - d};

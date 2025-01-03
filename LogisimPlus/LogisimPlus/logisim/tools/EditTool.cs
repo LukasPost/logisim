@@ -31,7 +31,7 @@ namespace logisim.tools
 	using SelectionActions = logisim.gui.main.SelectionActions;
 	using Event = logisim.gui.main.Selection.Event;
 	using Action = logisim.proj.Action;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	public class EditTool : Tool
 	{
@@ -155,7 +155,7 @@ namespace logisim.tools
 			select_Conflict.paintIcon(c, x, y);
 		}
 
-		public override ISet<Component> getHiddenComponents(Canvas canvas)
+		public override HashSet<Component> getHiddenComponents(Canvas canvas)
 		{
 			return current.getHiddenComponents(canvas);
 		}
@@ -167,12 +167,12 @@ namespace logisim.tools
 			{
 				int x = loc.X;
 				int y = loc.Y;
-				Graphics g = context.Graphics;
+				JGraphics g = context.Graphics;
 				g.setColor(Value.TRUE_COLOR);
-				GraphicsUtil.switchToWidth(g, 2);
+				JGraphicsUtil.switchToWidth(g, 2);
 				g.drawOval(x - 5, y - 5, 10, 10);
-				g.setColor(Color.BLACK);
-				GraphicsUtil.switchToWidth(g, 1);
+				g.setColor(Color.Black);
+				JGraphicsUtil.switchToWidth(g, 1);
 			}
 			current.draw(canvas, context);
 		}
@@ -196,7 +196,7 @@ namespace logisim.tools
 			canvas.Selection.removeListener(listener);
 		}
 
-		public override void mousePressed(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mousePressed(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			bool wire = updateLocation(canvas, e);
 			Location oldWireLoc = wireLoc;
@@ -234,13 +234,13 @@ namespace logisim.tools
 			current.mousePressed(canvas, g, e);
 		}
 
-		public override void mouseDragged(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseDragged(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			isClick(e);
 			current.mouseDragged(canvas, g, e);
 		}
 
-		public override void mouseReleased(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseReleased(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			bool click = isClick(e) && current == wiring;
 			canvas.Selection.SuppressHandles = null;
@@ -256,20 +256,20 @@ namespace logisim.tools
 			updateLocation(canvas, e);
 		}
 
-		public override void mouseEntered(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseEntered(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			pressX = -1;
 			current.mouseEntered(canvas, g, e);
 			canvas.requestFocusInWindow();
 		}
 
-		public override void mouseExited(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseExited(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			pressX = -1;
 			current.mouseExited(canvas, g, e);
 		}
 
-		public override void mouseMoved(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseMoved(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			updateLocation(canvas, e);
 			select_Conflict.mouseMoved(canvas, g, e);
@@ -548,17 +548,14 @@ namespace logisim.tools
 			}
 		}
 
-		private Attribute<Direction> getFacingAttribute(Component comp)
+		private Attribute getFacingAttribute(Component comp)
 		{
 			AttributeSet attrs = comp.AttributeSet;
 			object key = ComponentFactory.FACING_ATTRIBUTE_KEY;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?> a = (logisim.data.Attribute<?>) comp.getFactory().getFeature(key, attrs);
-			Attribute<object> a = (Attribute<object>) comp.Factory.getFeature(key, attrs);
-// JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<logisim.data.Direction> ret = (logisim.data.Attribute<logisim.data.Direction>) a;
-			Attribute<Direction> ret = (Attribute<Direction>) a;
-			return ret;
+			Attribute a = (Attribute) comp.Factory.getFeature(key, attrs);
+			return a;
 		}
 
 		public override Cursor Cursor

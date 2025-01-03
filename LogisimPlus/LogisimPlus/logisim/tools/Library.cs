@@ -28,7 +28,7 @@ namespace logisim.tools
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public abstract java.util.List<? extends Tool> getTools();
-		public abstract IList<Tool> Tools {get;}
+		public abstract List<Tool> Tools {get;}
 
 		public override string ToString()
 		{
@@ -51,17 +51,17 @@ namespace logisim.tools
 			}
 		}
 
-		public virtual IList<Library> Libraries
+		public virtual List<Library> Libraries
 		{
 			get
 			{
-				return Collections.emptyList();
+				return [];
 			}
 		}
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public java.util.List<?> getElements()
-		public virtual IList<object> Elements
+		public virtual List<object> Elements
 		{
 			get
 			{

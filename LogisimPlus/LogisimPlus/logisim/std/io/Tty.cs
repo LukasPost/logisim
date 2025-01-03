@@ -24,9 +24,10 @@ namespace logisim.std.io
 	using InstanceState = logisim.instance.InstanceState;
 	using Port = logisim.instance.Port;
 	using StdAttr = logisim.instance.StdAttr;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
+    using LogisimPlus.Java;
 
-	public class Tty : InstanceFactory
+    public class Tty : InstanceFactory
 	{
 		private const int CLR = 0;
 		private const int CK = 1;
@@ -36,16 +37,16 @@ namespace logisim.std.io
 		private const int BORDER = 5;
 		private const int ROW_HEIGHT = 15;
 		private const int COL_WIDTH = 7;
-		private static readonly Color DEFAULT_BACKGROUND = new Color(0, 0, 0, 64);
+		private static readonly Color DEFAULT_BACKGROUND = Color.FromArgb(64, 0, 0, 0);
 
 		private static readonly Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
 
-		private static readonly Attribute<int> ATTR_COLUMNS = Attributes.forIntegerRange("cols", Strings.getter("ttyColsAttr"), 1, 120);
-		private static readonly Attribute<int> ATTR_ROWS = Attributes.forIntegerRange("rows", Strings.getter("ttyRowsAttr"), 1, 48);
+		private static readonly Attribute ATTR_COLUMNS = Attributes.forIntegerRange("cols", Strings.getter("ttyColsAttr"), 1, 120);
+		private static readonly Attribute ATTR_ROWS = Attributes.forIntegerRange("rows", Strings.getter("ttyRowsAttr"), 1, 48);
 
 		public Tty() : base("TTY", Strings.getter("ttyComponent"))
 		{
-			setAttributes(new Attribute[] {ATTR_ROWS, ATTR_COLUMNS, StdAttr.EDGE_TRIGGER, Io.ATTR_COLOR, Io.ATTR_BACKGROUND}, new object[] {Convert.ToInt32(8), Convert.ToInt32(32), StdAttr.TRIG_RISING, Color.BLACK, DEFAULT_BACKGROUND});
+			setAttributes(new Attribute[] {ATTR_ROWS, ATTR_COLUMNS, StdAttr.EDGE_TRIGGER, Io.ATTR_COLOR, Io.ATTR_BACKGROUND}, new object[] {Convert.ToInt32(8), Convert.ToInt32(32), StdAttr.TRIG_RISING, Color.Black, DEFAULT_BACKGROUND});
 			IconName = "tty.gif";
 
 			Port[] ps = new Port[4];
@@ -53,10 +54,10 @@ namespace logisim.std.io
 			ps[CK] = new Port(0, 0, Port.INPUT, 1);
 			ps[WE] = new Port(10, 10, Port.INPUT, 1);
 			ps[IN] = new Port(0, -10, Port.INPUT, 7);
-			ps[CLR].setToolTip(Strings.getter("ttyClearTip"));
-			ps[CK].setToolTip(Strings.getter("ttyClockTip"));
-			ps[WE].setToolTip(Strings.getter("ttyEnableTip"));
-			ps[IN].setToolTip(Strings.getter("ttyInputTip"));
+			ps[CLR].ToolTip = Strings.getter("ttyClearTip");
+			ps[CK].ToolTip = Strings.getter("ttyClockTip");
+			ps[WE].ToolTip = Strings.getter("ttyEnableTip");
+			ps[IN].ToolTip = Strings.getter("ttyInputTip");
 			setPorts(ps);
 		}
 
@@ -82,7 +83,7 @@ namespace logisim.std.io
 			instance.addAttributeListener();
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == ATTR_ROWS || attr == ATTR_COLUMNS)
 			{
@@ -127,8 +128,8 @@ namespace logisim.std.io
 
 		public override void paintGhost(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
-			GraphicsUtil.switchToWidth(g, 2);
+			JGraphics g = painter.Graphics;
+			JGraphicsUtil.switchToWidth(g, 2);
 			Bounds bds = painter.Bounds;
 			g.drawRoundRect(bds.X, bds.Y, bds.Width, bds.Height, 10, 10);
 		}
@@ -136,18 +137,18 @@ namespace logisim.std.io
 		public override void paintInstance(InstancePainter painter)
 		{
 			bool showState = painter.ShowState;
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			Bounds bds = painter.Bounds;
 			painter.drawClock(CK, Direction.East);
 			if (painter.shouldDrawColor())
 			{
-				g.setColor(painter.getAttributeValue(Io.ATTR_BACKGROUND));
+				g.setColor((Color)painter.getAttributeValue(Io.ATTR_BACKGROUND));
 				g.fillRoundRect(bds.X, bds.Y, bds.Width, bds.Height, 10, 10);
 			}
-			GraphicsUtil.switchToWidth(g, 2);
-			g.setColor(Color.BLACK);
+			JGraphicsUtil.switchToWidth(g, 2);
+			g.setColor(Color.Black);
 			g.drawRoundRect(bds.X, bds.Y, bds.Width, bds.Height, 2 * BORDER, 2 * BORDER);
-			GraphicsUtil.switchToWidth(g, 1);
+			JGraphicsUtil.switchToWidth(g, 1);
 			painter.drawPort(CLR);
 			painter.drawPort(WE);
 			painter.drawPort(IN);
@@ -172,7 +173,7 @@ namespace logisim.std.io
 				}
 
 				g.setFont(DEFAULT_FONT);
-				g.setColor(painter.getAttributeValue(Io.ATTR_COLOR));
+				g.setColor((Color)painter.getAttributeValue(Io.ATTR_COLOR));
 				FontMetrics fm = g.getFontMetrics();
 				int x = bds.X + BORDER;
 				int y = bds.Y + BORDER + (ROW_HEIGHT + fm.getAscent()) / 2;

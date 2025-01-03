@@ -22,10 +22,11 @@ namespace logisim.std.memory
 	using InstanceState = logisim.instance.InstanceState;
 	using Port = logisim.instance.Port;
 	using Project = logisim.proj.Project;
+    using LogisimPlus.Java;
 
-	public class Rom : Mem
+    public class Rom : Mem
 	{
-		public static Attribute<MemContents> CONTENTS_ATTR = new ContentsAttribute();
+		public static Attribute CONTENTS_ATTR = new ContentsAttribute();
 
 		// The following is so that instance's MemListeners aren't freed by the
 		// garbage collector until the instance itself is ready to be freed.
@@ -41,7 +42,7 @@ namespace logisim.std.memory
 		{
 			Port[] ps = new Port[MEM_INPUTS];
 			configureStandardPorts(instance, ps);
-			instance.setPorts(ps);
+			instance.Ports = ps;
 		}
 
 		public override AttributeSet createAttributeSet()
@@ -81,13 +82,13 @@ namespace logisim.std.memory
 		// TODO - maybe delete this method?
 		internal virtual MemContents getMemContents(Instance instance)
 		{
-			return instance.getAttributeValue(CONTENTS_ATTR);
+			return (MemContents)instance.getAttributeValue(CONTENTS_ATTR);
 		}
 
 		public override void propagate(InstanceState state)
 		{
 			MemState myState = getState(state);
-			BitWidth dataBits = state.getAttributeValue(DATA_ATTR);
+			BitWidth dataBits = (BitWidth)state.getAttributeValue(DATA_ATTR);
 
 			Value addrValue = state.getPort(ADDR);
 			bool chipSelect = state.getPort(CS) != Value.FALSE;
@@ -123,7 +124,7 @@ namespace logisim.std.memory
 			contents.addHexModelListener(listener);
 		}
 
-		private class ContentsAttribute : Attribute<MemContents>
+		private class ContentsAttribute : Attribute
 		{
 			public ContentsAttribute() : base("contents", Strings.getter("romContentsAttr"))
 			{

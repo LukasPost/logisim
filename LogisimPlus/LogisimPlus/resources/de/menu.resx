@@ -131,7 +131,7 @@
   <data name="editRaiseItem" xml:space="preserve">
     <value>Auswahl anheben</value>
   </data>
-  <data name="editRaiseTopItem" xml:space="preserve">
+  <data name="editRaHashSetopItem" xml:space="preserve">
     <value>Nach oben</value>
   </data>
   <data name="editLowerBottomItem" xml:space="preserve">

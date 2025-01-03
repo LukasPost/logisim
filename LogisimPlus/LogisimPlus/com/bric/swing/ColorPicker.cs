@@ -1076,7 +1076,7 @@ namespace com.bric.swing
 					{
 						firePropertyChange(OPACITY_PROPERTY, lastOpacity, i);
 						Color c = preview.getForeground();
-						preview.setForeground(new Color(c.getRed(), c.getGreen(), c.getBlue(), i));
+						preview.setForeground(Color.FromArgb(255, c.R, c.G, c.B, i));
 					}
 					lastOpacity = value;
 				}
@@ -1182,14 +1182,14 @@ namespace com.bric.swing
 		{
 			set
 			{
-				setRGB(value.getRed(), value.getGreen(), value.getBlue());
-				float opacity = ((float) value.getAlpha()) / 255f;
+				setRGB(value.R, value.G, value.B);
+				float opacity = ((float) value.A) / 255f;
 				Opacity = opacity;
 			}
 			get
 			{
 				int[] i = RGB;
-				return new Color(i[0], i[1], i[2], opacitySlider.getValue());
+				return Color.FromArgb(255, i[0], i[1], i[2], opacitySlider.getValue());
 			}
 		}
 
@@ -1229,7 +1229,7 @@ namespace com.bric.swing
 					green.Value = g;
 					blue.Value = b;
 				}
-				preview.setForeground(new Color(r, g, b, alpha));
+				preview.setForeground(Color.FromArgb(255, r, g, b, alpha));
 				float[] hsb = new float[3];
 				Color.RGBtoHSB(r, g, b, hsb);
 				hue.Value = (int)(hsb[0] * 360f + .49f);
@@ -1414,13 +1414,13 @@ namespace com.bric.swing
 					bri.Value = (int)(b * 100f + .49f);
 				}
 
-				Color c = new Color(Color.HSBtoRGB(h, s, b));
+				Color c = Color.FromArgb(255, Color.HSBtoRGB(h, s, b));
 				int alpha = this.alpha.IntValue;
-				c = new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
+				c = Color.FromArgb(255, c.R, c.G, c.B, alpha);
 				preview.setForeground(c);
-				red.Value = c.getRed();
-				green.Value = c.getGreen();
-				blue.Value = c.getBlue();
+				red.Value = c.R;
+				green.Value = c.G;
+				blue.Value = c.B;
 				colorPanel.setHSB(h, s, b);
 				updateHexField();
 				updateSlider();

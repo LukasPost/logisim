@@ -128,7 +128,7 @@ namespace draw.shapes
 			object halign = text.getValue(DrawAttr.ALIGNMENT);
 			elt.setAttribute("x", "" + loc.X);
 			elt.setAttribute("y", "" + loc.Y);
-			if (!colorMatches(fill, Color.BLACK))
+			if (!colorMatches(fill, Color.Black))
 			{
 				elt.setAttribute("fill", getColorString(fill));
 			}
@@ -181,7 +181,7 @@ namespace draw.shapes
 			else
 			{
 				Color fill = shape.getValue(DrawAttr.FILL_COLOR);
-				if (colorMatches(fill, Color.BLACK))
+				if (colorMatches(fill, Color.Black))
 				{
 					elt.removeAttribute("fill");
 				}
@@ -214,22 +214,22 @@ namespace draw.shapes
 
 		private static bool colorMatches(Color a, Color b)
 		{
-			return a.getRed() == b.getRed() && a.getGreen() == b.getGreen() && a.getBlue() == b.getBlue();
+			return a.R == b.R && a.G == b.G && a.B == b.B;
 		}
 
 		private static string getColorString(Color color)
 		{
-			return string.Format("#{0:x2}{1:x2}{2:x2}", Convert.ToInt32(color.getRed()), Convert.ToInt32(color.getGreen()), Convert.ToInt32(color.getBlue()));
+			return string.Format("#{0:x2}{1:x2}{2:x2}", Convert.ToInt32(color.R), Convert.ToInt32(color.G), Convert.ToInt32(color.B));
 		}
 
 		private static bool showOpacity(Color color)
 		{
-			return color.getAlpha() != 255;
+			return color.A != 255;
 		}
 
 		private static string getOpacityString(Color color)
 		{
-			return string.Format("{0,5:F3}", Convert.ToDouble(color.getAlpha() / 255.0));
+			return string.Format("{0,5:F3}", Convert.ToDouble(color.A / 255.0));
 		}
 	}
 

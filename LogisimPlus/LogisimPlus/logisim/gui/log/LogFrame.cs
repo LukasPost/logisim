@@ -150,7 +150,7 @@ namespace logisim.gui.log
 		private Project project;
 		private Simulator curSimulator = null;
 		private Model curModel;
-		private IDictionary<CircuitState, Model> modelMap = new Dictionary<CircuitState, Model>();
+		private Dictionary<CircuitState, Model> modelMap = new Dictionary<CircuitState, Model>();
 		private MyListener myListener;
 		private WindowMenuManager windowManager;
 

@@ -33,20 +33,12 @@ namespace logisim.std.io
 			buffer = new char[capacity];
 			clear();
 		}
-
-		public virtual object clone()
-		{
-			try
-			{
-				KeyboardData ret = (KeyboardData) base.clone();
-				ret.buffer = (char[])this.buffer.Clone();
-				return ret;
-			}
-			catch (CloneNotSupportedException)
-			{
-				return null;
-			}
-		}
+        public virtual object Clone()
+        {
+            KeyboardData ret = (KeyboardData)base.MemberwiseClone();
+            ret.buffer = (char[])this.buffer.Clone();
+            return ret;
+        }
 
 		public virtual Value setLastClock(Value newClock)
 		{

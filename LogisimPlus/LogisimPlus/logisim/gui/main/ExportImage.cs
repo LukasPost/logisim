@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -54,7 +55,7 @@ namespace logisim.gui.main
 			{
 				return;
 			}
-			IList<Circuit> circuits = list.SelectedCircuits;
+			List<Circuit> circuits = list.SelectedCircuits;
 			double scale = options.Scale;
 			bool printerView = options.PrinterView;
 			if (circuits.Count == 0)
@@ -172,7 +173,7 @@ namespace logisim.gui.main
 				curScale.setHorizontalAlignment(SwingConstants.RIGHT);
 				curScale.setVerticalAlignment(SwingConstants.CENTER);
 				curScaleDim = new Size(curScale.getPreferredSize());
-				curScaleDim.height = Math.Max(curScaleDim.height, slider.getPreferredSize().height);
+				curScaledim.Height = Math.Max(curScaledim.Height, slider.getPreferredSize().height);
 				stateChanged(null);
 
 				printerView = new JCheckBox();
@@ -306,12 +307,12 @@ namespace logisim.gui.main
 			internal Canvas canvas;
 			internal File dest;
 			internal ImageFileFilter filter;
-			internal IList<Circuit> circuits;
+			internal List<Circuit> circuits;
 			internal double scale;
 			internal bool printerView;
 			internal ProgressMonitor monitor;
 
-			internal ExportThread(Frame frame, Canvas canvas, File dest, ImageFileFilter f, IList<Circuit> circuits, double scale, bool printerView, ProgressMonitor monitor)
+			internal ExportThread(Frame frame, Canvas canvas, File dest, ImageFileFilter f, List<Circuit> circuits, double scale, bool printerView, ProgressMonitor monitor)
 			{
 				this.frame = frame;
 				this.canvas = canvas;
@@ -337,21 +338,13 @@ namespace logisim.gui.main
 				int width = (int) (long)Math.Round(bds.Width * scale, MidpointRounding.AwayFromZero);
 				int height = (int) (long)Math.Round(bds.Height * scale, MidpointRounding.AwayFromZero);
 				BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-				Graphics @base = img.getGraphics();
-				Graphics g = @base.create();
-				g.setColor(Color.white);
+				JGraphics @base = img.getJGraphics();
+				JGraphics g = @base.create();
+				g.setColor(Color.White);
 				g.fillRect(0, 0, width, height);
-				g.setColor(Color.black);
-				if (g is Graphics2D)
-				{
-					((Graphics2D) g).scale(scale, scale);
-					((Graphics2D) g).translate(-bds.X, -bds.Y);
-				}
-				else
-				{
-					JOptionPane.showMessageDialog(frame, Strings.get("couldNotCreateImage"));
-					monitor.close();
-				}
+				g.setColor(Color.Black);
+				g.scale(scale, scale);
+				g.translate(-bds.X, -bds.Y);
 
 				CircuitState circuitState = canvas.Project.getCircuitState(circuit);
 				ComponentDrawContext context = new ComponentDrawContext(canvas, circuit, circuitState, @base, g, printerView);

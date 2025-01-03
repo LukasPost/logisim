@@ -24,7 +24,7 @@ namespace logisim.instance
 
 		AttributeSet AttributeSet {get;}
 
-		E getAttributeValue<E>(Attribute<E> attr);
+		object getAttributeValue(Attribute attr);
 
 		Value getPort(int portIndex);
 

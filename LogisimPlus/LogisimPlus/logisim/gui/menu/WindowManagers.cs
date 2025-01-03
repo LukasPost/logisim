@@ -88,7 +88,7 @@ namespace logisim.gui.menu
 
 		private static void computeListeners()
 		{
-			IList<Project> nowOpen = Projects.OpenProjects;
+			List<Project> nowOpen = Projects.OpenProjects;
 
 			Dictionary<Project, ProjectManager>.KeyCollection closed = new HashSet<Project>(projectMap.Keys);
 			closed.removeAll(nowOpen);

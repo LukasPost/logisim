@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System;
 using System.Collections.Generic;
 
@@ -259,23 +260,23 @@ namespace logisim.util
 
 			bool locChanged = false;
 			bool sizeChanged = false;
-			if (windowLoc.x + windowSize.width > screenSize.width)
+			if (windowLoc.x + windowsize.Width > screensize.Width)
 			{
-				windowLoc.x = Math.Max(0, screenSize.width - windowSize.width);
+				windowLoc.x = Math.Max(0, screensize.Width - windowsize.Width);
 				locChanged = true;
-				if (windowLoc.x + windowSize.width > screenSize.width)
+				if (windowLoc.x + windowsize.Width > screensize.Width)
 				{
-					windowSize.width = screenSize.width - windowLoc.x;
+					windowsize.Width = screensize.Width - windowLoc.x;
 					sizeChanged = true;
 				}
 			}
-			if (windowLoc.y + windowSize.height > screenSize.height)
+			if (windowLoc.y + windowsize.Height > screensize.Height)
 			{
-				windowLoc.y = Math.Max(0, screenSize.height - windowSize.height);
+				windowLoc.y = Math.Max(0, screensize.Height - windowsize.Height);
 				locChanged = true;
-				if (windowLoc.y + windowSize.height > screenSize.height)
+				if (windowLoc.y + windowsize.Height > screensize.Height)
 				{
-					windowSize.height = screenSize.height - windowLoc.y;
+					windowsize.Height = screensize.Height - windowLoc.y;
 					sizeChanged = true;
 				}
 			}

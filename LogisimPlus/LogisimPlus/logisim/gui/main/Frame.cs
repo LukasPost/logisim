@@ -222,7 +222,7 @@ namespace logisim.gui.main
 			}
 			this.proj = proj;
 
-			setBackground(Color.white);
+			setBackground(Color.White);
 			setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 			addWindowListener(new MyWindowListener(this));
 
@@ -564,8 +564,8 @@ namespace logisim.gui.main
 			int state = getExtendedState() & ~JFrame.ICONIFIED;
 			AppPreferences.WINDOW_STATE.set(Convert.ToInt32(state));
 			Size dim = getSize();
-			AppPreferences.WINDOW_WIDTH.set(Convert.ToInt32(dim.width));
-			AppPreferences.WINDOW_HEIGHT.set(Convert.ToInt32(dim.height));
+			AppPreferences.WINDOW_WIDTH.set(Convert.ToInt32(dim.Width));
+			AppPreferences.WINDOW_HEIGHT.set(Convert.ToInt32(dim.Height));
 			Point loc;
 			try
 			{
@@ -648,22 +648,22 @@ namespace logisim.gui.main
     
 					int gcBestSize = 0;
 					Point gcBestPoint = null;
-					GraphicsEnvironment ge;
-					ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-					foreach (GraphicsDevice gd in ge.getScreenDevices())
+					JGraphicsEnvironment ge;
+					ge = JGraphicsEnvironment.getLocalJGraphicsEnvironment();
+					foreach (JGraphicsDevice gd in ge.getScreenDevices())
 					{
-						foreach (GraphicsConfiguration gc in gd.getConfigurations())
+						foreach (JGraphicsConfiguration gc in gd.getConfigurations())
 						{
 							Rectangle gcBounds = gc.getBounds();
 							if (gcBounds.intersects(desired))
 							{
 								Rectangle inter = gcBounds.intersection(desired);
-								int size = inter.width * inter.height;
+								int size = inter.Width * inter.Height;
 								if (size > gcBestSize)
 								{
 									gcBestSize = size;
-									int x2 = Math.Max(gcBounds.x, Math.Min(inter.x, inter.x + inter.width - 50));
-									int y2 = Math.Max(gcBounds.y, Math.Min(inter.y, inter.y + inter.height - 50));
+									int x2 = Math.Max(gcBounds.x, Math.Min(inter.X, inter.X + inter.Width - 50));
+									int y2 = Math.Max(gcBounds.y, Math.Min(inter.Y, inter.Y + inter.Height - 50));
 									gcBestPoint = new Point(x2, y2);
 								}
 							}
@@ -671,7 +671,7 @@ namespace logisim.gui.main
 					}
 					if (gcBestPoint != null)
 					{
-						if (isProjectFrameAt(gcBestPoint.x, gcBestPoint.y))
+						if (isProjectFrameAt(gcBestpoint.X, gcBestpoint.Y))
 						{
 							gcBestPoint = null;
 						}

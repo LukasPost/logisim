@@ -27,8 +27,9 @@ namespace draw.tools
 	using AttributeListener = logisim.data.AttributeListener;
 	using Location = logisim.data.Location;
 	using Icons = logisim.util.Icons;
+    using LogisimPlus.Java;
 
-	public class TextTool : AbstractTool
+    public class TextTool : AbstractTool
 	{
 		private class FieldListener : AbstractAction, AttributeListener
 		{
@@ -115,7 +116,7 @@ namespace draw.tools
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
@@ -191,7 +192,7 @@ namespace draw.tools
 			}
 		}
 
-		public override void draw(Canvas canvas, Graphics g)
+		public override void draw(Canvas canvas, JGraphics g)
 		{
 			; // actually, there's nothing to do here - it's handled by the field
 		}

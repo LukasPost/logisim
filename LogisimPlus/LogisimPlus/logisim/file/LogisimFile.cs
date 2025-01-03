@@ -154,7 +154,7 @@ namespace logisim.file
 			}
 		}
 
-		public override IList<AddTool> Tools
+		public override List<AddTool> Tools
 		{
 			get
 			{
@@ -162,7 +162,7 @@ namespace logisim.file
 			}
 		}
 
-		public override IList<Library> Libraries
+		public override List<Library> Libraries
 		{
 			get
 			{
@@ -172,7 +172,7 @@ namespace logisim.file
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<?> getElements()
-		public override IList<object> Elements
+		public override List<object> Elements
 		{
 			get
 			{
@@ -210,11 +210,11 @@ namespace logisim.file
 			return false;
 		}
 
-		public virtual IList<Circuit> Circuits
+		public virtual List<Circuit> Circuits
 		{
 			get
 			{
-				IList<Circuit> ret = new List<Circuit>(tools.Count);
+				List<Circuit> ret = new List<Circuit>(tools.Count);
 				foreach (AddTool tool in tools)
 				{
 					SubcircuitFactory factory = (SubcircuitFactory) tool.Factory;

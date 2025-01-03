@@ -24,7 +24,7 @@ namespace logisim.circuit
 		/// 
 		/// If, in fact, no valid expression exists for the component, it throws <code>UnsupportedOperationException</code>.
 		/// </summary>
-		void computeExpression(IDictionary<Location, Expression> expressionMap);
+		void computeExpression(Dictionary<Location, Expression> expressionMap);
 	}
 
 }

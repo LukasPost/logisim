@@ -71,7 +71,7 @@ namespace logisim.gui.appear
 			bool canLower;
 			if (!selEmpty && canChange)
 			{
-				IDictionary<CanvasObject, int> zs = ZOrder.getZIndex(sel.Selected, canvas.Model);
+				Dictionary<CanvasObject, int> zs = ZOrder.getZIndex(sel.Selected, canvas.Model);
 				int zmin = int.MaxValue;
 				int zmax = int.MinValue;
 				int count = 0;
@@ -152,7 +152,7 @@ namespace logisim.gui.appear
 		{
 			ClipboardContents clip = Clipboard.get();
 			ICollection<CanvasObject> contents = clip.Elements;
-			IList<CanvasObject> add = new List<CanvasObject>(contents.Count);
+			List<CanvasObject> add = new List<CanvasObject>(contents.Count);
 			foreach (CanvasObject o in contents)
 			{
 				add.Add(o.clone());
@@ -205,8 +205,8 @@ namespace logisim.gui.appear
 		{
 			Selection sel = canvas.Selection;
 			int n = sel.Selected.Count;
-			IList<CanvasObject> select = new List<CanvasObject>(n);
-			IList<CanvasObject> remove = new List<CanvasObject>(n);
+			List<CanvasObject> select = new List<CanvasObject>(n);
+			List<CanvasObject> remove = new List<CanvasObject>(n);
 			Location anchorLocation = null;
 			Direction anchorFacing = null;
 			foreach (CanvasObject o in sel.Selected)
@@ -237,8 +237,8 @@ namespace logisim.gui.appear
 		{
 			Selection sel = canvas.Selection;
 			int n = sel.Selected.Count;
-			IList<CanvasObject> select = new List<CanvasObject>(n);
-			IList<CanvasObject> clones = new List<CanvasObject>(n);
+			List<CanvasObject> select = new List<CanvasObject>(n);
+			List<CanvasObject> clones = new List<CanvasObject>(n);
 			foreach (CanvasObject o in sel.Selected)
 			{
 				if (o.canRemove())
@@ -285,9 +285,9 @@ namespace logisim.gui.appear
 			}
 		}
 
-		public override void raiseTop()
+		public override void raHashSetop()
 		{
-			ModelReorderAction act = ModelReorderAction.createRaiseTop(canvas.Model, canvas.Selection.Selected);
+			ModelReorderAction act = ModelReorderAction.createRaHashSetop(canvas.Model, canvas.Selection.Selected);
 			if (act != null)
 			{
 				canvas.doAction(act);

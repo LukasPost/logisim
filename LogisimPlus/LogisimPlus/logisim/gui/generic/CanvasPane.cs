@@ -54,14 +54,14 @@ namespace logisim.gui.generic
 				{
 					double oldZoom = ((double?) e.getOldValue()).Value;
 					Rectangle r = getViewport().getViewRect();
-					double cx = (r.x + r.width / 2) / oldZoom;
-					double cy = (r.y + r.height / 2) / oldZoom;
+					double cx = (r.X + r.Width / 2) / oldZoom;
+					double cy = (r.Y + r.Height / 2) / oldZoom;
 
 					double newZoom = ((double?) e.getNewValue()).Value;
 					outerInstance.contents.recomputeSize();
 					r = getViewport().getViewRect();
-					int hv = (int)(cx * newZoom) - r.width / 2;
-					int vv = (int)(cy * newZoom) - r.height / 2;
+					int hv = (int)(cx * newZoom) - r.Width / 2;
+					int vv = (int)(cy * newZoom) - r.Height / 2;
 					getHorizontalScrollBar().setValue(hv);
 					getVerticalScrollBar().setValue(vv);
 				}
@@ -151,13 +151,13 @@ namespace logisim.gui.generic
 				height = (int) Math.Ceiling(height * zoom);
 			}
 			Size minSize = ViewportSize;
-			if (minSize.width > width)
+			if (minsize.Width > width)
 			{
-				width = minSize.width;
+				width = minsize.Width;
 			}
-			if (minSize.height > height)
+			if (minsize.Height > height)
 			{
-				height = minSize.height;
+				height = minsize.Height;
 			}
 			return new Size(width, height);
 		}

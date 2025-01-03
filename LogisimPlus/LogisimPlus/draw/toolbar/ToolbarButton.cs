@@ -10,7 +10,7 @@
 namespace draw.toolbar
 {
     using LogisimPlus.Java;
-    using GraphicsUtil = logisim.util.GraphicsUtil;
+    using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	internal class ToolbarButton : JComponent, MouseListener
 	{
@@ -53,10 +53,10 @@ namespace draw.toolbar
 			{
 				Size dim = item.getSize(toolbar.Orientation);
 				Color defaultColor = g.getColor();
-				GraphicsUtil.switchToWidth(g, 2);
+				JGraphicsUtil.switchToWidth(g, 2);
 				g.setColor(Color.Gray);
 				g.fillRect(BORDER, BORDER, dim.Width, dim.Height);
-				GraphicsUtil.switchToWidth(g, 1);
+				JGraphicsUtil.switchToWidth(g, 1);
 				g.setColor(defaultColor);
 			}
 
@@ -69,10 +69,10 @@ namespace draw.toolbar
 			if (toolbar.ToolbarModel.isSelected(item))
 			{
 				Size dim = item.getSize(toolbar.Orientation);
-				GraphicsUtil.switchToWidth(g, 2);
+				JGraphicsUtil.switchToWidth(g, 2);
 				g.setColor(Color.Black);
 				g.drawRect(BORDER, BORDER, dim.Width, dim.Height);
-				GraphicsUtil.switchToWidth(g, 1);
+				JGraphicsUtil.switchToWidth(g, 1);
 			}
 		}
 

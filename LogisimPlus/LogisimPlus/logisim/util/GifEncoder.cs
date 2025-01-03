@@ -18,7 +18,7 @@ namespace logisim.util
 
 	/// <summary>
 	/// GIFEncoder is a class which takes an image and saves it to a stream using the GIF file format
-	/// (<A HREF="http://www.dcs.ed.ac.uk/%7Emxr/gfx/">Graphics Interchange Format</A>). A GIFEncoder is constructed with
+	/// (<A HREF="http://www.dcs.ed.ac.uk/%7Emxr/gfx/">JGraphics Interchange Format</A>). A GIFEncoder is constructed with
 	/// either an AWT Image (which must be fully loaded) or a set of RGB arrays. The image can be written out with a call to
 	/// <CODE>Write</CODE>.
 	/// <P>
@@ -30,7 +30,7 @@ namespace logisim.util
 	/// <P>
 	/// 
 	/// <LI>The image cannot have more than 256 colors, since GIF is an 8 bit format. For a 24 bit to 8 bit quantization
-	/// algorithm, see Graphics Gems II III.2 by Xialoin Wu. Or check out his
+	/// algorithm, see JGraphics Gems II III.2 by Xialoin Wu. Or check out his
 	/// <A HREF="http://www.csd.uwo.ca/faculty/wu/cq.c">C source</A>.
 	/// <P>
 	/// 

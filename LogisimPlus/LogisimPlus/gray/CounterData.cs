@@ -18,7 +18,7 @@ namespace gray
 
 	/// <summary>
 	/// Represents the state of a counter. </summary>
-	internal class CounterData : InstanceData, ICloneable
+	internal class CounterData : InstanceData
 	{
 		/// <summary>
 		/// Retrieves the state associated with this counter in the circuit state, generating the state if necessary.
@@ -59,20 +59,9 @@ namespace gray
 
 		/// <summary>
 		/// Returns a copy of this object. </summary>
-		public virtual object clone()
+		public virtual object Clone()
 		{
-			// We can just use what super.clone() returns: The only instance variables are
-			// Value objects, which are immutable, so we don't care that both the copy
-			// and the copied refer to the same Value objects. If we had mutable instance
-			// variables, then of course we would need to clone them.
-			try
-			{
-				return base.clone();
-			}
-			catch (CloneNotSupportedException)
-			{
-				return null;
-			}
+			return base.MemberwiseClone();
 		}
 
 		/// <summary>

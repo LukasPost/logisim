@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace LogisimPlus.Java;
-internal interface MouseListener
+public interface MouseListener
 {
     public void mousePressed(MouseEvent e);
 
@@ -18,10 +18,12 @@ internal interface MouseListener
     public void mouseExited(MouseEvent e);
 }
 
-internal class MouseEvent
+public class MouseEvent
 {
     public int x;
     public int y;
+    public int getX() => x;
+    public int getY()=>y;
     public MouseEvent() { }
     public MouseEvent(MouseEventArgs e)
     {

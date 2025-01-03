@@ -46,12 +46,12 @@ namespace com.connectina.swing.fontchooser
 
 		/// <summary>
 		/// Gets the available font names. Returns a list containing the names of all font families in this
-		/// <code>GraphicsEnvironment</code> localized for the default locale, as returned by
+		/// <code>JGraphicsEnvironment</code> localized for the default locale, as returned by
 		/// <code>Locale.getDefault()</code>.
 		/// </summary>
 		/// <returns> a list of String containing font family names localized for the default locale, or a suitable alternative
 		///         name if no name exists for this locale </returns>
-		IList<string> AvailableFontNames {get;}
+		List<string> AvailableFontNames {get;}
 
 		/// <summary>
 		/// Adds <code>listener</code> as a listener to changes in the model.

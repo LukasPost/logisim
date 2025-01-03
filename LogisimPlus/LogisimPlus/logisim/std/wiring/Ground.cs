@@ -15,7 +15,7 @@ namespace logisim.std.wiring
 {
 
 	using BitWidthConfigurator = logisim.tools.key.BitWidthConfigurator;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	using Wire = logisim.circuit.Wire;
 	using logisim.data;
@@ -37,10 +37,10 @@ namespace logisim.std.wiring
 		public Ground() : base("Ground", Strings.getter("groundComponent"))
 		{
 			IconName = "ground.gif";
-			setAttributes(new Attribute[] {StdAttr.FACING, StdAttr.WIDTH}, new object[] {Direction.South, BitWidth.ONE});
+			setAttributes(new Attribute[] {StdAttr.FACING, StdAttr.Width}, new object[] {Direction.South, BitWidth.ONE});
 			FacingAttribute = StdAttr.FACING;
-			KeyConfigurator = new BitWidthConfigurator(StdAttr.WIDTH);
-			setPorts(new Port[] {new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH)});
+			KeyConfigurator = new BitWidthConfigurator(StdAttr.Width);
+			setPorts(new Port[] {new Port(0, 0, Port.OUTPUT, StdAttr.Width)});
 		}
 
 		protected internal override void configureNewInstance(Instance instance)
@@ -48,7 +48,7 @@ namespace logisim.std.wiring
 			instance.addAttributeListener();
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == StdAttr.FACING)
 			{
@@ -58,12 +58,12 @@ namespace logisim.std.wiring
 
 		public override Bounds getOffsetBounds(AttributeSet attrs)
 		{
-			return Bounds.create(0, -8, 14, 16).rotate(Direction.East, attrs.getValue(StdAttr.FACING), 0, 0);
+			return Bounds.create(0, -8, 14, 16).rotate(Direction.East, (Direction)attrs.getValue(StdAttr.FACING), 0, 0);
 		}
 
 		public override void propagate(InstanceState state)
 		{
-			BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
+			BitWidth width = (BitWidth)state.getAttributeValue(StdAttr.Width);
 			state.setPort(0, Value.repeat(Value.FALSE, width.Width), 1);
 		}
 
@@ -80,26 +80,26 @@ namespace logisim.std.wiring
 
 		private void drawInstance(InstancePainter painter, bool isGhost)
 		{
-			Graphics2D g = (Graphics2D) painter.Graphics.create();
+			JGraphics g = painter.Graphics;
 			Location loc = painter.Location;
 			g.translate(loc.X, loc.Y);
 
-			Direction from = painter.getAttributeValue(StdAttr.FACING);
+			Direction from = (Direction)painter.getAttributeValue(StdAttr.FACING);
 			int degrees = Direction.East.toDegrees() - from.toDegrees();
 			double radians = Math.toRadians((degrees + 360) % 360);
 			g.rotate(radians);
 
-			GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+			JGraphicsUtil.switchToWidth(g, Wire.WIDTH);
 			if (!isGhost && painter.ShowState)
 			{
 				g.setColor(painter.getPort(0).Color);
 			}
 			g.drawLine(0, 0, 5, 0);
 
-			GraphicsUtil.switchToWidth(g, 1);
+			JGraphicsUtil.switchToWidth(g, 1);
 			if (!isGhost && painter.shouldDrawColor())
 			{
-				BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
+				BitWidth width = (BitWidth)painter.getAttributeValue(StdAttr.Width);
 				g.setColor(Value.repeat(Value.FALSE, width.Width).Color);
 			}
 			g.drawLine(6, -8, 6, 8);

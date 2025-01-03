@@ -22,16 +22,17 @@ using System;
 namespace com.bric.swing
 {
 	using com.bric.awt;
+    using LogisimPlus.Java;
 
 
 
-	/// <summary>
-	/// This is a non-public SliderUI designed specifically for the <code>ColorPicker</code>.
-	/// 
-	/// @version 1.1
-	/// @author Jeremy Wood
-	/// </summary>
-	internal class ColorPickerSliderUI : BasicSliderUI
+    /// <summary>
+    /// This is a non-public SliderUI designed specifically for the <code>ColorPicker</code>.
+    /// 
+    /// @version 1.1
+    /// @author Jeremy Wood
+    /// </summary>
+    internal class ColorPickerSliderUI : BasicSliderUI
 	{
 		private bool instanceFieldsInitialized = false;
 
@@ -77,7 +78,7 @@ namespace com.bric.swing
 			}
 		}
 
-		public virtual void paintThumb(Graphics g)
+		public virtual void paintThumb(JGraphics g)
 		{
 			int y = thumbRect.y + thumbRect.height / 2;
 			Polygon polygon = new Polygon();
@@ -85,12 +86,11 @@ namespace com.bric.swing
 			polygon.addPoint(ARROW_HALF, y);
 			polygon.addPoint(0, y + ARROW_HALF);
 
-			Graphics2D g2 = (Graphics2D) g;
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			g2.setColor(Color.black);
-			g2.fill(polygon);
-			g2.setColor(Color.white);
-			g2.draw(polygon);
+			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g.setColor(Color.Black);
+			g.fill(polygon);
+			g.setColor(Color.White);
+			g.draw(polygon);
 		}
 
 		protected internal virtual void calculateThumbSize()
@@ -114,7 +114,7 @@ namespace com.bric.swing
 			trackRect.height = size;
 		}
 
-		public virtual void paintTrack(Graphics g)
+		public virtual void paintTrack(JGraphics g)
 		{
 			lock (this)
 			{
@@ -175,7 +175,6 @@ namespace com.bric.swing
 						}
 					}
 				}
-				Graphics2D g2 = (Graphics2D) g;
 				Rectangle r = new Rectangle(6, trackRect.y, 14, trackRect.height);
 				if (slider.hasFocus())
 				{
@@ -184,14 +183,14 @@ namespace com.bric.swing
         
 				bi.getRaster().setDataElements(0, 0, 1, trackRect.height, intArray);
 				TexturePaint p = new TexturePaint(bi, new Rectangle(0, trackRect.y, 1, bi.getHeight()));
-				g2.setPaint(p);
-				g2.fillRect(r.x, r.y, r.width, r.height);
+				g.setPaint(p);
+				g.fillRect(r.X, r.Y, r.Width, r.Height);
         
 				PaintUtils.drawBevel(g2, r);
 			}
 		}
 
-		public virtual void paintFocus(Graphics g)
+		public virtual void paintFocus(JGraphics g)
 		{
 		}
 

@@ -80,7 +80,7 @@ namespace logisim.data
 				return false;
 			}
 			Bounds other = (Bounds) other_obj;
-			return x == other.x && y == other.y && wid == other.wid && ht == other.ht;
+			return x == other.X && y == other.Y && wid == other.wid && ht == other.ht;
 		}
 
 		public override int GetHashCode()
@@ -344,8 +344,8 @@ namespace logisim.data
 			int y0 = this.y;
 			int x1 = x0 + this.wid;
 			int y1 = y0 + this.ht;
-			int x2 = other.x;
-			int y2 = other.y;
+			int x2 = other.X;
+			int y2 = other.Y;
 			int x3 = x2 + other.wid;
 			int y3 = y2 + other.ht;
 			if (x2 > x0)

@@ -25,7 +25,7 @@ namespace logisim.std.wiring
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private static final java.util.List<logisim.data.Attribute<?>> ATTRIBUTES = java.util.Arrays.asList(new logisim.data.Attribute<?>[] { logisim.instance.StdAttr.FACING, logisim.circuit.RadixOption.ATTRIBUTE, logisim.instance.StdAttr.LABEL, Pin.ATTR_LABEL_LOC, logisim.instance.StdAttr.LABEL_FONT});
-		private static readonly IList<Attribute<object>> ATTRIBUTES = new List<Attribute<object>> {StdAttr.FACING, RadixOption.ATTRIBUTE, StdAttr.LABEL, Pin.ATTR_LABEL_LOC, StdAttr.LABEL_FONT};
+		private static readonly List<Attribute> ATTRIBUTES = new List<Attribute> {StdAttr.FACING, RadixOption.ATTRIBUTE, StdAttr.LABEL, Pin.ATTR_LABEL_LOC, StdAttr.LABEL_FONT};
 
 		internal Direction facing = Direction.East;
 		internal string label = "";
@@ -45,7 +45,7 @@ namespace logisim.std.wiring
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
@@ -55,32 +55,32 @@ namespace logisim.std.wiring
 
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
 // ORIGINAL LINE: @Override @SuppressWarnings("unchecked") public <E> E getValue(logisim.data.Attribute<E> attr)
-		public override E getValue<E>(Attribute<E> attr)
+		public override object getValue(Attribute attr)
 		{
 			if (attr == StdAttr.FACING)
 			{
-				return (E) facing;
+				return facing;
 			}
 			if (attr == StdAttr.LABEL)
 			{
-				return (E) label;
+				return label;
 			}
 			if (attr == Pin.ATTR_LABEL_LOC)
 			{
-				return (E) labelloc;
+				return labelloc;
 			}
 			if (attr == StdAttr.LABEL_FONT)
 			{
-				return (E) labelfont;
+				return labelfont;
 			}
 			if (attr == RadixOption.ATTRIBUTE)
 			{
-				return (E) radix;
+				return radix;
 			}
 			return null;
 		}
 
-		public override void setValue<V>(Attribute<V> attr, V value)
+		public override void setValue(Attribute attr, object value)
 		{
 			if (attr == StdAttr.FACING)
 			{

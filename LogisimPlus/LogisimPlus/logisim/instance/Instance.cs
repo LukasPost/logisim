@@ -77,12 +77,12 @@ namespace logisim.instance
 			}
 		}
 
-		public virtual void setAttributeReadOnly<T1>(Attribute<T1> attr, bool value)
+		public virtual void setAttributeReadOnly(Attribute attr, bool value)
 		{
 			comp.AttributeSet.setReadOnly(attr, value);
 		}
 
-		public virtual E getAttributeValue<E>(Attribute<E> attr)
+		public virtual object getAttributeValue(Attribute attr)
 		{
 			return comp.AttributeSet.getValue(attr);
 		}
@@ -100,15 +100,15 @@ namespace logisim.instance
 			}
 		}
 
-		public virtual IList<Port> Ports
+		public virtual List<Port> Ports
 		{
 			get
 			{
-				return comp.getPorts();
+				return comp.Ports;
 			}
 			set
 			{
-				comp.setPorts(value);
+				comp..Ports = value;
 			}
 		}
 
@@ -123,7 +123,7 @@ namespace logisim.instance
 			comp.recomputeBounds();
 		}
 
-		public virtual void setTextField(Attribute<string> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign)
+		public virtual void setTextField(Attribute labelAttr, Attribute fontAttr, int x, int y, int halign, int valign)
 		{
 			comp.setTextField(labelAttr, fontAttr, x, y, halign, valign);
 		}

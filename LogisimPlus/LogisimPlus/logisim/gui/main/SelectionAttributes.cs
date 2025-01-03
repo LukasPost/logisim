@@ -27,7 +27,7 @@ namespace logisim.gui.main
 	{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private static final logisim.data.Attribute<?>[] EMPTY_ATTRIBUTES = new logisim.data.Attribute<?>[0];
-		private static readonly Attribute<object>[] EMPTY_ATTRIBUTES = new Attribute<object>[0];
+		private static readonly Attribute[] EMPTY_ATTRIBUTES = new Attribute[0];
 		private static readonly object[] EMPTY_VALUES = new object[0];
 
 		private class Listener : Selection.Listener, AttributeListener
@@ -65,15 +65,15 @@ namespace logisim.gui.main
 		private Selection selection;
 		private Listener listener;
 		private bool listening;
-		private ISet<Component> selected;
+		private HashSet<Component> selected;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private logisim.data.Attribute<?>[] attrs;
-		private Attribute<object>[] attrs;
+		private Attribute[] attrs;
 		private bool[] readOnly;
 		private object[] values;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private java.util.List<logisim.data.Attribute<?>> attrsView;
-		private IList<Attribute<object>> attrsView;
+		private List<Attribute> attrsView;
 
 		public SelectionAttributes(Canvas canvas, Selection selection)
 		{
@@ -81,10 +81,10 @@ namespace logisim.gui.main
 			this.selection = selection;
 			this.listener = new Listener(this);
 			this.listening = true;
-			this.selected = Collections.emptySet();
+			this.selected = [];
 			this.attrs = EMPTY_ATTRIBUTES;
 			this.values = EMPTY_VALUES;
-			this.attrsView = Collections.emptyList();
+			this.attrsView = [];
 
 			selection.addListener(listener);
 			updateList(true);
@@ -119,11 +119,11 @@ namespace logisim.gui.main
 		private void updateList(bool ignoreIfSelectionSame)
 		{
 			Selection sel = selection;
-			ISet<Component> oldSel = selected;
-			ISet<Component> newSel;
+            HashSet<Component> oldSel = selected;
+            HashSet<Component> newSel;
 			if (sel == null)
 			{
-				newSel = Collections.emptySet();
+				newSel = [];
 			}
 			else
 			{
@@ -155,7 +155,7 @@ namespace logisim.gui.main
 				}
 			}
 
-			LinkedHashMap<Attribute<object>, object> attrMap = computeAttributes(newSel);
+			Dictionary<Attribute, object> attrMap = computeAttributes(newSel);
 			bool same = isSame(attrMap, this.attrs, this.values);
 
 			if (same)
@@ -169,15 +169,15 @@ namespace logisim.gui.main
 			{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?>[] oldAttrs = this.attrs;
-				Attribute<object>[] oldAttrs = this.attrs;
+				Attribute[] oldAttrs = this.attrs;
 				object[] oldValues = this.values;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?>[] newAttrs = new logisim.data.Attribute[attrMap.size()];
-				Attribute<object>[] newAttrs = new Attribute[attrMap.size()];
+				Attribute[] newAttrs = new Attribute[attrMap.size()];
 				object[] newValues = new object[newAttrs.Length];
 				bool[] newReadOnly = new bool[newAttrs.Length];
 				int i = -1;
-				foreach (KeyValuePair<Attribute<object>, object> entry in attrMap.entrySet())
+				foreach (KeyValuePair<Attribute, object> entry in attrMap.entrySet())
 				{
 					i++;
 					newAttrs[i] = entry.Key;
@@ -191,7 +191,7 @@ namespace logisim.gui.main
 				this.attrs = newAttrs;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: this.attrsView = new logisim.util.UnmodifiableList<logisim.data.Attribute<?>>(newAttrs);
-				this.attrsView = new UnmodifiableList<Attribute<object>>(newAttrs);
+				this.attrsView = new UnmodifiableList<Attribute>(newAttrs);
 				this.values = newValues;
 				this.readOnly = newReadOnly;
 
@@ -218,8 +218,8 @@ namespace logisim.gui.main
 						if (!sameVals)
 						{
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<Object> attr = (logisim.data.Attribute<Object>) oldAttrs[i];
-							Attribute<object> attr = (Attribute<object>) oldAttrs[i];
+// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute attr = (logisim.data.Attribute) oldAttrs[i];
+							Attribute attr = (Attribute) oldAttrs[i];
 							fireAttributeValueChanged(attr, newVal);
 						}
 					}
@@ -231,7 +231,7 @@ namespace logisim.gui.main
 			}
 		}
 
-		private static ISet<Component> createSet(ICollection<Component> comps)
+		private static HashSet<Component> createSet(ICollection<Component> comps)
 		{
 			bool includeWires = true;
 			foreach (Component comp in comps)
@@ -288,10 +288,10 @@ namespace logisim.gui.main
 			}
 		}
 
-		private static LinkedHashMap<Attribute<object>, object> computeAttributes(ICollection<Component> newSel)
+		private static Dictionary<Attribute, object> computeAttributes(ICollection<Component> newSel)
 		{
-			LinkedHashMap<Attribute<object>, object> attrMap;
-			attrMap = new LinkedHashMap<Attribute<object>, object>();
+			Dictionary<Attribute, object> attrMap;
+			attrMap = new Dictionary<Attribute, object>();
 			IEnumerator<Component> sit = newSel.GetEnumerator();
 // JAVA TO C# CONVERTER TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
 			if (sit.hasNext())
@@ -300,20 +300,20 @@ namespace logisim.gui.main
 				AttributeSet first = sit.next().getAttributeSet();
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: for (logisim.data.Attribute<?> attr : first.getAttributes())
-				foreach (Attribute<object> attr in first.Attributes)
+				foreach (Attribute attr in first.Attributes)
 				{
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<Object> attrObj = (logisim.data.Attribute<Object>) attr;
-					Attribute<object> attrObj = (Attribute<object>) attr;
+// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute attrObj = (logisim.data.Attribute) attr;
+					Attribute attrObj = (Attribute) attr;
 					attrMap.put(attrObj, first.getValue(attr));
 				}
 				while (sit.MoveNext())
 				{
 					AttributeSet next = sit.Current.getAttributeSet();
-					IEnumerator<Attribute<object>> ait = attrMap.keySet().GetEnumerator();
+					IEnumerator<Attribute> ait = attrMap.keySet().GetEnumerator();
 					while (ait.MoveNext())
 					{
-						Attribute<object> attr = ait.Current;
+						Attribute attr = ait.Current;
 						if (next.containsAttribute(attr))
 						{
 							object v = attrMap.get(attr);
@@ -333,7 +333,7 @@ namespace logisim.gui.main
 			return attrMap;
 		}
 
-		private static bool isSame<T1>(LinkedHashMap<Attribute<object>, object> attrMap, Attribute<T1>[] oldAttrs, object[] oldValues)
+		private static bool isSame(Dictionary<Attribute, object> attrMap, Attribute[] oldAttrs, object[] oldValues)
 		{
 			if (oldAttrs.Length != attrMap.size())
 			{
@@ -342,11 +342,11 @@ namespace logisim.gui.main
 			else
 			{
 				int j = -1;
-				foreach (KeyValuePair<Attribute<object>, object> entry in attrMap.entrySet())
+				foreach (KeyValuePair<Attribute, object> entry in attrMap.entrySet())
 				{
 					j++;
 
-					Attribute<object> a = entry.Key;
+					Attribute a = entry.Key;
 					if (!oldAttrs[j].Equals(a) || j >= oldValues.Length)
 					{
 						return false;
@@ -362,7 +362,7 @@ namespace logisim.gui.main
 			}
 		}
 
-		private static bool computeReadOnly<T1>(ICollection<Component> sel, Attribute<T1> attr)
+		private static bool computeReadOnly(ICollection<Component> sel, Attribute attr)
 		{
 			foreach (Component comp in sel)
 			{
@@ -382,7 +382,7 @@ namespace logisim.gui.main
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
@@ -398,7 +398,7 @@ namespace logisim.gui.main
 			}
 		}
 
-		public override bool isReadOnly<T1>(Attribute<T1> attr)
+		public override bool isReadOnly(Attribute attr)
 		{
 			Project proj = canvas.Project;
 			Circuit circ = canvas.Circuit;
@@ -418,12 +418,12 @@ namespace logisim.gui.main
 			}
 		}
 
-		public override bool isToSave<T1>(Attribute<T1> attr)
+		public override bool isToSave(Attribute attr)
 		{
 			return false;
 		}
 
-		public override V getValue<V>(Attribute<V> attr)
+		public override object getValue(Attribute attr)
 		{
 			Circuit circ = canvas.Circuit;
 			if (selected.Count == 0 && circ != null)
@@ -434,14 +434,11 @@ namespace logisim.gui.main
 			{
 				int i = findIndex(attr);
 				object[] vs = values;
-// JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") V ret = (V)(i >= 0 && i < vs.length ? vs[i] : null);
-				V ret = (V)(i >= 0 && i < vs.Length ? vs[i] : null);
-				return ret;
+                return  (i >= 0 && i < vs.Length ? vs[i] : null);
 			}
 		}
 
-		public override void setValue<V>(Attribute<V> attr, V value)
+		public override void setValue(Attribute attr, object value)
 		{
 			Circuit circ = canvas.Circuit;
 			if (selected.Count == 0 && circ != null)
@@ -463,7 +460,7 @@ namespace logisim.gui.main
 			}
 		}
 
-		private int findIndex<T1>(Attribute<T1> attr)
+		private int findIndex(Attribute attr)
 		{
 			if (attr == null)
 			{
@@ -471,7 +468,7 @@ namespace logisim.gui.main
 			}
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?>[] as = attrs;
-			Attribute<object>[] @as = attrs;
+			Attribute[] @as = attrs;
 			for (int i = 0; i < @as.Length; i++)
 			{
 				if (attr.Equals(@as[i]))

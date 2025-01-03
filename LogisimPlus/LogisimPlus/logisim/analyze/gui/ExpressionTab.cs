@@ -18,8 +18,9 @@ namespace logisim.analyze.gui
 	using Parser = logisim.analyze.model.Parser;
 	using ParserException = logisim.analyze.model.ParserException;
 	using StringGetter = logisim.util.StringGetter;
+    using LogisimPlus.Java;
 
-	internal class ExpressionTab : AnalyzerTab, TabInterface
+    internal class ExpressionTab : AnalyzerTab, TabInterface
 	{
 		private bool instanceFieldsInitialized = false;
 

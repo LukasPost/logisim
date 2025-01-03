@@ -20,7 +20,7 @@ namespace logisim.gui.generic
 	{
 		private const string PATH = "logisim/img/logisim-icon-";
 		private static readonly int[] SIZES = new int[] {16, 20, 24, 48, 64, 128};
-		private static IList<Image> ICONS = null;
+		private static List<Image> ICONS = null;
 		private const int DEFAULT_SIZE = 48;
 		private static Image DEFAULT_ICON = null;
 
@@ -28,7 +28,7 @@ namespace logisim.gui.generic
 		{
 			if (ICONS == null)
 			{
-				IList<Image> loadedIcons = new List<Image>();
+				List<Image> loadedIcons = new List<Image>();
 				ClassLoader loader = typeof(LFrame).getClassLoader();
 				foreach (int size in SIZES)
 				{
@@ -51,7 +51,7 @@ namespace logisim.gui.generic
 			{
 				if (ICONS != null && ICONS.Count > 0)
 				{
-					System.Reflection.MethodInfo set = frame.GetType().GetMethod("setIconImages", typeof(System.Collections.IList));
+					System.Reflection.MethodInfo set = frame.GetType().GetMethod("setIconImages", typeof(System.Collections.List));
 					set.invoke(frame, ICONS);
 					success = true;
 				}

@@ -19,11 +19,12 @@ namespace logisim.tools
 	using AttributeDefaultProvider = logisim.data.AttributeDefaultProvider;
 	using AttributeSet = logisim.data.AttributeSet;
 	using Canvas = logisim.gui.main.Canvas;
+    using LogisimPlus.Java;
 
-	//
-	// DRAWING TOOLS
-	//
-	public abstract class Tool : AttributeDefaultProvider
+    //
+    // DRAWING TOOLS
+    //
+    public abstract class Tool : AttributeDefaultProvider
 	{
 		private static Cursor dflt_cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
 
@@ -64,7 +65,7 @@ namespace logisim.tools
 			return false;
 		}
 
-		public virtual object getDefaultAttributeValue<T1>(Attribute<T1> attr, LogisimVersion ver)
+		public virtual object getDefaultAttributeValue<T1>(Attribute attr, LogisimVersion ver)
 		{
 			return null;
 		}
@@ -90,7 +91,7 @@ namespace logisim.tools
 			draw(context);
 		}
 
-		public virtual ISet<Component> getHiddenComponents(Canvas canvas)
+		public virtual HashSet<Component> getHiddenComponents(Canvas canvas)
 		{
 			return null;
 		}
@@ -103,27 +104,27 @@ namespace logisim.tools
 		{
 		}
 
-		public virtual void mousePressed(Canvas canvas, Graphics g, MouseEvent e)
+		public virtual void mousePressed(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 		}
 
-		public virtual void mouseDragged(Canvas canvas, Graphics g, MouseEvent e)
+		public virtual void mouseDragged(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 		}
 
-		public virtual void mouseReleased(Canvas canvas, Graphics g, MouseEvent e)
+		public virtual void mouseReleased(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 		}
 
-		public virtual void mouseEntered(Canvas canvas, Graphics g, MouseEvent e)
+		public virtual void mouseEntered(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 		}
 
-		public virtual void mouseExited(Canvas canvas, Graphics g, MouseEvent e)
+		public virtual void mouseExited(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 		}
 
-		public virtual void mouseMoved(Canvas canvas, Graphics g, MouseEvent e)
+		public virtual void mouseMoved(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 		}
 

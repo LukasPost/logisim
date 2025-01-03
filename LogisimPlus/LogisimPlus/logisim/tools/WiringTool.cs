@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System.Collections.Generic;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -20,7 +21,7 @@ namespace logisim.tools
 	using Canvas = logisim.gui.main.Canvas;
 	using AppPreferences = logisim.prefs.AppPreferences;
 	using Action = logisim.proj.Action;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 	using Icons = logisim.util.Icons;
 	using StringGetter = logisim.util.StringGetter;
 
@@ -143,7 +144,7 @@ namespace logisim.tools
 			return true;
 		}
 
-		public override ISet<Component> getHiddenComponents(Canvas canvas)
+		public override HashSet<Component> getHiddenComponents(Canvas canvas)
 		{
 			Component shorten = willShorten(start, cur);
 			if (shorten != null)
@@ -158,7 +159,7 @@ namespace logisim.tools
 
 		public override void draw(Canvas canvas, ComponentDrawContext context)
 		{
-			Graphics g = context.Graphics;
+			JGraphics g = context.Graphics;
 			if (exists)
 			{
 				Location e0 = start;
@@ -182,8 +183,8 @@ namespace logisim.tools
 				int x1 = e1.X;
 				int y1 = e1.Y;
 
-				g.setColor(Color.BLACK);
-				GraphicsUtil.switchToWidth(g, 3);
+				g.setColor(Color.Black);
+				JGraphicsUtil.switchToWidth(g, 3);
 				if (direction == HORIZONTAL)
 				{
 					if (x0 != x1)
@@ -209,24 +210,24 @@ namespace logisim.tools
 			}
 			else if (AppPreferences.ADD_SHOW_GHOSTS.Boolean && inCanvas)
 			{
-				g.setColor(Color.GRAY);
+				g.setColor(Color.Gray);
 				g.fillOval(cur.X - 2, cur.Y - 2, 5, 5);
 			}
 		}
 
-		public override void mouseEntered(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseEntered(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			inCanvas = true;
 			canvas.Project.repaintCanvas();
 		}
 
-		public override void mouseExited(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseExited(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			inCanvas = false;
 			canvas.Project.repaintCanvas();
 		}
 
-		public override void mouseMoved(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseMoved(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			if (exists)
 			{
@@ -246,7 +247,7 @@ namespace logisim.tools
 			}
 		}
 
-		public override void mousePressed(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mousePressed(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			if (!canvas.Project.LogisimFile.contains(canvas.Circuit))
 			{
@@ -275,7 +276,7 @@ namespace logisim.tools
 			}
 		}
 
-		public override void mouseDragged(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseDragged(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			if (exists)
 			{
@@ -331,7 +332,7 @@ namespace logisim.tools
 			exists = false;
 		}
 
-		public override void mouseReleased(Canvas canvas, Graphics g, MouseEvent e)
+		public override void mouseReleased(Canvas canvas, JGraphics g, MouseEvent e)
 		{
 			if (!exists)
 			{
@@ -535,14 +536,14 @@ namespace logisim.tools
 
 		public override void paintIcon(ComponentDrawContext c, int x, int y)
 		{
-			Graphics g = c.Graphics;
+			JGraphics g = c.Graphics;
 			if (toolIcon != null)
 			{
 				toolIcon.paintIcon(c.Destination, g, x + 2, y + 2);
 			}
 			else
 			{
-				g.setColor(Color.black);
+				g.setColor(Color.Black);
 				g.drawLine(x + 3, y + 13, x + 17, y + 7);
 				g.fillOval(x + 1, y + 11, 5, 5);
 				g.fillOval(x + 15, y + 5, 5, 5);

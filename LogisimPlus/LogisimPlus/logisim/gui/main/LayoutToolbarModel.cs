@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System.Collections.Generic;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -50,7 +51,7 @@ namespace logisim.gui.main
 				}
 			}
 
-			public virtual void paintIcon(Component destination, Graphics g)
+			public virtual void paintIcon(JComponent destination, JGraphics g)
 			{
 				// draw halo
 				if (tool == outerInstance.haloedTool && AppPreferences.ATTRIBUTE_HALO.Boolean)
@@ -60,8 +61,8 @@ namespace logisim.gui.main
 				}
 
 				// draw tool icon
-				g.setColor(Color.BLACK);
-				Graphics g_copy = g.create();
+				g.setColor(Color.Black);
+				JGraphics g_copy = g.create();
 				ComponentDrawContext c = new ComponentDrawContext(destination, null, null, g, g_copy);
 				tool.paintIcon(c, 2, 2);
 				g_copy.dispose();
@@ -177,7 +178,7 @@ namespace logisim.gui.main
 		private Frame frame;
 		private Project proj;
 		private MyListener myListener;
-		private IList<ToolbarItem> items;
+		private List<ToolbarItem> items;
 		private Tool haloedTool;
 
 		public LayoutToolbarModel(Frame frame, Project proj)
@@ -185,7 +186,7 @@ namespace logisim.gui.main
 			this.frame = frame;
 			this.proj = proj;
 			myListener = new MyListener(this);
-			items = Collections.emptyList();
+			items = [];
 			haloedTool = null;
 			buildContents();
 
@@ -197,7 +198,7 @@ namespace logisim.gui.main
 			proj.addProjectListener(myListener);
 		}
 
-		public override IList<ToolbarItem> Items
+		public override List<ToolbarItem> Items
 		{
 			get
 			{
@@ -241,8 +242,8 @@ namespace logisim.gui.main
 
 		private void buildContents()
 		{
-			IList<ToolbarItem> oldItems = items;
-			IList<ToolbarItem> newItems = new List<ToolbarItem>();
+			List<ToolbarItem> oldItems = items;
+			List<ToolbarItem> newItems = new List<ToolbarItem>();
 			ToolbarData data = proj.LogisimFile.Options.ToolbarData;
 			foreach (Tool tool in data.Contents)
 			{
@@ -267,7 +268,7 @@ namespace logisim.gui.main
 			fireToolbarContentsChanged();
 		}
 
-		private static ToolbarItem findItem(IList<ToolbarItem> items, Tool tool)
+		private static ToolbarItem findItem(List<ToolbarItem> items, Tool tool)
 		{
 			foreach (ToolbarItem item in items)
 			{

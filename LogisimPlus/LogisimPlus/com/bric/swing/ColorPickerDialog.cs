@@ -16,6 +16,8 @@
 * accordance with the license agreement you entered into with
 * Jeremy Wood. For details see accompanying license terms.
 */
+using LogisimPlus.Java;
+
 namespace com.bric.swing
 {
 
@@ -60,7 +62,7 @@ namespace com.bric.swing
 			initialize(owner, color, includeOpacity);
 		}
 
-		private void initialize(Component owner, Color color, bool includeOpacity)
+		private void initialize(JComponent owner, Color color, bool includeOpacity)
 		{
 			cp = new ColorPicker(true, includeOpacity);
 			setModal(true);
@@ -84,9 +86,9 @@ namespace com.bric.swing
 			c.gridx++;
 			c.weightx = 0;
 			getContentPane().add(ok, c);
-			cp.setRGB(color.getRed(), color.getGreen(), color.getBlue());
-			cp.Opacity = ((float) color.getAlpha()) / 255f;
-			alpha = color.getAlpha();
+			cp.setRGB(color.R, color.G, color.B);
+			cp.Opacity = ((float) color.A) / 255f;
+			alpha = color.A;
 			pack();
 			setLocationRelativeTo(owner);
 

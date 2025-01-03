@@ -9,8 +9,8 @@
 
 namespace logisim.analyze.gui
 {
-
-	using Entry = logisim.analyze.model.Entry;
+    using LogisimPlus.Java;
+    using Entry = logisim.analyze.model.Entry;
 	using TruthTable = logisim.analyze.model.TruthTable;
 
 	internal class TruthTableMouseListener : MouseListener

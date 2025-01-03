@@ -4,6 +4,7 @@
 // https://www.tangiblesoftwaresolutions.com/product-details/java-to-csharp-converter.html
 // ====================================================================================================
 
+using LogisimPlus.Java;
 using System.Collections.Generic;
 
 /* Copyright (c) 2010, Carl Burch. License information is located in the
@@ -177,7 +178,7 @@ namespace draw.canvas
 		private void handlePopupTrigger(MouseEvent e)
 		{
 			Location loc = new Location(e.getX(), e.getY());
-			IList<CanvasObject> objects = canvas.Model.getObjectsFromTop();
+			List<CanvasObject> objects = canvas.Model.getObjectsFromTop();
 			CanvasObject clicked = null;
 			foreach (CanvasObject o in objects)
 			{

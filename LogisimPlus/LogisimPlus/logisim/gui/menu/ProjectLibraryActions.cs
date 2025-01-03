@@ -42,7 +42,7 @@ namespace logisim.gui.menu
 
 		private class LibraryJList : JList<BuiltinOption>
 		{
-			internal LibraryJList(IList<Library> libraries)
+			internal LibraryJList(List<Library> libraries)
 			{
 				BuiltinOption[] options = new BuiltinOption[libraries.Count];
 				for (int i = 0; i < libraries.Count; i++)
@@ -77,7 +77,7 @@ namespace logisim.gui.menu
 		public static void doLoadBuiltinLibrary(Project proj)
 		{
 			LogisimFile file = proj.LogisimFile;
-			IList<Library> baseBuilt = file.Loader.Builtin.Libraries;
+			List<Library> baseBuilt = file.Loader.Builtin.Libraries;
 			List<Library> builtins = new List<Library>(baseBuilt);
 			builtins.RemoveAll(file.Libraries);
 			if (builtins.Count == 0)

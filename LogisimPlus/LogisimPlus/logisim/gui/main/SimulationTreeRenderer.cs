@@ -9,9 +9,8 @@
 
 namespace logisim.gui.main
 {
-
-
-	using ComponentDrawContext = logisim.comp.ComponentDrawContext;
+    using LogisimPlus.Java;
+    using ComponentDrawContext = logisim.comp.ComponentDrawContext;
 	using ComponentFactory = logisim.comp.ComponentFactory;
 
 	public class SimulationTreeRenderer : DefaultTreeCellRenderer
@@ -43,7 +42,7 @@ namespace logisim.gui.main
 				}
 			}
 
-			public virtual void paintIcon(Component c, Graphics g, int x, int y)
+			public virtual void paintIcon(JComponent c, JGraphics g, int x, int y)
 			{
 				ComponentDrawContext context = new ComponentDrawContext(c, null, null, g, g);
 				factory.paintIcon(context, x, y, factory.createAttributeSet());
@@ -57,16 +56,16 @@ namespace logisim.gui.main
 					int[] yp = new int[] {ty + 1, y + 20, y + 18, ty - 1};
 					g.setColor(ProjectExplorer.MAGNIFYING_INTERIOR);
 					g.fillOval(x + 5, y + 5, 10, 10);
-					g.setColor(Color.BLACK);
+					g.setColor(Color.Black);
 					g.drawOval(x + 5, y + 5, 10, 10);
 					g.fillPolygon(xp, yp, xp.Length);
 				}
 			}
 		}
 
-		public override Component getTreeCellRendererComponent(JTree tree, object value, bool selected, bool expanded, bool leaf, int row, bool hasFocus)
+		public override JComponent getTreeCellRendererComponent(JTree tree, object value, bool selected, bool expanded, bool leaf, int row, bool hasFocus)
 		{
-			Component ret = base.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+			JComponent ret = base.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 			SimulationTreeModel model = (SimulationTreeModel) tree.getModel();
 			if (ret is JLabel)
 			{

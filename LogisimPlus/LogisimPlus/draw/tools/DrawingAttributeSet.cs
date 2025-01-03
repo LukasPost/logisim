@@ -26,13 +26,13 @@ namespace draw.tools
 
 
 	public class DrawingAttributeSet : AttributeSet, ICloneable
-	{
+    {
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: static final java.util.List<logisim.data.Attribute<?>> ATTRS_ALL = logisim.util.UnmodifiableList.create(new logisim.data.Attribute<?>[] { draw.shapes.DrawAttr.FONT, draw.shapes.DrawAttr.ALIGNMENT, draw.shapes.DrawAttr.PAINT_TYPE, draw.shapes.DrawAttr.STROKE_WIDTH, draw.shapes.DrawAttr.STROKE_COLOR, draw.shapes.DrawAttr.FILL_COLOR, draw.shapes.DrawAttr.TEXT_DEFAULT_FILL, draw.shapes.DrawAttr.CORNER_RADIUS });
-		internal static readonly IList<Attribute<object>> ATTRS_ALL = UnmodifiableList.create(new Attribute<object>[] {DrawAttr.FONT, DrawAttr.ALIGNMENT, DrawAttr.PAINT_TYPE, DrawAttr.STROKE_WIDTH, DrawAttr.STROKE_COLOR, DrawAttr.FILL_COLOR, DrawAttr.TEXT_DEFAULT_FILL, DrawAttr.CORNER_RADIUS});
-		internal static readonly IList<object> DEFAULTS_ALL = new List<object>
+		internal static readonly List<Attribute> ATTRS_ALL = UnmodifiableList.create(new Attribute[] {DrawAttr.FONT, DrawAttr.ALIGNMENT, DrawAttr.PAINT_TYPE, DrawAttr.STROKE_WIDTH, DrawAttr.STROKE_COLOR, DrawAttr.FILL_COLOR, DrawAttr.TEXT_DEFAULT_FILL, DrawAttr.CORNER_RADIUS});
+		internal static readonly List<object> DEFAULTS_ALL = new List<object>
 		{
-			new object[] {DrawAttr.DEFAULT_FONT, DrawAttr.ALIGN_CENTER, DrawAttr.PAINT_STROKE, Convert.ToInt32(1), Color.BLACK, Color.WHITE, Color.BLACK, Convert.ToInt32(10)}
+			new object[] {DrawAttr.DEFAULT_FONT, DrawAttr.ALIGN_CENTER, DrawAttr.PAINT_STROKE, Convert.ToInt32(1), Color.Black, Color.White, Color.Black, Convert.ToInt32(10)}
 		};
 
 		private class Restriction : AbstractAttributeSet, AttributeListener
@@ -42,10 +42,10 @@ namespace draw.tools
 			internal AbstractTool tool;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private java.util.List<logisim.data.Attribute<?>> selectedAttrs;
-			internal IList<Attribute<object>> selectedAttrs;
+			internal List<Attribute> selectedAttrs;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private java.util.List<logisim.data.Attribute<?>> selectedView;
-			internal IList<Attribute<object>> selectedView;
+			internal List<Attribute> selectedView;
 
 			internal Restriction(DrawingAttributeSet outerInstance, AbstractTool tool)
 			{
@@ -58,10 +58,10 @@ namespace draw.tools
 			{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: java.util.List<logisim.data.Attribute<?>> toolAttrs;
-				IList<Attribute<object>> toolAttrs;
+				List<Attribute> toolAttrs;
 				if (tool == null)
 				{
-					toolAttrs = Collections.emptyList();
+					toolAttrs = [];
 				}
 				else
 				{
@@ -73,7 +73,7 @@ namespace draw.tools
 				{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: selectedAttrs = new java.util.ArrayList<logisim.data.Attribute<?>>(toolAttrs);
-					selectedAttrs = new List<Attribute<object>>(toolAttrs);
+					selectedAttrs = new List<Attribute>(toolAttrs);
 					selectedView = selectedAttrs.AsReadOnly();
 					outerInstance.addAttributeListener(this);
 					fireAttributeListChanged();
@@ -87,7 +87,7 @@ namespace draw.tools
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-			public override IList<Attribute<object>> Attributes
+			public override List<Attribute> Attributes
 			{
 				get
 				{
@@ -95,12 +95,12 @@ namespace draw.tools
 				}
 			}
 
-			public override V getValue<V>(Attribute<V> attr)
+			public override object getValue(Attribute attr)
 			{
 				return outerInstance.getValue(attr);
 			}
 
-			public override void setValue<V>(Attribute<V> attr, V value)
+			public override void setValue(Attribute attr, object value)
 			{
 				outerInstance.setValue(attr, value);
 				updateAttributes();
@@ -119,8 +119,8 @@ namespace draw.tools
 				if (selectedAttrs.Contains(e.Attribute))
 				{
 // JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<Object> attr = (logisim.data.Attribute<Object>) e.getAttribute();
-					Attribute<object> attr = (Attribute<object>) e.Attribute;
+// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute attr = (logisim.data.Attribute) e.getAttribute();
+					Attribute attr = (Attribute) e.Attribute;
 					fireAttributeValueChanged(attr, e.Value);
 				}
 				updateAttributes();
@@ -130,8 +130,8 @@ namespace draw.tools
 		private EventSourceWeakSupport<AttributeListener> listeners;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private java.util.List<logisim.data.Attribute<?>> attrs;
-		private IList<Attribute<object>> attrs;
-		private IList<object> values;
+		private List<Attribute> attrs;
+		private List<object> values;
 
 		public DrawingAttributeSet()
 		{
@@ -155,24 +155,17 @@ namespace draw.tools
 			listeners.remove(l);
 		}
 
-		public virtual object clone()
+		public virtual object Clone()
 		{
-			try
-			{
-				DrawingAttributeSet ret = (DrawingAttributeSet) base.clone();
-				ret.listeners = new EventSourceWeakSupport<AttributeListener>();
-				ret.values = new List<object>(this.values);
-				return ret;
-			}
-			catch (CloneNotSupportedException)
-			{
-				return null;
-			}
+			DrawingAttributeSet ret = (DrawingAttributeSet)base.MemberwiseClone();
+			ret.listeners = new EventSourceWeakSupport<AttributeListener>();
+			ret.values = new List<object>(this.values);
+			return ret;
 		}
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public virtual IList<Attribute<object>> Attributes
+		public virtual List<Attribute> Attributes
 		{
 			get
 			{
@@ -180,18 +173,18 @@ namespace draw.tools
 			}
 		}
 
-		public virtual bool containsAttribute<T1>(Attribute<T1> attr)
+		public virtual bool containsAttribute(Attribute attr)
 		{
 			return attrs.Contains(attr);
 		}
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: public logisim.data.Attribute<?> getAttribute(String name)
-		public virtual Attribute<object> getAttribute(string name)
+		public virtual Attribute getAttribute(string name)
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: for (logisim.data.Attribute<?> attr : attrs)
-			foreach (Attribute<object> attr in attrs)
+			foreach (Attribute attr in attrs)
 			{
 				if (attr.Name.Equals(name))
 				{
@@ -201,26 +194,26 @@ namespace draw.tools
 			return null;
 		}
 
-		public virtual bool isReadOnly<T1>(Attribute<T1> attr)
+		public virtual bool isReadOnly(Attribute attr)
 		{
 			return false;
 		}
 
-		public virtual void setReadOnly<T1>(Attribute<T1> attr, bool value)
+		public virtual void setReadOnly(Attribute attr, bool value)
 		{
 			throw new System.NotSupportedException("setReadOnly");
 		}
 
-		public virtual bool isToSave<T1>(Attribute<T1> attr)
+		public virtual bool isToSave(Attribute attr)
 		{
 			return true;
 		}
 
-		public virtual V getValue<V>(Attribute<V> attr)
+		public virtual object getValue(Attribute attr)
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: java.util.Iterator<logisim.data.Attribute<?>> ait = attrs.iterator();
-			IEnumerator<Attribute<object>> ait = attrs.GetEnumerator();
+			IEnumerator<Attribute> ait = attrs.GetEnumerator();
 			IEnumerator<object> vit = values.GetEnumerator();
 			while (ait.MoveNext())
 			{
@@ -229,20 +222,17 @@ namespace draw.tools
 				object v = vit.next();
 				if (a.Equals(attr))
 				{
-// JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") V ret = (V) v;
-					V ret = (V) v;
-					return ret;
+					return v;
 				}
 			}
-			return default(V);
+			return null;
 		}
 
-		public virtual void setValue<V>(Attribute<V> attr, V value)
+		public virtual void setValue(Attribute attr, object value)
 		{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: java.util.Iterator<logisim.data.Attribute<?>> ait = attrs.iterator();
-			IEnumerator<Attribute<object>> ait = attrs.GetEnumerator();
+			IEnumerator<Attribute> ait = attrs.GetEnumerator();
 // JAVA TO C# CONVERTER WARNING: Unlike Java's ListIterator, enumerators in .NET do not allow altering the collection:
 			IEnumerator<object> vit = values.GetEnumerator();
 			while (ait.MoveNext())
@@ -280,18 +270,15 @@ namespace draw.tools
 			{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?> attr = d.getAttributes().get(i);
-				Attribute<object> attr = d.Attributes[i];
-// JAVA TO C# CONVERTER TASK: Most Java annotations will not have direct .NET equivalent attributes:
-// ORIGINAL LINE: @SuppressWarnings("unchecked") logisim.data.Attribute<Object> a = (logisim.data.Attribute<Object>) attr;
-				Attribute<object> a = (Attribute<object>) attr;
+				Attribute attr = d.Attributes[i];
 				if (attr == DrawAttr.FILL_COLOR && this.containsAttribute(DrawAttr.TEXT_DEFAULT_FILL))
 				{
-					d.setValue(a, this.getValue(DrawAttr.TEXT_DEFAULT_FILL));
+					d.setValue(attr, this.getValue(DrawAttr.TEXT_DEFAULT_FILL));
 				}
-				else if (this.containsAttribute(a))
+				else if (this.containsAttribute(attr))
 				{
-					object value = this.getValue(a);
-					d.setValue(a, value);
+					object value = this.getValue(attr);
+					d.setValue(attr, value);
 				}
 			}
 			return drawable;

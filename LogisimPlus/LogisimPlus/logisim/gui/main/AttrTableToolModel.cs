@@ -41,7 +41,7 @@ namespace logisim.gui.main
 			}
 		}
 
-		public override void setValueRequested(Attribute<object> attr, object value)
+		protected internal override void setValueRequested(Attribute attr, object value)
 		{
 			proj.doAction(ToolAttributeAction.create(tool, attr, value));
 		}

@@ -51,7 +51,7 @@ namespace logisim.circuit.appear
 			{
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: logisim.data.Attribute<?> attr = e.getAttribute();
-				Attribute<object> attr = e.Attribute;
+				Attribute attr = e.Attribute;
 				if (attr == StdAttr.FACING || attr == StdAttr.LABEL || attr == Pin.ATTR_TYPE)
 				{
 					outerInstance.appearanceManager.updatePorts();
@@ -61,7 +61,7 @@ namespace logisim.circuit.appear
 
 		private PortManager appearanceManager;
 		private MyComponentListener myComponentListener;
-		private ISet<Instance> pins;
+		private HashSet<Instance> pins;
 
 		internal CircuitPins(PortManager appearanceManager)
 		{
@@ -73,9 +73,9 @@ namespace logisim.circuit.appear
 		public virtual void transactionCompleted(ReplacementMap repl)
 		{
 			// determine the changes
-			ISet<Instance> adds = new HashSet<Instance>();
-			ISet<Instance> removes = new HashSet<Instance>();
-			IDictionary<Instance, Instance> replaces = new Dictionary<Instance, Instance>();
+			HashSet<Instance> adds = new HashSet<Instance>();
+			HashSet<Instance> removes = new HashSet<Instance>();
+			Dictionary<Instance, Instance> replaces = new Dictionary<Instance, Instance>();
 			foreach (Component comp in repl.Additions)
 			{
 				if (comp.Factory is Pin)

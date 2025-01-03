@@ -19,13 +19,13 @@ namespace draw.actions
 
 	public class ModelChangeAttributeAction : ModelAction
 	{
-		private IDictionary<AttributeMapKey, object> oldValues;
-		private IDictionary<AttributeMapKey, object> newValues;
+		private Dictionary<AttributeMapKey, object> oldValues;
+		private Dictionary<AttributeMapKey, object> newValues;
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: private logisim.data.Attribute<?> attr;
-		private Attribute<object> attr;
+		private Attribute attr;
 
-		public ModelChangeAttributeAction(CanvasModel model, IDictionary<AttributeMapKey, object> oldValues, IDictionary<AttributeMapKey, object> newValues) : base(model)
+		public ModelChangeAttributeAction(CanvasModel model, Dictionary<AttributeMapKey, object> oldValues, Dictionary<AttributeMapKey, object> newValues) : base(model)
 		{
 			this.oldValues = oldValues;
 			this.newValues = newValues;
@@ -50,7 +50,7 @@ namespace draw.actions
 			{
 	// JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 	// ORIGINAL LINE: logisim.data.Attribute<?> a = attr;
-				Attribute<object> a = attr;
+				Attribute a = attr;
 				if (a == null)
 				{
 					bool found = false;
@@ -58,7 +58,7 @@ namespace draw.actions
 					{
 	// JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 	// ORIGINAL LINE: logisim.data.Attribute<?> at = key.getAttribute();
-						Attribute<object> at = key.Attribute;
+						Attribute at = key.Attribute;
 						if (found)
 						{
 							if (a == null ? at != null :!a.Equals(at))

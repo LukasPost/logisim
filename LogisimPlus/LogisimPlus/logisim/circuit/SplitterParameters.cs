@@ -10,7 +10,7 @@
 namespace logisim.circuit
 {
 	using Direction = logisim.data.Direction;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	internal class SplitterParameters
 	{
@@ -65,8 +65,8 @@ namespace logisim.circuit
 				dxSpine1 = m * justify * offs;
 				dySpine1 = -m * offs;
 				textAngle = 90;
-				halign = m > 0 ? GraphicsUtil.H_RIGHT : GraphicsUtil.H_LEFT;
-				valign = m * justify <= 0 ? GraphicsUtil.V_BASELINE : GraphicsUtil.V_TOP;
+				halign = m > 0 ? JGraphicsUtil.H_RIGHT : JGraphicsUtil.H_LEFT;
+				valign = m * justify <= 0 ? JGraphicsUtil.V_BASELINE : JGraphicsUtil.V_TOP;
 			}
 			else
 			{ // > or <
@@ -82,8 +82,8 @@ namespace logisim.circuit
 				dxSpine1 = m * offs;
 				dySpine1 = m * justify * offs;
 				textAngle = 0;
-				halign = m > 0 ? GraphicsUtil.H_LEFT : GraphicsUtil.H_RIGHT;
-				valign = m * justify < 0 ? GraphicsUtil.V_TOP : GraphicsUtil.V_BASELINE;
+				halign = m > 0 ? JGraphicsUtil.H_LEFT : JGraphicsUtil.H_RIGHT;
+				valign = m * justify < 0 ? JGraphicsUtil.V_TOP : JGraphicsUtil.V_BASELINE;
 			}
 		}
 

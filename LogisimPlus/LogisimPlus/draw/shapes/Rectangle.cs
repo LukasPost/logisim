@@ -20,8 +20,9 @@ namespace draw.shapes
 	using logisim.data;
 	using Bounds = logisim.data.Bounds;
 	using Location = logisim.data.Location;
+    using LogisimPlus.Java;
 
-	public class Rectangle : Rectangular
+    public class Rectangle : Rectangular
 	{
 		public Rectangle(int x, int y, int w, int h) : base(x, y, w, h)
 		{
@@ -64,7 +65,7 @@ namespace draw.shapes
 
 // JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in C#:
 // ORIGINAL LINE: @Override public java.util.List<logisim.data.Attribute<?>> getAttributes()
-		public override IList<Attribute<object>> Attributes
+		public override List<Attribute> Attributes
 		{
 			get
 			{
@@ -118,7 +119,7 @@ namespace draw.shapes
 			}
 		}
 
-		public override void draw(Graphics g, int x, int y, int w, int h)
+		public override void draw(JGraphics g, int x, int y, int w, int h)
 		{
 			if (setForFill(g))
 			{

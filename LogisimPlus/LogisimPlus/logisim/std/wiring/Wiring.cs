@@ -26,7 +26,7 @@ namespace logisim.std.wiring
 
 		internal static readonly AttributeOption GATE_TOP_LEFT = new AttributeOption("tl", Strings.getter("wiringGateTopLeftOption"));
 		internal static readonly AttributeOption GATE_BOTTOM_RIGHT = new AttributeOption("br", Strings.getter("wiringGateBottomRightOption"));
-		internal static readonly Attribute<AttributeOption> ATTR_GATE = Attributes.forOption("gate", Strings.getter("wiringGateAttr"), new AttributeOption[] {GATE_TOP_LEFT, GATE_BOTTOM_RIGHT});
+		internal static readonly Attribute ATTR_GATE = Attributes.forOption("gate", Strings.getter("wiringGateAttr"), new AttributeOption[] {GATE_TOP_LEFT, GATE_BOTTOM_RIGHT});
 
 		private static Tool[] ADD_TOOLS = new Tool[]
 		{
@@ -48,7 +48,7 @@ namespace logisim.std.wiring
 			new FactoryDescription("Bit Extender", Strings.getter("extenderComponent"), "extender.gif", "BitExtender")
 		};
 
-		private IList<Tool> tools = null;
+		private List<Tool> tools = null;
 
 		public Wiring()
 		{
@@ -70,13 +70,13 @@ namespace logisim.std.wiring
 			}
 		}
 
-		public override IList<Tool> Tools
+		public override List<Tool> Tools
 		{
 			get
 			{
 				if (tools == null)
 				{
-					IList<Tool> ret = new List<Tool>(ADD_TOOLS.Length + DESCRIPTIONS.Length);
+					List<Tool> ret = new List<Tool>(ADD_TOOLS.Length + DESCRIPTIONS.Length);
 					foreach (Tool a in ADD_TOOLS)
 					{
 						ret.Add(a);

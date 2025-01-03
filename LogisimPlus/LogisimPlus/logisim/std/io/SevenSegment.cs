@@ -20,15 +20,16 @@ namespace logisim.std.io
 	using InstancePainter = logisim.instance.InstancePainter;
 	using InstanceState = logisim.instance.InstanceState;
 	using Port = logisim.instance.Port;
+    using LogisimPlus.Java;
 
-	public class SevenSegment : InstanceFactory
+    public class SevenSegment : InstanceFactory
 	{
 		internal static Bounds[] SEGMENTS = null;
-		internal static Color DEFAULT_OFF = new Color(220, 220, 220);
+		internal static Color DEFAULT_OFF = Color.FromArgb(255, 220, 220, 220);
 
 		public SevenSegment() : base("7-Segment Display", Strings.getter("sevenSegmentComponent"))
 		{
-			setAttributes(new Attribute[] {Io.ATTR_ON_COLOR, Io.ATTR_OFF_COLOR, Io.ATTR_BACKGROUND, Io.ATTR_ACTIVE}, new object[] {new Color(240, 0, 0), DEFAULT_OFF, Io.DEFAULT_BACKGROUND, true});
+			setAttributes(new Attribute[] {Io.ATTR_ON_COLOR, Io.ATTR_OFF_COLOR, Io.ATTR_BACKGROUND, Io.ATTR_ACTIVE}, new object[] {Color.FromArgb(255, 240, 0, 0), DEFAULT_OFF, Io.DEFAULT_BACKGROUND, true});
 			OffsetBounds = Bounds.create(-5, 0, 40, 60);
 			IconName = "7seg.gif";
 			setPorts(new Port[]
@@ -75,27 +76,27 @@ namespace logisim.std.io
 		internal static void drawBase(InstancePainter painter)
 		{
 			ensureSegments();
-			InstanceDataSingleton data = (InstanceDataSingleton) painter.Data;
-			int summ = (data == null ? 0 : ((int?) data.Value).Value);
-			bool? active = painter.getAttributeValue(Io.ATTR_ACTIVE);
+			InstanceDataSingleton data = (InstanceDataSingleton)painter.Data;
+			int summ = (data == null ? 0 : ((int?)data.Value).Value);
+			bool? active = (bool?)painter.getAttributeValue(Io.ATTR_ACTIVE);
 			int desired = active == null || active.Value ? 1 : 0;
 
 			Bounds bds = painter.Bounds;
 			int x = bds.X + 5;
 			int y = bds.Y;
 
-			Graphics g = painter.Graphics;
-			Color onColor = painter.getAttributeValue(Io.ATTR_ON_COLOR);
-			Color offColor = painter.getAttributeValue(Io.ATTR_OFF_COLOR);
-			Color bgColor = painter.getAttributeValue(Io.ATTR_BACKGROUND);
-			if (painter.shouldDrawColor() && bgColor.getAlpha() != 0)
+			JGraphics g = painter.Graphics;
+			Color onColor = (Color)painter.getAttributeValue(Io.ATTR_ON_COLOR);
+			Color offColor = (Color)painter.getAttributeValue(Io.ATTR_OFF_COLOR);
+			Color bgColor = (Color)painter.getAttributeValue(Io.ATTR_BACKGROUND);
+			if (painter.shouldDrawColor() && bgColor.A != 0)
 			{
 				g.setColor(bgColor);
 				g.fillRect(bds.X, bds.Y, bds.Width, bds.Height);
-				g.setColor(Color.BLACK);
+				g.setColor(Color.Black);
 			}
 			painter.drawBounds();
-			g.setColor(Color.DARK_GRAY);
+			g.setColor(Color.DarkGray);
 			for (int i = 0; i <= 7; i++)
 			{
 				if (painter.ShowState)

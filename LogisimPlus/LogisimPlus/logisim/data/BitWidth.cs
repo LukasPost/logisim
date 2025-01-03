@@ -21,7 +21,7 @@ namespace logisim.data
 
 		private static BitWidth[] prefab = null;
 
-		internal class Attribute : logisim.data.Attribute<BitWidth>
+		internal class Attribute : logisim.data.Attribute
 		{
 			internal BitWidth[] choices;
 
@@ -102,12 +102,12 @@ namespace logisim.data
 				return false;
 			}
 			BitWidth other = (BitWidth) other_obj;
-			return this.width == other.width;
+			return this.width == other.Width;
 		}
 
 		public virtual int CompareTo(BitWidth other)
 		{
-			return this.width - other.width;
+			return this.width - other.Width;
 		}
 
 		public override int GetHashCode()

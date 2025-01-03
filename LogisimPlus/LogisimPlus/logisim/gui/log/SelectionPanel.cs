@@ -81,7 +81,7 @@ namespace logisim.gui.log
 				else if (src == outerInstance.remove)
 				{
 					Selection sel = outerInstance.Selection;
-					IList<SelectionItem> toRemove = outerInstance.list.getSelectedValuesList();
+					List<SelectionItem> toRemove = outerInstance.list.getSelectedValuesList();
 					bool changed = false;
 					for (int i = 0; i < toRemove.Count; i++)
 					{
@@ -119,7 +119,7 @@ namespace logisim.gui.log
 				outerInstance.remove.setEnabled(index >= 0);
 			}
 
-			internal virtual void doAdd(IList<SelectionItem> selectedItems)
+			internal virtual void doAdd(List<SelectionItem> selectedItems)
 			{
 				if (selectedItems != null && selectedItems.Count > 0)
 				{

@@ -29,7 +29,7 @@ namespace logisim.gui.appear
 	internal class AppearanceToolbarModel : AbstractToolbarModel, PropertyChangeListener
 	{
 		private Canvas canvas;
-		private IList<ToolbarItem> items;
+		private List<ToolbarItem> items;
 
 		public AppearanceToolbarModel(AbstractTool selectTool, Canvas canvas, DrawingAttributeSet attrs)
 		{
@@ -55,7 +55,7 @@ namespace logisim.gui.appear
 			}
 		}
 
-		public override IList<ToolbarItem> Items
+		public override List<ToolbarItem> Items
 		{
 			get
 			{

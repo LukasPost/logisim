@@ -28,7 +28,7 @@ namespace logisim.std.wiring
 	using InstanceState = logisim.instance.InstanceState;
 	using Port = logisim.instance.Port;
 	using StdAttr = logisim.instance.StdAttr;
-	using GraphicsUtil = logisim.util.GraphicsUtil;
+	using JGraphicsUtil = logisim.util.JGraphicsUtil;
 
 	public class Probe : InstanceFactory
 	{
@@ -88,11 +88,11 @@ namespace logisim.std.wiring
 		}
 
 		//
-		// graphics methods
+		// JGraphics methods
 		//
 		public override void paintGhost(InstancePainter painter)
 		{
-			Graphics g = painter.Graphics;
+			JGraphics g = painter.Graphics;
 			Bounds bds = painter.OffsetBounds;
 			g.drawOval(bds.X + 1, bds.Y + 1, bds.Width - 1, bds.Height - 1);
 		}
@@ -101,13 +101,13 @@ namespace logisim.std.wiring
 		{
 			Value value = getValue(painter);
 
-			Graphics g = painter.Graphics;
-			Bounds bds = painter.Bounds; // intentionally with no graphics object - we don't want label included
+			JGraphics g = painter.Graphics;
+			Bounds bds = painter.Bounds; // intentionally with no JGraphics object - we don't want label included
 			int x = bds.X;
 			int y = bds.Y;
-			g.setColor(Color.WHITE);
+			g.setColor(Color.White);
 			g.fillRect(x + 5, y + 5, bds.Width - 10, bds.Height - 10);
-			g.setColor(Color.GRAY);
+			g.setColor(Color.Gray);
 			if (value.Width <= 1)
 			{
 				g.drawOval(x + 1, y + 1, bds.Width - 2, bds.Height - 2);
@@ -117,14 +117,14 @@ namespace logisim.std.wiring
 				g.drawRoundRect(x + 1, y + 1, bds.Width - 2, bds.Height - 2, 6, 6);
 			}
 
-			g.setColor(Color.BLACK);
+			g.setColor(Color.Black);
 			painter.drawLabel();
 
 			if (!painter.ShowState)
 			{
 				if (value.Width > 0)
 				{
-					GraphicsUtil.drawCenteredText(g, "x" + value.Width, bds.X + bds.Width / 2, bds.Y + bds.Height / 2);
+					JGraphicsUtil.drawCenteredText(g, "x" + value.Width, bds.X + bds.Width / 2, bds.Y + bds.Height / 2);
 				}
 			}
 			else
@@ -137,8 +137,8 @@ namespace logisim.std.wiring
 
 		internal static void paintValue(InstancePainter painter, Value value)
 		{
-			Graphics g = painter.Graphics;
-			Bounds bds = painter.Bounds; // intentionally with no graphics object - we don't want label included
+			JGraphics g = painter.Graphics;
+			Bounds bds = painter.Bounds; // intentionally with no JGraphics object - we don't want label included
 
 			RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
 			if (radix == null || radix == RadixOption.RADIX_2)
@@ -150,7 +150,7 @@ namespace logisim.std.wiring
 				{
 					x += bds.Width / 2;
 					y += bds.Height / 2;
-					GraphicsUtil.switchToWidth(g, 2);
+					JGraphicsUtil.switchToWidth(g, 2);
 					g.drawLine(x - 4, y, x + 4, y);
 					return;
 				}
@@ -165,7 +165,7 @@ namespace logisim.std.wiring
 				int cur = 0;
 				for (int k = 0; k < wid; k++)
 				{
-					GraphicsUtil.drawCenteredText(g, value.get(k).toDisplayString(), cx, cy);
+					JGraphicsUtil.drawCenteredText(g, value.get(k).toDisplayString(), cx, cy);
 					++cur;
 					if (cur == 8)
 					{
@@ -182,7 +182,7 @@ namespace logisim.std.wiring
 			else
 			{
 				string text = radix.toString(value);
-				GraphicsUtil.drawCenteredText(g, text, bds.X + bds.Width / 2, bds.Y + bds.Height / 2);
+				JGraphicsUtil.drawCenteredText(g, text, bds.X + bds.Width / 2, bds.Y + bds.Height / 2);
 			}
 		}
 
@@ -191,12 +191,12 @@ namespace logisim.std.wiring
 		//
 		protected internal override void configureNewInstance(Instance instance)
 		{
-			instance.setPorts(new Port[] {new Port(0, 0, Port.INPUT, BitWidth.UNKNOWN)});
+			instance.Ports = new Port[] { new Port(0, 0, Port.INPUT, BitWidth.UNKNOWN) };
 			instance.addAttributeListener();
 			configureLabel(instance);
 		}
 
-		protected internal override void instanceAttributeChanged<T1>(Instance instance, Attribute<T1> attr)
+		protected internal override void instanceAttributeChanged(Instance instance, Attribute attr)
 		{
 			if (attr == Pin.ATTR_LABEL_LOC)
 			{
