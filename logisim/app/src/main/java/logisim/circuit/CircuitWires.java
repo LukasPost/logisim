@@ -328,7 +328,7 @@ class CircuitWires {
 	//
 	// utility methods
 	//
-	void propagate(CircuitState circState, Set<Location> points) {
+	void propagate(CircuitState circState, List<Location> points) {
 		BundleMap map = getBundleMap();
 		SmallSet<WireThread> dirtyThreads = new SmallSet<WireThread>(); // affected threads
 

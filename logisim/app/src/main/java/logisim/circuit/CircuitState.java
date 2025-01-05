@@ -3,13 +3,7 @@
 
 package logisim.circuit;
 
-import java.util.Collection;
-import java.util.ConcurrentModificationException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import logisim.circuit.Propagator.SetData;
 import logisim.comp.Component;
@@ -131,8 +125,8 @@ public class CircuitState implements InstanceData {
 	private CircuitWires.State wireData = null;
 	private HashMap<Component, Object> componentData = new HashMap<Component, Object>();
 	private Map<Location, Value> values = new HashMap<Location, Value>();
-	private SmallSet<Component> dirtyComponents = new SmallSet<Component>();
-	private SmallSet<Location> dirtyPoints = new SmallSet<Location>();
+	private ArrayList<Component> dirtyComponents = new ArrayList<Component>();
+	private ArrayList<Location> dirtyPoints = new ArrayList<Location>();
 	HashMap<Location, SetData> causes = new HashMap<Location, SetData>();
 
 	private static int lastId = 0;
@@ -292,7 +286,7 @@ public class CircuitState implements InstanceData {
 			dirtyComponents.add(comp);
 		}
 		catch (RuntimeException e) {
-			SmallSet<Component> set = new SmallSet<Component>();
+			ArrayList<Component> set = new ArrayList<Component>();
 			set.add(comp);
 			dirtyComponents = set;
 		}
@@ -347,7 +341,7 @@ public class CircuitState implements InstanceData {
 						firstException = e;
 					if (tries == 0) {
 						toProcess = new Object[0];
-						dirtyComponents = new SmallSet<Component>();
+						dirtyComponents.clear();
 						throw firstException;
 					}
 				}
@@ -372,8 +366,8 @@ public class CircuitState implements InstanceData {
 	}
 
 	void processDirtyPoints() {
-		HashSet<Location> dirty = new HashSet<Location>(dirtyPoints);
-		dirtyPoints.clear();
+		ArrayList<Location> dirty = dirtyPoints;
+		dirtyPoints = new ArrayList<>();
 		if (circuit.wires.isMapVoided()) {
 			for (int i = 3; i >= 0; i--) {
 				try {
@@ -397,7 +391,8 @@ public class CircuitState implements InstanceData {
 		}
 
 		CircuitState[] subs = new CircuitState[substates.size()];
-		for (CircuitState substate : substates.toArray(subs)) {
+		subs = substates.toArray(subs);
+		for (CircuitState substate : subs) {
 			substate.processDirtyPoints();
 		}
 	}
