@@ -17,28 +17,22 @@ public class Parser {
 		if (tokens.size() == 0)
 			return null;
 
-		for (Token token : tokens) {
-			if (token.type == TOKEN_ERROR) {
-				throw token.error(Strings.getter("invalidCharacterError", token.text));
-			} else if (token.type == TOKEN_IDENT) {
+		for (Token token : tokens)
+			if (token.type == TOKEN_ERROR) throw token.error(Strings.getter("invalidCharacterError", token.text));
+			else if (token.type == TOKEN_IDENT) {
 				int index = model.getInputs().indexOf(token.text);
 				if (index < 0) {
 					// ok; but maybe this is an operator
 					String opText = token.text.toUpperCase();
-					if (opText.equals("NOT")) {
-						token.type = TOKEN_NOT;
-					} else if (opText.equals("AND")) {
-						token.type = TOKEN_AND;
-					} else if (opText.equals("XOR")) {
-						token.type = TOKEN_XOR;
-					} else if (opText.equals("OR")) {
-						token.type = TOKEN_OR;
-					} else {
-						throw token.error(Strings.getter("badVariableName", token.text));
+					switch (opText) {
+						case "NOT" -> token.type = TOKEN_NOT;
+						case "AND" -> token.type = TOKEN_AND;
+						case "XOR" -> token.type = TOKEN_XOR;
+						case "OR" -> token.type = TOKEN_OR;
+						default -> throw token.error(Strings.getter("badVariableName", token.text));
 					}
 				}
 			}
-		}
 
 		return parse(tokens);
 	}
@@ -58,13 +52,9 @@ public class Parser {
 	static String replaceVariable(String in, String oldName, String newName) {
 		StringBuilder ret = new StringBuilder();
 		ArrayList<Token> tokens = toTokens(in, true);
-		for (Token token : tokens) {
-			if (token.type == TOKEN_IDENT && token.text.equals(oldName)) {
-				ret.append(newName);
-			} else {
-				ret.append(token.text);
-			}
-		}
+		for (Token token : tokens)
+			if (token.type == TOKEN_IDENT && token.text.equals(oldName)) ret.append(newName);
+			else ret.append(token.text);
 		return ret.toString();
 	}
 
@@ -106,7 +96,7 @@ public class Parser {
 	}
 
 	private static ArrayList<Token> toTokens(String in, boolean includeWhite) {
-		ArrayList<Token> tokens = new ArrayList<Token>();
+		ArrayList<Token> tokens = new ArrayList<>();
 
 		// Guarantee that we will stop just after reading whitespace,
 		// not in the middle of a token.
@@ -116,9 +106,8 @@ public class Parser {
 			int whiteStart = pos;
 			while (pos < in.length() && Character.isWhitespace(in.charAt(pos)))
 				pos++;
-			if (includeWhite && pos != whiteStart) {
+			if (includeWhite && pos != whiteStart)
 				tokens.add(new Token(TOKEN_WHITE, whiteStart, in.substring(whiteStart, pos)));
-			}
 			if (pos == in.length())
 				return tokens;
 
@@ -129,8 +118,7 @@ public class Parser {
 				while (Character.isJavaIdentifierPart(in.charAt(pos)))
 					pos++;
 				tokens.add(new Token(TOKEN_IDENT, start, in.substring(start, pos)));
-			} else {
-				switch (startChar) {
+			} else switch (startChar) {
 				case '(':
 					tokens.add(new Token(TOKEN_LPAREN, start, "("));
 					break;
@@ -171,7 +159,6 @@ public class Parser {
 						pos++;
 					String errorText = in.substring(start, pos);
 					tokens.add(new Token(TOKEN_ERROR, start, errorText));
-				}
 			}
 		}
 	}
@@ -196,17 +183,14 @@ public class Parser {
 	}
 
 	private static Expression parse(ArrayList<Token> tokens) throws ParserException {
-		ArrayList<Context> stack = new ArrayList<Context>();
+		ArrayList<Context> stack = new ArrayList<>();
 		Expression current = null;
 		for (int i = 0; i < tokens.size(); i++) {
 			Token t = tokens.get(i);
 			if (t.type == TOKEN_IDENT || t.type == TOKEN_CONST) {
 				Expression here;
-				if (t.type == TOKEN_IDENT) {
-					here = Expressions.variable(t.text);
-				} else {
-					here = Expressions.constant(Integer.parseInt(t.text, 16));
-				}
+				if (t.type == TOKEN_IDENT) here = Expressions.variable(t.text);
+				else here = Expressions.constant(Integer.parseInt(t.text, 16));
 				while (i + 1 < tokens.size() && tokens.get(i + 1).type == TOKEN_NOT_POSTFIX) {
 					here = Expressions.not(here);
 					i++;
@@ -221,27 +205,20 @@ public class Parser {
 					current = Expressions.and(top.current, current);
 				}
 			} else if (t.type == TOKEN_NOT) {
-				if (current != null) {
-					push(stack, current, Expression.AND_LEVEL,
-							new Token(TOKEN_AND, t.offset, Strings.get("implicitAndOperator")));
-				}
+				if (current != null) push(stack, current, Expression.AND_LEVEL,
+						new Token(TOKEN_AND, t.offset, Strings.get("implicitAndOperator")));
 				push(stack, null, Expression.NOT_LEVEL, t);
 				current = null;
-			} else if (t.type == TOKEN_NOT_POSTFIX) {
-				throw t.error(Strings.getter("unexpectedApostrophe"));
-			} else if (t.type == TOKEN_LPAREN) {
-				if (current != null) {
-					push(stack, current, Expression.AND_LEVEL,
-							new Token(TOKEN_AND, t.offset, 0, Strings.get("implicitAndOperator")));
-				}
+			} else if (t.type == TOKEN_NOT_POSTFIX) throw t.error(Strings.getter("unexpectedApostrophe"));
+			else if (t.type == TOKEN_LPAREN) {
+				if (current != null) push(stack, current, Expression.AND_LEVEL,
+						new Token(TOKEN_AND, t.offset, 0, Strings.get("implicitAndOperator")));
 				push(stack, null, -2, t);
 				current = null;
 			} else if (t.type == TOKEN_RPAREN) {
 				current = popTo(stack, -1, current);
 				// there had better be a LPAREN atop the stack now.
-				if (stack.isEmpty()) {
-					throw t.error(Strings.getter("lparenMissingError"));
-				}
+				if (stack.isEmpty()) throw t.error(Strings.getter("lparenMissingError"));
 				pop(stack);
 				while (i + 1 < tokens.size() && tokens.get(i + 1).type == TOKEN_NOT_POSTFIX) {
 					current = Expressions.not(current);
@@ -249,21 +226,13 @@ public class Parser {
 				}
 				current = popTo(stack, Expression.AND_LEVEL, current);
 			} else {
-				if (current == null) {
-					throw t.error(Strings.getter("missingLeftOperandError", t.text));
-				}
-				int level = 0;
-				switch (t.type) {
-				case TOKEN_AND:
-					level = Expression.AND_LEVEL;
-					break;
-				case TOKEN_OR:
-					level = Expression.OR_LEVEL;
-					break;
-				case TOKEN_XOR:
-					level = Expression.XOR_LEVEL;
-					break;
-				}
+				if (current == null) throw t.error(Strings.getter("missingLeftOperandError", t.text));
+				int level = switch (t.type) {
+					case TOKEN_AND -> Expression.AND_LEVEL;
+					case TOKEN_OR -> Expression.OR_LEVEL;
+					case TOKEN_XOR -> Expression.XOR_LEVEL;
+					default -> 0;
+				};
 				push(stack, popTo(stack, level, current), level, t);
 				current = null;
 			}
@@ -283,12 +252,12 @@ public class Parser {
 	private static int peekLevel(ArrayList<Context> stack) {
 		if (stack.isEmpty())
 			return -3;
-		Context context = stack.get(stack.size() - 1);
+		Context context = stack.getLast();
 		return context.level;
 	}
 
 	private static Context pop(ArrayList<Context> stack) {
-		return stack.remove(stack.size() - 1);
+		return stack.removeLast();
 	}
 
 	private static Expression popTo(ArrayList<Context> stack, int level, Expression current) throws ParserException {

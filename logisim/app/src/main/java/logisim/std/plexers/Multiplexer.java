@@ -42,10 +42,8 @@ public class Multiplexer extends InstanceFactory {
 	public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
 		if (attr == Plexers.ATTR_ENABLE) {
 			int newer = ver.compareTo(LogisimVersion.get(2, 6, 3, 220));
-			return Boolean.valueOf(newer >= 0);
-		} else {
-			return super.getDefaultAttributeValue(attr, ver);
-		}
+			return newer >= 0;
+		} else return super.getDefaultAttributeValue(attr, ver);
 	}
 
 	@Override
@@ -53,9 +51,8 @@ public class Multiplexer extends InstanceFactory {
 		Direction dir = attrs.getValue(StdAttr.FACING);
 		BitWidth select = attrs.getValue(Plexers.ATTR_SELECT);
 		int inputs = 1 << select.getWidth();
-		if (inputs == 2) {
-			return Bounds.create(-30, -20, 30, 40).rotate(Direction.East, dir, 0, 0);
-		} else {
+		if (inputs == 2) return Bounds.create(-30, -20, 30, 40).rotate(Direction.East, dir, 0, 0);
+		else {
 			int offs = -(inputs / 2) * 10 - 10;
 			int length = inputs * 10 + 20;
 			return Bounds.create(-40, offs, 40, length).rotate(Direction.East, dir, 0, 0);
@@ -79,11 +76,8 @@ public class Multiplexer extends InstanceFactory {
 		if (attr == StdAttr.FACING || attr == Plexers.ATTR_SELECT_LOC || attr == Plexers.ATTR_SELECT) {
 			instance.recomputeBounds();
 			updatePorts(instance);
-		} else if (attr == StdAttr.WIDTH || attr == Plexers.ATTR_ENABLE) {
-			updatePorts(instance);
-		} else if (attr == Plexers.ATTR_DISABLED) {
-			instance.fireInvalidated();
-		}
+		} else if (attr == StdAttr.WIDTH || attr == Plexers.ATTR_ENABLE) updatePorts(instance);
+		else if (attr == Plexers.ATTR_DISABLED) instance.fireInvalidated();
 	}
 
 	private void updatePorts(Instance instance) {
@@ -91,7 +85,7 @@ public class Multiplexer extends InstanceFactory {
 		Object selectLoc = instance.getAttributeValue(Plexers.ATTR_SELECT_LOC);
 		BitWidth data = instance.getAttributeValue(StdAttr.WIDTH);
 		BitWidth select = instance.getAttributeValue(Plexers.ATTR_SELECT);
-		boolean enable = instance.getAttributeValue(Plexers.ATTR_ENABLE).booleanValue();
+		boolean enable = instance.getAttributeValue(Plexers.ATTR_ENABLE);
 
 		int selMult = selectLoc == Plexers.SELECT_BOTTOM_LEFT ? 1 : -1;
 		int inputs = 1 << select.getWidth();
@@ -117,8 +111,8 @@ public class Multiplexer extends InstanceFactory {
 				end1 = new Location(-30, 10);
 				sel = new Location(-20, selMult * 20);
 			}
-			ps[0] = new Port(end0.getX(), end0.getY(), Port.INPUT, data.getWidth());
-			ps[1] = new Port(end1.getX(), end1.getY(), Port.INPUT, data.getWidth());
+			ps[0] = new Port(end0.x(), end0.y(), Port.INPUT, data.getWidth());
+			ps[1] = new Port(end1.x(), end1.y(), Port.INPUT, data.getWidth());
 		} else {
 			int dx = -(inputs / 2) * 10;
 			int ddx = 10;
@@ -148,19 +142,13 @@ public class Multiplexer extends InstanceFactory {
 			}
 		}
 		Location en = sel.translate(dir, 10);
-		ps[inputs] = new Port(sel.getX(), sel.getY(), Port.INPUT, select.getWidth());
-		if (enable) {
-			ps[inputs + 1] = new Port(en.getX(), en.getY(), Port.INPUT, BitWidth.ONE);
-		}
+		ps[inputs] = new Port(sel.x(), sel.y(), Port.INPUT, select.getWidth());
+		if (enable) ps[inputs + 1] = new Port(en.x(), en.y(), Port.INPUT, BitWidth.ONE);
 		ps[ps.length - 1] = new Port(0, 0, Port.OUTPUT, data.getWidth());
 
-		for (int i = 0; i < inputs; i++) {
-			ps[i].setToolTip(Strings.getter("multiplexerInTip", "" + i));
-		}
+		for (int i = 0; i < inputs; i++) ps[i].setToolTip(Strings.getter("multiplexerInTip", "" + i));
 		ps[inputs].setToolTip(Strings.getter("multiplexerSelectTip"));
-		if (enable) {
-			ps[inputs + 1].setToolTip(Strings.getter("multiplexerEnableTip"));
-		}
+		if (enable) ps[inputs + 1].setToolTip(Strings.getter("multiplexerEnableTip"));
 		ps[ps.length - 1].setToolTip(Strings.getter("multiplexerOutTip"));
 
 		instance.setPorts(ps);
@@ -170,7 +158,7 @@ public class Multiplexer extends InstanceFactory {
 	public void propagate(InstanceState state) {
 		BitWidth data = state.getAttributeValue(StdAttr.WIDTH);
 		BitWidth select = state.getAttributeValue(Plexers.ATTR_SELECT);
-		boolean enable = state.getAttributeValue(Plexers.ATTR_ENABLE).booleanValue();
+		boolean enable = state.getAttributeValue(Plexers.ATTR_ENABLE);
 		int inputs = 1 << select.getWidth();
 		Value en = enable ? state.getPort(inputs + 1) : Value.TRUE;
 		Value out;
@@ -178,17 +166,12 @@ public class Multiplexer extends InstanceFactory {
 			Object opt = state.getAttributeValue(Plexers.ATTR_DISABLED);
 			Value base = opt == Plexers.DISABLED_ZERO ? Value.FALSE : Value.UNKNOWN;
 			out = Value.repeat(base, data.getWidth());
-		} else if (en == Value.ERROR && state.isPortConnected(inputs + 1)) {
-			out = Value.createError(data);
-		} else {
+		} else if (en == Value.ERROR && state.isPortConnected(inputs + 1)) out = Value.createError(data);
+		else {
 			Value sel = state.getPort(inputs);
-			if (sel.isFullyDefined()) {
-				out = state.getPort(sel.toIntValue());
-			} else if (sel.isErrorValue()) {
-				out = Value.createError(data);
-			} else {
-				out = Value.createUnknown(data);
-			}
+			if (sel.isFullyDefined()) out = state.getPort(sel.toIntValue());
+			else if (sel.isErrorValue()) out = Value.createError(data);
+			else out = Value.createUnknown(data);
 		}
 		state.setPort(inputs + (enable ? 2 : 1), out, Plexers.DELAY);
 	}
@@ -206,7 +189,7 @@ public class Multiplexer extends InstanceFactory {
 		Bounds bds = painter.getBounds();
 		Direction facing = painter.getAttributeValue(StdAttr.FACING);
 		BitWidth select = painter.getAttributeValue(Plexers.ATTR_SELECT);
-		boolean enable = painter.getAttributeValue(Plexers.ATTR_ENABLE).booleanValue();
+		boolean enable = painter.getAttributeValue(Plexers.ATTR_ENABLE);
 		int inputs = 1 << select.getWidth();
 
 		// draw stubs for select/enable inputs that aren't on instance boundary
@@ -218,18 +201,14 @@ public class Multiplexer extends InstanceFactory {
 		int dy = vertical ? selMult : 0;
 		if (inputs == 2) { // draw select wire
 			Location pt = painter.getInstance().getPortLocation(inputs);
-			if (painter.getShowState()) {
-				g.setColor(painter.getPort(inputs).getColor());
-			}
-			g.drawLine(pt.getX() - 2 * dx, pt.getY() - 2 * dy, pt.getX(), pt.getY());
+			if (painter.getShowState()) g.setColor(painter.getPort(inputs).getColor());
+			g.drawLine(pt.x() - 2 * dx, pt.y() - 2 * dy, pt.x(), pt.y());
 		}
 		if (enable) {
 			Location en = painter.getInstance().getPortLocation(inputs + 1);
-			if (painter.getShowState()) {
-				g.setColor(painter.getPort(inputs + 1).getColor());
-			}
+			if (painter.getShowState()) g.setColor(painter.getPort(inputs + 1).getColor());
 			int len = inputs == 2 ? 6 : 4;
-			g.drawLine(en.getX() - len * dx, en.getY() - len * dy, en.getX(), en.getY());
+			g.drawLine(en.x() - len * dx, en.y() - len * dy, en.x(), en.y());
 		}
 		GraphicsUtil.switchToWidth(g, 1);
 
@@ -270,20 +249,17 @@ public class Multiplexer extends InstanceFactory {
 	static void drawSelectCircle(Graphics g, Bounds bds, Location loc) {
 		int locDelta = Math.max(bds.getHeight(), bds.getWidth()) <= 50 ? 8 : 6;
 		Location circLoc;
-		if (bds.getHeight() >= bds.getWidth()) { // vertically oriented
-			if (loc.getY() < bds.getY() + bds.getHeight() / 2) { // at top
-				circLoc = loc.translate(0, locDelta);
-			} else { // at bottom
-				circLoc = loc.translate(0, -locDelta);
-			}
-		} else {
-			if (loc.getX() < bds.getX() + bds.getWidth() / 2) { // at left
-				circLoc = loc.translate(locDelta, 0);
-			} else { // at right
-				circLoc = loc.translate(-locDelta, 0);
-			}
-		}
+		// at right
+		// at left
+		// vertically oriented
+		// at bottom
+		// at top
+		if (bds.getHeight() >= bds.getWidth())
+			if (loc.y() < bds.getY() + bds.getHeight() / 2) circLoc = loc.translate(0, locDelta);
+			else circLoc = loc.translate(0, -locDelta);
+		else if (loc.x() < bds.getX() + bds.getWidth() / 2) circLoc = loc.translate(locDelta, 0);
+		else circLoc = loc.translate(-locDelta, 0);
 		g.setColor(Color.LIGHT_GRAY);
-		g.fillOval(circLoc.getX() - 3, circLoc.getY() - 3, 6, 6);
+		g.fillOval(circLoc.x() - 3, circLoc.y() - 3, 6, 6);
 	}
 }

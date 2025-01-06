@@ -17,44 +17,34 @@ class DrawingOverlaps {
 	private Set<CanvasObject> untested;
 
 	public DrawingOverlaps() {
-		map = new HashMap<CanvasObject, List<CanvasObject>>();
-		untested = new HashSet<CanvasObject>();
+		map = new HashMap<>();
+		untested = new HashSet<>();
 	}
 
 	public Collection<CanvasObject> getObjectsOverlapping(CanvasObject o) {
 		ensureUpdated();
 
 		List<CanvasObject> ret = map.get(o);
-		if (ret == null || ret.isEmpty()) {
-			return Collections.emptyList();
-		} else {
-			return Collections.unmodifiableList(ret);
-		}
+		if (ret == null || ret.isEmpty()) return Collections.emptyList();
+		else return Collections.unmodifiableList(ret);
 	}
 
 	private void ensureUpdated() {
 		for (CanvasObject o : untested) {
-			ArrayList<CanvasObject> over = new ArrayList<CanvasObject>();
-			for (CanvasObject o2 : map.keySet()) {
+			ArrayList<CanvasObject> over = new ArrayList<>();
+			for (CanvasObject o2 : map.keySet())
 				if (o != o2 && o.overlaps(o2)) {
 					over.add(o2);
 					addOverlap(o2, o);
 				}
-			}
 			map.put(o, over);
 		}
 		untested.clear();
 	}
 
 	private void addOverlap(CanvasObject a, CanvasObject b) {
-		List<CanvasObject> alist = map.get(a);
-		if (alist == null) {
-			alist = new ArrayList<CanvasObject>();
-			map.put(a, alist);
-		}
-		if (!alist.contains(b)) {
-			alist.add(b);
-		}
+		List<CanvasObject> alist = map.computeIfAbsent(a, k -> new ArrayList<>());
+		if (!alist.contains(b)) alist.add(b);
 	}
 
 	public void addShape(CanvasObject shape) {
@@ -64,13 +54,9 @@ class DrawingOverlaps {
 	public void removeShape(CanvasObject shape) {
 		untested.remove(shape);
 		List<CanvasObject> mapped = map.remove(shape);
-		if (mapped != null) {
-			for (CanvasObject o : mapped) {
-				List<CanvasObject> reverse = map.get(o);
-				if (reverse != null) {
-					reverse.remove(shape);
-				}
-			}
+		if (mapped != null) for (CanvasObject o : mapped) {
+			List<CanvasObject> reverse = map.get(o);
+			if (reverse != null) reverse.remove(shape);
 		}
 	}
 
@@ -80,8 +66,6 @@ class DrawingOverlaps {
 	}
 
 	public void invalidateShapes(Collection<? extends CanvasObject> shapes) {
-		for (CanvasObject o : shapes) {
-			invalidateShape(o);
-		}
+		for (CanvasObject o : shapes) invalidateShape(o);
 	}
 }

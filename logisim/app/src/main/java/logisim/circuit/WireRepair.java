@@ -22,7 +22,7 @@ class WireRepair extends CircuitTransaction {
 		private final HashMap<Wire, ArrayList<Wire>> map;
 
 		MergeSets() {
-			map = new HashMap<Wire, ArrayList<Wire>>();
+			map = new HashMap<>();
 		}
 
 		void merge(Wire a, Wire b) {
@@ -41,24 +41,17 @@ class WireRepair extends CircuitTransaction {
 				for (Wire w : set0) 
 					map.put(w, set1);
 
-			} else if (set0 == null && set1 != null) {
+			} else if (set0 == null) {
 				set1.add(a);
 				map.put(a, set1);
-			} else if (set0 != null && set1 == null) {
-				set0.add(b);
-				map.put(b, set0);
 			} else {
-				set0 = new ArrayList<Wire>(2);
-				set0.add(a);
 				set0.add(b);
-				map.put(a, set0);
 				map.put(b, set0);
 			}
 		}
 
 		Collection<ArrayList<Wire>> getMergeSets() {
-			IdentityHashMap<ArrayList<Wire>, Boolean> lists;
-			lists = new IdentityHashMap<ArrayList<Wire>, Boolean>();
+			IdentityHashMap<ArrayList<Wire>, Boolean> lists = new IdentityHashMap<>();
 			for (ArrayList<Wire> list : map.values()) 
 				lists.put(list, Boolean.TRUE);
 			
@@ -100,105 +93,76 @@ class WireRepair extends CircuitTransaction {
 				Iterator<?> atit = at.iterator();
 				Object at0 = atit.next();
 				Object at1 = atit.next();
-				if (at0 instanceof Wire && at1 instanceof Wire) {
-					Wire w0 = (Wire) at0;
-					Wire w1 = (Wire) at1;
-					if (w0.isParallel(w1)) {
-						sets.merge(w0, w1);
-					}
-				}
+				if (at0 instanceof Wire w0 && at1 instanceof Wire w1) if (w0.isParallel(w1)) sets.merge(w0, w1);
 			}
 		}
 
 		ReplacementMap repl = new ReplacementMap();
-		for (ArrayList<Wire> mergeSet : sets.getMergeSets()) {
+		for (ArrayList<Wire> mergeSet : sets.getMergeSets())
 			if (mergeSet.size() > 1) {
-				ArrayList<Location> locs = new ArrayList<Location>(2 * mergeSet.size());
+				ArrayList<Location> locs = new ArrayList<>(2 * mergeSet.size());
 				for (Wire w : mergeSet) {
 					locs.add(w.getEnd0());
 					locs.add(w.getEnd1());
 				}
 				Collections.sort(locs);
-				Location e0 = locs.get(0);
-				Location e1 = locs.get(locs.size() - 1);
+				Location e0 = locs.getFirst();
+				Location e1 = locs.getLast();
 				Wire wnew = Wire.create(e0, e1);
 				Collection<Wire> wset = Collections.singleton(wnew);
 
-				for (Wire w : mergeSet) {
-					if (!w.equals(wset)) {
-						repl.put(w, wset);
-					}
-				}
+				for (Wire w : mergeSet)
+					repl.put(w, wset);
 			}
-		}
 		mutator.replace(circuit, repl);
 	}
 
 	private void doOverlaps(CircuitMutator mutator) {
-		HashMap<Location, ArrayList<Wire>> wirePoints;
-		wirePoints = new HashMap<Location, ArrayList<Wire>>();
-		for (Wire w : circuit.getWires()) {
+		HashMap<Location, ArrayList<Wire>> wirePoints = new HashMap<>();
+		for (Wire w : circuit.getWires())
 			for (Location loc : w) {
-				ArrayList<Wire> locWires = wirePoints.get(loc);
-				if (locWires == null) {
-					locWires = new ArrayList<Wire>(3);
-					wirePoints.put(loc, locWires);
-				}
+				ArrayList<Wire> locWires = wirePoints.computeIfAbsent(loc, k -> new ArrayList<>(3));
 				locWires.add(w);
 			}
-		}
 
 		MergeSets mergeSets = new MergeSets();
-		for (ArrayList<Wire> locWires : wirePoints.values()) {
-			if (locWires.size() > 1) {
-				for (int i = 0, n = locWires.size(); i < n; i++) {
-					Wire w0 = locWires.get(i);
-					for (int j = i + 1; j < n; j++) {
-						Wire w1 = locWires.get(j);
-						if (w0.overlaps(w1, false)) {
-							mergeSets.merge(w0, w1);
-						}
-					}
+		for (ArrayList<Wire> locWires : wirePoints.values())
+			if (locWires.size() > 1) for (int i = 0, n = locWires.size(); i < n; i++) {
+				Wire w0 = locWires.get(i);
+				for (int j = i + 1; j < n; j++) {
+					Wire w1 = locWires.get(j);
+					if (w0.overlaps(w1, false)) mergeSets.merge(w0, w1);
 				}
 			}
-		}
 
 		ReplacementMap replacements = new ReplacementMap();
 		Set<Location> splitLocs = circuit.wires.points.getSplitLocations();
-		for (ArrayList<Wire> mergeSet : mergeSets.getMergeSets()) {
-			if (mergeSet.size() > 1) {
-				doMergeSet(mergeSet, replacements, splitLocs);
-			}
-		}
+		for (ArrayList<Wire> mergeSet : mergeSets.getMergeSets())
+			if (mergeSet.size() > 1) doMergeSet(mergeSet, replacements, splitLocs);
 		mutator.replace(circuit, replacements);
 	}
 
 	private void doMergeSet(ArrayList<Wire> mergeSet, ReplacementMap replacements, Set<Location> splitLocs) {
-		TreeSet<Location> ends = new TreeSet<Location>();
+		TreeSet<Location> ends = new TreeSet<>();
 		for (Wire w : mergeSet) {
 			ends.add(w.getEnd0());
 			ends.add(w.getEnd1());
 		}
 		Wire whole = Wire.create(ends.first(), ends.last());
 
-		TreeSet<Location> mids = new TreeSet<Location>();
+		TreeSet<Location> mids = new TreeSet<>();
 		mids.add(whole.getEnd0());
 		mids.add(whole.getEnd1());
-		for (Location loc : whole) {
-			if (splitLocs.contains(loc)) {
-				for (Component comp : circuit.getComponents(loc)) {
-					if (!mergeSet.contains(comp)) {
-						mids.add(loc);
-						break;
-					}
+		for (Location loc : whole)
+			if (splitLocs.contains(loc)) for (Component comp : circuit.getComponents(loc))
+				if (comp instanceof Wire w && !mergeSet.contains(w)) {
+					mids.add(loc);
+					break;
 				}
-			}
-		}
 
-		ArrayList<Wire> mergeResult = new ArrayList<Wire>();
-		if (mids.size() == 2) {
-			mergeResult.add(whole);
-		} else {
+		ArrayList<Wire> mergeResult = new ArrayList<>();
+		if (mids.size() == 2) mergeResult.add(whole);
+		else {
 			Location e0 = mids.first();
 			for (Location e1 : mids) {
 				mergeResult.add(Wire.create(e0, e1));
@@ -207,12 +171,8 @@ class WireRepair extends CircuitTransaction {
 		}
 
 		for (Wire w : mergeSet) {
-			ArrayList<Component> wRepl = new ArrayList<Component>(2);
-			for (Wire w2 : mergeResult) {
-				if (w2.overlaps(w, false)) {
-					wRepl.add(w2);
-				}
-			}
+			ArrayList<Component> wRepl = new ArrayList<>(2);
+			for (Wire w2 : mergeResult) if (w2.overlaps(w, false)) wRepl.add(w2);
 			replacements.put(w, wRepl);
 		}
 	}
@@ -224,18 +184,17 @@ class WireRepair extends CircuitTransaction {
 			Location w0 = w.getEnd0();
 			Location w1 = w.getEnd1();
 			ArrayList<Location> splits = null;
-			for (Location loc : splitLocs) {
+			for (Location loc : splitLocs)
 				if (w.contains(loc) && !loc.equals(w0) && !loc.equals(w1)) {
 					if (splits == null)
-						splits = new ArrayList<Location>();
+						splits = new ArrayList<>();
 					splits.add(loc);
 				}
-			}
 			if (splits != null) {
 				splits.add(w1);
 				Collections.sort(splits);
 				Location e0 = w0;
-				ArrayList<Wire> subs = new ArrayList<Wire>(splits.size());
+				ArrayList<Wire> subs = new ArrayList<>(splits.size());
 				for (Location e1 : splits) {
 					subs.add(Wire.create(e0, e1));
 					e0 = e1;

@@ -23,7 +23,7 @@ public class KeyConfigurationEvent {
 		this.attrs = attrs;
 		this.event = event;
 		this.data = data;
-		this.consumed = false;
+		consumed = false;
 	}
 
 	public int getType() {

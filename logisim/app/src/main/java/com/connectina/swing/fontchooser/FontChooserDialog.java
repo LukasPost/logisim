@@ -19,6 +19,8 @@
  */
 package com.connectina.swing.fontchooser;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,19 +29,24 @@ import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.WindowConstants;
 
 /**
  * A dialog containing a <code>JFontChooser</code> as well as OK and Cancel buttons.
  *
  * @author Christos Bohoris
  */
-class FontChooserDialog extends javax.swing.JDialog {
+class FontChooserDialog extends JDialog {
 
     private static final long serialVersionUID = -953666562985797384L;
 
-    private static final HashMap<Locale, ResourceBundle> bundles = new HashMap<Locale, ResourceBundle>();
+    private static final HashMap<Locale, ResourceBundle> bundles = new HashMap<>();
 
     private static ResourceBundle getBundle() {
         Locale loc = Locale.getDefault();
@@ -109,27 +116,28 @@ class FontChooserDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents(ResourceBundle bundle) {
 
-        basePanel = new javax.swing.JPanel();
-        chooserPanel = new javax.swing.JPanel();
-        chooserSeparator = new javax.swing.JSeparator();
-        controlPanel = new javax.swing.JPanel();
-        okButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
+		// Variables declaration - do not modify//GEN-BEGIN:variables
+		JPanel basePanel = new JPanel();
+		JPanel chooserPanel = new JPanel();
+		JSeparator chooserSeparator = new JSeparator();
+		JPanel controlPanel = new JPanel();
+        okButton = new JButton();
+        cancelButton = new JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(bundle.getString("window.title"));
 
-        basePanel.setLayout(new java.awt.BorderLayout());
+        basePanel.setLayout(new BorderLayout());
 
-        chooserPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(12, 12, 0, 11));
-        chooserPanel.setLayout(new java.awt.BorderLayout(0, 12));
-        chooserPanel.add(chooserSeparator, java.awt.BorderLayout.PAGE_END);
+        chooserPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 0, 11));
+        chooserPanel.setLayout(new BorderLayout(0, 12));
+        chooserPanel.add(chooserSeparator, BorderLayout.PAGE_END);
 
-        basePanel.add(chooserPanel, java.awt.BorderLayout.CENTER);
-        chooserPanel.add(chooserPane, java.awt.BorderLayout.CENTER);
+        basePanel.add(chooserPanel, BorderLayout.CENTER);
+        chooserPanel.add(chooserPane, BorderLayout.CENTER);
 
-        controlPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(7, 7, 6, 6));
-        controlPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        controlPanel.setBorder(BorderFactory.createEmptyBorder(7, 7, 6, 6));
+        controlPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         okButton.setMnemonic(bundle.getString("action.ok.mnemonic").charAt(0));
         okButton.setText(bundle.getString("action.ok"));
@@ -139,19 +147,14 @@ class FontChooserDialog extends javax.swing.JDialog {
         cancelButton.setText(bundle.getString("action.cancel"));
         controlPanel.add(cancelButton);
 
-        basePanel.add(controlPanel, java.awt.BorderLayout.SOUTH);
+        basePanel.add(controlPanel, BorderLayout.SOUTH);
 
-        getContentPane().add(basePanel, java.awt.BorderLayout.CENTER);
+        getContentPane().add(basePanel, BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel basePanel;
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JPanel chooserPanel;
-    private javax.swing.JSeparator chooserSeparator;
-    private javax.swing.JPanel controlPanel;
-    private javax.swing.JButton okButton;
+	private JButton cancelButton;
+	private JButton okButton;
     // End of variables declaration//GEN-END:variables
 }

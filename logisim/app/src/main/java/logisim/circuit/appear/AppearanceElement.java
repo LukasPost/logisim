@@ -26,12 +26,7 @@ public abstract class AppearanceElement extends AbstractCanvasObject {
 
 	@Override
 	public boolean matches(CanvasObject other) {
-		if (other instanceof AppearanceElement) {
-			AppearanceElement that = (AppearanceElement) other;
-			return this.location.equals(that.location);
-		} else {
-			return false;
-		}
+		return other instanceof AppearanceElement that && location.equals(that.location);
 	}
 
 	@Override
@@ -65,8 +60,8 @@ public abstract class AppearanceElement extends AbstractCanvasObject {
 	}
 
 	protected boolean isInCircle(Location loc, int radius) {
-		int dx = loc.getX() - location.getX();
-		int dy = loc.getY() - location.getY();
+		int dx = loc.x() - location.x();
+		int dy = loc.y() - location.y();
 		return dx * dx + dy * dy < radius * radius;
 	}
 
@@ -77,6 +72,6 @@ public abstract class AppearanceElement extends AbstractCanvasObject {
 	}
 
 	protected Bounds getBounds(int radius) {
-		return Bounds.create(location.getX() - radius, location.getY() - radius, 2 * radius, 2 * radius);
+		return Bounds.create(location.x() - radius, location.y() - radius, 2 * radius, 2 * radius);
 	}
 }

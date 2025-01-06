@@ -1,10 +1,6 @@
 /* Copyright (c) 2011, Carl Burch. License information is located in the
  * logisim.Main source code and at www.cburch.com/logisim/. */
 
-/**
- * Based on PUCTools (v0.9 beta) by CRC - PUC - Minas (pucmg.crc at gmail.com)
- */
-
 package logisim.std.wiring;
 
 import java.awt.Graphics2D;
@@ -45,9 +41,7 @@ public class Ground extends InstanceFactory {
 
 	@Override
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-		if (attr == StdAttr.FACING) {
-			instance.recomputeBounds();
-		}
+		if (attr == StdAttr.FACING) instance.recomputeBounds();
 	}
 
 	@Override
@@ -75,7 +69,7 @@ public class Ground extends InstanceFactory {
 	private void drawInstance(InstancePainter painter, boolean isGhost) {
 		Graphics2D g = (Graphics2D) painter.getGraphics().create();
 		Location loc = painter.getLocation();
-		g.translate(loc.getX(), loc.getY());
+		g.translate(loc.x(), loc.y());
 
 		Direction from = painter.getAttributeValue(StdAttr.FACING);
 		int degrees = Direction.East.toDegrees() - from.toDegrees();
@@ -83,9 +77,7 @@ public class Ground extends InstanceFactory {
 		g.rotate(radians);
 
 		GraphicsUtil.switchToWidth(g, Wire.WIDTH);
-		if (!isGhost && painter.getShowState()) {
-			g.setColor(painter.getPort(0).getColor());
-		}
+		if (!isGhost && painter.getShowState()) g.setColor(painter.getPort(0).getColor());
 		g.drawLine(0, 0, 5, 0);
 
 		GraphicsUtil.switchToWidth(g, 1);

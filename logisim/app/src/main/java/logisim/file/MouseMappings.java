@@ -6,6 +6,7 @@ package logisim.file;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Map;
 
@@ -16,8 +17,8 @@ import logisim.tools.SelectTool;
 import logisim.tools.Tool;
 
 public class MouseMappings {
-	public static interface MouseMappingsListener {
-		public void mouseMappingsChanged();
+	public interface MouseMappingsListener {
+		void mouseMappingsChanged();
 	}
 
 	private ArrayList<MouseMappingsListener> listeners;
@@ -26,8 +27,8 @@ public class MouseMappings {
 	private Tool cache_tool;
 
 	public MouseMappings() {
-		listeners = new ArrayList<MouseMappingsListener>();
-		map = new HashMap<Integer, Tool>();
+		listeners = new ArrayList<>();
+		map = new HashMap<>();
 	}
 
 	//
@@ -42,9 +43,7 @@ public class MouseMappings {
 	}
 
 	private void fireMouseMappingsChanged() {
-		for (MouseMappingsListener l : listeners) {
-			l.mouseMappingsChanged();
-		}
+		for (MouseMappingsListener l : listeners) l.mouseMappingsChanged();
 	}
 
 	//
@@ -63,10 +62,9 @@ public class MouseMappings {
 	}
 
 	public Tool getToolFor(int mods) {
-		if (mods == cache_mods) {
-			return cache_tool;
-		} else {
-			Tool ret = map.get(Integer.valueOf(mods));
+		if (mods == cache_mods) return cache_tool;
+		else {
+			Tool ret = map.get(mods);
 			cache_mods = mods;
 			cache_tool = ret;
 			return ret;
@@ -74,30 +72,24 @@ public class MouseMappings {
 	}
 
 	public Tool getToolFor(Integer mods) {
-		if (mods.intValue() == cache_mods) {
-			return cache_tool;
-		} else {
+		if (mods == cache_mods) return cache_tool;
+		else {
 			Tool ret = map.get(mods);
-			cache_mods = mods.intValue();
+			cache_mods = mods;
 			cache_tool = ret;
 			return ret;
 		}
 	}
 
 	public boolean usesToolFromSource(Tool query) {
-		for (Tool tool : map.values()) {
-			if (tool.sharesSource(query)) {
-				return true;
-			}
-		}
+		for (Tool tool : map.values()) if (tool.sharesSource(query)) return true;
 		return false;
 	}
 
 	public boolean containsSelectTool() {
-		for (Tool tool : map.values()) {
+		for (Tool tool : map.values())
 			if (tool instanceof SelectTool)
 				return true;
-		}
 		return false;
 	}
 
@@ -108,14 +100,14 @@ public class MouseMappings {
 		if (this == other)
 			return;
 		cache_mods = -1;
-		this.map.clear();
+		map.clear();
 		for (Integer mods : other.map.keySet()) {
 			Tool srcTool = other.map.get(mods);
 			Tool dstTool = file.findTool(srcTool);
 			if (dstTool != null) {
 				dstTool = dstTool.cloneTool();
 				AttributeSets.copy(srcTool.getAttributeSet(), dstTool.getAttributeSet());
-				this.map.put(mods, dstTool);
+				map.put(mods, dstTool);
 			}
 		}
 		fireMouseMappingsChanged();
@@ -130,18 +122,18 @@ public class MouseMappings {
 			cache_mods = -1;
 
 		if (tool == null) {
-			Object old = map.remove(Integer.valueOf(mods));
+			Object old = map.remove(mods);
 			if (old != null)
 				fireMouseMappingsChanged();
 		} else {
-			Object old = map.put(Integer.valueOf(mods), tool);
+			Object old = map.put(mods, tool);
 			if (old != tool)
 				fireMouseMappingsChanged();
 		}
 	}
 
 	public void setToolFor(Integer mods, Tool tool) {
-		if (mods.intValue() == cache_mods)
+		if (mods == cache_mods)
 			cache_mods = -1;
 
 		if (tool == null) {
@@ -160,35 +152,29 @@ public class MouseMappings {
 	//
 	void replaceAll(Map<Tool, Tool> toolMap) {
 		boolean changed = false;
-		for (Map.Entry<Integer, Tool> entry : map.entrySet()) {
+		for (Entry<Integer, Tool> entry : map.entrySet()) {
 			Integer key = entry.getKey();
 			Tool tool = entry.getValue();
 			if (tool instanceof AddTool at) {
 				ComponentFactory factory = at.getFactory();
-				if (toolMap.containsKey(factory)) {
+				Tool newTool = toolMap.get((Tool)factory);
+				if (newTool != null) {
 					changed = true;
-					Tool newTool = toolMap.get(factory);
-					if (newTool == null) {
-						map.remove(key);
-					} else {
-						Tool clone = newTool.cloneTool();
-						LoadedLibrary.copyAttributes(clone.getAttributeSet(), tool.getAttributeSet());
-						map.put(key, clone);
-					}
+					Tool clone = newTool.cloneTool();
+					LoadedLibrary.copyAttributes(clone.getAttributeSet(), tool.getAttributeSet());
+					map.put(key, clone);
 				}
-			} else {
-				if (toolMap.containsKey(tool)) {
-					changed = true;
-					Tool newTool = toolMap.get(tool);
-					if (newTool == null) {
-						map.remove(key);
-					} else {
-						Tool clone = newTool.cloneTool();
-						LoadedLibrary.copyAttributes(clone.getAttributeSet(), tool.getAttributeSet());
-						map.put(key, clone);
-					}
+			} else if (toolMap.containsKey(tool)) {
+				changed = true;
+				Tool newTool = toolMap.get(tool);
+				if (newTool == null) map.remove(key);
+				else {
+					Tool clone = newTool.cloneTool();
+					LoadedLibrary.copyAttributes(clone.getAttributeSet(), tool.getAttributeSet());
+					map.put(key, clone);
 				}
 			}
+
 		}
 		if (changed)
 			fireMouseMappingsChanged();

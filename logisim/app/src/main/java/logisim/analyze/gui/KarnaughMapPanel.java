@@ -11,6 +11,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.JPanel;
 
@@ -28,7 +29,7 @@ import logisim.util.GraphicsUtil;
 class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 	private static final Font HEAD_FONT = new Font("Serif", Font.BOLD, 14);
 	private static final Font BODY_FONT = new Font("Serif", Font.PLAIN, 14);
-	private static final Color[] IMP_COLORS = new Color[] { new Color(255, 0, 0, 128), new Color(0, 150, 0, 128),
+	private static final Color[] IMP_COLORS = { new Color(255, 0, 0, 128), new Color(0, 150, 0, 128),
 			new Color(0, 0, 255, 128), new Color(255, 0, 255, 128), };
 
 	private static final int MAX_VARS = 4;
@@ -42,9 +43,8 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 
 	private class MyListener implements OutputExpressionsListener, TruthTableListener {
 		public void expressionChanged(OutputExpressionsEvent event) {
-			if (event.getType() == OutputExpressionsEvent.OUTPUT_MINIMAL && event.getVariable().equals(output)) {
+			if (event.getType() == OutputExpressionsEvent.OUTPUT_MINIMAL && event.getVariable().equals(output))
 				repaint();
-			}
 		}
 
 		public void cellsChanged(TruthTableEvent event) {
@@ -57,7 +57,6 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 
 	}
 
-	private MyListener myListener = new MyListener();
 	private AnalyzerModel model;
 	private String output;
 	private int headHeight;
@@ -67,17 +66,18 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 	private int tableHeight;
 	private int provisionalX;
 	private int provisionalY;
-	private Entry provisionalValue = null;
+	private Entry provisionalValue;
 
 	public KarnaughMapPanel(AnalyzerModel model) {
 		this.model = model;
+		MyListener myListener = new MyListener();
 		model.getOutputExpressions().addOutputExpressionsListener(myListener);
 		model.getTruthTable().addTruthTableListener(myListener);
 		setToolTipText(" ");
 	}
 
 	public void setOutput(String value) {
-		boolean recompute = (output == null || value == null) && output != value;
+		boolean recompute = (output == null || value == null) && !Objects.equals(output, value);
 		output = value;
 		if (recompute)
 			computePreferredSize();
@@ -139,11 +139,8 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 		TruthTable table = model.getTruthTable();
 
 		String message = null;
-		if (output == null) {
-			message = Strings.get("karnaughNoOutputError");
-		} else if (table.getInputColumnCount() > MAX_VARS) {
-			message = Strings.get("karnaughTooManyInputsError");
-		}
+		if (output == null) message = Strings.get("karnaughNoOutputError");
+		else if (table.getInputColumnCount() > MAX_VARS) message = Strings.get("karnaughTooManyInputsError");
 		if (message != null) {
 			if (g == null) {
 				tableHeight = 15;
@@ -188,11 +185,8 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 		int inputCount = table.getInputColumnCount();
 		Dimension sz = getSize();
 		String message = null;
-		if (output == null) {
-			message = Strings.get("karnaughNoOutputError");
-		} else if (inputCount > MAX_VARS) {
-			message = Strings.get("karnaughTooManyInputsError");
-		}
+		if (output == null) message = Strings.get("karnaughNoOutputError");
+		else if (inputCount > MAX_VARS) message = Strings.get("karnaughTooManyInputsError");
 		if (message != null) {
 			g.setFont(BODY_FONT);
 			GraphicsUtil.drawCenteredText(g, message, sz.width / 2, sz.height / 2);
@@ -212,8 +206,8 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 		FontMetrics headFm = g.getFontMetrics();
 		String rowHeader = header(0, rowVars);
 		String colHeader = header(rowVars, rowVars + colVars);
-		int xoffs = (tableWidth + headHeight + cellWidth - headFm.stringWidth(colHeader)) / 2;
-		g.drawString(colHeader, x + xoffs, y + headFm.getAscent());
+		int xOffset = (tableWidth + headHeight + cellWidth - headFm.stringWidth(colHeader)) / 2;
+		g.drawString(colHeader, x + xOffset, y + headFm.getAscent());
 		int headerWidth = headFm.stringWidth(rowHeader);
 		if (headerWidth <= headHeight) {
 			int headX = x + (headHeight - headerWidth) / 2;
@@ -221,9 +215,9 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 			g.drawString(rowHeader, headX, headY);
 		} else if (g instanceof Graphics2D) {
 			Graphics2D g2 = (Graphics2D) g.create();
-			int yoffs = (tableHeight + headHeight + cellHeight + headerWidth) / 2;
+			int yOffset = (tableHeight + headHeight + cellHeight + headerWidth) / 2;
 			int headX = x + headFm.getAscent();
-			int headY = y + yoffs;
+			int headY = y + yOffset;
 			g2.rotate(-Math.PI / 2.0);
 			g2.drawString(rowHeader, -headY, headX);
 			g2.dispose();
@@ -247,17 +241,14 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 		x += cellWidth;
 		y += cellHeight;
 		g.setColor(ERROR_COLOR);
-		for (int i = 0; i < rows; i++) {
+		for (int i = 0; i < rows; i++)
 			for (int j = 0; j < cols; j++) {
 				int row = getTableRow(i, j, rows, cols);
 				Entry entry = table.getOutputEntry(row, outputColumn);
 				if (provisionalValue != null && row == provisionalY && outputColumn == provisionalX)
 					entry = provisionalValue;
-				if (entry.isError()) {
-					g.fillRect(x + j * cellWidth, y + i * cellHeight, cellWidth, cellHeight);
-				}
+				if (entry.isError()) g.fillRect(x + j * cellWidth, y + i * cellHeight, cellWidth, cellHeight);
 			}
-		}
 
 		List<Implicant> implicants = model.getOutputExpressions().getMinimalImplicants(output);
 		if (implicants != null) {
@@ -278,7 +269,7 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 			return;
 
 		g.setColor(Color.BLACK);
-		for (int i = 0; i < rows; i++) {
+		for (int i = 0; i < rows; i++)
 			for (int j = 0; j < cols; j++) {
 				int row = getTableRow(i, j, rows, cols);
 				if (provisionalValue != null && row == provisionalY && outputColumn == provisionalX) {
@@ -287,14 +278,14 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 					g.drawString(text, x + j * cellWidth + (cellWidth - fm.stringWidth(text)) / 2,
 							y + i * cellHeight + dy);
 					g.setColor(Color.BLACK);
-				} else {
+				}
+				else {
 					Entry entry = table.getOutputEntry(row, outputColumn);
 					String text = entry.getDescription();
 					g.drawString(text, x + j * cellWidth + (cellWidth - fm.stringWidth(text)) / 2,
 							y + i * cellHeight + dy);
 				}
 			}
-		}
 	}
 
 	private void paintImplicant(Graphics g, Implicant imp, int x, int y, int rows, int cols) {
@@ -306,8 +297,8 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 		int count = 0;
 		for (Implicant sq : imp.getTerms()) {
 			int tableRow = sq.getRow();
-			int row = getRow(tableRow, rows, cols);
-			int col = getCol(tableRow, rows, cols);
+			int row = getRow(tableRow, cols);
+			int col = getCol(tableRow, cols);
 			if (row == 1)
 				oneRowFound = true;
 			if (row > rowMax)
@@ -325,33 +316,33 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 		int numRows = rowMax - rowMin + 1;
 		int covered = numCols * numRows;
 		int d = 2 * IMP_RADIUS;
-		if (covered == count) {
-			g.fillRoundRect(x + colMin * cellWidth + IMP_INSET, y + rowMin * cellHeight + IMP_INSET,
-					numCols * cellWidth - 2 * IMP_INSET, numRows * cellHeight - 2 * IMP_INSET, d, d);
-		} else if (covered == 16) {
-			if (count == 4) {
-				int w = cellWidth - IMP_INSET;
-				int h = cellHeight - IMP_INSET;
-				int x1 = x + 3 * cellWidth + IMP_INSET;
-				int y1 = y + 3 * cellHeight + IMP_INSET;
-				g.fillRoundRect(x, y, w, h, d, d);
-				g.fillRoundRect(x1, y, w, h, d, d);
-				g.fillRoundRect(x, y1, w, h, d, d);
-				g.fillRoundRect(x1, y1, w, h, d, d);
-			} else if (oneRowFound) { // first and last columns
-				int w = cellWidth - IMP_INSET;
-				int h = 4 * cellHeight - 2 * IMP_INSET;
-				int x1 = x + 3 * cellWidth + IMP_INSET;
-				g.fillRoundRect(x, y + IMP_INSET, w, h, d, d);
-				g.fillRoundRect(x1, y + IMP_INSET, w, h, d, d);
-			} else { // first and last rows
-				int w = 4 * cellWidth - 2 * IMP_INSET;
-				int h = cellHeight - IMP_INSET;
-				int y1 = y + 3 * cellHeight + IMP_INSET;
-				g.fillRoundRect(x + IMP_INSET, y, w, h, d, d);
-				g.fillRoundRect(x + IMP_INSET, y1, w, h, d, d);
-			}
-		} else if (numCols == 4) {
+		if (covered == count) g.fillRoundRect(x + colMin * cellWidth + IMP_INSET, y + rowMin * cellHeight + IMP_INSET,
+				numCols * cellWidth - 2 * IMP_INSET, numRows * cellHeight - 2 * IMP_INSET, d, d);
+		else if (covered == 16) if (count == 4) {
+			int w = cellWidth - IMP_INSET;
+			int h = cellHeight - IMP_INSET;
+			int x1 = x + 3 * cellWidth + IMP_INSET;
+			int y1 = y + 3 * cellHeight + IMP_INSET;
+			g.fillRoundRect(x, y, w, h, d, d);
+			g.fillRoundRect(x1, y, w, h, d, d);
+			g.fillRoundRect(x, y1, w, h, d, d);
+			g.fillRoundRect(x1, y1, w, h, d, d);
+		}
+		else if (oneRowFound) { // first and last columns
+			int w = cellWidth - IMP_INSET;
+			int h = 4 * cellHeight - 2 * IMP_INSET;
+			int x1 = x + 3 * cellWidth + IMP_INSET;
+			g.fillRoundRect(x, y + IMP_INSET, w, h, d, d);
+			g.fillRoundRect(x1, y + IMP_INSET, w, h, d, d);
+		}
+		else { // first and last rows
+			int w = 4 * cellWidth - 2 * IMP_INSET;
+			int h = cellHeight - IMP_INSET;
+			int y1 = y + 3 * cellHeight + IMP_INSET;
+			g.fillRoundRect(x + IMP_INSET, y, w, h, d, d);
+			g.fillRoundRect(x + IMP_INSET, y1, w, h, d, d);
+		}
+		else if (numCols == 4) {
 			int top = y + rowMin * cellHeight + IMP_INSET;
 			int w = cellWidth - IMP_INSET;
 			int h = numRows * cellHeight - 2 * IMP_INSET;
@@ -422,42 +413,31 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 	}
 
 	private int toRow(int row, int rows) {
-		if (rows == 4) {
-			switch (row) {
-			case 2:
-				return 3;
-			case 3:
-				return 2;
-			default:
-				return row;
-			}
-		} else {
+		if (rows != 4)
 			return row;
-		}
+		return switch (row) {
+			case 2 -> 3;
+			case 3 -> 2;
+			default -> row;
+		};
 	}
 
-	private int getRow(int tableRow, int rows, int cols) {
+	private int getRow(int tableRow, int cols) {
 		int ret = tableRow / cols;
-		switch (ret) {
-		case 2:
-			return 3;
-		case 3:
-			return 2;
-		default:
-			return ret;
-		}
+		return switch (ret) {
+			case 2 -> 3;
+			case 3 -> 2;
+			default -> ret;
+		};
 	}
 
-	private int getCol(int tableRow, int rows, int cols) {
+	private int getCol(int tableRow, int cols) {
 		int ret = tableRow % cols;
-		switch (ret) {
-		case 2:
-			return 3;
-		case 3:
-			return 2;
-		default:
-			return ret;
-		}
+		return switch (ret) {
+			case 2 -> 3;
+			case 3 -> 2;
+			default -> ret;
+		};
 	}
 
 	private int computeMargin(int compDim, int tableDim) {

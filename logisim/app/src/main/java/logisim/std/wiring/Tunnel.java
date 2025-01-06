@@ -47,15 +47,13 @@ public class Tunnel extends InstanceFactory {
 	public Bounds getOffsetBounds(AttributeSet attrsBase) {
 		TunnelAttributes attrs = (TunnelAttributes) attrsBase;
 		Bounds bds = attrs.getOffsetBounds();
-		if (bds != null) {
-			return bds;
-		} else {
+		if (bds == null) {
 			int ht = attrs.getFont().getSize();
 			int wd = ht * attrs.getLabel().length() / 2;
 			bds = computeBounds(attrs, wd, ht, null, "");
 			attrs.setOffsetBounds(bds);
-			return bds;
 		}
+		return bds;
 	}
 
 	//
@@ -128,8 +126,8 @@ public class Tunnel extends InstanceFactory {
 	@Override
 	public void paintInstance(InstancePainter painter) {
 		Location loc = painter.getLocation();
-		int x = loc.getX();
-		int y = loc.getY();
+		int x = loc.x();
+		int y = loc.y();
 		Graphics g = painter.getGraphics();
 		g.translate(x, y);
 		g.setColor(Color.BLACK);
@@ -153,14 +151,12 @@ public class Tunnel extends InstanceFactory {
 		if (attr == StdAttr.FACING) {
 			configureLabel(instance);
 			instance.recomputeBounds();
-		} else if (attr == StdAttr.LABEL || attr == StdAttr.LABEL_FONT) {
-			instance.recomputeBounds();
-		}
+		} else if (attr == StdAttr.LABEL || attr == StdAttr.LABEL_FONT) instance.recomputeBounds();
 	}
 
 	@Override
 	public void propagate(InstanceState state) {
-		; // nothing to do - handled by circuit
+		// nothing to do - handled by circuit
 	}
 
 	//
@@ -169,8 +165,8 @@ public class Tunnel extends InstanceFactory {
 	private void configureLabel(Instance instance) {
 		TunnelAttributes attrs = (TunnelAttributes) instance.getAttributeSet();
 		Location loc = instance.getLocation();
-		instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, loc.getX() + attrs.getLabelX(),
-				loc.getY() + attrs.getLabelY(), attrs.getLabelHAlign(), attrs.getLabelVAlign());
+		instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, loc.x() + attrs.getLabelX(),
+				loc.y() + attrs.getLabelY(), attrs.getLabelHAlign(), attrs.getLabelVAlign());
 	}
 
 	private Bounds computeBounds(TunnelAttributes attrs, int textWidth, int textHeight, Graphics g, String label) {
@@ -182,33 +178,19 @@ public class Tunnel extends InstanceFactory {
 		int minDim = ARROW_MIN_WIDTH - 2 * MARGIN;
 		int bw = Math.max(minDim, textWidth);
 		int bh = Math.max(minDim, textHeight);
-		int bx;
-		int by;
-		switch (halign) {
-		case TextField.H_LEFT:
-			bx = x;
-			break;
-		case TextField.H_RIGHT:
-			bx = x - bw;
-			break;
-		default:
-			bx = x - (bw / 2);
-		}
-		switch (valign) {
-		case TextField.V_TOP:
-			by = y;
-			break;
-		case TextField.V_BOTTOM:
-			by = y - bh;
-			break;
-		default:
-			by = y - (bh / 2);
-		}
+		int bx = switch (halign) {
+			case TextField.H_LEFT -> x;
+			case TextField.H_RIGHT -> x - bw;
+			default -> x - (bw / 2);
+		};
+		int by = switch (valign) {
+			case TextField.V_TOP -> y;
+			case TextField.V_BOTTOM -> y - bh;
+			default -> y - (bh / 2);
+		};
 
-		if (g != null) {
-			GraphicsUtil.drawText(g, label, bx + bw / 2, by + bh / 2, GraphicsUtil.H_CENTER,
-					GraphicsUtil.V_CENTER_OVERALL);
-		}
+		if (g != null) GraphicsUtil.drawText(g, label, bx + bw / 2, by + bh / 2, GraphicsUtil.H_CENTER,
+				GraphicsUtil.V_CENTER_OVERALL);
 
 		return Bounds.create(bx, by, bw, bh).expand(MARGIN).add(0, 0);
 	}

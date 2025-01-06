@@ -29,12 +29,13 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
-import logisim.file.MouseMappings;
+import logisim.file.MouseMappings.MouseMappingsListener;
 import logisim.gui.generic.AttrTable;
 import logisim.gui.generic.AttrTableModel;
 import logisim.gui.main.AttrTableToolModel;
 import logisim.gui.main.ProjectExplorer;
 import logisim.gui.main.ProjectExplorer.Event;
+import logisim.gui.main.ProjectExplorer.Listener;
 import logisim.proj.Project;
 import logisim.tools.AddTool;
 import logisim.tools.Tool;
@@ -82,7 +83,7 @@ class MouseOptions extends OptionsPanel {
 	}
 
 	private class MyListener implements ActionListener, MouseListener, ListSelectionListener,
-			MouseMappings.MouseMappingsListener, ProjectExplorer.Listener {
+			MouseMappingsListener, Listener {
 		//
 		// ActionListener method
 		//
@@ -112,7 +113,7 @@ class MouseOptions extends OptionsPanel {
 		public void mousePressed(MouseEvent e) {
 			if (e.getSource() == addArea && curTool != null) {
 				Tool t = curTool.cloneTool();
-				Integer mods = Integer.valueOf(e.getModifiersEx());
+				Integer mods = e.getModifiersEx();
 				getProject().doAction(OptionsActions.setMapping(getOptions().getMouseMappings(), mods, t));
 				setSelectedRow(model.getRow(mods));
 			}
@@ -134,11 +135,8 @@ class MouseOptions extends OptionsPanel {
 				Tool tool = model.getTool(row);
 				Project proj = getProject();
 				AttrTableModel model;
-				if (tool.getAttributeSet() == null) {
-					model = null;
-				} else {
-					model = new AttrTableToolModel(proj, tool);
-				}
+				if (tool.getAttributeSet() == null) model = null;
+				else model = new AttrTableToolModel(proj, tool);
 				attrTable.setAttrTableModel(model);
 			}
 		}
@@ -155,11 +153,8 @@ class MouseOptions extends OptionsPanel {
 		//
 		public void selectionChanged(Event event) {
 			Object target = event.getTarget();
-			if (target instanceof Tool) {
-				setCurrentTool((Tool) event.getTarget());
-			} else {
-				setCurrentTool(null);
-			}
+			if (target instanceof Tool) setCurrentTool((Tool) event.getTarget());
+			else setCurrentTool(null);
 		}
 
 		public void doubleClicked(Event event) {
@@ -186,7 +181,7 @@ class MouseOptions extends OptionsPanel {
 		// AbstractTableModel methods
 		@Override
 		public void fireTableStructureChanged() {
-			cur_keys = new ArrayList<Integer>(getOptions().getMouseMappings().getMappedModifiers());
+			cur_keys = new ArrayList<>(getOptions().getMouseMappings().getMappedModifiers());
 			Collections.sort(cur_keys);
 			super.fireTableStructureChanged();
 		}
@@ -201,9 +196,8 @@ class MouseOptions extends OptionsPanel {
 
 		public Object getValueAt(int row, int column) {
 			Integer key = cur_keys.get(row);
-			if (column == 0) {
-				return InputEventUtil.toDisplayString(key.intValue());
-			} else {
+			if (column == 0) return InputEventUtil.toDisplayString(key);
+			else {
 				Tool tool = getOptions().getMouseMappings().getToolFor(key);
 				return tool.getDisplayName();
 			}
@@ -223,17 +217,13 @@ class MouseOptions extends OptionsPanel {
 
 		int getRow(Integer mods) {
 			int row = Collections.binarySearch(cur_keys, mods);
-			if (row < 0)
-				row = -(row + 1);
-			return row;
+			return row < 0 ? -(row + 1) : row;
 		}
 	}
 
-	private MyListener listener = new MyListener();
-	private Tool curTool = null;
+	private Tool curTool;
 	private MappingsModel model;
 
-	private ProjectExplorer explorer;
 	private JPanel addArea = new AddArea();
 	private JTable mappings = new JTable();
 	private AttrTable attrTable;
@@ -242,7 +232,8 @@ class MouseOptions extends OptionsPanel {
 	public MouseOptions(OptionsFrame window) {
 		super(window, new GridLayout(1, 3));
 
-		explorer = new ProjectExplorer(getProject());
+		ProjectExplorer explorer = new ProjectExplorer(getProject());
+		MyListener listener = new MyListener();
 		explorer.setListener(listener);
 
 		// Area for adding mappings
@@ -329,8 +320,6 @@ class MouseOptions extends OptionsPanel {
 			row = 0;
 		if (row >= model.getRowCount())
 			row = model.getRowCount() - 1;
-		if (row >= 0) {
-			mappings.getSelectionModel().setSelectionInterval(row, row);
-		}
+		if (row >= 0) mappings.getSelectionModel().setSelectionInterval(row, row);
 	}
 }

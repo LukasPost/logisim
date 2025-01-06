@@ -5,6 +5,7 @@ package logisim.gui.main;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import logisim.data.Attribute;
 import logisim.data.AttributeSet;
@@ -31,7 +32,7 @@ public class ToolAttributeAction extends Action {
 
 	private ToolAttributeAction(KeyConfigurationResult config) {
 		this.config = config;
-		this.oldValues = new HashMap<Attribute<?>, Object>(2);
+		oldValues = new HashMap<>(2);
 	}
 
 	@Override
@@ -43,8 +44,8 @@ public class ToolAttributeAction extends Action {
 	public void doIt(Project proj) {
 		AttributeSet attrs = config.getEvent().getAttributeSet();
 		Map<Attribute<?>, Object> newValues = config.getAttributeValues();
-		Map<Attribute<?>, Object> oldValues = new HashMap<Attribute<?>, Object>(newValues.size());
-		for (Map.Entry<Attribute<?>, Object> entry : newValues.entrySet()) {
+		Map<Attribute<?>, Object> oldValues = new HashMap<>(newValues.size());
+		for (Entry<Attribute<?>, Object> entry : newValues.entrySet()) {
 			@SuppressWarnings("unchecked")
 			Attribute<Object> attr = (Attribute<Object>) entry.getKey();
 			oldValues.put(attr, attrs.getValue(attr));
@@ -57,7 +58,7 @@ public class ToolAttributeAction extends Action {
 	public void undo(Project proj) {
 		AttributeSet attrs = config.getEvent().getAttributeSet();
 		Map<Attribute<?>, Object> oldValues = this.oldValues;
-		for (Map.Entry<Attribute<?>, Object> entry : oldValues.entrySet()) {
+		for (Entry<Attribute<?>, Object> entry : oldValues.entrySet()) {
 			@SuppressWarnings("unchecked")
 			Attribute<Object> attr = (Attribute<Object>) entry.getKey();
 			attrs.setValue(attr, entry.getValue());

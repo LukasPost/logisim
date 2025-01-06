@@ -4,5 +4,5 @@
 package logisim.util;
 
 public interface StringGetter {
-	public String get();
+	String get();
 }

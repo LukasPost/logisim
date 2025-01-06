@@ -88,7 +88,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 
 		private void configure(JInputComponent input) {
 			this.input = input;
-			this.value = input.getValue();
+			value = input.getValue();
 
 			// Thanks to Christophe Jacquet, who contributed a fix to this
 			// so that when the dialog is resized, the component within it
@@ -118,7 +118,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 
 		TableModelAdapter(Window parent, AttrTableModel attrModel) {
 			this.parent = parent;
-			this.listeners = new LinkedList<TableModelListener>();
+			listeners = new LinkedList<>();
 			this.attrModel = attrModel;
 		}
 
@@ -144,9 +144,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 
 		void fireTableChanged() {
 			TableModelEvent e = new TableModelEvent(this);
-			for (TableModelListener l : new ArrayList<TableModelListener>(listeners)) {
-				l.tableChanged(e);
-			}
+			for (TableModelListener l : new ArrayList<>(listeners)) l.tableChanged(e);
 		}
 
 		public int getColumnCount() {
@@ -169,11 +167,8 @@ public class AttrTable extends JPanel implements LocaleListener {
 		}
 
 		public Object getValueAt(int rowIndex, int columnIndex) {
-			if (columnIndex == 0) {
-				return attrModel.getRow(rowIndex).getLabel();
-			} else {
-				return attrModel.getRow(rowIndex).getValue();
-			}
+			if (columnIndex == 0) return attrModel.getRow(rowIndex).getLabel();
+			else return attrModel.getRow(rowIndex).getValue();
 		}
 
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -181,14 +176,11 @@ public class AttrTable extends JPanel implements LocaleListener {
 		}
 
 		public void setValueAt(Object value, int rowIndex, int columnIndex) {
-			if (columnIndex > 0) {
-				try {
-					attrModel.getRow(rowIndex).setValue(value);
-				}
-				catch (AttrTableSetException e) {
-					JOptionPane.showMessageDialog(parent, e.getMessage(), Strings.get("attributeChangeInvalidTitle"),
-							JOptionPane.WARNING_MESSAGE);
-				}
+			if (columnIndex > 0) try {
+				attrModel.getRow(rowIndex).setValue(value);
+			} catch (AttrTableSetException e) {
+				JOptionPane.showMessageDialog(parent, e.getMessage(), Strings.get("attributeChangeInvalidTitle"),
+						JOptionPane.WARNING_MESSAGE);
 			}
 		}
 
@@ -221,7 +213,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 	}
 
 	private class CellEditor implements TableCellEditor, FocusListener, ActionListener {
-		LinkedList<CellEditorListener> listeners = new LinkedList<CellEditorListener>();
+		LinkedList<CellEditorListener> listeners = new LinkedList<>();
 		Component currentEditor;
 
 		//
@@ -240,16 +232,12 @@ public class AttrTable extends JPanel implements LocaleListener {
 
 		public void fireEditingCanceled() {
 			ChangeEvent e = new ChangeEvent(AttrTable.this);
-			for (CellEditorListener l : new ArrayList<CellEditorListener>(listeners)) {
-				l.editingCanceled(e);
-			}
+			for (CellEditorListener l : new ArrayList<>(listeners)) l.editingCanceled(e);
 		}
 
 		public void fireEditingStopped() {
 			ChangeEvent e = new ChangeEvent(AttrTable.this);
-			for (CellEditorListener l : new ArrayList<CellEditorListener>(listeners)) {
-				l.editingStopped(e);
-			}
+			for (CellEditorListener l : new ArrayList<>(listeners)) l.editingStopped(e);
 		}
 
 		//
@@ -271,13 +259,9 @@ public class AttrTable extends JPanel implements LocaleListener {
 		public Object getCellEditorValue() {
 			// Returns the value contained in the editor.
 			Component comp = currentEditor;
-			if (comp instanceof JTextField) {
-				return ((JTextField) comp).getText();
-			} else if (comp instanceof JComboBox) {
-				return ((JComboBox<?>) comp).getSelectedItem();
-			} else {
-				return null;
-			}
+			if (comp instanceof JTextField) return ((JTextField) comp).getText();
+			else if (comp instanceof JComboBox) return ((JComboBox<?>) comp).getSelectedItem();
+			else return null;
 		}
 
 		public boolean isCellEditable(EventObject anEvent) {
@@ -296,9 +280,8 @@ public class AttrTable extends JPanel implements LocaleListener {
 			AttrTableModel attrModel = tableModel.attrModel;
 			AttrTableModelRow row = attrModel.getRow(rowIndex);
 
-			if (columnIndex == 0) {
-				return new JLabel(row.getLabel());
-			} else {
+			if (columnIndex == 0) return new JLabel(row.getLabel());
+			else {
 				if (currentEditor != null)
 					currentEditor.transferFocus();
 
@@ -306,15 +289,11 @@ public class AttrTable extends JPanel implements LocaleListener {
 				if (editor instanceof JComboBox) {
 					((JComboBox<?>) editor).addActionListener(this);
 					editor.addFocusListener(this);
-				} else if (editor instanceof JInputComponent) {
-					JInputComponent input = (JInputComponent) editor;
+				} else if (editor instanceof JInputComponent input) {
 					MyDialog dlog;
 					Window parent = AttrTable.this.parent;
-					if (parent instanceof Frame) {
-						dlog = new MyDialog((Frame) parent, input);
-					} else {
-						dlog = new MyDialog((Dialog) parent, input);
-					}
+					if (parent instanceof Frame) dlog = new MyDialog((Frame) parent, input);
+					else dlog = new MyDialog((Dialog) parent, input);
 					dlog.setVisible(true);
 					Object retval = dlog.getValue();
 					try {
@@ -325,9 +304,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 								Strings.get("attributeChangeInvalidTitle"), JOptionPane.WARNING_MESSAGE);
 					}
 					editor = new JLabel(row.getValue());
-				} else {
-					editor.addFocusListener(this);
-				}
+				} else editor.addFocusListener(this);
 				currentEditor = editor;
 				return editor;
 			}
@@ -338,14 +315,11 @@ public class AttrTable extends JPanel implements LocaleListener {
 		//
 		public void focusLost(FocusEvent e) {
 			Object dst = e.getOppositeComponent();
-			if (dst instanceof Component) {
-				Component p = (Component) dst;
+			if (dst instanceof Component p) {
 				while (p != null && !(p instanceof Window)) {
-					if (p == AttrTable.this) {
-						// switch to another place in this table,
-						// no problem
-						return;
-					}
+					// switch to another place in this table,
+					// no problem
+					if (p == AttrTable.this) return;
 					p = p.getParent();
 				}
 				// focus transferred outside table; stop editing
@@ -394,14 +368,12 @@ public class AttrTable extends JPanel implements LocaleListener {
 		setBackground(bgColor);
 		table.setBackground(bgColor);
 		Object renderer = table.getDefaultRenderer(String.class);
-		if (renderer instanceof JComponent) {
-			((JComponent) renderer).setBackground(Color.WHITE);
-		}
+		if (renderer instanceof JComponent) ((JComponent) renderer).setBackground(Color.WHITE);
 
 		JScrollPane tableScroll = new JScrollPane(table);
 
-		this.add(title, BorderLayout.PAGE_START);
-		this.add(tableScroll, BorderLayout.CENTER);
+		add(title, BorderLayout.PAGE_START);
+		add(tableScroll, BorderLayout.CENTER);
 		LocaleManager.addLocaleListener(this);
 		localeChanged();
 	}
@@ -432,14 +404,11 @@ public class AttrTable extends JPanel implements LocaleListener {
 	private void updateTitle() {
 		if (titleEnabled) {
 			String text = tableModel.attrModel.getTitle();
-			if (text == null) {
-				title.setVisible(false);
-			} else {
+			if (text == null) title.setVisible(false);
+			else {
 				title.setText(text);
 				title.setVisible(true);
 			}
-		} else {
-			title.setVisible(false);
-		}
+		} else title.setVisible(false);
 	}
 }

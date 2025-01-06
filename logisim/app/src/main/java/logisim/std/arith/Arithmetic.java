@@ -21,7 +21,7 @@ public class Arithmetic extends Library {
 			new FactoryDescription("BitAdder", Strings.getter("bitAdderComponent"), "bitadder.gif", "BitAdder"),
 			new FactoryDescription("BitFinder", Strings.getter("bitFinderComponent"), "bitfindr.gif", "BitFinder"), };
 
-	private List<Tool> tools = null;
+	private List<Tool> tools;
 
 	public Arithmetic() {
 	}
@@ -38,9 +38,7 @@ public class Arithmetic extends Library {
 
 	@Override
 	public List<Tool> getTools() {
-		if (tools == null) {
-			tools = FactoryDescription.getTools(Arithmetic.class, DESCRIPTIONS);
-		}
+		if (tools == null) tools = FactoryDescription.getTools(Arithmetic.class, DESCRIPTIONS);
 		return tools;
 	}
 }

@@ -3,6 +3,7 @@
 
 package logisim.data;
 
+import java.awt.Component;
 import java.awt.Window;
 
 import javax.swing.JTextField;
@@ -31,11 +32,11 @@ public abstract class Attribute<V> {
 		return disp.get();
 	}
 
-	public java.awt.Component getCellEditor(Window source, V value) {
+	public Component getCellEditor(Window source, V value) {
 		return getCellEditor(value);
 	}
 
-	protected java.awt.Component getCellEditor(V value) {
+	protected Component getCellEditor(V value) {
 		return new JTextField(toDisplayString(value));
 	}
 

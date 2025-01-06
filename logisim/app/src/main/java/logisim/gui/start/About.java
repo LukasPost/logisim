@@ -66,7 +66,7 @@ public class About {
 		private Value upper = Value.FALSE;
 		private Value lower = Value.TRUE;
 		private AboutCredits credits;
-		private PanelThread thread = null;
+		private PanelThread thread;
 
 		public MyPanel() {
 			setLayout(null);
@@ -99,10 +99,7 @@ public class About {
 		}
 
 		private void drawCircuit(Graphics g, int x0, int y0) {
-			if (g instanceof Graphics2D) {
-				Graphics2D g2 = (Graphics2D) g;
-				g2.setStroke(new BasicStroke(5.0f));
-			}
+			if (g instanceof Graphics2D g2) g2.setStroke(new BasicStroke(5.0f));
 			drawWires(g, x0, y0);
 			g.setColor(gateColor);
 			drawNot(g, x0, y0, 70, 10);
@@ -118,12 +115,10 @@ public class About {
 			Value upperAnd = upperNot.and(lower);
 			Value lowerAnd = lowerNot.and(upper);
 			Value out = upperAnd.or(lowerAnd);
-			int x;
-			int y;
 
 			g.setColor(upper.getColor());
-			x = toX(x0, 20);
-			y = toY(y0, 10);
+			int x = toX(x0, 20);
+			int y = toY(y0, 10);
 			g.fillOval(x - 7, y - 7, 14, 14);
 			g.drawLine(toX(x0, 0), y, toX(x0, 40), y);
 			g.drawLine(x, y, x, toY(y0, 70));
@@ -217,15 +212,13 @@ public class About {
 		}
 
 		private void drawText(Graphics g, int x, int y) {
-			FontMetrics fm;
-			String str;
 
 			g.setColor(headerColor);
 			g.setFont(headerFont);
 			g.drawString("Logisim", x, y + 45);
 			g.setFont(copyrightFont);
-			fm = g.getFontMetrics();
-			str = "\u00a9 " + Main.COPYRIGHT_YEAR;
+			FontMetrics fm = g.getFontMetrics();
+			String str = "© " + Main.COPYRIGHT_YEAR;
 			g.drawString(str, x + IMAGE_WIDTH - fm.stringWidth(str), y + 16);
 			g.setFont(versionFont);
 			fm = g.getFontMetrics();
@@ -241,9 +234,7 @@ public class About {
 		}
 
 		public void ancestorRemoved(AncestorEvent arg0) {
-			if (thread != null) {
-				thread.running = false;
-			}
+			if (thread != null) thread.running = false;
 		}
 
 		public void ancestorMoved(AncestorEvent arg0) {
@@ -253,12 +244,12 @@ public class About {
 	private About() {
 	}
 
-	public static MyPanel getImagePanel() {
+	public static JPanel getImagePanel() {
 		return new MyPanel();
 	}
 
 	public static void showAboutDialog(JFrame owner) {
-		MyPanel imgPanel = getImagePanel();
+		MyPanel imgPanel = new MyPanel();
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(imgPanel);
 		panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));

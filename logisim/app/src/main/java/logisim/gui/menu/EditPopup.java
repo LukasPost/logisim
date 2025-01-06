@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -15,12 +16,11 @@ public abstract class EditPopup extends JPopupMenu {
 	private class Listener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			Object source = e.getSource();
-			for (Map.Entry<LogisimMenuItem, JMenuItem> entry : items.entrySet()) {
+			for (Entry<LogisimMenuItem, JMenuItem> entry : items.entrySet())
 				if (entry.getValue() == source) {
 					fire(entry.getKey());
 					return;
 				}
-			}
 		}
 	}
 
@@ -33,7 +33,7 @@ public abstract class EditPopup extends JPopupMenu {
 
 	public EditPopup(boolean waitForInitialize) {
 		listener = new Listener();
-		items = new HashMap<LogisimMenuItem, JMenuItem>();
+		items = new HashMap<>();
 		if (!waitForInitialize)
 			initialize();
 	}
@@ -42,29 +42,18 @@ public abstract class EditPopup extends JPopupMenu {
 		boolean x = false;
 		x |= add(LogisimMenuBar.CUT, Strings.get("editCutItem"));
 		x |= add(LogisimMenuBar.COPY, Strings.get("editCopyItem"));
-		if (x) {
-			addSeparator();
-			x = false;
-		}
-		x |= add(LogisimMenuBar.DELETE, Strings.get("editClearItem"));
+		if (x) addSeparator();
+		x = add(LogisimMenuBar.DELETE, Strings.get("editClearItem"));
 		x |= add(LogisimMenuBar.DUPLICATE, Strings.get("editDuplicateItem"));
-		if (x) {
-			addSeparator();
-			x = false;
-		}
-		x |= add(LogisimMenuBar.RAISE, Strings.get("editRaiseItem"));
+		if (x) addSeparator();
+		x = add(LogisimMenuBar.RAISE, Strings.get("editRaiseItem"));
 		x |= add(LogisimMenuBar.LOWER, Strings.get("editLowerItem"));
 		x |= add(LogisimMenuBar.RAISE_TOP, Strings.get("editRaiseTopItem"));
 		x |= add(LogisimMenuBar.LOWER_BOTTOM, Strings.get("editLowerBottomItem"));
-		if (x) {
-			addSeparator();
-			x = false;
-		}
-		x |= add(LogisimMenuBar.ADD_CONTROL, Strings.get("editAddControlItem"));
+		if (x) addSeparator();
+		x = add(LogisimMenuBar.ADD_CONTROL, Strings.get("editAddControlItem"));
 		x |= add(LogisimMenuBar.REMOVE_CONTROL, Strings.get("editRemoveControlItem"));
-		if (!x && getComponentCount() > 0) {
-			remove(getComponentCount() - 1);
-		}
+		if (!x && getComponentCount() > 0) remove(getComponentCount() - 1);
 	}
 
 	private boolean add(LogisimMenuItem item, String display) {
@@ -75,9 +64,7 @@ public abstract class EditPopup extends JPopupMenu {
 			menu.addActionListener(listener);
 			add(menu);
 			return true;
-		} else {
-			return false;
-		}
+		} else return false;
 	}
 
 	protected abstract boolean shouldShow(LogisimMenuItem item);

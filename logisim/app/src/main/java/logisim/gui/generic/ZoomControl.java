@@ -23,10 +23,9 @@ public class ZoomControl extends JPanel {
 			double zoom = model.getZoomFactor();
 			double[] choices = model.getZoomOptions();
 			double factor = zoom * 100.0 * 1.001;
-			for (int i = 0; i < choices.length; i++) {
-				if (choices[i] > factor)
-					return toString(choices[i]);
-			}
+			for (double choice : choices)
+				if (choice > factor)
+					return toString(choice);
 			return null;
 		}
 
@@ -34,10 +33,9 @@ public class ZoomControl extends JPanel {
 			double zoom = model.getZoomFactor();
 			double[] choices = model.getZoomOptions();
 			double factor = zoom * 100.0 * 0.999;
-			for (int i = choices.length - 1; i >= 0; i--) {
+			for (int i = choices.length - 1; i >= 0; i--)
 				if (choices[i] < factor)
 					return toString(choices[i]);
-			}
 			return null;
 		}
 
@@ -47,18 +45,13 @@ public class ZoomControl extends JPanel {
 		}
 
 		private String toString(double factor) {
-			if (factor > 10) {
-				return (int) (factor + 0.5) + "%";
-			} else if (factor > 0.1) {
-				return (int) (factor * 100 + 0.5) / 100.0 + "%";
-			} else {
-				return factor + "%";
-			}
+			if (factor > 10) return (int) (factor + 0.5) + "%";
+			else if (factor > 0.1) return (int) (factor * 100 + 0.5) / 100.0 + "%";
+			else return factor + "%";
 		}
 
 		public void setValue(Object value) {
-			if (value instanceof String) {
-				String s = (String) value;
+			if (value instanceof String s) {
 				if (s.endsWith("%"))
 					s = s.substring(0, s.length() - 1);
 				s = s.trim();
@@ -107,11 +100,8 @@ public class ZoomControl extends JPanel {
 			int dim = (Math.min(width, height) - 4) / 3 * 3 + 1;
 			int xoff = (width - dim) / 2;
 			int yoff = (height - dim) / 2;
-			for (int x = 0; x < dim; x += 3) {
-				for (int y = 0; y < dim; y += 3) {
-					g.drawLine(x + xoff, y + yoff, x + xoff, y + yoff);
-				}
-			}
+			for (int x = 0; x < dim; x += 3)
+				for (int y = 0; y < dim; y += 3) g.drawLine(x + xoff, y + yoff, x + xoff, y + yoff);
 		}
 
 		public void mouseClicked(MouseEvent e) {
@@ -147,10 +137,10 @@ public class ZoomControl extends JPanel {
 		spinnerModel = new SpinnerModel();
 		spinner = new JSpinner();
 		spinner.setModel(spinnerModel);
-		this.add(spinner, BorderLayout.CENTER);
+		add(spinner, BorderLayout.CENTER);
 
 		grid = new GridIcon();
-		this.add(grid, BorderLayout.EAST);
+		add(grid, BorderLayout.EAST);
 		grid.update();
 
 		model.addPropertyChangeListener(ZoomModel.SHOW_GRID, grid);

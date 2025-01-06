@@ -10,7 +10,7 @@ public abstract class AbstractToolbarModel implements ToolbarModel {
 	private List<ToolbarModelListener> listeners;
 
 	public AbstractToolbarModel() {
-		listeners = new ArrayList<ToolbarModelListener>();
+		listeners = new ArrayList<>();
 	}
 
 	public void addToolbarModelListener(ToolbarModelListener listener) {
@@ -23,16 +23,12 @@ public abstract class AbstractToolbarModel implements ToolbarModel {
 
 	protected void fireToolbarContentsChanged() {
 		ToolbarModelEvent event = new ToolbarModelEvent(this);
-		for (ToolbarModelListener listener : listeners) {
-			listener.toolbarContentsChanged(event);
-		}
+		for (ToolbarModelListener listener : listeners) listener.toolbarContentsChanged(event);
 	}
 
 	protected void fireToolbarAppearanceChanged() {
 		ToolbarModelEvent event = new ToolbarModelEvent(this);
-		for (ToolbarModelListener listener : listeners) {
-			listener.toolbarAppearanceChanged(event);
-		}
+		for (ToolbarModelListener listener : listeners) listener.toolbarAppearanceChanged(event);
 	}
 
 	public abstract List<ToolbarItem> getItems();

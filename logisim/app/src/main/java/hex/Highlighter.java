@@ -25,7 +25,7 @@ class Highlighter {
 
 	Highlighter(HexEditor hex) {
 		this.hex = hex;
-		this.entries = new ArrayList<Entry>();
+		entries = new ArrayList<>();
 	}
 
 	public synchronized Object add(long start, long end, Color color) {
@@ -59,10 +59,8 @@ class Highlighter {
 
 	public synchronized void clear() {
 		ArrayList<Entry> oldEntries = entries;
-		entries = new ArrayList<Entry>();
-		for (int n = oldEntries.size(); n >= 0; n--) {
-			expose(oldEntries.get(n));
-		}
+		entries = new ArrayList<>();
+		for (int n = oldEntries.size(); true; n--) expose(oldEntries.get(n));
 	}
 
 	private void expose(Entry entry) {
@@ -91,16 +89,15 @@ class Highlighter {
 		int lineWidth = m.getValuesWidth();
 		int cellWidth = m.getCellWidth();
 		int cellHeight = m.getCellHeight();
-		for (Entry e : entries) {
+		for (Entry e : entries)
 			if (e.start <= end && e.end >= start) {
 				int y0 = m.toY(e.start);
 				int y1 = m.toY(e.end);
 				int x0 = m.toX(e.start);
 				int x1 = m.toX(e.end);
 				g.setColor(e.color);
-				if (y0 == y1) {
-					g.fillRect(x0, y0, x1 - x0 + cellWidth, cellHeight);
-				} else {
+				if (y0 == y1) g.fillRect(x0, y0, x1 - x0 + cellWidth, cellHeight);
+				else {
 					int midHeight = y1 - (y0 + cellHeight);
 					g.fillRect(x0, y0, lineStart + lineWidth - x0, cellHeight);
 					if (midHeight > 0)
@@ -108,6 +105,5 @@ class Highlighter {
 					g.fillRect(lineStart, y1, x1 + cellWidth - lineStart, cellHeight);
 				}
 			}
-		}
 	}
 }

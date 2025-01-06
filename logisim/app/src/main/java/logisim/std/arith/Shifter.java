@@ -54,9 +54,7 @@ public class Shifter extends InstanceFactory {
 
 	@Override
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-		if (attr == StdAttr.WIDTH) {
-			configurePorts(instance);
-		}
+		if (attr == StdAttr.WIDTH) configurePorts(instance);
 	}
 
 	private void configurePorts(Instance instance) {
@@ -87,14 +85,12 @@ public class Shifter extends InstanceFactory {
 		if (vd.isFullyDefined() && vx.getWidth() == bits) {
 			int d = vd.toIntValue();
 			Object shift = state.getAttributeValue(ATTR_SHIFT);
-			if (d == 0) {
-				vy = vx;
-			} else if (vx.isFullyDefined()) {
+			if (d == 0) vy = vx;
+			else if (vx.isFullyDefined()) {
 				int x = vx.toIntValue();
 				int y;
-				if (shift == SHIFT_LOGICAL_RIGHT) {
-					y = x >>> d;
-				} else if (shift == SHIFT_ARITHMETIC_RIGHT) {
+				if (shift == SHIFT_LOGICAL_RIGHT) y = x >>> d;
+				else if (shift == SHIFT_ARITHMETIC_RIGHT) {
 					if (d >= bits)
 						d = bits - 1;
 					y = x >> d | ((x << (32 - bits)) >> (32 - bits + d));
@@ -102,13 +98,12 @@ public class Shifter extends InstanceFactory {
 					if (d >= bits)
 						d -= bits;
 					y = (x >>> d) | (x << (bits - d));
-				} else if (shift == SHIFT_ROLL_LEFT) {
+				} else // SHIFT_LOGICAL_LEFT
+					if (shift == SHIFT_ROLL_LEFT) {
 					if (d >= bits)
 						d -= bits;
 					y = (x << d) | (x >>> (bits - d));
-				} else { // SHIFT_LOGICAL_LEFT
-					y = x << d;
-				}
+				} else y = x << d;
 				vy = Value.createKnown(dataWidth, y);
 			} else {
 				Value[] x = vx.getAll();
@@ -141,9 +136,7 @@ public class Shifter extends InstanceFactory {
 				}
 				vy = Value.create(y);
 			}
-		} else {
-			vy = Value.createError(dataWidth);
-		}
+		} else vy = Value.createError(dataWidth);
 
 		// propagate them
 		int delay = dataWidth.getWidth() * (3 * Adder.PER_DELAY);
@@ -158,8 +151,8 @@ public class Shifter extends InstanceFactory {
 		painter.drawPorts();
 
 		Location loc = painter.getLocation();
-		int x = loc.getX() - 15;
-		int y = loc.getY();
+		int x = loc.x() - 15;
+		int y = loc.y();
 		Object shift = painter.getAttributeValue(ATTR_SHIFT);
 		g.setColor(Color.BLACK);
 		if (shift == SHIFT_LOGICAL_RIGHT) {

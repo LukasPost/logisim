@@ -3,6 +3,8 @@
 
 package logisim.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.AbstractList;
 import java.util.Iterator;
 import java.util.List;
@@ -31,7 +33,7 @@ public class ListUtil {
 		}
 
 		@Override
-		public Iterator<E> iterator() {
+		public @NotNull Iterator<E> iterator() {
 			return IteratorUtil.createJoinedIterator(a.iterator(), b.iterator());
 		}
 
@@ -41,6 +43,6 @@ public class ListUtil {
 	}
 
 	public static <E> List<E> joinImmutableLists(List<? extends E> a, List<? extends E> b) {
-		return new JoinedList<E>(a, b);
+		return new JoinedList<>(a, b);
 	}
 }

@@ -3,8 +3,6 @@
 
 package logisim.gui.appear;
 
-import java.util.Locale;
-
 import logisim.util.LocaleManager;
 import logisim.util.StringGetter;
 import logisim.util.StringUtil;
@@ -24,7 +22,4 @@ class Strings {
 		return source.getter(key);
 	}
 
-	public static Locale[] getLocaleOptions() {
-		return source.getLocaleOptions();
-	}
 }

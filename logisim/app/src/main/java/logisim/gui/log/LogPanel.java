@@ -14,12 +14,12 @@ abstract class LogPanel extends JPanel {
 
 	public LogPanel(LogFrame frame) {
 		super();
-		this.logFrame = frame;
+		logFrame = frame;
 	}
 
 	public LogPanel(LogFrame frame, LayoutManager manager) {
 		super(manager);
-		this.logFrame = frame;
+		logFrame = frame;
 	}
 
 	public abstract String getTitle();

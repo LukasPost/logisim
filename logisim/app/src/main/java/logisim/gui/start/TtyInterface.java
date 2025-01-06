@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import logisim.circuit.Analyze;
 import logisim.circuit.Circuit;
@@ -16,6 +17,7 @@ import logisim.circuit.CircuitState;
 import logisim.circuit.Propagator;
 import logisim.comp.Component;
 import logisim.data.Value;
+import logisim.file.FileStatistics.Count;
 import logisim.file.LoadFailedException;
 import logisim.file.Loader;
 import logisim.file.LogisimFile;
@@ -52,7 +54,7 @@ public class TtyInterface {
 	}
 
 	public static void run(Startup args) {
-		File fileToOpen = args.getFilesToOpen().get(0);
+		File fileToOpen = args.getFilesToOpen().getFirst();
 		Loader loader = new Loader(null);
 		LogisimFile file;
 		try {
@@ -69,23 +71,20 @@ public class TtyInterface {
 			format &= ~FORMAT_STATISTICS;
 			displayStatistics(file);
 		}
-		if (format == 0) { // no simulation remaining to perform, so just exit
-			System.exit(0);
-		}
+		// no simulation remaining to perform, so just exit
+		if (format == 0) System.exit(0);
 
 		Project proj = new Project(file);
 		Circuit circuit = file.getMainCircuit();
 		Map<Instance, String> pinNames = Analyze.getPinLabels(circuit);
-		ArrayList<Instance> outputPins = new ArrayList<Instance>();
+		ArrayList<Instance> outputPins = new ArrayList<>();
 		Instance haltPin = null;
-		for (Map.Entry<Instance, String> entry : pinNames.entrySet()) {
+		for (Entry<Instance, String> entry : pinNames.entrySet()) {
 			Instance pin = entry.getKey();
 			String pinName = entry.getValue();
 			if (!Pin.FACTORY.isInputPin(pin)) {
 				outputPins.add(pin);
-				if (pinName.equals("halt")) {
-					haltPin = pin;
-				}
+				if ("halt".equals(pinName)) haltPin = pin;
 			}
 		}
 
@@ -93,18 +92,15 @@ public class TtyInterface {
 		// we have to do our initial propagation before the simulation starts -
 		// it's necessary to populate the circuit with substates.
 		circState.getPropagator().propagate();
-		if (args.getLoadFile() != null) {
-			try {
-				boolean loaded = loadRam(circState, args.getLoadFile());
-				if (!loaded) {
-					System.err.println(Strings.get("loadNoRamError")); // OK
-					System.exit(-1);
-				}
-			}
-			catch (IOException e) {
-				System.err.println(Strings.get("loadIoError") + ": " + e.toString()); // OK
+		if (args.getLoadFile() != null) try {
+			boolean loaded = loadRam(circState, args.getLoadFile());
+			if (!loaded) {
+				System.err.println(Strings.get("loadNoRamError")); // OK
 				System.exit(-1);
 			}
+		} catch (IOException e) {
+			System.err.println(Strings.get("loadIoError") + ": " + e); // OK
+			System.exit(-1);
 		}
 		int ttyFormat = args.getTtyFormat();
 		int simCode = runSimulation(circState, outputPins, haltPin, ttyFormat);
@@ -113,9 +109,9 @@ public class TtyInterface {
 
 	private static void displayStatistics(LogisimFile file) {
 		FileStatistics stats = FileStatistics.compute(file, file.getMainCircuit());
-		FileStatistics.Count total = stats.getTotalWithSubcircuits();
+		Count total = stats.getTotalWithSubcircuits();
 		int maxName = 0;
-		for (FileStatistics.Count count : stats.getCounts()) {
+		for (Count count : stats.getCounts()) {
 			int nameLength = count.getFactory().getDisplayName().length();
 			if (nameLength > maxName)
 				maxName = nameLength;
@@ -123,19 +119,19 @@ public class TtyInterface {
 		String fmt = "%" + countDigits(total.getUniqueCount()) + "d\t" + "%" + countDigits(total.getRecursiveCount())
 				+ "d\t";
 		String fmtNormal = fmt + "%-" + maxName + "s\t%s\n";
-		for (FileStatistics.Count count : stats.getCounts()) {
+		for (Count count : stats.getCounts()) {
 			Library lib = count.getLibrary();
 			String libName = lib == null ? "-" : lib.getDisplayName();
 			System.out.printf(fmtNormal, // OK
-					Integer.valueOf(count.getUniqueCount()), Integer.valueOf(count.getRecursiveCount()),
+					count.getUniqueCount(), count.getRecursiveCount(),
 					count.getFactory().getDisplayName(), libName);
 		}
-		FileStatistics.Count totalWithout = stats.getTotalWithoutSubcircuits();
+		Count totalWithout = stats.getTotalWithoutSubcircuits();
 		System.out.printf(fmt + "%s\n", // OK
-				Integer.valueOf(totalWithout.getUniqueCount()), Integer.valueOf(totalWithout.getRecursiveCount()),
+				totalWithout.getUniqueCount(), totalWithout.getRecursiveCount(),
 				Strings.get("statsTotalWithout"));
 		System.out.printf(fmt + "%s\n", // OK
-				Integer.valueOf(total.getUniqueCount()), Integer.valueOf(total.getRecursiveCount()),
+				total.getUniqueCount(), total.getRecursiveCount(),
 				Strings.get("statsTotalWith"));
 	}
 
@@ -154,18 +150,14 @@ public class TtyInterface {
 			return false;
 
 		boolean found = false;
-		for (Component comp : circState.getCircuit().getNonWires()) {
-			if (comp.getFactory() instanceof Ram) {
-				Ram ramFactory = (Ram) comp.getFactory();
+		for (Component comp : circState.getCircuit().getNonWires())
+			if (comp.getFactory() instanceof Ram ramFactory) {
 				InstanceState ramState = circState.getInstanceState(comp);
 				ramFactory.loadImage(ramState, loadFile);
 				found = true;
 			}
-		}
 
-		for (CircuitState sub : circState.getSubstates()) {
-			found |= loadRam(sub, loadFile);
-		}
+		for (CircuitState sub : circState.getSubstates()) found |= loadRam(sub, loadFile);
 		return found;
 	}
 
@@ -173,8 +165,7 @@ public class TtyInterface {
 		boolean found = false;
 		for (Component comp : circState.getCircuit().getNonWires()) {
 			Object factory = comp.getFactory();
-			if (factory instanceof Tty) {
-				Tty ttyFactory = (Tty) factory;
+			if (factory instanceof Tty ttyFactory) {
 				InstanceState ttyState = circState.getInstanceState(comp);
 				ttyFactory.sendToStdout(ttyState);
 				found = true;
@@ -184,9 +175,7 @@ public class TtyInterface {
 			}
 		}
 
-		for (CircuitState sub : circState.getSubstates()) {
-			found |= prepareForTty(sub, keybStates);
-		}
+		for (CircuitState sub : circState.getSubstates()) found |= prepareForTty(sub, keybStates);
 		return found;
 	}
 
@@ -200,15 +189,14 @@ public class TtyInterface {
 		ArrayList<InstanceState> keyboardStates = null;
 		StdinThread stdinThread = null;
 		if (showTty) {
-			keyboardStates = new ArrayList<InstanceState>();
+			keyboardStates = new ArrayList<>();
 			boolean ttyFound = prepareForTty(circState, keyboardStates);
 			if (!ttyFound) {
 				System.err.println(Strings.get("ttyNoTtyError")); // OK
 				System.exit(-1);
 			}
-			if (keyboardStates.isEmpty()) {
-				keyboardStates = null;
-			} else {
+			if (keyboardStates.isEmpty()) keyboardStates = null;
+			else {
 				stdinThread = new StdinThread();
 				stdinThread.start();
 			}
@@ -221,19 +209,14 @@ public class TtyInterface {
 		ArrayList<Value> prevOutputs = null;
 		Propagator prop = circState.getPropagator();
 		while (true) {
-			ArrayList<Value> curOutputs = new ArrayList<Value>();
+			ArrayList<Value> curOutputs = new ArrayList<>();
 			for (Instance pin : outputPins) {
 				InstanceState pinState = circState.getInstanceState(pin);
 				Value val = Pin.FACTORY.getValue(pinState);
-				if (pin == haltPin) {
-					halted |= val.equals(Value.TRUE);
-				} else if (showTable) {
-					curOutputs.add(val);
-				}
+				if (pin == haltPin) halted |= val.equals(Value.TRUE);
+				else if (showTable) curOutputs.add(val);
 			}
-			if (showTable) {
-				displayTableRow(prevOutputs, curOutputs);
-			}
+			if (showTable) displayTableRow(prevOutputs, curOutputs);
 
 			if (halted) {
 				retCode = 0; // normal exit
@@ -243,13 +226,10 @@ public class TtyInterface {
 				retCode = 1; // abnormal exit
 				break;
 			}
-			if (keyboardStates != null && stdinThread != null) {
+			if (keyboardStates != null) {
 				char[] buffer = stdinThread.getBuffer();
-				if (buffer != null) {
-					for (InstanceState keyState : keyboardStates) {
-						Keyboard.addToBuffer(keyState, buffer);
-					}
-				}
+				if (buffer != null)
+					for (InstanceState keyState : keyboardStates) Keyboard.addToBuffer(keyState, buffer);
 			}
 			prevOutputs = curOutputs;
 			tickCount++;
@@ -259,31 +239,21 @@ public class TtyInterface {
 		long elapse = System.currentTimeMillis() - start;
 		if (showTty)
 			ensureLineTerminated();
-		if (showHalt || retCode != 0) {
-			if (retCode == 0) {
-				System.out.println(Strings.get("ttyHaltReasonPin")); // OK
-			} else if (retCode == 1) {
-				System.out.println(Strings.get("ttyHaltReasonOscillation")); // OK
-			}
-		}
-		if (showSpeed) {
-			displaySpeed(tickCount, elapse);
-		}
+		if (showHalt || retCode != 0) if (retCode == 0) System.out.println(Strings.get("ttyHaltReasonPin")); // OK
+		else System.out.println(Strings.get("ttyHaltReasonOscillation")); // OK
+		if (showSpeed) displaySpeed(tickCount, elapse);
 		return retCode;
 	}
 
 	private static void displayTableRow(ArrayList<Value> prevOutputs, ArrayList<Value> curOutputs) {
 		boolean shouldPrint = false;
-		if (prevOutputs == null) {
-			shouldPrint = true;
-		} else {
-			for (int i = 0; i < curOutputs.size(); i++) {
-				Value a = prevOutputs.get(i);
-				Value b = curOutputs.get(i);
-				if (!a.equals(b)) {
-					shouldPrint = true;
-					break;
-				}
+		if (prevOutputs == null) shouldPrint = true;
+		else for (int i = 0; i < curOutputs.size(); i++) {
+			Value a = prevOutputs.get(i);
+			Value b = curOutputs.get(i);
+			if (!a.equals(b)) {
+				shouldPrint = true;
+				break;
 			}
 		}
 		if (shouldPrint) {
@@ -319,19 +289,16 @@ public class TtyInterface {
 	// but this doesn't quite work because on some systems, the keyboard input
 	// is not interactively echoed until System.in.read() is invoked.
 	private static class StdinThread extends Thread {
-		private LinkedList<char[]> queue; // of char[]
+		private final LinkedList<char[]> queue; // of char[]
 
 		public StdinThread() {
-			queue = new LinkedList<char[]>();
+			queue = new LinkedList<>();
 		}
 
 		public char[] getBuffer() {
 			synchronized (queue) {
-				if (queue.isEmpty()) {
-					return null;
-				} else {
-					return queue.removeFirst();
-				}
+				if (queue.isEmpty()) return null;
+				else return queue.removeFirst();
 			}
 		}
 
@@ -339,19 +306,16 @@ public class TtyInterface {
 		public void run() {
 			InputStreamReader stdin = new InputStreamReader(System.in);
 			char[] buffer = new char[32];
-			while (true) {
-				try {
-					int nbytes = stdin.read(buffer);
-					if (nbytes > 0) {
-						char[] add = new char[nbytes];
-						System.arraycopy(buffer, 0, add, 0, nbytes);
-						synchronized (queue) {
-							queue.addLast(add);
-						}
+			while (true) try {
+				int nbytes = stdin.read(buffer);
+				if (nbytes > 0) {
+					char[] add = new char[nbytes];
+					System.arraycopy(buffer, 0, add, 0, nbytes);
+					synchronized (queue) {
+						queue.addLast(add);
 					}
 				}
-				catch (IOException e) {
-				}
+			} catch (IOException e) {
 			}
 		}
 	}

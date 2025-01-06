@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 
 import logisim.analyze.model.Entry;
 import logisim.analyze.model.TruthTable;
+import org.jetbrains.annotations.NotNull;
 
 class TableTabClip implements ClipboardOwner {
 	private static final DataFlavor binaryFlavor = new DataFlavor(Data.class, "Binary data");
@@ -37,25 +38,22 @@ class TableTabClip implements ClipboardOwner {
 			return flavor == binaryFlavor || flavor == DataFlavor.stringFlavor;
 		}
 
-		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-			if (flavor == binaryFlavor) {
+		public @NotNull Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
+			if (flavor == binaryFlavor)
 				return this;
-			} else if (flavor == DataFlavor.stringFlavor) {
+			else if (flavor == DataFlavor.stringFlavor) {
 				StringBuilder buf = new StringBuilder();
 				for (int i = 0; i < headers.length; i++) {
 					buf.append(headers[i]);
 					buf.append(i == headers.length - 1 ? '\n' : '\t');
 				}
-				for (int i = 0; i < contents.length; i++) {
-					for (int j = 0; j < contents[i].length; j++) {
-						buf.append(contents[i][j]);
-						buf.append(j == contents[i].length - 1 ? '\n' : '\t');
+				for (String[] content : contents)
+					for (int j = 0; j < content.length; j++) {
+						buf.append(content[j]);
+						buf.append(j == content.length - 1 ? '\n' : '\t');
 					}
-				}
 				return buf.toString();
-			} else {
-				throw new UnsupportedFlavorException(flavor);
-			}
+			} else throw new UnsupportedFlavorException(flavor);
 		}
 	}
 
@@ -85,23 +83,14 @@ class TableTabClip implements ClipboardOwner {
 		TruthTable t = table.getTruthTable();
 		int inputs = t.getInputColumnCount();
 		String[] header = new String[c1 - c0 + 1];
-		for (int c = c0; c <= c1; c++) {
-			if (c < inputs) {
-				header[c - c0] = t.getInputHeader(c);
-			} else {
-				header[c - c0] = t.getOutputHeader(c - inputs);
-			}
-		}
+		for (int c = c0; c <= c1; c++)
+			if (c < inputs) header[c - c0] = t.getInputHeader(c);
+			else header[c - c0] = t.getOutputHeader(c - inputs);
 		String[][] contents = new String[r1 - r0 + 1][c1 - c0 + 1];
-		for (int r = r0; r <= r1; r++) {
-			for (int c = c0; c <= c1; c++) {
-				if (c < inputs) {
-					contents[r - r0][c - c0] = t.getInputEntry(r, c).getDescription();
-				} else {
-					contents[r - r0][c - c0] = t.getOutputEntry(r, c - inputs).getDescription();
-				}
-			}
-		}
+		for (int r = r0; r <= r1; r++)
+			for (int c = c0; c <= c1; c++)
+				if (c < inputs) contents[r - r0][c - c0] = t.getInputEntry(r, c).getDescription();
+				else contents[r - r0][c - c0] = t.getOutputEntry(r, c - inputs).getDescription();
 
 		Clipboard clip = table.getToolkit().getSystemClipboard();
 		clip.setContents(new Data(header, contents), this);
@@ -127,67 +116,52 @@ class TableTabClip implements ClipboardOwner {
 			return;
 		}
 		Entry[][] entries;
-		if (xfer.isDataFlavorSupported(binaryFlavor)) {
-			try {
-				Data data = (Data) xfer.getTransferData(binaryFlavor);
-				entries = new Entry[data.contents.length][];
-				for (int i = 0; i < entries.length; i++) {
-					Entry[] row = new Entry[data.contents[i].length];
-					for (int j = 0; j < row.length; j++) {
-						row[j] = Entry.parse(data.contents[i][j]);
-					}
-					entries[i] = row;
-				}
+		if (xfer.isDataFlavorSupported(binaryFlavor)) try {
+			Data data = (Data) xfer.getTransferData(binaryFlavor);
+			entries = new Entry[data.contents.length][];
+			for (int i = 0; i < entries.length; i++) {
+				Entry[] row = new Entry[data.contents[i].length];
+				for (int j = 0; j < row.length; j++) row[j] = Entry.parse(data.contents[i][j]);
+				entries[i] = row;
 			}
-			catch (UnsupportedFlavorException e) {
+		} catch (UnsupportedFlavorException | IOException e) {
+			return;
+		}
+		else if (xfer.isDataFlavorSupported(DataFlavor.stringFlavor)) try {
+			String buf = (String) xfer.getTransferData(DataFlavor.stringFlavor);
+			StringTokenizer lines = new StringTokenizer(buf, "\r\n");
+			if (!lines.hasMoreTokens())
 				return;
+			String first = lines.nextToken();
+			StringTokenizer toks = new StringTokenizer(first, "\t,");
+			String[] headers = new String[toks.countTokens()];
+			Entry[] firstEntries = new Entry[headers.length];
+			boolean allParsed = true;
+			for (int i = 0; toks.hasMoreTokens(); i++) {
+				headers[i] = toks.nextToken();
+				firstEntries[i] = Entry.parse(headers[i]);
+				allParsed = allParsed && firstEntries[i] != null;
 			}
-			catch (IOException e) {
-				return;
+			int rows = lines.countTokens();
+			if (allParsed)
+				rows++;
+			entries = new Entry[rows][];
+			int cur = 0;
+			if (allParsed) {
+				entries[0] = firstEntries;
+				cur++;
 			}
-		} else if (xfer.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-			try {
-				String buf = (String) xfer.getTransferData(DataFlavor.stringFlavor);
-				StringTokenizer lines = new StringTokenizer(buf, "\r\n");
-				String first;
-				if (!lines.hasMoreTokens())
-					return;
-				first = lines.nextToken();
-				StringTokenizer toks = new StringTokenizer(first, "\t,");
-				String[] headers = new String[toks.countTokens()];
-				Entry[] firstEntries = new Entry[headers.length];
-				boolean allParsed = true;
-				for (int i = 0; toks.hasMoreTokens(); i++) {
-					headers[i] = toks.nextToken();
-					firstEntries[i] = Entry.parse(headers[i]);
-					allParsed = allParsed && firstEntries[i] != null;
-				}
-				int rows = lines.countTokens();
-				if (allParsed)
-					rows++;
-				entries = new Entry[rows][];
-				int cur = 0;
-				if (allParsed) {
-					entries[0] = firstEntries;
-					cur++;
-				}
-				while (lines.hasMoreTokens()) {
-					toks = new StringTokenizer(lines.nextToken(), "\t");
-					Entry[] ents = new Entry[toks.countTokens()];
-					for (int i = 0; toks.hasMoreTokens(); i++) {
-						ents[i] = Entry.parse(toks.nextToken());
-					}
-					entries[cur] = ents;
-					cur++;
-				}
+			while (lines.hasMoreTokens()) {
+				toks = new StringTokenizer(lines.nextToken(), "\t");
+				Entry[] ents = new Entry[toks.countTokens()];
+				for (int i = 0; toks.hasMoreTokens(); i++) ents[i] = Entry.parse(toks.nextToken());
+				entries[cur] = ents;
+				cur++;
 			}
-			catch (UnsupportedFlavorException e) {
-				return;
-			}
-			catch (IOException e) {
-				return;
-			}
-		} else {
+		} catch (UnsupportedFlavorException | IOException e) {
+			return;
+		}
+		else {
 			JOptionPane.showMessageDialog(table.getRootPane(), Strings.get("clipPasteSupportedError"),
 					Strings.get("clipPasteErrorTitle"), JOptionPane.ERROR_MESSAGE);
 			return;
@@ -228,13 +202,9 @@ class TableTabClip implements ClipboardOwner {
 				return;
 			}
 		}
-		for (int r = 0; r < entries.length; r++) {
-			for (int c = 0; c < entries[0].length; c++) {
-				if (c0 + c >= inputs) {
-					model.setOutputEntry(r0 + r, c0 + c - inputs, entries[r][c]);
-				}
-			}
-		}
+		for (int r = 0; r < entries.length; r++)
+			for (int c = 0; c < entries[0].length; c++)
+				if (c0 + c >= inputs) model.setOutputEntry(r0 + r, c0 + c - inputs, entries[r][c]);
 	}
 
 	public void lostOwnership(Clipboard clip, Transferable transfer) {

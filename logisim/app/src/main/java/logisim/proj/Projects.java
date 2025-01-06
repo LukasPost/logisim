@@ -23,7 +23,7 @@ import logisim.util.PropertyChangeWeakSupport;
 public class Projects {
 	public static final String projectListProperty = "projectList";
 
-	private static final WeakHashMap<Window, Point> frameLocations = new WeakHashMap<Window, Point>();
+	private static final WeakHashMap<Window, Point> frameLocations = new WeakHashMap<>();
 
 	private static void projectRemoved(Project proj, Frame frame, MyListener listener) {
 		frame.removeWindowListener(listener);
@@ -56,12 +56,8 @@ public class Projects {
 			Frame frame = (Frame) event.getSource();
 			Project proj = frame.getProject();
 
-			if (frame == proj.getFrame()) {
-				projectRemoved(proj, frame, this);
-			}
-			if (openProjects.isEmpty() && !MacCompatibility.isSwingUsingScreenMenuBar()) {
-				ProjectActions.doQuit();
-			}
+			if (frame == proj.getFrame()) projectRemoved(proj, frame, this);
+			if (openProjects.isEmpty() && !MacCompatibility.isSwingUsingScreenMenuBar()) ProjectActions.doQuit();
 		}
 
 		@Override
@@ -78,34 +74,27 @@ public class Projects {
 
 	private static final MyListener myListener = new MyListener();
 	private static final PropertyChangeWeakSupport propertySupport = new PropertyChangeWeakSupport(Projects.class);
-	private static ArrayList<Project> openProjects = new ArrayList<Project>();
-	private static Frame mostRecentFrame = null;
+	private static ArrayList<Project> openProjects = new ArrayList<>();
+	private static Frame mostRecentFrame;
 
 	private Projects() {
 	}
 
 	public static Frame getTopFrame() {
-		Frame ret = mostRecentFrame;
-		if (ret == null) {
-			Frame backup = null;
-			for (Project proj : openProjects) {
-				Frame frame = proj.getFrame();
-				if (ret == null)
-					ret = frame;
-				if (ret.isVisible() && (ret.getExtendedState() & Frame.ICONIFIED) != 0) {
-					backup = ret;
-				}
-			}
+		if (mostRecentFrame != null)
+			return mostRecentFrame;
+
+		Frame ret = null;
+		for (Project proj : openProjects) {
+			Frame frame = proj.getFrame();
 			if (ret == null)
-				ret = backup;
+				ret = frame;
 		}
 		return ret;
 	}
 
 	static void windowCreated(Project proj, Frame oldFrame, Frame frame) {
-		if (oldFrame != null) {
-			projectRemoved(proj, oldFrame, myListener);
-		}
+		if (oldFrame != null) projectRemoved(proj, oldFrame, myListener);
 
 		if (frame == null)
 			return;
@@ -143,10 +132,9 @@ public class Projects {
 	}
 
 	public static boolean windowNamed(String name) {
-		for (Project proj : openProjects) {
+		for (Project proj : openProjects)
 			if (proj.getLogisimFile().getName().equals(name))
 				return true;
-		}
 		return false;
 	}
 

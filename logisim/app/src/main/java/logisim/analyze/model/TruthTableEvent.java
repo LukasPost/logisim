@@ -10,7 +10,7 @@ public class TruthTableEvent {
 
 	public TruthTableEvent(TruthTable source, VariableListEvent event) {
 		this.source = source;
-		this.data = event;
+		data = event;
 	}
 
 	public TruthTableEvent(TruthTable source, int column) {

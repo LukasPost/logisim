@@ -4,7 +4,7 @@
 package logisim.analyze.model;
 
 public interface TruthTableListener {
-	public void cellsChanged(TruthTableEvent event);
+	void cellsChanged(TruthTableEvent event);
 
-	public void structureChanged(TruthTableEvent event);
+	void structureChanged(TruthTableEvent event);
 }

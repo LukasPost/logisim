@@ -36,20 +36,13 @@ class InstanceStateImpl implements InstanceState {
 	}
 
 	public Instance getInstance() {
-		if (component instanceof InstanceComponent) {
-			return ((InstanceComponent) component).getInstance();
-		} else {
-			return null;
-		}
+		if (component instanceof InstanceComponent) return ((InstanceComponent) component).getInstance();
+		else return null;
 	}
 
 	public InstanceFactory getFactory() {
-		if (component instanceof InstanceComponent) {
-			InstanceComponent comp = (InstanceComponent) component;
-			return (InstanceFactory) comp.getFactory();
-		} else {
-			return null;
-		}
+		if (component instanceof InstanceComponent comp) return (InstanceFactory) comp.getFactory();
+		else return null;
 	}
 
 	public AttributeSet getAttributeSet() {
@@ -85,9 +78,7 @@ class InstanceStateImpl implements InstanceState {
 	}
 
 	public void fireInvalidated() {
-		if (component instanceof InstanceComponent) {
-			((InstanceComponent) component).fireInvalidated();
-		}
+		if (component instanceof InstanceComponent) ((InstanceComponent) component).fireInvalidated();
 	}
 
 	public boolean isCircuitRoot() {

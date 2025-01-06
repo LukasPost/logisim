@@ -32,9 +32,7 @@ class WindowOptions extends OptionsPanel {
 		panel.add(toolbarPlacement.getJComboBox());
 
 		setLayout(new TableLayout(1));
-		for (int i = 0; i < checks.length; i++) {
-			add(checks[i]);
-		}
+		for (PrefBoolean check : checks) add(check);
 		add(panel);
 	}
 
@@ -50,9 +48,7 @@ class WindowOptions extends OptionsPanel {
 
 	@Override
 	public void localeChanged() {
-		for (int i = 0; i < checks.length; i++) {
-			checks[i].localeChanged();
-		}
+		for (PrefBoolean check : checks) check.localeChanged();
 		toolbarPlacement.localeChanged();
 	}
 }

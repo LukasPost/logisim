@@ -26,16 +26,10 @@ class ClockState implements Cloneable {
 	public boolean updateClock(Value newClock, Object trigger) {
 		Value oldClock = lastClock;
 		lastClock = newClock;
-		if (trigger == null || trigger == StdAttr.TRIG_RISING) {
-			return oldClock == Value.FALSE && newClock == Value.TRUE;
-		} else if (trigger == StdAttr.TRIG_FALLING) {
-			return oldClock == Value.TRUE && newClock == Value.FALSE;
-		} else if (trigger == StdAttr.TRIG_HIGH) {
-			return newClock == Value.TRUE;
-		} else if (trigger == StdAttr.TRIG_LOW) {
-			return newClock == Value.FALSE;
-		} else {
-			return oldClock == Value.FALSE && newClock == Value.TRUE;
-		}
+		if (trigger == null || trigger == StdAttr.TRIG_RISING) return oldClock == Value.FALSE && newClock == Value.TRUE;
+		else if (trigger == StdAttr.TRIG_FALLING) return oldClock == Value.TRUE && newClock == Value.FALSE;
+		else if (trigger == StdAttr.TRIG_HIGH) return newClock == Value.TRUE;
+		else if (trigger == StdAttr.TRIG_LOW) return newClock == Value.FALSE;
+		else return oldClock == Value.FALSE && newClock == Value.TRUE;
 	}
 }

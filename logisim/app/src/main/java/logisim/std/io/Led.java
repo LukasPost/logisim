@@ -52,9 +52,7 @@ public class Led extends InstanceFactory {
 		if (attr == StdAttr.FACING) {
 			instance.recomputeBounds();
 			computeTextField(instance);
-		} else if (attr == Io.ATTR_LABEL_LOC) {
-			computeTextField(instance);
-		}
+		} else if (attr == Io.ATTR_LABEL_LOC) computeTextField(instance);
 	}
 
 	private void computeTextField(Instance instance) {
@@ -79,14 +77,13 @@ public class Led extends InstanceFactory {
 			x = bds.getX() - 2;
 			halign = GraphicsUtil.H_RIGHT;
 		}
-		if (labelLoc == facing) {
-			if (labelLoc == Direction.North || labelLoc == Direction.South) {
-				x += 2;
-				halign = GraphicsUtil.H_LEFT;
-			} else {
-				y -= 2;
-				valign = GraphicsUtil.V_BOTTOM;
-			}
+		if (labelLoc == facing) if (labelLoc == Direction.North || labelLoc == Direction.South) {
+			x += 2;
+			halign = GraphicsUtil.H_LEFT;
+		}
+		else {
+			y -= 2;
+			valign = GraphicsUtil.V_BOTTOM;
 		}
 
 		instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, x, y, halign, valign);
@@ -96,11 +93,8 @@ public class Led extends InstanceFactory {
 	public void propagate(InstanceState state) {
 		Value val = state.getPort(0);
 		InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
-		if (data == null) {
-			state.setData(new InstanceDataSingleton(val));
-		} else {
-			data.setValue(val);
-		}
+		if (data == null) state.setData(new InstanceDataSingleton(val));
+		else data.setValue(val);
 	}
 
 	@Override
@@ -122,7 +116,7 @@ public class Led extends InstanceFactory {
 			Color onColor = painter.getAttributeValue(Io.ATTR_ON_COLOR);
 			Color offColor = painter.getAttributeValue(Io.ATTR_OFF_COLOR);
 			Boolean activ = painter.getAttributeValue(Io.ATTR_ACTIVE);
-			Object desired = activ.booleanValue() ? Value.TRUE : Value.FALSE;
+			Object desired = activ ? Value.TRUE : Value.FALSE;
 			g.setColor(val == desired ? onColor : offColor);
 			g.fillOval(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
 		}

@@ -49,11 +49,8 @@ public class BitFinder extends InstanceFactory {
 
 	@Override
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-		if (attr == StdAttr.WIDTH) {
-			configurePorts(instance);
-		} else if (attr == TYPE) {
-			instance.fireInvalidated();
-		}
+		if (attr == StdAttr.WIDTH) configurePorts(instance);
+		else if (attr == TYPE) instance.fireInvalidated();
 	}
 
 	private void configurePorts(Instance instance) {

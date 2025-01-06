@@ -31,61 +31,26 @@ public class HexDigit extends InstanceFactory {
 		Value baseVal = state.getPort(0);
 		if (baseVal == null)
 			baseVal = Value.createUnknown(BitWidth.create(4));
-		int segs; // each nibble is one segment, in top-down, left-to-right
+		int segs = switch (baseVal.toIntValue()) {
+			case 0 -> 0x1110111;
+			case 1 -> 0x0000011;
+			case 2 -> 0x0111110;
+			case 3 -> 0x0011111;
+			case 4 -> 0x1001011;
+			case 5 -> 0x1011101;
+			case 6 -> 0x1111101;
+			case 7 -> 0x0010011;
+			case 8 -> 0x1111111;
+			case 9 -> 0x1011011;
+			case 10 -> 0x1111011;
+			case 11 -> 0x1101101;
+			case 12 -> 0x1110100;
+			case 13 -> 0x0101111;
+			case 14 -> 0x1111100;
+			case 15 -> 0x1111000;
+			default -> 0x0001000; // a dash '-'
+		}; // each nibble is one segment, in top-down, left-to-right
 		// order: middle three nibbles are the three horizontal segments
-		switch (baseVal.toIntValue()) {
-		case 0:
-			segs = 0x1110111;
-			break;
-		case 1:
-			segs = 0x0000011;
-			break;
-		case 2:
-			segs = 0x0111110;
-			break;
-		case 3:
-			segs = 0x0011111;
-			break;
-		case 4:
-			segs = 0x1001011;
-			break;
-		case 5:
-			segs = 0x1011101;
-			break;
-		case 6:
-			segs = 0x1111101;
-			break;
-		case 7:
-			segs = 0x0010011;
-			break;
-		case 8:
-			segs = 0x1111111;
-			break;
-		case 9:
-			segs = 0x1011011;
-			break;
-		case 10:
-			segs = 0x1111011;
-			break;
-		case 11:
-			segs = 0x1101101;
-			break;
-		case 12:
-			segs = 0x1110100;
-			break;
-		case 13:
-			segs = 0x0101111;
-			break;
-		case 14:
-			segs = 0x1111100;
-			break;
-		case 15:
-			segs = 0x1111000;
-			break;
-		default:
-			segs = 0x0001000;
-			break; // a dash '-'
-		}
 		if ((segs & 0x1) != 0)
 			summary |= 4; // vertical seg in bottom right
 		if ((segs & 0x10) != 0)
@@ -103,13 +68,10 @@ public class HexDigit extends InstanceFactory {
 		if (state.getPort(1) == Value.TRUE)
 			summary |= 128;
 
-		Object value = Integer.valueOf(summary);
+		Object value = summary;
 		InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
-		if (data == null) {
-			state.setData(new InstanceDataSingleton(value));
-		} else {
-			data.setValue(value);
-		}
+		if (data == null) state.setData(new InstanceDataSingleton(value));
+		else data.setValue(value);
 	}
 
 	@Override

@@ -43,15 +43,11 @@ public class PriorityEncoder extends InstanceFactory {
 		int inputs = 1 << select.getWidth();
 		int offs = -5 * inputs;
 		int len = 10 * inputs + 10;
-		if (dir == Direction.North) {
-			return Bounds.create(offs, 0, len, 40);
-		} else if (dir == Direction.South) {
-			return Bounds.create(offs, -40, len, 40);
-		} else if (dir == Direction.West) {
-			return Bounds.create(0, offs, 40, len);
-		} else { // dir == Direction.EAST
-			return Bounds.create(-40, offs, 40, len);
-		}
+		if (dir == Direction.North) return Bounds.create(offs, 0, len, 40);
+		else if (dir == Direction.South) return Bounds.create(offs, -40, len, 40);
+		else // dir == Direction.EAST
+			if (dir == Direction.West) return Bounds.create(0, offs, 40, len);
+			else return Bounds.create(-40, offs, 40, len);
 	}
 
 	@Override
@@ -65,11 +61,7 @@ public class PriorityEncoder extends InstanceFactory {
 		if (attr == StdAttr.FACING || attr == Plexers.ATTR_SELECT) {
 			instance.recomputeBounds();
 			updatePorts(instance);
-		} else if (attr == Plexers.ATTR_SELECT) {
-			updatePorts(instance);
-		} else if (attr == Plexers.ATTR_DISABLED) {
-			instance.fireInvalidated();
-		}
+		} else if (attr == Plexers.ATTR_DISABLED) instance.fireInvalidated();
 	}
 
 	private void updatePorts(Instance instance) {
@@ -80,9 +72,7 @@ public class PriorityEncoder extends InstanceFactory {
 		if (dir == Direction.North || dir == Direction.South) {
 			int x = -5 * n + 10;
 			int y = dir == Direction.North ? 40 : -40;
-			for (int i = 0; i < n; i++) {
-				ps[i] = new Port(x + 10 * i, y, Port.INPUT, 1);
-			}
+			for (int i = 0; i < n; i++) ps[i] = new Port(x + 10 * i, y, Port.INPUT, 1);
 			ps[n + OUT] = new Port(0, 0, Port.OUTPUT, select.getWidth());
 			ps[n + EN_IN] = new Port(x + 10 * n, y / 2, Port.INPUT, 1);
 			ps[n + EN_OUT] = new Port(x - 10, y / 2, Port.OUTPUT, 1);
@@ -90,18 +80,14 @@ public class PriorityEncoder extends InstanceFactory {
 		} else {
 			int x = dir == Direction.East ? -40 : 40;
 			int y = -5 * n + 10;
-			for (int i = 0; i < n; i++) {
-				ps[i] = new Port(x, y + 10 * i, Port.INPUT, 1);
-			}
+			for (int i = 0; i < n; i++) ps[i] = new Port(x, y + 10 * i, Port.INPUT, 1);
 			ps[n + OUT] = new Port(0, 0, Port.OUTPUT, select.getWidth());
 			ps[n + EN_IN] = new Port(x / 2, y + 10 * n, Port.INPUT, 1);
 			ps[n + EN_OUT] = new Port(x / 2, y - 10, Port.OUTPUT, 1);
 			ps[n + GS] = new Port(0, 10, Port.OUTPUT, 1);
 		}
 
-		for (int i = 0; i < n; i++) {
-			ps[i].setToolTip(Strings.getter("priorityEncoderInTip", "" + i));
-		}
+		for (int i = 0; i < n; i++) ps[i].setToolTip(Strings.getter("priorityEncoderInTip", "" + i));
 		ps[n + OUT].setToolTip(Strings.getter("priorityEncoderOutTip"));
 		ps[n + EN_IN].setToolTip(Strings.getter("priorityEncoderEnableInTip"));
 		ps[n + EN_OUT].setToolTip(Strings.getter("priorityEncoderEnableOutTip"));
@@ -120,12 +106,11 @@ public class PriorityEncoder extends InstanceFactory {
 		Value outDefault;
 		if (enabled) {
 			outDefault = Value.createUnknown(select);
-			for (int i = n - 1; i >= 0; i--) {
+			for (int i = n - 1; i >= 0; i--)
 				if (state.getPort(i) == Value.TRUE) {
 					out = i;
 					break;
 				}
-			}
 		} else {
 			Object opt = state.getAttributeValue(Plexers.ATTR_DISABLED);
 			Value base = opt == Plexers.DISABLED_ZERO ? Value.FALSE : Value.UNKNOWN;

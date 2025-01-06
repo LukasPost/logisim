@@ -108,24 +108,19 @@ public class TextTool extends AbstractTool {
 
 	@Override
 	public void mousePressed(Canvas canvas, MouseEvent e) {
-		if (curText != null) {
-			commitText(canvas);
-		}
+		if (curText != null) commitText(canvas);
 
 		Text clicked = null;
 		boolean found = false;
 		int mx = e.getX();
 		int my = e.getY();
 		Location mloc = new Location(mx, my);
-		for (CanvasObject o : canvas.getModel().getObjectsFromTop()) {
+		for (CanvasObject o : canvas.getModel().getObjectsFromTop())
 			if (o instanceof Text text && o.contains(mloc, true)) {
 				clicked = text;
 				break;
 			}
-		}
-		if (clicked == null) {
-			clicked = attrs.applyTo(new Text(mx, my, ""));
-		}
+		if (clicked == null) clicked = attrs.applyTo(new Text(mx, my, ""));
 
 		curText = clicked;
 		curCanvas = canvas;
@@ -139,9 +134,7 @@ public class TextTool extends AbstractTool {
 		fieldLoc.x = (int) Math.round(mx * zoom - fieldLoc.x);
 		fieldLoc.y = (int) Math.round(my * zoom - fieldLoc.y);
 		int caret = field.viewToModel2D(fieldLoc);
-		if (caret >= 0) {
-			field.setCaretPosition(caret);
-		}
+		if (caret >= 0) field.setCaretPosition(caret);
 		field.requestFocus();
 
 		canvas.getSelection().setSelected(clicked, true);
@@ -153,14 +146,12 @@ public class TextTool extends AbstractTool {
 	@Override
 	public void zoomFactorChanged(Canvas canvas) {
 		Text t = curText;
-		if (t != null) {
-			t.getLabel().configureTextField(field, canvas.getZoomFactor());
-		}
+		if (t != null) t.getLabel().configureTextField(field, canvas.getZoomFactor());
 	}
 
 	@Override
 	public void draw(Canvas canvas, Graphics g) {
-		; // actually, there's nothing to do here - it's handled by the field
+		// actually, there's nothing to do here - it's handled by the field
 	}
 
 	private void cancelText(Canvas canvas) {
@@ -178,23 +169,19 @@ public class TextTool extends AbstractTool {
 		Text cur = curText;
 		boolean isNew = isTextNew;
 		String newText = field.getText();
-		if (cur == null) {
-			return;
-		}
+		if (cur == null) return;
 		cancelText(canvas);
 
 		if (isNew) {
-			if (!newText.equals("")) {
+			if (!newText.isEmpty()) {
 				cur.setText(newText);
 				canvas.doAction(new ModelAddAction(canvas.getModel(), cur));
 			}
 		} else {
 			String oldText = cur.getText();
-			if (newText.equals("")) {
-				canvas.doAction(new ModelRemoveAction(canvas.getModel(), cur));
-			} else if (!oldText.equals(newText)) {
+			if (newText.isEmpty()) canvas.doAction(new ModelRemoveAction(canvas.getModel(), cur));
+			else if (!oldText.equals(newText))
 				canvas.doAction(new ModelEditTextAction(canvas.getModel(), cur, newText));
-			}
 		}
 	}
 }

@@ -21,9 +21,7 @@ import logisim.util.StringGetter;
 public class FactoryDescription {
 	public static List<Tool> getTools(Class<? extends Library> base, FactoryDescription[] descriptions) {
 		Tool[] tools = new Tool[descriptions.length];
-		for (int i = 0; i < tools.length; i++) {
-			tools[i] = new AddTool(base, descriptions[i]);
-		}
+		for (int i = 0; i < tools.length; i++) tools[i] = new AddTool(base, descriptions[i]);
 		return Arrays.asList(tools);
 	}
 
@@ -40,27 +38,27 @@ public class FactoryDescription {
 	public FactoryDescription(String name, StringGetter displayName, String iconName, String factoryClassName) {
 		this(name, displayName, factoryClassName);
 		this.iconName = iconName;
-		this.iconLoadAttempted = false;
-		this.icon = null;
+		iconLoadAttempted = false;
+		icon = null;
 	}
 
 	public FactoryDescription(String name, StringGetter displayName, Icon icon, String factoryClassName) {
 		this(name, displayName, factoryClassName);
-		this.iconName = "???";
-		this.iconLoadAttempted = true;
+		iconName = "???";
+		iconLoadAttempted = true;
 		this.icon = icon;
 	}
 
 	public FactoryDescription(String name, StringGetter displayName, String factoryClassName) {
 		this.name = name;
 		this.displayName = displayName;
-		this.iconName = "???";
-		this.iconLoadAttempted = true;
-		this.icon = null;
+		iconName = "???";
+		iconLoadAttempted = true;
+		icon = null;
 		this.factoryClassName = factoryClassName;
-		this.factoryLoadAttempted = false;
-		this.factory = null;
-		this.toolTip = null;
+		factoryLoadAttempted = false;
+		factory = null;
+		toolTip = null;
 	}
 
 	public String getName() {
@@ -76,22 +74,16 @@ public class FactoryDescription {
 	}
 
 	public Icon getIcon() {
-		Icon ret = icon;
-		if (ret != null || iconLoadAttempted) {
-			return ret;
-		} else {
-			ret = Icons.getIcon(iconName);
-			icon = ret;
-			iconLoadAttempted = true;
-			return ret;
-		}
+		if (icon != null || iconLoadAttempted) return icon;
+		icon = Icons.getIcon(iconName);
+		iconLoadAttempted = true;
+		return icon;
 	}
 
 	public ComponentFactory getFactory(Class<? extends Library> libraryClass) {
 		ComponentFactory ret = factory;
-		if (factory != null || factoryLoadAttempted) {
-			return ret;
-		} else {
+		if (factory != null || factoryLoadAttempted) return ret;
+		else {
 			String msg = "";
 			try {
 				msg = "getting class loader";
@@ -99,11 +91,8 @@ public class FactoryDescription {
 				msg = "getting package name";
 				String name;
 				Package pack = libraryClass.getPackage();
-				if (pack == null) {
-					name = factoryClassName;
-				} else {
-					name = pack.getName() + "." + factoryClassName;
-				}
+				if (pack == null) name = factoryClassName;
+				else name = pack.getName() + "." + factoryClassName;
 				msg = "loading class";
 				Class<?> factoryClass = loader.loadClass(name);
 				msg = "creating instance";

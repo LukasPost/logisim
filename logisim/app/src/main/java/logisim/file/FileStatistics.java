@@ -28,11 +28,11 @@ public class FileStatistics {
 		private int recursiveCount;
 
 		private Count(ComponentFactory factory) {
-			this.library = null;
+			library = null;
 			this.factory = factory;
-			this.simpleCount = 0;
-			this.uniqueCount = 0;
-			this.recursiveCount = 0;
+			simpleCount = 0;
+			uniqueCount = 0;
+			recursiveCount = 0;
 		}
 
 		public Library getLibrary() {
@@ -57,9 +57,8 @@ public class FileStatistics {
 	}
 
 	public static FileStatistics compute(LogisimFile file, Circuit circuit) {
-		Set<Circuit> include = new HashSet<Circuit>(file.getCircuits());
-		Map<Circuit, Map<ComponentFactory, Count>> countMap;
-		countMap = new HashMap<Circuit, Map<ComponentFactory, Count>>();
+		Set<Circuit> include = new HashSet<>(file.getCircuits());
+		Map<Circuit, Map<ComponentFactory, Count>> countMap = new HashMap<>();
 		doRecursiveCount(circuit, include, countMap);
 		doUniqueCounts(countMap.get(circuit), countMap);
 		List<Count> countList = sortCounts(countMap.get(circuit), file);
@@ -68,9 +67,7 @@ public class FileStatistics {
 
 	private static Map<ComponentFactory, Count> doRecursiveCount(Circuit circuit, Set<Circuit> include,
 			Map<Circuit, Map<ComponentFactory, Count>> countMap) {
-		if (countMap.containsKey(circuit)) {
-			return countMap.get(circuit);
-		}
+		if (countMap.containsKey(circuit)) return countMap.get(circuit);
 
 		Map<ComponentFactory, Count> counts = doSimpleCount(circuit);
 		countMap.put(circuit, counts);
@@ -82,15 +79,10 @@ public class FileStatistics {
 			SubcircuitFactory subFactory = sub.getSubcircuitFactory();
 			if (counts.containsKey(subFactory)) {
 				int multiplier = counts.get(subFactory).simpleCount;
-				Map<ComponentFactory, Count> subCount;
-				subCount = doRecursiveCount(sub, include, countMap);
+				Map<ComponentFactory, Count> subCount = doRecursiveCount(sub, include, countMap);
 				for (Count subcount : subCount.values()) {
 					ComponentFactory subfactory = subcount.factory;
-					Count supercount = counts.get(subfactory);
-					if (supercount == null) {
-						supercount = new Count(subfactory);
-						counts.put(subfactory, supercount);
-					}
+					Count supercount = counts.computeIfAbsent(subfactory, Count::new);
 					supercount.recursiveCount += multiplier * subcount.recursiveCount;
 				}
 			}
@@ -100,15 +92,10 @@ public class FileStatistics {
 	}
 
 	private static Map<ComponentFactory, Count> doSimpleCount(Circuit circuit) {
-		Map<ComponentFactory, Count> counts;
-		counts = new HashMap<ComponentFactory, Count>();
+		Map<ComponentFactory, Count> counts = new HashMap<>();
 		for (Component comp : circuit.getNonWires()) {
 			ComponentFactory factory = comp.getFactory();
-			Count count = counts.get(factory);
-			if (count == null) {
-				count = new Count(factory);
-				counts.put(factory, count);
-			}
+			Count count = counts.computeIfAbsent(factory, Count::new);
 			count.simpleCount++;
 		}
 		return counts;
@@ -121,16 +108,14 @@ public class FileStatistics {
 			int unique = 0;
 			for (Circuit circ : circuitCounts.keySet()) {
 				Count subcount = circuitCounts.get(circ).get(factory);
-				if (subcount != null) {
-					unique += subcount.simpleCount;
-				}
+				if (subcount != null) unique += subcount.simpleCount;
 			}
 			count.uniqueCount = unique;
 		}
 	}
 
 	private static List<Count> sortCounts(Map<ComponentFactory, Count> counts, LogisimFile file) {
-		List<Count> ret = new ArrayList<Count>();
+		List<Count> ret = new ArrayList<>();
 		for (AddTool tool : file.getTools()) {
 			ComponentFactory factory = tool.getFactory();
 			Count count = counts.get(factory);
@@ -139,8 +124,8 @@ public class FileStatistics {
 				ret.add(count);
 			}
 		}
-		for (Library lib : file.getLibraries()) {
-			for (Tool tool : lib.getTools()) {
+		for (Library lib : file.getLibraries())
+			for (Tool tool : lib.getTools())
 				if (tool instanceof AddTool) {
 					ComponentFactory factory = ((AddTool) tool).getFactory();
 					Count count = counts.get(factory);
@@ -149,8 +134,6 @@ public class FileStatistics {
 						ret.add(count);
 					}
 				}
-			}
-		}
 		return ret;
 	}
 
@@ -159,9 +142,7 @@ public class FileStatistics {
 		for (Count count : counts) {
 			ComponentFactory factory = count.getFactory();
 			Circuit factoryCirc = null;
-			if (factory instanceof SubcircuitFactory) {
-				factoryCirc = ((SubcircuitFactory) factory).getSubcircuit();
-			}
+			if (factory instanceof SubcircuitFactory) factoryCirc = ((SubcircuitFactory) factory).getSubcircuit();
 			if (exclude == null || !exclude.contains(factoryCirc)) {
 				ret.simpleCount += count.simpleCount;
 				ret.uniqueCount += count.uniqueCount;

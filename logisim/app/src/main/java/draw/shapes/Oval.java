@@ -22,11 +22,7 @@ public class Oval extends Rectangular {
 
 	@Override
 	public boolean matches(CanvasObject other) {
-		if (other instanceof Oval) {
-			return super.matches(other);
-		} else {
-			return false;
-		}
+		return other instanceof Oval && super.matches(other);
 	}
 
 	@Override
@@ -51,8 +47,8 @@ public class Oval extends Rectangular {
 
 	@Override
 	protected boolean contains(int x, int y, int w, int h, Location q) {
-		int qx = q.getX();
-		int qy = q.getY();
+		int qx = q.x();
+		int qy = q.y();
 		double dx = qx - (x + 0.5 * w);
 		double dy = qy - (y + 0.5 * h);
 		double sum = (dx * dx) / (w * w) + (dy * dy) / (h * h);
@@ -73,9 +69,7 @@ public class Oval extends Rectangular {
 				y += rand.nextInt(d) - d / 2;
 			}
 			return new Location(x, y);
-		} else {
-			return super.getRandomPoint(bds, rand);
-		}
+		} else return super.getRandomPoint(bds, rand);
 	}
 
 	@Override

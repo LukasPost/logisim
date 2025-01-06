@@ -81,11 +81,8 @@ class ToolbarActions {
 
 		@Override
 		public void undo(Project proj) {
-			if (removed instanceof Tool) {
-				toolbar.addTool(which, (Tool) removed);
-			} else if (removed == null) {
-				toolbar.addSeparator(which);
-			}
+			if (removed instanceof Tool) toolbar.addTool(which, (Tool) removed);
+			else if (removed == null) toolbar.addSeparator(which);
 		}
 	}
 
@@ -117,23 +114,14 @@ class ToolbarActions {
 
 		@Override
 		public boolean shouldAppendTo(Action other) {
-			if (other instanceof MoveTool) {
-				MoveTool o = (MoveTool) other;
-				return this.toolbar == o.toolbar && o.dest == this.oldpos;
-			} else {
-				return false;
-			}
+			return other instanceof MoveTool o && toolbar == o.toolbar && o.dest == oldpos;
 		}
 
 		@Override
 		public Action append(Action other) {
-			if (other instanceof MoveTool) {
-				MoveTool o = (MoveTool) other;
-				if (this.toolbar == o.toolbar && this.dest == o.oldpos) {
-					// TODO if (this.oldpos == o.dest) return null;
-					return new MoveTool(toolbar, this.oldpos, o.dest);
-				}
-			}
+			// TODO if (this.oldpos == o.dest) return null;
+			if (other instanceof MoveTool o)
+				if (toolbar == o.toolbar && dest == o.oldpos) return new MoveTool(toolbar, oldpos, o.dest);
 			return super.append(other);
 		}
 	}

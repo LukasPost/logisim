@@ -55,9 +55,8 @@ class FilePanel extends LogPanel {
 
 		public void actionPerformed(ActionEvent event) {
 			Object src = event.getSource();
-			if (src == enableButton) {
-				getModel().setFileEnabled(!getModel().isFileEnabled());
-			} else if (src == selectButton) {
+			if (src == enableButton) getModel().setFileEnabled(!getModel().isFileEnabled());
+			else if (src == selectButton) {
 				int result = chooser.showSaveDialog(getLogFrame());
 				if (result != JFileChooser.APPROVE_OPTION)
 					return;
@@ -65,32 +64,24 @@ class FilePanel extends LogPanel {
 				if (file.exists() && (!file.canWrite() || file.isDirectory())) {
 					JOptionPane.showMessageDialog(getLogFrame(),
 							StringUtil.format(Strings.get("fileCannotWriteMessage"), file.getName()),
-							Strings.get("fileCannotWriteTitle"), JOptionPane.OK_OPTION);
+							Strings.get("fileCannotWriteTitle"), JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				if (file.exists() && file.length() > 0) {
-					String[] options = { Strings.get("fileOverwriteOption"), Strings.get("fileAppendOption"),
-							Strings.get("fileCancelOption"), };
+					String[] options = {Strings.get("fileOverwriteOption"), Strings.get("fileAppendOption"),
+							Strings.get("fileCancelOption"),};
 					int option = JOptionPane.showOptionDialog(getLogFrame(),
 							StringUtil.format(Strings.get("fileExistsMessage"), file.getName()),
-							Strings.get("fileExistsTitle"), 0, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-					if (option == 0) {
-						try {
-							FileWriter delete = new FileWriter(file);
-							delete.close();
-						}
-						catch (IOException e) {
-						}
-					} else if (option == 1) {
-						// do nothing
-					} else {
+							Strings.get("fileExistsTitle"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+					if (option != 0)
 						return;
-					}
+					try {
+						FileWriter delete = new FileWriter(file);
+						delete.close();
+					} catch (IOException e) { }
 				}
 				getModel().setFile(file);
-			} else if (src == headerCheckBox) {
-				getModel().setFileHeader(headerCheckBox.isSelected());
-			}
+			} else if (src == headerCheckBox) getModel().setFileHeader(headerCheckBox.isSelected());
 		}
 	}
 
@@ -127,8 +118,7 @@ class FilePanel extends LogPanel {
 		gc.gridx = 0;
 		gc.weightx = 1.0;
 		gc.gridy = GridBagConstraints.RELATIVE;
-		JComponent glue;
-		glue = new JPanel();
+		JComponent glue = new JPanel();
 		gc.weighty = 1.0;
 		gb.setConstraints(glue, gc);
 		add(glue);

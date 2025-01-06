@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import draw.model.CanvasObject;
+import org.jetbrains.annotations.NotNull;
 
 public class MatchingSet<E extends CanvasObject> extends AbstractSet<E> {
 	private static class Member<E extends CanvasObject> {
@@ -22,7 +23,7 @@ public class MatchingSet<E extends CanvasObject> extends AbstractSet<E> {
 		public boolean equals(Object other) {
 			@SuppressWarnings("unchecked")
 			Member<E> that = (Member<E>) other;
-			return this.value.matches(that.value);
+			return value.matches(that.value);
 		}
 
 		@Override
@@ -55,38 +56,36 @@ public class MatchingSet<E extends CanvasObject> extends AbstractSet<E> {
 	private HashSet<Member<E>> set;
 
 	public MatchingSet() {
-		set = new HashSet<Member<E>>();
+		set = new HashSet<>();
 	}
 
 	public MatchingSet(Collection<E> initialContents) {
-		set = new HashSet<Member<E>>(initialContents.size());
-		for (E value : initialContents) {
-			set.add(new Member<E>(value));
-		}
+		set = new HashSet<>(initialContents.size());
+		for (E value : initialContents) set.add(new Member<>(value));
 	}
 
 	@Override
 	public boolean add(E value) {
-		return set.add(new Member<E>(value));
+		return set.add(new Member<>(value));
 	}
 
 	@Override
 	public boolean remove(Object value) {
 		@SuppressWarnings("unchecked")
 		E eValue = (E) value;
-		return set.remove(new Member<E>(eValue));
+		return set.remove(new Member<>(eValue));
 	}
 
 	@Override
 	public boolean contains(Object value) {
 		@SuppressWarnings("unchecked")
 		E eValue = (E) value;
-		return set.contains(new Member<E>(eValue));
+		return set.contains(new Member<>(eValue));
 	}
 
 	@Override
-	public Iterator<E> iterator() {
-		return new MatchIterator<E>(set.iterator());
+	public @NotNull Iterator<E> iterator() {
+		return new MatchIterator<>(set.iterator());
 	}
 
 	@Override

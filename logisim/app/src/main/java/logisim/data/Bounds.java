@@ -28,12 +28,12 @@ public class Bounds {
 		return ret;
 	}
 
-	public static Bounds create(java.awt.Rectangle rect) {
+	public static Bounds create(Rectangle rect) {
 		return create(rect.x, rect.y, rect.width, rect.height);
 	}
 
 	public static Bounds create(Location pt) {
-		return create(pt.getX(), pt.getY(), 1, 1);
+		return create(pt.x(), pt.y(), 1, 1);
 	}
 
 	private final int x;
@@ -46,22 +46,11 @@ public class Bounds {
 		this.y = y;
 		this.wid = wid;
 		this.ht = ht;
-		if (wid < 0) {
-			x += wid / 2;
-			wid = 0;
-		}
-		if (ht < 0) {
-			y += ht / 2;
-			ht = 0;
-		}
 	}
 
 	@Override
 	public boolean equals(Object other_obj) {
-		if (!(other_obj instanceof Bounds))
-			return false;
-		Bounds other = (Bounds) other_obj;
-		return x == other.x && y == other.y && wid == other.wid && ht == other.ht;
+		return other_obj instanceof Bounds other && x == other.x && y == other.y && wid == other.wid && ht == other.ht;
 	}
 
 	@Override
@@ -98,11 +87,11 @@ public class Bounds {
 	}
 
 	public boolean contains(Location p) {
-		return contains(p.getX(), p.getY(), 0);
+		return contains(p.x(), p.y(), 0);
 	}
 
 	public boolean contains(Location p, int allowedError) {
-		return contains(p.getX(), p.getY(), allowedError);
+		return contains(p.x(), p.y(), allowedError);
 	}
 
 	public boolean contains(int px, int py) {
@@ -125,25 +114,20 @@ public class Bounds {
 	}
 
 	public boolean borderContains(Location p, int fudge) {
-		return borderContains(p.getX(), p.getY(), fudge);
+		return borderContains(p.x(), p.y(), fudge);
 	}
 
 	public boolean borderContains(int px, int py, int fudge) {
 		int x1 = x + wid - 1;
 		int y1 = y + ht - 1;
-		if (Math.abs(px - x) <= fudge || Math.abs(px - x1) <= fudge) {
-			// maybe on east or west border?
-			return y - fudge >= py && py <= y1 + fudge;
-		}
-		if (Math.abs(py - y) <= fudge || Math.abs(py - y1) <= fudge) {
-			// maybe on north or south border?
-			return x - fudge >= px && px <= x1 + fudge;
-		}
-		return false;
+		// maybe on east or west border?
+		if (Math.abs(px - x) <= fudge || Math.abs(px - x1) <= fudge) return y - fudge >= py && py <= y1 + fudge;
+		// maybe on north or south border?
+		return (Math.abs(py - y) <= fudge || Math.abs(py - y1) <= fudge) && x - fudge >= px && px <= x1 + fudge;
 	}
 
 	public Bounds add(Location p) {
-		return add(p.getX(), p.getY());
+		return add(p.x(), p.y());
 	}
 
 	public Bounds add(int x, int y) {
@@ -153,23 +137,17 @@ public class Bounds {
 			return this;
 
 		int new_x = this.x;
-		int new_wid = this.wid;
+		int new_wid = wid;
 		int new_y = this.y;
-		int new_ht = this.ht;
+		int new_ht = ht;
 		if (x < this.x) {
 			new_x = x;
-			new_wid = (this.x + this.wid) - x;
-		} else if (x >= this.x + this.wid) {
-			new_x = this.x;
-			new_wid = x - this.x + 1;
-		}
+			new_wid = (this.x + wid) - x;
+		} else if (x >= this.x + wid) new_wid = x - this.x + 1;
 		if (y < this.y) {
 			new_y = y;
-			new_ht = (this.y + this.ht) - y;
-		} else if (y >= this.y + this.ht) {
-			new_y = this.y;
-			new_ht = y - this.y + 1;
-		}
+			new_ht = (this.y + ht) - y;
+		} else if (y >= this.y + ht) new_ht = y - this.y + 1;
 		return create(new_x, new_y, new_wid, new_ht);
 	}
 
@@ -180,11 +158,8 @@ public class Bounds {
 		int retY = Math.min(y, this.y);
 		int retWidth = Math.max(x + wid, this.x + this.wid) - retX;
 		int retHeight = Math.max(y + ht, this.y + this.ht) - retY;
-		if (retX == this.x && retY == this.y && retWidth == this.wid && retHeight == this.ht) {
-			return this;
-		} else {
-			return Bounds.create(retX, retY, retWidth, retHeight);
-		}
+		if (retX == this.x && retY == this.y && retWidth == this.wid && retHeight == this.ht) return this;
+		else return Bounds.create(retX, retY, retWidth, retHeight);
 	}
 
 	public Bounds add(Bounds bd) {
@@ -192,17 +167,13 @@ public class Bounds {
 			return bd;
 		if (bd == EMPTY_BOUNDS)
 			return this;
-		int retX = Math.min(bd.x, this.x);
-		int retY = Math.min(bd.y, this.y);
-		int retWidth = Math.max(bd.x + bd.wid, this.x + this.wid) - retX;
-		int retHeight = Math.max(bd.y + bd.ht, this.y + this.ht) - retY;
-		if (retX == this.x && retY == this.y && retWidth == this.wid && retHeight == this.ht) {
-			return this;
-		} else if (retX == bd.x && retY == bd.y && retWidth == bd.wid && retHeight == bd.ht) {
-			return bd;
-		} else {
-			return Bounds.create(retX, retY, retWidth, retHeight);
-		}
+		int retX = Math.min(bd.x, x);
+		int retY = Math.min(bd.y, y);
+		int retWidth = Math.max(bd.x + bd.wid, x + wid) - retX;
+		int retHeight = Math.max(bd.y + bd.ht, y + ht) - retY;
+		if (retX == x && retY == y && retWidth == wid && retHeight == ht) return this;
+		else if (retX == bd.x && retY == bd.y && retWidth == bd.wid && retHeight == bd.ht) return bd;
+		else return Bounds.create(retX, retY, retWidth, retHeight);
 	}
 
 	public Bounds expand(int d) { // d pixels in each direction
@@ -232,22 +203,17 @@ public class Bounds {
 
 		int dx = x - xc;
 		int dy = y - yc;
-		if (degrees == 90) {
-			return create(xc + dy, yc - dx - wid, ht, wid);
-		} else if (degrees == 180) {
-			return create(xc - dx - wid, yc - dy - ht, wid, ht);
-		} else if (degrees == 270) {
-			return create(xc - dy - ht, yc + dx, ht, wid);
-		} else {
-			return this;
-		}
+		if (degrees == 90) return create(xc + dy, yc - dx - wid, ht, wid);
+		else if (degrees == 180) return create(xc - dx - wid, yc - dy - ht, wid, ht);
+		else if (degrees == 270) return create(xc - dy - ht, yc + dx, ht, wid);
+		else return this;
 	}
 
 	public Bounds intersect(Bounds other) {
-		int x0 = this.x;
-		int y0 = this.y;
-		int x1 = x0 + this.wid;
-		int y1 = y0 + this.ht;
+		int x0 = x;
+		int y0 = y;
+		int x1 = x0 + wid;
+		int y1 = y0 + ht;
 		int x2 = other.x;
 		int y2 = other.y;
 		int x3 = x2 + other.wid;
@@ -260,10 +226,7 @@ public class Bounds {
 			x1 = x3;
 		if (y3 < y1)
 			y1 = y3;
-		if (x1 < x0 || y1 < y0) {
-			return EMPTY_BOUNDS;
-		} else {
-			return create(x0, y0, x1 - x0, y1 - y0);
-		}
+		if (x1 < x0 || y1 < y0) return EMPTY_BOUNDS;
+		else return create(x0, y0, x1 - x0, y1 - y0);
 	}
 }

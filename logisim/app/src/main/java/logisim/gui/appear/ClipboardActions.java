@@ -35,22 +35,21 @@ public class ClipboardActions extends Action {
 	private ClipboardActions(boolean remove, AppearanceCanvas canvas) {
 		this.remove = remove;
 		this.canvas = canvas;
-		this.canvasModel = canvas.getModel();
+		canvasModel = canvas.getModel();
 
-		ArrayList<CanvasObject> contents = new ArrayList<CanvasObject>();
+		ArrayList<CanvasObject> contents = new ArrayList<>();
 		Direction anchorFacing = null;
 		Location anchorLocation = null;
-		ArrayList<CanvasObject> aff = new ArrayList<CanvasObject>();
-		for (CanvasObject o : canvas.getSelection().getSelected()) {
+		ArrayList<CanvasObject> aff = new ArrayList<>();
+		for (CanvasObject o : canvas.getSelection().getSelected())
 			if (o.canRemove()) {
 				aff.add(o);
 				contents.add(o.clone());
-			} else if (o instanceof AppearanceAnchor) {
-				AppearanceAnchor anch = (AppearanceAnchor) o;
+			}
+			else if (o instanceof AppearanceAnchor anch) {
 				anchorFacing = anch.getFacing();
 				anchorLocation = anch.getLocation();
 			}
-		}
 		contents.trimToSize();
 		affected = ZOrder.getZIndex(aff, canvasModel);
 		newClipboard = new ClipboardContents(contents, anchorLocation, anchorFacing);
@@ -58,20 +57,15 @@ public class ClipboardActions extends Action {
 
 	@Override
 	public String getName() {
-		if (remove) {
-			return Strings.get("cutSelectionAction");
-		} else {
-			return Strings.get("copySelectionAction");
-		}
+		if (remove) return Strings.get("cutSelectionAction");
+		else return Strings.get("copySelectionAction");
 	}
 
 	@Override
 	public void doIt(Project proj) {
 		oldClipboard = Clipboard.get();
 		Clipboard.set(newClipboard);
-		if (remove) {
-			canvasModel.removeObjects(affected.keySet());
-		}
+		if (remove) canvasModel.removeObjects(affected.keySet());
 	}
 
 	@Override

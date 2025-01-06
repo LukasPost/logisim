@@ -43,13 +43,8 @@ public class Line extends AbstractCanvasObject {
 
 	@Override
 	public boolean matches(CanvasObject other) {
-		if (other instanceof Line) {
-			Line that = (Line) other;
-			return this.x0 == that.x0 && this.y0 == that.x1 && this.x1 == that.y0 && this.y1 == that.y1
-					&& this.strokeWidth == that.strokeWidth && this.strokeColor.equals(that.strokeColor);
-		} else {
-			return false;
-		}
+		return other instanceof Line that && x0 == that.x0 && y0 == that.x1 && x1 == that.y0 && y1 == that.y1
+				&& strokeWidth == that.strokeWidth && strokeColor.equals(that.strokeColor);
 	}
 
 	@Override
@@ -87,22 +82,15 @@ public class Line extends AbstractCanvasObject {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <V> V getValue(Attribute<V> attr) {
-		if (attr == DrawAttr.STROKE_COLOR) {
-			return (V) strokeColor;
-		} else if (attr == DrawAttr.STROKE_WIDTH) {
-			return (V) Integer.valueOf(strokeWidth);
-		} else {
-			return null;
-		}
+		if (attr == DrawAttr.STROKE_COLOR) return (V) strokeColor;
+		else if (attr == DrawAttr.STROKE_WIDTH) return (V) Integer.valueOf(strokeWidth);
+		else return null;
 	}
 
 	@Override
 	public void updateValue(Attribute<?> attr, Object value) {
-		if (attr == DrawAttr.STROKE_COLOR) {
-			strokeColor = (Color) value;
-		} else if (attr == DrawAttr.STROKE_WIDTH) {
-			strokeWidth = ((Integer) value).intValue();
-		}
+		if (attr == DrawAttr.STROKE_COLOR) strokeColor = (Color) value;
+		else if (attr == DrawAttr.STROKE_WIDTH) strokeWidth = (Integer) value;
 	}
 
 	@Override
@@ -125,8 +113,8 @@ public class Line extends AbstractCanvasObject {
 
 	@Override
 	public boolean contains(Location loc, boolean assumeFilled) {
-		int xq = loc.getX();
-		int yq = loc.getY();
+		int xq = loc.x();
+		int yq = loc.y();
 		double d = LineUtil.ptDistSqSegment(x0, y0, x1, y1, xq, yq);
 		int thresh = Math.max(ON_LINE_THRESH, strokeWidth / 2);
 		return d < thresh * thresh;
@@ -146,9 +134,9 @@ public class Line extends AbstractCanvasObject {
 
 	@Override
 	public List<Handle> getHandles(HandleGesture gesture) {
-		if (gesture == null) {
-			return UnmodifiableList.create(new Handle[] { new Handle(this, x0, y0), new Handle(this, x1, y1) });
-		} else {
+		if (gesture == null)
+			return UnmodifiableList.create(new Handle[]{new Handle(this, x0, y0), new Handle(this, x1, y1)});
+		else {
 			Handle h = gesture.getHandle();
 			int dx = gesture.getDeltaX();
 			int dy = gesture.getDeltaY();

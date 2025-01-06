@@ -43,16 +43,16 @@ public class Constant extends InstanceFactory {
 			.asList(new Attribute<?>[] { StdAttr.FACING, StdAttr.WIDTH, ATTR_VALUE });
 
 	private static class ConstantAttributes extends AbstractAttributeSet {
-		private Direction facing = Direction.East;;
+		private Direction facing = Direction.East;
 		private BitWidth width = BitWidth.ONE;
 		private Value value = Value.TRUE;
 
 		@Override
 		protected void copyInto(AbstractAttributeSet destObj) {
 			ConstantAttributes dest = (ConstantAttributes) destObj;
-			dest.facing = this.facing;
-			dest.width = this.width;
-			dest.value = this.value;
+			dest.facing = facing;
+			dest.width = width;
+			dest.value = value;
 		}
 
 		@Override
@@ -74,17 +74,14 @@ public class Constant extends InstanceFactory {
 
 		@Override
 		public <V> void setValue(Attribute<V> attr, V value) {
-			if (attr == StdAttr.FACING) {
-				facing = (Direction) value;
-			} else if (attr == StdAttr.WIDTH) {
+			if (attr == StdAttr.FACING) facing = (Direction) value;
+			else if (attr == StdAttr.WIDTH) {
 				width = (BitWidth) value;
 				this.value = this.value.extendWidth(width.getWidth(), this.value.get(this.value.getWidth() - 1));
 			} else if (attr == ATTR_VALUE) {
-				int val = ((Integer) value).intValue();
+				int val = (Integer) value;
 				this.value = Value.createKnown(width, val);
-			} else {
-				throw new IllegalArgumentException("unknown attribute " + attr);
-			}
+			} else throw new IllegalArgumentException("unknown attribute " + attr);
 			fireAttributeValueChanged(attr, value);
 		}
 	}
@@ -98,7 +95,7 @@ public class Constant extends InstanceFactory {
 
 		public void computeExpression(Map<Location, Expression> expressionMap) {
 			AttributeSet attrs = instance.getAttributeSet();
-			int intValue = attrs.getValue(ATTR_VALUE).intValue();
+			int intValue = attrs.getValue(ATTR_VALUE);
 
 			expressionMap.put(instance.getLocation(), Expressions.constant(intValue));
 		}
@@ -132,11 +129,8 @@ public class Constant extends InstanceFactory {
 		if (attr == StdAttr.WIDTH) {
 			instance.recomputeBounds();
 			updatePorts(instance);
-		} else if (attr == StdAttr.FACING) {
-			instance.recomputeBounds();
-		} else if (attr == ATTR_VALUE) {
-			instance.fireInvalidated();
-		}
+		} else if (attr == StdAttr.FACING) instance.recomputeBounds();
+		else if (attr == ATTR_VALUE) instance.fireInvalidated();
 	}
 
 	@Override
@@ -149,7 +143,7 @@ public class Constant extends InstanceFactory {
 	@Override
 	public void propagate(InstanceState state) {
 		BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
-		int value = state.getAttributeValue(ATTR_VALUE).intValue();
+		int value = state.getAttributeValue(ATTR_VALUE);
 		state.setPort(0, Value.createKnown(width, value), 1);
 	}
 
@@ -160,118 +154,47 @@ public class Constant extends InstanceFactory {
 		int chars = (width.getWidth() + 3) / 4;
 
 		Bounds ret = null;
-		if (facing == Direction.East) {
-			switch (chars) {
-			case 1:
-				ret = Bounds.create(-16, -8, 16, 16);
-				break;
-			case 2:
-				ret = Bounds.create(-16, -8, 16, 16);
-				break;
-			case 3:
-				ret = Bounds.create(-26, -8, 26, 16);
-				break;
-			case 4:
-				ret = Bounds.create(-36, -8, 36, 16);
-				break;
-			case 5:
-				ret = Bounds.create(-46, -8, 46, 16);
-				break;
-			case 6:
-				ret = Bounds.create(-56, -8, 56, 16);
-				break;
-			case 7:
-				ret = Bounds.create(-66, -8, 66, 16);
-				break;
-			case 8:
-				ret = Bounds.create(-76, -8, 76, 16);
-				break;
-			}
-		} else if (facing == Direction.West) {
-			switch (chars) {
-			case 1:
-				ret = Bounds.create(0, -8, 16, 16);
-				break;
-			case 2:
-				ret = Bounds.create(0, -8, 16, 16);
-				break;
-			case 3:
-				ret = Bounds.create(0, -8, 26, 16);
-				break;
-			case 4:
-				ret = Bounds.create(0, -8, 36, 16);
-				break;
-			case 5:
-				ret = Bounds.create(0, -8, 46, 16);
-				break;
-			case 6:
-				ret = Bounds.create(0, -8, 56, 16);
-				break;
-			case 7:
-				ret = Bounds.create(0, -8, 66, 16);
-				break;
-			case 8:
-				ret = Bounds.create(0, -8, 76, 16);
-				break;
-			}
-		} else if (facing == Direction.South) {
-			switch (chars) {
-			case 1:
-				ret = Bounds.create(-8, -16, 16, 16);
-				break;
-			case 2:
-				ret = Bounds.create(-8, -16, 16, 16);
-				break;
-			case 3:
-				ret = Bounds.create(-13, -16, 26, 16);
-				break;
-			case 4:
-				ret = Bounds.create(-18, -16, 36, 16);
-				break;
-			case 5:
-				ret = Bounds.create(-23, -16, 46, 16);
-				break;
-			case 6:
-				ret = Bounds.create(-28, -16, 56, 16);
-				break;
-			case 7:
-				ret = Bounds.create(-33, -16, 66, 16);
-				break;
-			case 8:
-				ret = Bounds.create(-38, -16, 76, 16);
-				break;
-			}
-		} else if (facing == Direction.North) {
-			switch (chars) {
-			case 1:
-				ret = Bounds.create(-8, 0, 16, 16);
-				break;
-			case 2:
-				ret = Bounds.create(-8, 0, 16, 16);
-				break;
-			case 3:
-				ret = Bounds.create(-13, 0, 26, 16);
-				break;
-			case 4:
-				ret = Bounds.create(-18, 0, 36, 16);
-				break;
-			case 5:
-				ret = Bounds.create(-23, 0, 46, 16);
-				break;
-			case 6:
-				ret = Bounds.create(-28, 0, 56, 16);
-				break;
-			case 7:
-				ret = Bounds.create(-33, 0, 66, 16);
-				break;
-			case 8:
-				ret = Bounds.create(-38, 0, 76, 16);
-				break;
-			}
-		}
-		if (ret == null) {
-			throw new IllegalArgumentException("unrecognized arguments " + facing + " " + width);
-		}
+		if (facing == Direction.East) ret = switch (chars) {
+			case 1, 2 -> Bounds.create(-16, -8, 16, 16);
+			case 3 -> Bounds.create(-26, -8, 26, 16);
+			case 4 -> Bounds.create(-36, -8, 36, 16);
+			case 5 -> Bounds.create(-46, -8, 46, 16);
+			case 6 -> Bounds.create(-56, -8, 56, 16);
+			case 7 -> Bounds.create(-66, -8, 66, 16);
+			case 8 -> Bounds.create(-76, -8, 76, 16);
+			default -> null;
+		};
+		else if (facing == Direction.West) ret = switch (chars) {
+			case 1, 2 -> Bounds.create(0, -8, 16, 16);
+			case 3 -> Bounds.create(0, -8, 26, 16);
+			case 4 -> Bounds.create(0, -8, 36, 16);
+			case 5 -> Bounds.create(0, -8, 46, 16);
+			case 6 -> Bounds.create(0, -8, 56, 16);
+			case 7 -> Bounds.create(0, -8, 66, 16);
+			case 8 -> Bounds.create(0, -8, 76, 16);
+			default -> null;
+		};
+		else if (facing == Direction.South) ret = switch (chars) {
+			case 1, 2 -> Bounds.create(-8, -16, 16, 16);
+			case 3 -> Bounds.create(-13, -16, 26, 16);
+			case 4 -> Bounds.create(-18, -16, 36, 16);
+			case 5 -> Bounds.create(-23, -16, 46, 16);
+			case 6 -> Bounds.create(-28, -16, 56, 16);
+			case 7 -> Bounds.create(-33, -16, 66, 16);
+			case 8 -> Bounds.create(-38, -16, 76, 16);
+			default -> null;
+		};
+		else if (facing == Direction.North) ret = switch (chars) {
+			case 1, 2 -> Bounds.create(-8, 0, 16, 16);
+			case 3 -> Bounds.create(-13, 0, 26, 16);
+			case 4 -> Bounds.create(-18, 0, 36, 16);
+			case 5 -> Bounds.create(-23, 0, 46, 16);
+			case 6 -> Bounds.create(-28, 0, 56, 16);
+			case 7 -> Bounds.create(-33, 0, 66, 16);
+			case 8 -> Bounds.create(-38, 0, 76, 16);
+			default -> null;
+		};
+		if (ret == null) throw new IllegalArgumentException("unrecognized arguments " + facing + " " + width);
 		return ret;
 	}
 
@@ -286,9 +209,8 @@ public class Constant extends InstanceFactory {
 		Direction dir = painter.getAttributeValue(StdAttr.FACING);
 		if (dir == Direction.East) {
 		} // keep defaults
-		else if (dir == Direction.West) {
-			pinx = 4;
-		} else if (dir == Direction.North) {
+		else if (dir == Direction.West) pinx = 4;
+		else if (dir == Direction.North) {
 			pinx = 9;
 			piny = 4;
 		} else if (dir == Direction.South) {
@@ -298,7 +220,7 @@ public class Constant extends InstanceFactory {
 
 		Graphics g = painter.getGraphics();
 		if (w == 1) {
-			int v = painter.getAttributeValue(ATTR_VALUE).intValue();
+			int v = painter.getAttributeValue(ATTR_VALUE);
 			Value val = v == 1 ? Value.TRUE : Value.FALSE;
 			g.setColor(val.getColor());
 			GraphicsUtil.drawCenteredText(g, "" + v, 10, 9);
@@ -311,7 +233,7 @@ public class Constant extends InstanceFactory {
 
 	@Override
 	public void paintGhost(InstancePainter painter) {
-		int v = painter.getAttributeValue(ATTR_VALUE).intValue();
+		int v = painter.getAttributeValue(ATTR_VALUE);
 		String vStr = Integer.toHexString(v);
 		Bounds bds = getOffsetBounds(painter.getAttributeSet());
 
@@ -325,11 +247,11 @@ public class Constant extends InstanceFactory {
 	public void paintInstance(InstancePainter painter) {
 		Bounds bds = painter.getOffsetBounds();
 		BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
-		int intValue = painter.getAttributeValue(ATTR_VALUE).intValue();
+		int intValue = painter.getAttributeValue(ATTR_VALUE);
 		Value v = Value.createKnown(width, intValue);
 		Location loc = painter.getLocation();
-		int x = loc.getX();
-		int y = loc.getY();
+		int x = loc.x();
+		int y = loc.y();
 
 		Graphics g = painter.getGraphics();
 		if (painter.shouldDrawColor()) {

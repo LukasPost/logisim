@@ -22,6 +22,7 @@ import javax.swing.table.TableColumn;
 
 import logisim.circuit.Circuit;
 import logisim.file.FileStatistics;
+import logisim.file.FileStatistics.Count;
 import logisim.file.LogisimFile;
 import logisim.tools.Library;
 import logisim.util.TableSorter;
@@ -55,28 +56,22 @@ public class StatisticsDialog extends JDialog implements ActionListener {
 
 		@Override
 		public String getColumnName(int column) {
-			switch (column) {
-			case 0:
-				return Strings.get("statsComponentColumn");
-			case 1:
-				return Strings.get("statsLibraryColumn");
-			case 2:
-				return Strings.get("statsSimpleCountColumn");
-			case 3:
-				return Strings.get("statsUniqueCountColumn");
-			case 4:
-				return Strings.get("statsRecursiveCountColumn");
-			default:
-				return "??"; // should never happen
-			}
+			return switch (column) {
+				case 0 -> Strings.get("statsComponentColumn");
+				case 1 -> Strings.get("statsLibraryColumn");
+				case 2 -> Strings.get("statsSimpleCountColumn");
+				case 3 -> Strings.get("statsUniqueCountColumn");
+				case 4 -> Strings.get("statsRecursiveCountColumn");
+				default -> "??"; // should never happen
+			};
 		}
 
 		public Object getValueAt(int row, int column) {
-			List<FileStatistics.Count> counts = stats.getCounts();
+			List<Count> counts = stats.getCounts();
 			int countsLen = counts.size();
 			if (row < 0 || row >= countsLen + 2)
 				return "";
-			FileStatistics.Count count;
+			Count count;
 			if (row < countsLen)
 				count = counts.get(row);
 			else if (row == countsLen)
@@ -85,26 +80,20 @@ public class StatisticsDialog extends JDialog implements ActionListener {
 				count = stats.getTotalWithSubcircuits();
 			switch (column) {
 			case 0:
-				if (row < countsLen) {
-					return count.getFactory().getDisplayName();
-				} else if (row == countsLen) {
-					return Strings.get("statsTotalWithout");
-				} else {
-					return Strings.get("statsTotalWith");
-				}
+				if (row < countsLen) return count.getFactory().getDisplayName();
+				else if (row == countsLen) return Strings.get("statsTotalWithout");
+				else return Strings.get("statsTotalWith");
 			case 1:
 				if (row < countsLen) {
 					Library lib = count.getLibrary();
 					return lib == null ? "-" : lib.getDisplayName();
-				} else {
-					return "";
-				}
+				} else return "";
 			case 2:
-				return Integer.valueOf(count.getSimpleCount());
+				return count.getSimpleCount();
 			case 3:
-				return Integer.valueOf(count.getUniqueCount());
+				return count.getUniqueCount();
 			case 4:
-				return Integer.valueOf(count.getRecursiveCount());
+				return count.getRecursiveCount();
 			default:
 				return ""; // should never happen
 			}
@@ -141,9 +130,7 @@ public class StatisticsDialog extends JDialog implements ActionListener {
 			Dimension tableDim = getPreferredSize();
 
 			double total = 0;
-			for (int i = 0; i < getColumnModel().getColumnCount(); i++) {
-				total += percentages[i];
-			}
+			for (int i = 0; i < getColumnModel().getColumnCount(); i++) total += percentages[i];
 
 			for (int i = 0; i < getColumnModel().getColumnCount(); i++) {
 				TableColumn column = getColumnModel().getColumn(i);
@@ -171,11 +158,11 @@ public class StatisticsDialog extends JDialog implements ActionListener {
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(button);
 
-		Container contents = this.getContentPane();
+		Container contents = getContentPane();
 		contents.setLayout(new BorderLayout());
 		contents.add(tablePane, BorderLayout.CENTER);
 		contents.add(buttonPanel, BorderLayout.PAGE_END);
-		this.pack();
+		pack();
 
 		Dimension pref = contents.getPreferredSize();
 		if (pref.width > 750 || pref.height > 550) {
@@ -183,11 +170,11 @@ public class StatisticsDialog extends JDialog implements ActionListener {
 				pref.width = 750;
 			if (pref.height > 550)
 				pref.height = 550;
-			this.setSize(pref);
+			setSize(pref);
 		}
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		this.dispose();
+		dispose();
 	}
 }

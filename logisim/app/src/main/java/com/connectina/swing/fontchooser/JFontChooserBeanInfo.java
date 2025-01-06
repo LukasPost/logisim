@@ -59,18 +59,14 @@ public class JFontChooserBeanInfo extends SimpleBeanInfo {
      */
     // Java5 @Override
     public Image getIcon(int iconKind) {
-        switch (iconKind) {
-        case ICON_COLOR_16x16:
-            return iconColor16;
-        case ICON_COLOR_32x32:
-            return iconColor32;
-        case ICON_MONO_16x16:
-            return iconMono16;
-        case ICON_MONO_32x32:
-            return iconMono32;
-        }
+		return switch (iconKind) {
+			case ICON_COLOR_16x16 -> iconColor16;
+			case ICON_COLOR_32x32 -> iconColor32;
+			case ICON_MONO_16x16 -> iconMono16;
+			case ICON_MONO_32x32 -> iconMono32;
+			default -> null;
+		};
 
-        return null;
-    }
+	}
 
 }

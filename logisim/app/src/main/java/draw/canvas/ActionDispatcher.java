@@ -6,5 +6,5 @@ package draw.canvas;
 import draw.undo.Action;
 
 public interface ActionDispatcher {
-	public void doAction(Action action);
+	void doAction(Action action);
 }

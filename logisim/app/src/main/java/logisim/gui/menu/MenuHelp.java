@@ -48,10 +48,8 @@ class MenuHelp extends JMenu implements ActionListener {
 	}
 
 	public void localeChanged() {
-		this.setText(Strings.get("helpMenu"));
-		if (helpFrame != null) {
-			helpFrame.setTitle(Strings.get("helpWindowTitle"));
-		}
+		setText(Strings.get("helpMenu"));
+		if (helpFrame != null) helpFrame.setTitle(Strings.get("helpWindowTitle"));
 		tutorial.setText(Strings.get("helpTutorialItem"));
 		guide.setText(Strings.get("helpGuideItem"));
 		library.setText(Strings.get("helpLibraryItem"));
@@ -64,15 +62,10 @@ class MenuHelp extends JMenu implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		Object src = e.getSource();
-		if (src == guide) {
-			showHelp("guide");
-		} else if (src == tutorial) {
-			showHelp("tutorial");
-		} else if (src == library) {
-			showHelp("libs");
-		} else if (src == about) {
-			About.showAboutDialog(menubar.getParentWindow());
-		}
+		if (src == guide) showHelp("guide");
+		else if (src == tutorial) showHelp("tutorial");
+		else if (src == library) showHelp("libs");
+		else if (src == about) About.showAboutDialog(menubar.getParentWindow());
 	}
 
 	private void loadBroker() {
@@ -107,7 +100,6 @@ class MenuHelp extends JMenu implements ActionListener {
 				disableHelp();
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(menubar.getParentWindow(), Strings.get("helpUnavailableError"));
-				return;
 			}
 		}
 	}

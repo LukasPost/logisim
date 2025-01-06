@@ -22,12 +22,12 @@ class Measures {
 
 	public Measures(HexEditor hex) {
 		this.hex = hex;
-		this.guessed = true;
-		this.cols = 1;
-		this.cellWidth = -1;
-		this.cellHeight = -1;
-		this.cellChars = 2;
-		this.headerChars = 4;
+		guessed = true;
+		cols = 1;
+		cellWidth = -1;
+		cellHeight = -1;
+		cellChars = 2;
+		headerChars = 4;
 
 		computeCellSize(null);
 	}
@@ -69,9 +69,8 @@ class Measures {
 	}
 
 	public long getBaseAddress(HexModel model) {
-		if (model == null) {
-			return 0;
-		} else {
+		if (model == null) return 0;
+		else {
 			long addr0 = model.getFirstOffset();
 			return addr0 - addr0 % cols;
 		}
@@ -105,9 +104,7 @@ class Measures {
 		long ret = base + offs;
 		if (ret > addr1)
 			ret = addr1;
-		if (ret < addr0)
-			ret = addr0;
-		return ret;
+		return Math.max(ret, addr0);
 	}
 
 	void ensureComputed(Graphics g) {
@@ -155,9 +152,7 @@ class Measures {
 		} else {
 			int logSize = 0;
 			long addrEnd = model.getLastOffset();
-			while (addrEnd > (1L << logSize)) {
-				logSize++;
-			}
+			while (addrEnd > (1L << logSize)) logSize++;
 			headerChars = (logSize + 3) / 4;
 			cellChars = (model.getValueWidth() + 3) / 4;
 		}
@@ -171,11 +166,8 @@ class Measures {
 			charWidth = 8;
 			spaceWidth = 6;
 			Font font = hex.getFont();
-			if (font == null) {
-				lineHeight = 16;
-			} else {
-				lineHeight = font.getSize();
-			}
+			if (font == null) lineHeight = 16;
+			else lineHeight = font.getSize();
 		} else {
 			guessed = false;
 			charWidth = 0;
@@ -197,9 +189,8 @@ class Measures {
 		// compute preferred size
 		int width = headerWidth + cols * cellWidth + (cols / 4) * spacerWidth;
 		long height;
-		if (model == null) {
-			height = 16 * cellHeight;
-		} else {
+		if (model == null) height = 16L * cellHeight;
+		else {
 			long addr0 = getBaseAddress(model);
 			long addr1 = model.getLastOffset();
 			long rows = (int) (((addr1 - addr0 + 1) + cols - 1) / cols);

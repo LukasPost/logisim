@@ -21,9 +21,8 @@ class CounterData implements InstanceData, Cloneable {
 			// in future propagations.
 			ret = new CounterData(null, Value.createKnown(width, 0));
 			state.setData(ret);
-		} else if (!ret.value.getBitWidth().equals(width)) {
+		} else if (!ret.value.getBitWidth().equals(width))
 			ret.value = ret.value.extendWidth(width.getWidth(), Value.FALSE);
-		}
 		return ret;
 	}
 

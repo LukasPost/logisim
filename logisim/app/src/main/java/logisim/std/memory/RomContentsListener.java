@@ -58,8 +58,7 @@ class RomContentsListener implements HexModelListener {
 
 		@Override
 		public boolean shouldAppendTo(Action other) {
-			if (other instanceof Change) {
-				Change o = (Change) other;
+			if (other instanceof Change o) {
 				long oEnd = o.start + o.newValues.length;
 				long end = start + newValues.length;
 				if (oEnd >= start && end >= o.start)
@@ -70,8 +69,7 @@ class RomContentsListener implements HexModelListener {
 
 		@Override
 		public Action append(Action other) {
-			if (other instanceof Change) {
-				Change o = (Change) other;
+			if (other instanceof Change o) {
 				long oEnd = o.start + o.newValues.length;
 				long end = start + newValues.length;
 				if (oEnd >= start && end >= o.start) {
@@ -110,9 +108,7 @@ class RomContentsListener implements HexModelListener {
 		if (enabled && proj != null && oldValues != null) {
 			// this change needs to be logged in the undo log
 			int[] newValues = new int[oldValues.length];
-			for (int i = 0; i < newValues.length; i++) {
-				newValues[i] = source.get(start + i);
-			}
+			for (int i = 0; i < newValues.length; i++) newValues[i] = source.get(start + i);
 			proj.doAction(new Change(this, (MemContents) source, start, oldValues, newValues));
 		}
 	}

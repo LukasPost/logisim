@@ -8,10 +8,11 @@ import java.util.List;
 import draw.toolbar.AbstractToolbarModel;
 import draw.toolbar.ToolbarItem;
 import draw.toolbar.ToolbarSeparator;
+import logisim.gui.main.MenuListener.EnabledListener;
 import logisim.gui.menu.LogisimMenuBar;
 import logisim.util.UnmodifiableList;
 
-class ExplorerToolbarModel extends AbstractToolbarModel implements MenuListener.EnabledListener {
+class ExplorerToolbarModel extends AbstractToolbarModel implements EnabledListener {
 	private Frame frame;
 	private LogisimToolbarItem itemToolbox;
 	private LogisimToolbarItem itemSimulation;
@@ -44,24 +45,16 @@ class ExplorerToolbarModel extends AbstractToolbarModel implements MenuListener.
 
 	@Override
 	public boolean isSelected(ToolbarItem item) {
-		if (item == itemLayout) {
-			return frame.getEditorView().equals(Frame.EDIT_LAYOUT);
-		} else if (item == itemAppearance) {
-			return frame.getEditorView().equals(Frame.EDIT_APPEARANCE);
-		} else if (item == itemToolbox) {
-			return frame.getExplorerView().equals(Frame.VIEW_TOOLBOX);
-		} else if (item == itemSimulation) {
-			return frame.getExplorerView().equals(Frame.VIEW_SIMULATION);
-		} else {
-			return false;
-		}
+		if (item == itemLayout) return frame.getEditorView().equals(Frame.EDIT_LAYOUT);
+		else if (item == itemAppearance) return frame.getEditorView().equals(Frame.EDIT_APPEARANCE);
+		else if (item == itemToolbox) return frame.getExplorerView().equals(Frame.VIEW_TOOLBOX);
+		else if (item == itemSimulation) return frame.getExplorerView().equals(Frame.VIEW_SIMULATION);
+		else return false;
 	}
 
 	@Override
 	public void itemSelected(ToolbarItem item) {
-		if (item instanceof LogisimToolbarItem) {
-			((LogisimToolbarItem) item).doAction();
-		}
+		if (item instanceof LogisimToolbarItem) ((LogisimToolbarItem) item).doAction();
 	}
 
 	//

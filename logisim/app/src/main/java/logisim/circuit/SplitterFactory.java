@@ -10,6 +10,7 @@ import java.awt.event.InputEvent;
 import javax.swing.Icon;
 
 import logisim.LogisimVersion;
+import logisim.circuit.SplitterAttributes.BitOutAttribute;
 import logisim.comp.AbstractComponentFactory;
 import logisim.comp.Component;
 import logisim.comp.ComponentDrawContext;
@@ -51,19 +52,12 @@ public class SplitterFactory extends AbstractComponentFactory {
 
 	@Override
 	public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-		if (attr == SplitterAttributes.ATTR_APPEARANCE) {
-			if (ver.compareTo(LogisimVersion.get(2, 6, 3, 202)) < 0) {
-				return SplitterAttributes.APPEAR_LEGACY;
-			} else {
-				return SplitterAttributes.APPEAR_LEFT;
-			}
-		} else if (attr instanceof SplitterAttributes.BitOutAttribute) {
-			SplitterAttributes.BitOutAttribute a;
-			a = (SplitterAttributes.BitOutAttribute) attr;
+		if (attr == SplitterAttributes.ATTR_APPEARANCE)
+			if (ver.compareTo(LogisimVersion.get(2, 6, 3, 202)) < 0) return SplitterAttributes.APPEAR_LEGACY;
+			else return SplitterAttributes.APPEAR_LEFT;
+		else if (attr instanceof BitOutAttribute a) {
 			return a.getDefault();
-		} else {
-			return super.getDefaultAttributeValue(attr, ver);
-		}
+		} else return super.getDefaultAttributeValue(attr, ver);
 	}
 
 	@Override
@@ -93,26 +87,20 @@ public class SplitterFactory extends AbstractComponentFactory {
 		SplitterAttributes attrs = (SplitterAttributes) attrsBase;
 		context.getGraphics().setColor(color);
 		Location loc = new Location(x, y);
-		if (attrs.appear == SplitterAttributes.APPEAR_LEGACY) {
-			SplitterPainter.drawLegacy(context, attrs, loc);
-		} else {
-			SplitterPainter.drawLines(context, attrs, loc);
-		}
+		if (attrs.appear == SplitterAttributes.APPEAR_LEGACY) SplitterPainter.drawLegacy(context, attrs, loc);
+		else SplitterPainter.drawLines(context, attrs, loc);
 	}
 
 	@Override
 	public void paintIcon(ComponentDrawContext c, int x, int y, AttributeSet attrs) {
 		Graphics g = c.getGraphics();
-		if (toolIcon != null) {
-			toolIcon.paintIcon(c.getDestination(), g, x + 2, y + 2);
-		}
+		if (toolIcon != null) toolIcon.paintIcon(c.getDestination(), g, x + 2, y + 2);
 	}
 
 	@Override
 	public Object getFeature(Object key, AttributeSet attrs) {
-		if (key == FACING_ATTRIBUTE_KEY) {
-			return StdAttr.FACING;
-		} else if (key == KeyConfigurator.class) {
+		if (key == FACING_ATTRIBUTE_KEY) return StdAttr.FACING;
+		else if (key == KeyConfigurator.class) {
 			KeyConfigurator altConfig = ParallelConfigurator.create(
 					new BitWidthConfigurator(SplitterAttributes.ATTR_WIDTH),
 					new IntegerConfigurator(SplitterAttributes.ATTR_FANOUT, 1, 32, InputEvent.ALT_DOWN_MASK));

@@ -17,11 +17,8 @@ class OptionsActions<E> {
 
 	public static <V> Action setAttribute(AttributeSet attrs, Attribute<V> attr, V value) {
 		V oldValue = attrs.getValue(attr);
-		if (!oldValue.equals(value)) {
-			return new SetAction<>(attrs, attr, value);
-		} else {
-			return null;
-		}
+		if (!oldValue.equals(value)) return new SetAction<>(attrs, attr, value);
+		else return null;
 	}
 
 	public static Action setMapping(MouseMappings mm, Integer mods, Tool tool) {
@@ -41,7 +38,7 @@ class OptionsActions<E> {
 		SetAction(AttributeSet attrs, Attribute<E> attr, E value) {
 			this.attrs = attrs;
 			this.attr = attr;
-			this.newval = value;
+			newval = value;
 		}
 
 		@Override

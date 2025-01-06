@@ -8,7 +8,7 @@ public class CurveUtil {
 
 	/**
 	 * getBounds and findNearestPoint are based translated from the ActionScript of Olivier Besson's Bezier class for
-	 * collision detection. Code from: http://blog.gludion.com/2009/08/distance-to-quadratic-bezier-curve.html
+	 * collision detection. Code from: https://blog.gludion.com/2009/08/distance-to-quadratic-bezier-curve.html
 	 */
 
 	// a value we consider "small enough" to equal it to zero:
@@ -85,13 +85,9 @@ public class CurveUtil {
 		double[] posMin = new double[2];
 		for (double root : roots) {
 			double t;
-			if (root < 0) {
-				t = 0;
-			} else if (root <= 1) {
-				t = root;
-			} else {
-				t = 1;
-			}
+			if (root < 0) t = 0;
+			else if (root <= 1) t = root;
+			else t = 1;
 
 			getPos(pos, t, p0, p1, p2);
 			double lx = q[0] - pos[0];
@@ -106,11 +102,8 @@ public class CurveUtil {
 			}
 		}
 
-		if (tMin == Double.MAX_VALUE) {
-			return null;
-		} else {
-			return posMin;
-		}
+		if (tMin == Double.MAX_VALUE) return null;
+		else return posMin;
 	}
 
 	private static void getPos(double[] result, double t, double[] p0, double[] p1, double[] p2) {
@@ -167,24 +160,18 @@ public class CurveUtil {
 			b = c;
 			c = d;
 			double D = b * b - 4 * a * c;
-			if (D <= -zeroMax) {
-				// D negative
-				return null;
-			} else if (D > zeroMax) {
+			// D negative
+			if (D <= -zeroMax) return null;
+			else // D zero
+				if (D > zeroMax) {
 				// D positive
 				D = Math.sqrt(D);
 				return new double[] { (-b - D) / (2 * a), (-b + D) / (2 * a) };
-			} else {
-				// D zero
-				return new double[] { -b / (2 * a) };
-			}
-		} else if (Math.abs(c) > zeroMax) {
+			} else return new double[]{-b / (2 * a)};
+		} else // a, b, and c are all 0 - this is a constant equation
 			// a and b are both 0 - we're looking at a linear equation
-			return new double[] { -d / c };
-		} else {
-			// a, b, and c are all 0 - this is a constant equation
-			return null;
-		}
+			if (Math.abs(c) > zeroMax) return new double[]{-d / c};
+			else return null;
 	}
 
 	// Translated from ActionScript written by Jim Armstrong, at
@@ -207,9 +194,7 @@ public class CurveUtil {
 		dy = mid[1] - end1[1];
 		double d1 = Math.sqrt(dx * dx + dy * dy);
 
-		if (d0 < zeroMax || d1 < zeroMax) {
-			return new double[] { (end0[0] + end1[0]) / 2, (end0[1] + end1[1]) / 2 };
-		}
+		if (d0 < zeroMax || d1 < zeroMax) return new double[]{(end0[0] + end1[0]) / 2, (end0[1] + end1[1]) / 2};
 
 		double t = d0 / (d0 + d1);
 		double u = 1.0 - t;

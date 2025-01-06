@@ -6,5 +6,5 @@ package logisim.tools;
 import logisim.comp.ComponentUserEvent;
 
 public interface ToolTipMaker {
-	public String getToolTip(ComponentUserEvent event);
+	String getToolTip(ComponentUserEvent event);
 }

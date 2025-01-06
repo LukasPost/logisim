@@ -7,7 +7,7 @@ public class Expressions {
 	private Expressions() {
 	}
 
-	private static abstract class Binary extends Expression {
+	private abstract static class Binary extends Expression {
 		protected final Expression a;
 		protected final Expression b;
 
@@ -20,10 +20,10 @@ public class Expressions {
 		public boolean equals(Object other) {
 			if (other == null)
 				return false;
-			if (this.getClass() != other.getClass())
+			if (getClass() != other.getClass())
 				return false;
 			Binary o = (Binary) other;
-			return this.a.equals(o.a) && this.b.equals(o.b);
+			return a.equals(o.a) && b.equals(o.b);
 		}
 
 		@Override
@@ -139,10 +139,7 @@ public class Expressions {
 
 		@Override
 		public boolean equals(Object other) {
-			if (!(other instanceof Not))
-				return false;
-			Not o = (Not) other;
-			return this.a.equals(o.a);
+			return other instanceof Not o && a.equals(o.a);
 		}
 
 		@Override
@@ -180,10 +177,7 @@ public class Expressions {
 
 		@Override
 		public boolean equals(Object other) {
-			if (!(other instanceof Variable))
-				return false;
-			Variable o = (Variable) other;
-			return this.name.equals(o.name);
+			return other instanceof Variable o && name.equals(o.name);
 		}
 
 		@Override
@@ -221,10 +215,7 @@ public class Expressions {
 
 		@Override
 		public boolean equals(Object other) {
-			if (!(other instanceof Constant))
-				return false;
-			Constant o = (Constant) other;
-			return this.value == o.value;
+			return other instanceof Constant o && value == o.value;
 		}
 
 		@Override

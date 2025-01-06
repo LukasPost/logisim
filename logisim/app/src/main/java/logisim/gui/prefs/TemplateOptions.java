@@ -94,9 +94,7 @@ class TemplateOptions extends OptionsPanel {
 				plain.setSelected(value == AppPreferences.TEMPLATE_PLAIN);
 				empty.setSelected(value == AppPreferences.TEMPLATE_EMPTY);
 				custom.setSelected(value == AppPreferences.TEMPLATE_CUSTOM);
-			} else if (prop.equals(AppPreferences.TEMPLATE_FILE)) {
-				setTemplateField((File) event.getNewValue());
-			}
+			} else if (prop.equals(AppPreferences.TEMPLATE_FILE)) setTemplateField((File) event.getNewValue());
 		}
 
 		private void setTemplateField(File f) {
@@ -110,12 +108,10 @@ class TemplateOptions extends OptionsPanel {
 		}
 
 		private void computeEnabled() {
-			custom.setEnabled(!templateField.getText().equals(""));
+			custom.setEnabled(!templateField.getText().isEmpty());
 			templateField.setEnabled(custom.isSelected());
 		}
 	}
-
-	private MyListener myListener = new MyListener();
 
 	private JRadioButton plain = new JRadioButton();
 	private JRadioButton empty = new JRadioButton();
@@ -131,6 +127,7 @@ class TemplateOptions extends OptionsPanel {
 		bgroup.add(empty);
 		bgroup.add(custom);
 
+		MyListener myListener = new MyListener();
 		plain.addActionListener(myListener);
 		empty.addActionListener(myListener);
 		custom.addActionListener(myListener);

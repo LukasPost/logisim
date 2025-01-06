@@ -17,10 +17,10 @@ class WireIterator implements Iterator<Location> {
 	private boolean destReturned;
 
 	public WireIterator(Location e0, Location e1) {
-		curX = e0.getX();
-		curY = e0.getY();
-		destX = e1.getX();
-		destY = e1.getY();
+		curX = e0.x();
+		curY = e0.y();
+		destX = e1.x();
+		destY = e1.y();
 		destReturned = false;
 		if (curX < destX)
 			deltaX = 10;
@@ -36,13 +36,11 @@ class WireIterator implements Iterator<Location> {
 			deltaY = 0;
 
 		int offX = (destX - curX) % 10;
-		if (offX != 0) { // should not happen, but in case it does...
-			destX = curX + deltaX * ((destX - curX) / 10);
-		}
+		// should not happen, but in case it does...
+		if (offX != 0) destX = curX + deltaX * ((destX - curX) / 10);
 		int offY = (destY - curY) % 10;
-		if (offY != 0) { // should not happen, but in case it does...
-			destY = curY + deltaY * ((destY - curY) / 10);
-		}
+		// should not happen, but in case it does...
+		if (offY != 0) destY = curY + deltaY * ((destY - curY) / 10);
 	}
 
 	public boolean hasNext() {

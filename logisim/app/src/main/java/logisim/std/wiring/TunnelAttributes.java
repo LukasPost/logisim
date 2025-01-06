@@ -6,6 +6,7 @@ package logisim.std.wiring;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import logisim.comp.TextField;
 import logisim.data.AbstractAttributeSet;
@@ -17,7 +18,7 @@ import logisim.instance.StdAttr;
 
 class TunnelAttributes extends AbstractAttributeSet {
 	private static final List<Attribute<?>> ATTRIBUTES = Arrays
-			.asList(new Attribute<?>[] { StdAttr.FACING, StdAttr.WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT });
+			.asList(StdAttr.FACING, StdAttr.WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT);
 
 	private Direction facing;
 	private BitWidth width;
@@ -72,16 +73,14 @@ class TunnelAttributes extends AbstractAttributeSet {
 
 	boolean setOffsetBounds(Bounds value) {
 		Bounds old = offsetBounds;
-		boolean same = old == null ? value == null : old.equals(value);
-		if (!same) {
-			offsetBounds = value;
-		}
+		boolean same = Objects.equals(old, value);
+		if (!same) offsetBounds = value;
 		return !same;
 	}
 
 	@Override
 	protected void copyInto(AbstractAttributeSet destObj) {
-		; // nothing to do
+		// nothing to do
 	}
 
 	@Override
@@ -108,15 +107,10 @@ class TunnelAttributes extends AbstractAttributeSet {
 		if (attr == StdAttr.FACING) {
 			facing = (Direction) value;
 			configureLabel();
-		} else if (attr == StdAttr.WIDTH) {
-			width = (BitWidth) value;
-		} else if (attr == StdAttr.LABEL) {
-			label = (String) value;
-		} else if (attr == StdAttr.LABEL_FONT) {
-			labelFont = (Font) value;
-		} else {
-			throw new IllegalArgumentException("unknown attribute");
-		}
+		} else if (attr == StdAttr.WIDTH) width = (BitWidth) value;
+		else if (attr == StdAttr.LABEL) label = (String) value;
+		else if (attr == StdAttr.LABEL_FONT) labelFont = (Font) value;
+		else throw new IllegalArgumentException("unknown attribute");
 		offsetBounds = null;
 		fireAttributeValueChanged(attr, value);
 	}

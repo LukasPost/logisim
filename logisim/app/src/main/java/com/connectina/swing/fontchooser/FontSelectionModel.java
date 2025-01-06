@@ -27,7 +27,7 @@ import javax.swing.event.ChangeListener;
  * A model that supports selecting a <code>Font</code>.
  *
  * @author Christos Bohoris
- * @see java.awt.Font
+ * @see Font
  */
 public interface FontSelectionModel {
 

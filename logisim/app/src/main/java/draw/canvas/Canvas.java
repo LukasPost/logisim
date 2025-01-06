@@ -43,7 +43,7 @@ public class Canvas extends JComponent {
 	}
 
 	public void toolGestureComplete(CanvasTool tool, CanvasObject created) {
-		; // nothing to do - subclass may override
+		// nothing to do - subclass may override
 	}
 
 	protected JPopupMenu showPopupMenu(MouseEvent e, CanvasObject clicked) {

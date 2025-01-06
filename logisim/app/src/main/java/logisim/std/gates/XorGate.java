@@ -32,10 +32,8 @@ class XorGate extends AbstractGate {
 		boolean isOdd = false;
 		Object behavior = attrs.getValue(GateAttributes.ATTR_XOR);
 		if (behavior == GateAttributes.XOR_ODD) {
-			Object inputs = attrs.getValue(GateAttributes.ATTR_INPUTS);
-			if (inputs == null || ((Integer) inputs).intValue() != 2) {
-				isOdd = true;
-			}
+			Integer inputs = attrs.getValue(GateAttributes.ATTR_INPUTS);
+			if (inputs == null || inputs != 2) isOdd = true;
 		}
 		return isOdd ? "2k+1" : "=1";
 	}
@@ -55,18 +53,15 @@ class XorGate extends AbstractGate {
 	}
 
 	@Override
-	protected void paintDinShape(InstancePainter painter, int width, int height, int inputs) {
+	protected void paintDinShape(InstancePainter painter, int width, int height) {
 		PainterDin.paintXor(painter, width, height, false);
 	}
 
 	@Override
 	protected Value computeOutput(Value[] inputs, int numInputs, InstanceState state) {
 		Object behavior = state.getAttributeValue(GateAttributes.ATTR_XOR);
-		if (behavior == GateAttributes.XOR_ODD) {
-			return GateFunctions.computeOddParity(inputs, numInputs);
-		} else {
-			return GateFunctions.computeExactlyOne(inputs, numInputs);
-		}
+		if (behavior == GateAttributes.XOR_ODD) return GateFunctions.computeOddParity(inputs, numInputs);
+		else return GateFunctions.computeExactlyOne(inputs, numInputs);
 	}
 
 	@Override
@@ -85,13 +80,9 @@ class XorGate extends AbstractGate {
 	}
 
 	protected static Expression xorExpression(Expression[] inputs, int numInputs) {
-		if (numInputs > 2) {
-			throw new UnsupportedOperationException("XorGate");
-		}
+		if (numInputs > 2) throw new UnsupportedOperationException("XorGate");
 		Expression ret = inputs[0];
-		for (int i = 1; i < numInputs; i++) {
-			ret = Expressions.xor(ret, inputs[i]);
-		}
+		for (int i = 1; i < numInputs; i++) ret = Expressions.xor(ret, inputs[i]);
 		return ret;
 	}
 }

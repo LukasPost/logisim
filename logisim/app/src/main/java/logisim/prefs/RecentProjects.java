@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
@@ -27,12 +28,7 @@ class RecentProjects implements PreferenceChangeListener {
 
 		@Override
 		public boolean equals(Object other) {
-			if (other instanceof FileTime) {
-				FileTime o = (FileTime) other;
-				return this.time == o.time && isSame(this.file, o.file);
-			} else {
-				return false;
-			}
+			return other instanceof FileTime o && time == o.time && isSame(file, o.file);
 		}
 	}
 
@@ -47,9 +43,7 @@ class RecentProjects implements PreferenceChangeListener {
 		Preferences prefs = AppPreferences.getPrefs();
 		prefs.addPreferenceChangeListener(this);
 
-		for (int index = 0; index < NUM_RECENT; index++) {
-			getAndDecode(prefs, index);
-		}
+		for (int index = 0; index < NUM_RECENT; index++) getAndDecode(prefs, index);
 	}
 
 	public List<File> getRecentFiles() {
@@ -57,31 +51,24 @@ class RecentProjects implements PreferenceChangeListener {
 		long[] ages = new long[NUM_RECENT];
 		long[] toSort = new long[NUM_RECENT];
 		for (int i = 0; i < NUM_RECENT; i++) {
-			if (recentFiles[i] == null) {
-				ages[i] = -1;
-			} else {
-				ages[i] = now - recentTimes[i];
-			}
+			if (recentFiles[i] == null) ages[i] = -1;
+			else ages[i] = now - recentTimes[i];
 			toSort[i] = ages[i];
 		}
 		Arrays.sort(toSort);
 
-		List<File> ret = new ArrayList<File>();
-		for (long age : toSort) {
+		List<File> ret = new ArrayList<>();
+		for (long age : toSort)
 			if (age >= 0) {
 				int index = -1;
-				for (int i = 0; i < NUM_RECENT; i++) {
+				for (int i = 0; i < NUM_RECENT; i++)
 					if (ages[i] == age) {
 						index = i;
 						ages[i] = -1;
 						break;
 					}
-				}
-				if (index >= 0) {
-					ret.add(recentFiles[index]);
-				}
+				if (index >= 0) ret.add(recentFiles[index]);
 			}
-		}
 		return ret;
 	}
 
@@ -102,23 +89,16 @@ class RecentProjects implements PreferenceChangeListener {
 		int oldestIndex = 0;
 		int nullIndex = -1;
 		for (int i = 0; i < NUM_RECENT; i++) {
-			if (f.equals(recentFiles[i])) {
-				return i;
-			}
-			if (recentFiles[i] == null) {
-				nullIndex = i;
-			}
+			if (f.equals(recentFiles[i])) return i;
+			if (recentFiles[i] == null) nullIndex = i;
 			long age = now - recentTimes[i];
 			if (age > oldestAge) {
 				oldestIndex = i;
 				oldestAge = age;
 			}
 		}
-		if (nullIndex != -1) {
-			return nullIndex;
-		} else {
-			return oldestIndex;
-		}
+		if (nullIndex != -1) return nullIndex;
+		else return oldestIndex;
 	}
 
 	public void preferenceChange(PreferenceChangeEvent event) {
@@ -140,10 +120,9 @@ class RecentProjects implements PreferenceChangeListener {
 				getAndDecode(prefs, index);
 				File newValue = recentFiles[index];
 				long newTime = recentTimes[index];
-				if (!isSame(oldValue, newValue) || oldTime != newTime) {
+				if (!isSame(oldValue, newValue) || oldTime != newTime)
 					AppPreferences.firePropertyChange(AppPreferences.RECENT_PROJECTS, new FileTime(oldValue, oldTime),
 							new FileTime(newValue, newTime));
-				}
 			}
 		}
 	}
@@ -155,7 +134,7 @@ class RecentProjects implements PreferenceChangeListener {
 			recentFiles[index] = file;
 			recentTimes[index] = time;
 			try {
-				AppPreferences.getPrefs().put(BASE_PROPERTY + index, "" + time + ";" + file.getCanonicalPath());
+				AppPreferences.getPrefs().put(BASE_PROPERTY + index, time + ";" + file.getCanonicalPath());
 				AppPreferences.firePropertyChange(AppPreferences.RECENT_PROJECTS, new FileTime(oldFile, oldTime),
 						new FileTime(file, time));
 			}
@@ -183,6 +162,6 @@ class RecentProjects implements PreferenceChangeListener {
 	}
 
 	private static boolean isSame(Object a, Object b) {
-		return a == null ? b == null : a.equals(b);
+		return Objects.equals(a, b);
 	}
 }

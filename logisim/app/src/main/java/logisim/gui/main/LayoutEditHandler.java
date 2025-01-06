@@ -40,10 +40,11 @@ public class LayoutEditHandler extends EditHandler implements ProjectListener, L
 		boolean canChange = proj.getLogisimFile().contains(proj.getCurrentCircuit());
 
 		boolean selectAvailable = false;
-		for (Library lib : proj.getLogisimFile().getLibraries()) {
-			if (lib instanceof Base)
+		for (Library lib : proj.getLogisimFile().getLibraries())
+			if (lib instanceof Base) {
 				selectAvailable = true;
-		}
+				break;
+			}
 
 		setEnabled(LogisimMenuBar.CUT, !selEmpty && selectAvailable && canChange);
 		setEnabled(LogisimMenuBar.COPY, !selEmpty && selectAvailable);
@@ -79,9 +80,7 @@ public class LayoutEditHandler extends EditHandler implements ProjectListener, L
 		Selection sel = frame.getCanvas().getSelection();
 		selectSelectTool(proj);
 		Action action = SelectionActions.pasteMaybe(proj, sel);
-		if (action != null) {
-			proj.doAction(action);
-		}
+		proj.doAction(action);
 	}
 
 	@Override
@@ -111,68 +110,57 @@ public class LayoutEditHandler extends EditHandler implements ProjectListener, L
 
 	@Override
 	public void raise() {
-		; // not yet supported in layout mode
+		// not yet supported in layout mode
 	}
 
 	@Override
 	public void lower() {
-		; // not yet supported in layout mode
+		// not yet supported in layout mode
 	}
 
 	@Override
 	public void raiseTop() {
-		; // not yet supported in layout mode
+		// not yet supported in layout mode
 	}
 
 	@Override
 	public void lowerBottom() {
-		; // not yet supported in layout mode
+		// not yet supported in layout mode
 	}
 
 	@Override
 	public void addControlPoint() {
-		; // not yet supported in layout mode
+		// not yet supported in layout mode
 	}
 
 	@Override
 	public void removeControlPoint() {
-		; // not yet supported in layout mode
+		// not yet supported in layout mode
 	}
 
 	private void selectSelectTool(Project proj) {
-		for (Library sub : proj.getLogisimFile().getLibraries()) {
-			if (sub instanceof Base) {
-				Base base = (Base) sub;
+		for (Library sub : proj.getLogisimFile().getLibraries())
+			if (sub instanceof Base base) {
 				Tool tool = base.getTool("Edit Tool");
 				if (tool != null)
 					proj.setTool(tool);
 			}
-		}
 	}
 
 	public void projectChanged(ProjectEvent e) {
 		int action = e.getAction();
-		if (action == ProjectEvent.ACTION_SET_FILE) {
-			computeEnabled();
-		} else if (action == ProjectEvent.ACTION_SET_CURRENT) {
-			computeEnabled();
-		} else if (action == ProjectEvent.ACTION_SELECTION) {
-			computeEnabled();
-		}
+		if (action == ProjectEvent.ACTION_SET_FILE) computeEnabled();
+		else if (action == ProjectEvent.ACTION_SET_CURRENT) computeEnabled();
+		else if (action == ProjectEvent.ACTION_SELECTION) computeEnabled();
 	}
 
 	public void libraryChanged(LibraryEvent e) {
 		int action = e.getAction();
-		if (action == LibraryEvent.ADD_LIBRARY) {
-			computeEnabled();
-		} else if (action == LibraryEvent.REMOVE_LIBRARY) {
-			computeEnabled();
-		}
+		if (action == LibraryEvent.ADD_LIBRARY) computeEnabled();
+		else if (action == LibraryEvent.REMOVE_LIBRARY) computeEnabled();
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getPropertyName().equals(Clipboard.contentsProperty)) {
-			computeEnabled();
-		}
+		if (event.getPropertyName().equals(Clipboard.contentsProperty)) computeEnabled();
 	}
 }

@@ -8,6 +8,8 @@ import logisim.data.Attributes;
 import logisim.data.Direction;
 import logisim.util.StringUtil;
 
+import java.awt.Component;
+
 class NegateAttribute extends Attribute<Boolean> {
 	private static Attribute<Boolean> BOOLEAN_ATTR = Attributes.forBoolean("negateDummy");
 
@@ -22,12 +24,7 @@ class NegateAttribute extends Attribute<Boolean> {
 
 	@Override
 	public boolean equals(Object other) {
-		if (other instanceof NegateAttribute) {
-			NegateAttribute o = (NegateAttribute) other;
-			return this.index == o.index && this.side == o.side;
-		} else {
-			return false;
-		}
+		return other instanceof NegateAttribute o && index == o.index && side == o.side;
 	}
 
 	@Override
@@ -38,9 +35,7 @@ class NegateAttribute extends Attribute<Boolean> {
 	@Override
 	public String getDisplayName() {
 		String ret = StringUtil.format(Strings.get("gateNegateAttr"), "" + (index + 1));
-		if (side != null) {
-			ret += " (" + side.toVerticalDisplayString() + ")";
-		}
+		if (side != null) ret += " (" + side.toVerticalDisplayString() + ")";
 		return ret;
 	}
 
@@ -55,7 +50,7 @@ class NegateAttribute extends Attribute<Boolean> {
 	}
 
 	@Override
-	public java.awt.Component getCellEditor(Boolean value) {
+	public Component getCellEditor(Boolean value) {
 		return BOOLEAN_ATTR.getCellEditor(null, value);
 	}
 

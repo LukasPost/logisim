@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -28,8 +29,8 @@ import logisim.util.PropertyChangeWeakSupport;
 public class AppPreferences {
 	// class variables for maintaining consistency between properties,
 	// internal variables, and other classes
-	private static Preferences prefs = null;
-	private static MyListener myListener = null;
+	private static volatile Preferences prefs;
+	private static MyListener myListener;
 	private static PropertyChangeWeakSupport propertySupport = new PropertyChangeWeakSupport(AppPreferences.class);
 
 	// Template preferences
@@ -43,12 +44,12 @@ public class AppPreferences {
 	public static final String TEMPLATE_FILE = "templateFile";
 
 	private static int templateType = TEMPLATE_PLAIN;
-	private static File templateFile = null;
+	private static File templateFile;
 
-	private static Template plainTemplate = null;
-	private static Template emptyTemplate = null;
-	private static Template customTemplate = null;
-	private static File customTemplateFile = null;
+	private static Template plainTemplate;
+	private static Template emptyTemplate;
+	private static Template customTemplate;
+	private static File customTemplateFile;
 
 	// International preferences
 	public static final String SHAPE_SHAPED = "shaped";
@@ -87,9 +88,7 @@ public class AppPreferences {
 	static {
 		RadixOption[] radixOptions = RadixOption.OPTIONS;
 		String[] radixStrings = new String[radixOptions.length];
-		for (int i = 0; i < radixOptions.length; i++) {
-			radixStrings[i] = radixOptions[i].getSaveString();
-		}
+		for (int i = 0; i < radixOptions.length; i++) radixStrings[i] = radixOptions[i].getSaveString();
 		POKE_WIRE_RADIX1 = create(
 				new PrefMonitorStringOpts("pokeRadix1", radixStrings, RadixOption.RADIX_2.getSaveString()));
 		POKE_WIRE_RADIX2 = create(
@@ -146,7 +145,7 @@ public class AppPreferences {
 			} else if (prop.equals(TEMPLATE_FILE)) {
 				File oldValue = templateFile;
 				File value = convertFile(prefs.get(TEMPLATE_FILE, null));
-				if (value == null ? oldValue != null : !value.equals(oldValue)) {
+				if (!Objects.equals(value, oldValue)) {
 					templateFile = value;
 					if (templateType == TEMPLATE_CUSTOM) {
 						customTemplate = null;
@@ -160,9 +159,7 @@ public class AppPreferences {
 		public void localeChanged() {
 			Locale loc = LocaleManager.getLocale();
 			String lang = loc.getLanguage();
-			if (LOCALE != null) {
-				LOCALE.set(lang);
-			}
+			if (LOCALE != null) LOCALE.set(lang);
 		}
 	}
 
@@ -184,47 +181,30 @@ public class AppPreferences {
 	}
 
 	private static Preferences getPrefs(boolean shouldClear) {
-		if (prefs == null) {
-			synchronized (AppPreferences.class) {
-				if (prefs == null) {
-					Preferences p = Preferences.userNodeForPackage(Main.class);
-					if (shouldClear) {
-						try {
-							p.clear();
-						}
-						catch (BackingStoreException e) {
-						}
-					}
-					myListener = new MyListener();
-					p.addPreferenceChangeListener(myListener);
-					prefs = p;
-
-					setTemplateFile(convertFile(p.get(TEMPLATE_FILE, null)));
-					setTemplateType(p.getInt(TEMPLATE_TYPE, TEMPLATE_PLAIN));
+		if (prefs == null) synchronized (AppPreferences.class) {
+			if (prefs == null) {
+				Preferences p = Preferences.userNodeForPackage(Main.class);
+				if (shouldClear) try {
+					p.clear();
+				} catch (BackingStoreException e) {
 				}
+				myListener = new MyListener();
+				p.addPreferenceChangeListener(myListener);
+				prefs = p;
+
+				setTemplateFile(convertFile(p.get(TEMPLATE_FILE, null)));
+				setTemplateType(p.getInt(TEMPLATE_TYPE, TEMPLATE_PLAIN));
 			}
 		}
 		return prefs;
 	}
 
 	private static File convertFile(String fileName) {
-		if (fileName == null || fileName.equals("")) {
-			return null;
-		} else {
+		if (fileName == null || fileName.isEmpty()) return null;
+		else {
 			File file = new File(fileName);
 			return file.canRead() ? file : null;
 		}
-	}
-
-	//
-	// PropertyChangeSource methods
-	//
-	public static void addPropertyChangeListener(PropertyChangeListener listener) {
-		propertySupport.addPropertyChangeListener(listener);
-	}
-
-	public static void removePropertyChangeListener(PropertyChangeListener listener) {
-		propertySupport.removePropertyChangeListener(listener);
 	}
 
 	public static void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
@@ -248,21 +228,13 @@ public class AppPreferences {
 	//
 	public static int getTemplateType() {
 		getPrefs();
-		int ret = templateType;
-		if (ret == TEMPLATE_CUSTOM && templateFile == null) {
-			ret = TEMPLATE_UNKNOWN;
-		}
-		return ret;
+		return templateType == TEMPLATE_CUSTOM && templateFile == null ? TEMPLATE_UNKNOWN : templateType;
 	}
 
 	public static void setTemplateType(int value) {
 		getPrefs();
-		if (value != TEMPLATE_PLAIN && value != TEMPLATE_EMPTY && value != TEMPLATE_CUSTOM) {
-			value = TEMPLATE_UNKNOWN;
-		}
-		if (value != TEMPLATE_UNKNOWN && templateType != value) {
-			getPrefs().putInt(TEMPLATE_TYPE, value);
-		}
+		if (value != TEMPLATE_PLAIN && value != TEMPLATE_EMPTY && value != TEMPLATE_CUSTOM) value = TEMPLATE_UNKNOWN;
+		if (value != TEMPLATE_UNKNOWN && templateType != value) getPrefs().putInt(TEMPLATE_TYPE, value);
 	}
 
 	public static File getTemplateFile() {
@@ -279,29 +251,30 @@ public class AppPreferences {
 		getPrefs();
 		if (value != null && !value.canRead())
 			value = null;
-		if (value == null ? templateFile != null : !value.equals(templateFile)) {
-			try {
-				customTemplateFile = template == null ? null : value;
-				customTemplate = template;
-				getPrefs().put(TEMPLATE_FILE, value == null ? "" : value.getCanonicalPath());
-			}
-			catch (IOException ex) {
-			}
+		if (!Objects.equals(value, templateFile)) try {
+			customTemplateFile = template == null ? null : value;
+			customTemplate = template;
+			getPrefs().put(TEMPLATE_FILE, value == null ? "" : value.getCanonicalPath());
+		} catch (IOException ex) {
 		}
 	}
 
 	public static void handleGraphicsAcceleration() {
 		String accel = GRAPHICS_ACCELERATION.get();
 		try {
-			if (accel == ACCEL_NONE) {
-				System.setProperty("sun.java2d.opengl", "False");
-				System.setProperty("sun.java2d.d3d", "False");
-			} else if (accel == ACCEL_OPENGL) {
-				System.setProperty("sun.java2d.opengl", "True");
-				System.setProperty("sun.java2d.d3d", "False");
-			} else if (accel == ACCEL_D3D) {
-				System.setProperty("sun.java2d.opengl", "False");
-				System.setProperty("sun.java2d.d3d", "True");
+			switch (accel) {
+				case ACCEL_NONE -> {
+					System.setProperty("sun.java2d.opengl", "False");
+					System.setProperty("sun.java2d.d3d", "False");
+				}
+				case ACCEL_OPENGL -> {
+					System.setProperty("sun.java2d.opengl", "True");
+					System.setProperty("sun.java2d.d3d", "False");
+				}
+				case ACCEL_D3D -> {
+					System.setProperty("sun.java2d.opengl", "False");
+					System.setProperty("sun.java2d.d3d", "True");
+				}
 			}
 		}
 		catch (Throwable t) {
@@ -313,16 +286,11 @@ public class AppPreferences {
 	//
 	public static Template getTemplate() {
 		getPrefs();
-		switch (templateType) {
-		case TEMPLATE_PLAIN:
-			return getPlainTemplate();
-		case TEMPLATE_EMPTY:
-			return getEmptyTemplate();
-		case TEMPLATE_CUSTOM:
-			return getCustomTemplate();
-		default:
-			return getPlainTemplate();
-		}
+		return switch (templateType) {
+			case TEMPLATE_EMPTY -> getEmptyTemplate();
+			case TEMPLATE_CUSTOM -> getCustomTemplate();
+			default -> getPlainTemplate();
+		};
 	}
 
 	public static Template getEmptyTemplate() {
@@ -335,19 +303,13 @@ public class AppPreferences {
 		if (plainTemplate == null) {
 			ClassLoader ld = Startup.class.getClassLoader();
 			InputStream in = ld.getResourceAsStream("logisim/default.templ");
-			if (in == null) {
+			if (in == null) plainTemplate = getEmptyTemplate();
+			else try {
+				try (in) {
+					plainTemplate = Template.create(in);
+				}
+			} catch (Throwable e) {
 				plainTemplate = getEmptyTemplate();
-			} else {
-				try {
-					try {
-						plainTemplate = Template.create(in);
-					} finally {
-						in.close();
-					}
-				}
-				catch (Throwable e) {
-					plainTemplate = getEmptyTemplate();
-				}
 			}
 		}
 		return plainTemplate;
@@ -355,29 +317,24 @@ public class AppPreferences {
 
 	private static Template getCustomTemplate() {
 		File toRead = templateFile;
-		if (customTemplateFile == null || !(customTemplateFile.equals(toRead))) {
-			if (toRead == null) {
+		if (customTemplateFile == null || !(customTemplateFile.equals(toRead))) if (toRead == null) {
+			customTemplate = null;
+			customTemplateFile = null;
+		}
+		else {
+			FileInputStream reader = null;
+			try {
+				reader = new FileInputStream(toRead);
+				customTemplate = Template.create(reader);
+				customTemplateFile = templateFile;
+			} catch (Throwable t) {
+				setTemplateFile(null);
 				customTemplate = null;
 				customTemplateFile = null;
-			} else {
-				FileInputStream reader = null;
-				try {
-					reader = new FileInputStream(toRead);
-					customTemplate = Template.create(reader);
-					customTemplateFile = templateFile;
-				}
-				catch (Throwable t) {
-					setTemplateFile(null);
-					customTemplate = null;
-					customTemplateFile = null;
-				} finally {
-					if (reader != null) {
-						try {
-							reader.close();
-						}
-						catch (IOException e) {
-						}
-					}
+			} finally {
+				if (reader != null) try {
+					reader.close();
+				} catch (IOException e) {
 				}
 			}
 		}
@@ -402,19 +359,15 @@ public class AppPreferences {
 		public LocalePreference() {
 			super("locale", "");
 
-			String localeStr = this.get();
-			if (localeStr != null && !localeStr.equals("")) {
-				LocaleManager.setLocale(Locale.of(localeStr));
-			}
+			String localeStr = get();
+			if (localeStr != null && !localeStr.isEmpty()) LocaleManager.setLocale(Locale.of(localeStr));
 			LocaleManager.addLocaleListener(myListener);
 			myListener.localeChanged();
 		}
 
 		@Override
 		public void set(String value) {
-			if (findLocale(value) != null) {
-				super.set(value);
-			}
+			if (findLocale(value) != null) super.set(value);
 		}
 
 		private static Locale findLocale(String lang) {
@@ -424,12 +377,7 @@ public class AppPreferences {
 					check = new Locale[] { Locale.getDefault(), Locale.ENGLISH };
 				else
 					check = Locale.getAvailableLocales();
-				for (int i = 0; i < check.length; i++) {
-					Locale loc = check[i];
-					if (loc != null && loc.getLanguage().equals(lang)) {
-						return loc;
-					}
-				}
+				for (Locale loc : check) if (loc != null && loc.getLanguage().equals(lang)) return loc;
 			}
 			return null;
 		}

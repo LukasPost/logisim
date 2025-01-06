@@ -34,8 +34,8 @@ public class PolyUtil {
 	}
 
 	public static ClosestResult getClosestPoint(Location loc, boolean closed, Handle[] hs) {
-		int xq = loc.getX();
-		int yq = loc.getY();
+		int xq = loc.x();
+		int yq = loc.y();
 		ClosestResult ret = new ClosestResult();
 		ret.dist = Double.MAX_VALUE;
 		if (hs.length > 0) {
@@ -58,9 +58,8 @@ public class PolyUtil {
 				y0 = y1;
 			}
 		}
-		if (ret.dist == Double.MAX_VALUE) {
-			return null;
-		} else {
+		if (ret.dist == Double.MAX_VALUE) return null;
+		else {
 			Handle h0 = ret.prevHandle;
 			Handle h1 = ret.nextHandle;
 			double[] p = LineUtil.nearestPointSegment(xq, yq, h0.getX(), h0.getY(), h1.getX(), h1.getY());

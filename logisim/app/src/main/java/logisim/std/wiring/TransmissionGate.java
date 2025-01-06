@@ -1,10 +1,6 @@
 /* Copyright (c) 2011, Carl Burch. License information is located in the
  * logisim.Main source code and at www.cburch.com/logisim/. */
 
-/**
- * Based on PUCTools (v0.9 beta) by CRC - PUC - Minas (pucmg.crc at gmail.com)
- */
-
 package logisim.std.wiring;
 
 import java.awt.Color;
@@ -53,24 +49,17 @@ public class TransmissionGate extends InstanceFactory {
 		if (attr == StdAttr.FACING || attr == Wiring.ATTR_GATE) {
 			instance.recomputeBounds();
 			updatePorts(instance);
-		} else if (attr == StdAttr.WIDTH) {
-			instance.fireInvalidated();
-		}
+		} else if (attr == StdAttr.WIDTH) instance.fireInvalidated();
 	}
 
 	private void updatePorts(Instance instance) {
 		int dx = 0;
 		int dy = 0;
 		Direction facing = instance.getAttributeValue(StdAttr.FACING);
-		if (facing == Direction.North) {
-			dy = 1;
-		} else if (facing == Direction.East) {
-			dx = -1;
-		} else if (facing == Direction.South) {
-			dy = -1;
-		} else if (facing == Direction.West) {
-			dx = 1;
-		}
+		if (facing == Direction.North) dy = 1;
+		else if (facing == Direction.East) dx = -1;
+		else if (facing == Direction.South) dy = -1;
+		else if (facing == Direction.West) dx = 1;
 
 		Object powerLoc = instance.getAttributeValue(Wiring.ATTR_GATE);
 		boolean flip = (facing == Direction.South || facing == Direction.West) == (powerLoc == Wiring.GATE_TOP_LEFT);
@@ -100,9 +89,7 @@ public class TransmissionGate extends InstanceFactory {
 			Direction facing = attrs.getValue(StdAttr.FACING);
 			Location center = new Location(0, 0).translate(facing, -20);
 			return center.manhattanDistanceTo(loc) < 24;
-		} else {
-			return false;
-		}
+		} else return false;
 	}
 
 	@Override
@@ -116,24 +103,14 @@ public class TransmissionGate extends InstanceFactory {
 		Value gate0 = state.getPort(GATE0);
 		Value gate1 = state.getPort(GATE1);
 
-		if (gate0.isFullyDefined() && gate1.isFullyDefined() && gate0 != gate1) {
-			if (gate0 == Value.TRUE) {
-				return Value.createUnknown(width);
-			} else {
-				return input;
-			}
-		} else {
-			if (input.isFullyDefined()) {
-				return Value.createError(width);
-			} else {
-				Value[] v = input.getAll();
-				for (int i = 0; i < v.length; i++) {
-					if (v[i] != Value.UNKNOWN) {
-						v[i] = Value.ERROR;
-					}
-				}
-				return Value.create(v);
-			}
+		if (gate0.isFullyDefined() && gate1.isFullyDefined() && gate0 != gate1)
+			if (gate0 == Value.TRUE) return Value.createUnknown(width);
+			else return input;
+		else if (input.isFullyDefined()) return Value.createError(width);
+		else {
+			Value[] v = input.getAll();
+			for (int i = 0; i < v.length; i++) if (v[i] != Value.UNKNOWN) v[i] = Value.ERROR;
+			return Value.create(v);
 		}
 	}
 

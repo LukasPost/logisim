@@ -58,7 +58,7 @@ class ToolbarButton extends JComponent implements MouseListener {
 
 		Graphics g2 = g.create();
 		g2.translate(BORDER, BORDER);
-		item.paintIcon(ToolbarButton.this, g2);
+		item.paintIcon(this, g2);
 		g2.dispose();
 
 		// draw selection indicator
@@ -77,9 +77,7 @@ class ToolbarButton extends JComponent implements MouseListener {
 	}
 
 	public void mousePressed(MouseEvent e) {
-		if (item != null && item.isSelectable()) {
-			toolbar.setPressed(this);
-		}
+		if (item != null && item.isSelectable()) toolbar.setPressed(this);
 	}
 
 	public void mouseReleased(MouseEvent e) {

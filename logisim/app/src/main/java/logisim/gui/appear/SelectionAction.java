@@ -35,14 +35,14 @@ class SelectionAction extends Action {
 			Collection<CanvasObject> toAdd, Collection<CanvasObject> newSelection, Location anchorLocation,
 			Direction anchorFacing) {
 		this.canvas = canvas;
-		this.canvasModel = canvas.getModel();
+		canvasModel = canvas.getModel();
 		this.displayName = displayName;
 		this.toRemove = toRemove == null ? null : ZOrder.getZIndex(toRemove, canvasModel);
 		this.toAdd = toAdd;
-		this.oldSelection = new ArrayList<CanvasObject>(canvas.getSelection().getSelected());
+		oldSelection = new ArrayList<>(canvas.getSelection().getSelected());
 		this.newSelection = newSelection;
-		this.anchorNewLocation = anchorLocation;
-		this.anchorNewFacing = anchorFacing;
+		anchorNewLocation = anchorLocation;
+		anchorNewFacing = anchorFacing;
 	}
 
 	@Override
@@ -63,8 +63,8 @@ class SelectionAction extends Action {
 		AppearanceAnchor anchor = findAnchor(canvasModel);
 		if (anchor != null && anchorNewLocation != null) {
 			anchorOldLocation = anchor.getLocation();
-			anchor.translate(anchorNewLocation.getX() - anchorOldLocation.getX(),
-					anchorNewLocation.getY() - anchorOldLocation.getY());
+			anchor.translate(anchorNewLocation.x() - anchorOldLocation.x(),
+					anchorNewLocation.y() - anchorOldLocation.y());
 		}
 		if (anchor != null && anchorNewFacing != null) {
 			anchorOldFacing = anchor.getFacing();
@@ -75,24 +75,16 @@ class SelectionAction extends Action {
 	}
 
 	private AppearanceAnchor findAnchor(CanvasModel canvasModel) {
-		for (Object o : canvasModel.getObjectsFromTop()) {
-			if (o instanceof AppearanceAnchor) {
-				return (AppearanceAnchor) o;
-			}
-		}
+		for (Object o : canvasModel.getObjectsFromTop()) if (o instanceof AppearanceAnchor) return (AppearanceAnchor) o;
 		return null;
 	}
 
 	@Override
 	public void undo(Project proj) {
 		AppearanceAnchor anchor = findAnchor(canvasModel);
-		if (anchor != null && anchorOldLocation != null) {
-			anchor.translate(anchorOldLocation.getX() - anchorNewLocation.getX(),
-					anchorOldLocation.getY() - anchorNewLocation.getY());
-		}
-		if (anchor != null && anchorOldFacing != null) {
-			anchor.setValue(AppearanceAnchor.FACING, anchorOldFacing);
-		}
+		if (anchor != null && anchorOldLocation != null) anchor.translate(anchorOldLocation.x() - anchorNewLocation.x(),
+				anchorOldLocation.y() - anchorNewLocation.y());
+		if (anchor != null && anchorOldFacing != null) anchor.setValue(AppearanceAnchor.FACING, anchorOldFacing);
 		Selection sel = canvas.getSelection();
 		sel.clearSelected();
 		if (toAdd != null)

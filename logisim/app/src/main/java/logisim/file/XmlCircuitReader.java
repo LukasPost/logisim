@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import logisim.file.XmlReader.CircuitData;
+import logisim.file.XmlReader.ReadContext;
 import org.w3c.dom.Element;
 
 import draw.model.AbstractCanvasObject;
@@ -24,31 +26,27 @@ import logisim.tools.Library;
 import logisim.tools.Tool;
 
 public class XmlCircuitReader extends CircuitTransaction {
-	private XmlReader.ReadContext reader;
-	private List<XmlReader.CircuitData> circuitsData;
+	private ReadContext reader;
+	private List<CircuitData> circuitsData;
 
-	public XmlCircuitReader(XmlReader.ReadContext reader, List<XmlReader.CircuitData> circDatas) {
+	public XmlCircuitReader(ReadContext reader, List<CircuitData> circDatas) {
 		this.reader = reader;
-		this.circuitsData = circDatas;
+		circuitsData = circDatas;
 	}
 
 	@Override
 	protected Map<Circuit, Integer> getAccessedCircuits() {
-		HashMap<Circuit, Integer> access = new HashMap<Circuit, Integer>();
-		for (XmlReader.CircuitData data : circuitsData) {
-			access.put(data.circuit, READ_WRITE);
-		}
+		HashMap<Circuit, Integer> access = new HashMap<>();
+		for (CircuitData data : circuitsData) access.put(data.circuit, READ_WRITE);
 		return access;
 	}
 
 	@Override
 	protected void run(CircuitMutator mutator) {
-		for (XmlReader.CircuitData circuitData : circuitsData) {
-			buildCircuit(circuitData, mutator);
-		}
+		for (CircuitData circuitData : circuitsData) buildCircuit(circuitData, mutator);
 	}
 
-	private void buildCircuit(XmlReader.CircuitData circData, CircuitMutator mutator) {
+	private void buildCircuit(CircuitData circData, CircuitMutator mutator) {
 		Element elt = circData.circuitElement;
 		Circuit dest = circData.circuit;
 		Map<Element, Component> knownComponents = circData.knownComponents;
@@ -63,24 +61,17 @@ public class XmlCircuitReader extends CircuitTransaction {
 
 		for (Element sub_elt : XmlIterator.forChildElements(elt)) {
 			String sub_elt_name = sub_elt.getTagName();
-			if (sub_elt_name.equals("comp")) {
-				try {
-					Component comp = knownComponents.get(sub_elt);
-					if (comp == null) {
-						comp = getComponent(sub_elt, reader);
-					}
-					mutator.add(dest, comp);
-				}
-				catch (XmlReaderException e) {
-					reader.addErrors(e, circData.circuit.getName() + "." + toComponentString(sub_elt));
-				}
-			} else if (sub_elt_name.equals("wire")) {
-				try {
-					addWire(dest, mutator, sub_elt);
-				}
-				catch (XmlReaderException e) {
-					reader.addErrors(e, circData.circuit.getName() + "." + toWireString(sub_elt));
-				}
+			if ("comp".equals(sub_elt_name)) try {
+				Component comp = knownComponents.get(sub_elt);
+				if (comp == null) comp = getComponent(sub_elt, reader);
+				mutator.add(dest, comp);
+			} catch (XmlReaderException e) {
+				reader.addErrors(e, circData.circuit.getName() + "." + toComponentString(sub_elt));
+			}
+			else if ("wire".equals(sub_elt_name)) try {
+				addWire(dest, mutator, sub_elt);
+			} catch (XmlReaderException e) {
+				reader.addErrors(e, circData.circuit.getName() + "." + toWireString(sub_elt));
 			}
 		}
 
@@ -107,9 +98,7 @@ public class XmlCircuitReader extends CircuitTransaction {
 		Location pt0;
 		try {
 			String str = elt.getAttribute("from");
-			if (str == null || str.equals("")) {
-				throw new XmlReaderException(Strings.get("wireStartMissingError"));
-			}
+			if (str.isEmpty()) throw new XmlReaderException(Strings.get("wireStartMissingError"));
 			pt0 = Location.parse(str);
 		}
 		catch (NumberFormatException e) {
@@ -119,9 +108,7 @@ public class XmlCircuitReader extends CircuitTransaction {
 		Location pt1;
 		try {
 			String str = elt.getAttribute("to");
-			if (str == null || str.equals("")) {
-				throw new XmlReaderException(Strings.get("wireEndMissingError"));
-			}
+			if (str.isEmpty()) throw new XmlReaderException(Strings.get("wireEndMissingError"));
 			pt1 = Location.parse(str);
 		}
 		catch (NumberFormatException e) {
@@ -131,27 +118,19 @@ public class XmlCircuitReader extends CircuitTransaction {
 		mutator.add(dest, Wire.create(pt0, pt1));
 	}
 
-	static Component getComponent(Element elt, XmlReader.ReadContext reader) throws XmlReaderException {
+	static Component getComponent(Element elt, ReadContext reader) throws XmlReaderException {
 		// Determine the factory that creates this element
 		String name = elt.getAttribute("name");
-		if (name == null || name.equals("")) {
-			throw new XmlReaderException(Strings.get("compNameMissingError"));
-		}
+		if (name.isEmpty()) throw new XmlReaderException(Strings.get("compNameMissingError"));
 
 		String libName = elt.getAttribute("lib");
 		Library lib = reader.findLibrary(libName);
-		if (lib == null) {
-			throw new XmlReaderException(Strings.get("compUnknownError", "no-lib"));
-		}
+		if (lib == null) throw new XmlReaderException(Strings.get("compUnknownError", "no-lib"));
 
 		Tool tool = lib.getTool(name);
-		if (tool == null || !(tool instanceof AddTool)) {
-			if (libName == null || libName.equals("")) {
-				throw new XmlReaderException(Strings.get("compUnknownError", name));
-			} else {
-				throw new XmlReaderException(Strings.get("compAbsentError", name, libName));
-			}
-		}
+		if (!(tool instanceof AddTool))
+			if (libName.isEmpty()) throw new XmlReaderException(Strings.get("compUnknownError", name));
+			else throw new XmlReaderException(Strings.get("compAbsentError", name, libName));
 		ComponentFactory source = ((AddTool) tool).getFactory();
 
 		// Determine attributes
@@ -160,16 +139,12 @@ public class XmlCircuitReader extends CircuitTransaction {
 		reader.initAttributeSet(elt, attrs, source);
 
 		// Create component if location known
-		if (loc_str == null || loc_str.equals("")) {
-			throw new XmlReaderException(Strings.get("compLocMissingError", source.getName()));
-		} else {
-			try {
-				Location loc = Location.parse(loc_str);
-				return source.createComponent(loc, attrs);
-			}
-			catch (NumberFormatException e) {
-				throw new XmlReaderException(Strings.get("compLocInvalidError", source.getName(), loc_str));
-			}
+		if (loc_str.isEmpty()) throw new XmlReaderException(Strings.get("compLocMissingError", source.getName()));
+		else try {
+			Location loc = Location.parse(loc_str);
+			return source.createComponent(loc, attrs);
+		} catch (NumberFormatException e) {
+			throw new XmlReaderException(Strings.get("compLocInvalidError", source.getName(), loc_str));
 		}
 	}
 }

@@ -38,12 +38,12 @@ public class CanvasPane extends JScrollPane {
 		public void propertyChange(PropertyChangeEvent e) {
 			String prop = e.getPropertyName();
 			if (prop.equals(ZoomModel.ZOOM)) {
-				double oldZoom = ((Double) e.getOldValue()).doubleValue();
+				double oldZoom = (Double) e.getOldValue();
 				Rectangle r = getViewport().getViewRect();
-				double cx = (r.x + r.width / 2) / oldZoom;
-				double cy = (r.y + r.height / 2) / oldZoom;
+				double cx = (r.x + (double) r.width / 2) / oldZoom;
+				double cy = (r.y + (double) r.height / 2) / oldZoom;
 
-				double newZoom = ((Double) e.getNewValue()).doubleValue();
+				double newZoom = (Double) e.getNewValue();
 				contents.recomputeSize();
 				r = getViewport().getViewRect();
 				int hv = (int) (cx * newZoom) - r.width / 2;
@@ -61,8 +61,8 @@ public class CanvasPane extends JScrollPane {
 	public CanvasPane(CanvasPaneContents contents) {
 		super((Component) contents);
 		this.contents = contents;
-		this.listener = new Listener();
-		this.zoomModel = null;
+		listener = new Listener();
+		zoomModel = null;
 		if (MacCompatibility.mrjVersion >= 0.0) {
 			setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 			setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -74,13 +74,9 @@ public class CanvasPane extends JScrollPane {
 
 	public void setZoomModel(ZoomModel model) {
 		ZoomModel oldModel = zoomModel;
-		if (oldModel != null) {
-			oldModel.removePropertyChangeListener(ZoomModel.ZOOM, listener);
-		}
+		if (oldModel != null) oldModel.removePropertyChangeListener(ZoomModel.ZOOM, listener);
 		zoomModel = model;
-		if (model != null) {
-			model.addPropertyChangeListener(ZoomModel.ZOOM, listener);
-		}
+		if (model != null) model.addPropertyChangeListener(ZoomModel.ZOOM, listener);
 	}
 
 	public double getZoomFactor() {
@@ -94,16 +90,13 @@ public class CanvasPane extends JScrollPane {
 		return size;
 	}
 
-	public int supportScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-		int unit = supportScrollableUnitIncrement(visibleRect, orientation, direction);
-		if (direction == SwingConstants.VERTICAL) {
-			return visibleRect.height / unit * unit;
-		} else {
-			return visibleRect.width / unit * unit;
-		}
+	public int supportScrollableBlockIncrement(Rectangle visibleRect, int direction) {
+		int unit = supportScrollableUnitIncrement();
+		if (direction == SwingConstants.VERTICAL) return visibleRect.height / unit * unit;
+		else return visibleRect.width / unit * unit;
 	}
 
-	public int supportScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+	public int supportScrollableUnitIncrement() {
 		double zoom = getZoomFactor();
 		return (int) Math.round(10 * zoom);
 	}

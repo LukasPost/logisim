@@ -44,9 +44,7 @@ class BuildCircuitButton extends JButton {
 	}
 
 	private class DialogPanel extends JPanel {
-		private JLabel projectLabel = new JLabel();
 		private JComboBox<Object> project;
-		private JLabel nameLabel = new JLabel();
 		private JTextField name = new JTextField(10);
 		private JCheckBox twoInputs = new JCheckBox();
 		private JCheckBox nands = new JCheckBox();
@@ -58,17 +56,13 @@ class BuildCircuitButton extends JButton {
 			for (int i = 0; i < options.length; i++) {
 				Project proj = projects.get(i);
 				options[i] = new ProjectItem(proj);
-				if (proj == model.getCurrentProject()) {
-					initialSelection = options[i];
-				}
+				if (proj == model.getCurrentProject()) initialSelection = options[i];
 			}
-			project = new JComboBox<Object>(options);
+			project = new JComboBox<>(options);
 			if (options.length == 1) {
 				project.setSelectedItem(options[0]);
 				project.setEnabled(false);
-			} else if (initialSelection != null) {
-				project.setSelectedItem(initialSelection);
-			}
+			} else if (initialSelection != null) project.setSelectedItem(initialSelection);
 
 			Circuit defaultCircuit = model.getCurrentCircuit();
 			if (defaultCircuit != null) {
@@ -96,6 +90,7 @@ class BuildCircuitButton extends JButton {
 
 			gc.gridx = 0;
 			gc.gridy = 0;
+			JLabel projectLabel = new JLabel();
 			gb.setConstraints(projectLabel, gc);
 			add(projectLabel);
 			gc.gridx = 1;
@@ -103,6 +98,7 @@ class BuildCircuitButton extends JButton {
 			add(project);
 			gc.gridy++;
 			gc.gridx = 0;
+			JLabel nameLabel = new JLabel();
 			gb.setConstraints(nameLabel, gc);
 			add(nameLabel);
 			gc.gridx = 1;
@@ -147,7 +143,7 @@ class BuildCircuitButton extends JButton {
 				dest = projectItem.project;
 
 				name = dlog.name.getText().trim();
-				if (name.equals("")) {
+				if (name.isEmpty()) {
 					JOptionPane.showMessageDialog(parent, Strings.get("buildNeedCircuitError"),
 							Strings.get("buildDialogErrorTitle"), JOptionPane.ERROR_MESSAGE);
 					continue;
@@ -157,9 +153,7 @@ class BuildCircuitButton extends JButton {
 					int choice = JOptionPane.showConfirmDialog(parent,
 							StringUtil.format(Strings.get("buildConfirmReplaceMessage"), name),
 							Strings.get("buildConfirmReplaceTitle"), JOptionPane.YES_NO_OPTION);
-					if (choice != JOptionPane.YES_OPTION) {
-						continue;
-					}
+					if (choice != JOptionPane.YES_OPTION) continue;
 					replace = true;
 				}
 
@@ -172,13 +166,13 @@ class BuildCircuitButton extends JButton {
 		}
 	}
 
-	private MyListener myListener = new MyListener();
 	private JFrame parent;
 	private AnalyzerModel model;
 
 	BuildCircuitButton(JFrame parent, AnalyzerModel model) {
 		this.parent = parent;
 		this.model = model;
+		MyListener myListener = new MyListener();
 		addActionListener(myListener);
 	}
 

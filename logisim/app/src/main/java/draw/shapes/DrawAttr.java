@@ -16,11 +16,11 @@ import logisim.util.UnmodifiableList;
 public class DrawAttr {
 	public static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 12);
 
-	public static final AttributeOption ALIGN_LEFT = new AttributeOption(Integer.valueOf(EditableLabel.LEFT),
+	public static final AttributeOption ALIGN_LEFT = new AttributeOption(EditableLabel.LEFT,
 			Strings.getter("alignStart"));
-	public static final AttributeOption ALIGN_CENTER = new AttributeOption(Integer.valueOf(EditableLabel.CENTER),
+	public static final AttributeOption ALIGN_CENTER = new AttributeOption(EditableLabel.CENTER,
 			Strings.getter("alignMiddle"));
-	public static final AttributeOption ALIGN_RIGHT = new AttributeOption(Integer.valueOf(EditableLabel.RIGHT),
+	public static final AttributeOption ALIGN_RIGHT = new AttributeOption(EditableLabel.RIGHT,
 			Strings.getter("alignEnd"));
 
 	public static final AttributeOption PAINT_STROKE = new AttributeOption("stroke", Strings.getter("paintStroke"));
@@ -68,22 +68,14 @@ public class DrawAttr {
 	}
 
 	public static List<Attribute<?>> getFillAttributes(AttributeOption paint) {
-		if (paint == PAINT_STROKE) {
-			return ATTRS_FILL_STROKE;
-		} else if (paint == PAINT_FILL) {
-			return ATTRS_FILL_FILL;
-		} else {
-			return ATTRS_FILL_BOTH;
-		}
+		if (paint == PAINT_STROKE) return ATTRS_FILL_STROKE;
+		else if (paint == PAINT_FILL) return ATTRS_FILL_FILL;
+		else return ATTRS_FILL_BOTH;
 	}
 
 	public static List<Attribute<?>> getRoundRectAttributes(AttributeOption paint) {
-		if (paint == PAINT_STROKE) {
-			return ATTRS_RRECT_STROKE;
-		} else if (paint == PAINT_FILL) {
-			return ATTRS_RRECT_FILL;
-		} else {
-			return ATTRS_RRECT_BOTH;
-		}
+		if (paint == PAINT_STROKE) return ATTRS_RRECT_STROKE;
+		else if (paint == PAINT_FILL) return ATTRS_RRECT_FILL;
+		else return ATTRS_RRECT_BOTH;
 	}
 }

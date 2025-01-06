@@ -5,6 +5,7 @@ package logisim.circuit;
 
 import javax.swing.JPopupMenu;
 
+import logisim.circuit.CircuitWires.SplitterData;
 import logisim.comp.ComponentEvent;
 import logisim.comp.ComponentFactory;
 import logisim.comp.ComponentDrawContext;
@@ -30,7 +31,7 @@ public class Splitter extends ManagedComponent implements WireRepair, ToolTipMak
 	byte[] bit_thread; // how each bit maps to thread within end
 
 	// derived data
-	CircuitWires.SplitterData wire_data;
+	SplitterData wire_data;
 
 	public Splitter(Location loc, AttributeSet attrs) {
 		super(loc, attrs, 3);
@@ -48,7 +49,7 @@ public class Splitter extends ManagedComponent implements WireRepair, ToolTipMak
 
 	@Override
 	public void propagate(CircuitState state) {
-		; // handled by CircuitWires, nothing to do
+		// handled by CircuitWires, nothing to do
 	}
 
 	@Override
@@ -56,14 +57,10 @@ public class Splitter extends ManagedComponent implements WireRepair, ToolTipMak
 		if (super.contains(loc)) {
 			Location myLoc = getLocation();
 			Direction facing = getAttributeSet().getValue(StdAttr.FACING);
-			if (facing == Direction.East || facing == Direction.West) {
-				return Math.abs(loc.getX() - myLoc.getX()) > 5 || loc.manhattanDistanceTo(myLoc) <= 5;
-			} else {
-				return Math.abs(loc.getY() - myLoc.getY()) > 5 || loc.manhattanDistanceTo(myLoc) <= 5;
-			}
-		} else {
-			return false;
-		}
+			if (facing == Direction.East || facing == Direction.West)
+				return Math.abs(loc.x() - myLoc.x()) > 5 || loc.manhattanDistanceTo(myLoc) <= 5;
+			else return Math.abs(loc.y() - myLoc.y()) > 5 || loc.manhattanDistanceTo(myLoc) <= 5;
+		} else return false;
 	}
 
 	private synchronized void configureComponent() {
@@ -81,15 +78,13 @@ public class Splitter extends ManagedComponent implements WireRepair, ToolTipMak
 			if (thr > 0) {
 				bit_thread[i] = end_width[thr];
 				end_width[thr]++;
-			} else {
-				bit_thread[i] = -1;
-			}
+			} else bit_thread[i] = -1;
 		}
 
 		// compute end positions
 		Location origin = getLocation();
-		int x = origin.getX() + parms.getEnd0X();
-		int y = origin.getY() + parms.getEnd0Y();
+		int x = origin.x() + parms.getEnd0X();
+		int y = origin.y() + parms.getEnd0Y();
 		int dx = parms.getEndToEndDeltaX();
 		int dy = parms.getEndToEndDeltaY();
 
@@ -100,7 +95,7 @@ public class Splitter extends ManagedComponent implements WireRepair, ToolTipMak
 			x += dx;
 			y += dy;
 		}
-		wire_data = new CircuitWires.SplitterData(fanout);
+		wire_data = new SplitterData(fanout);
 		setEnds(ends);
 		recomputeBounds();
 		fireComponentInvalidated(new ComponentEvent(this));
@@ -111,9 +106,8 @@ public class Splitter extends ManagedComponent implements WireRepair, ToolTipMak
 	//
 	public void draw(ComponentDrawContext context) {
 		SplitterAttributes attrs = (SplitterAttributes) getAttributeSet();
-		if (attrs.appear == SplitterAttributes.APPEAR_LEGACY) {
-			SplitterPainter.drawLegacy(context, attrs, getLocation());
-		} else {
+		if (attrs.appear == SplitterAttributes.APPEAR_LEGACY) SplitterPainter.drawLegacy(context, attrs, getLocation());
+		else {
 			Location loc = getLocation();
 			SplitterPainter.drawLines(context, attrs, loc);
 			SplitterPainter.drawLabels(context, attrs, loc);
@@ -139,64 +133,48 @@ public class Splitter extends ManagedComponent implements WireRepair, ToolTipMak
 
 	public String getToolTip(ComponentUserEvent e) {
 		int end = -1;
-		for (int i = getEnds().size() - 1; i >= 0; i--) {
+		for (int i = getEnds().size() - 1; i >= 0; i--)
 			if (getEndLocation(i).manhattanDistanceTo(e.getX(), e.getY()) < 10) {
 				end = i;
 				break;
 			}
-		}
 
-		if (end == 0) {
-			return Strings.get("splitterCombinedTip");
-		} else if (end > 0) {
+		if (end == 0) return Strings.get("splitterCombinedTip");
+		else if (end > 0) {
 			int bits = 0;
 			StringBuilder buf = new StringBuilder();
 			SplitterAttributes attrs = (SplitterAttributes) getAttributeSet();
 			byte[] bit_end = attrs.bit_end;
 			boolean inString = false;
 			int beginString = 0;
-			for (int i = 0; i < bit_end.length; i++) {
+			for (int i = 0; i < bit_end.length; i++)
 				if (bit_end[i] == end) {
 					bits++;
 					if (!inString) {
 						inString = true;
 						beginString = i;
 					}
-				} else {
-					if (inString) {
-						appendBuf(buf, beginString, i - 1);
-						inString = false;
-					}
 				}
-			}
+				else if (inString) {
+					appendBuf(buf, beginString, i - 1);
+					inString = false;
+				}
 			if (inString)
 				appendBuf(buf, beginString, bit_end.length - 1);
-			String base;
-			switch (bits) {
-			case 0:
-				base = Strings.get("splitterSplit0Tip");
-				break;
-			case 1:
-				base = Strings.get("splitterSplit1Tip");
-				break;
-			default:
-				base = Strings.get("splitterSplitManyTip");
-				break;
-			}
+			String base = switch (bits) {
+				case 0 -> Strings.get("splitterSplit0Tip");
+				case 1 -> Strings.get("splitterSplit1Tip");
+				default -> Strings.get("splitterSplitManyTip");
+			};
 			return StringUtil.format(base, buf.toString());
-		} else {
-			return null;
-		}
+		} else return null;
 	}
 
 	private static void appendBuf(StringBuilder buf, int start, int end) {
-		if (buf.length() > 0)
+		if (!buf.isEmpty())
 			buf.append(",");
-		if (start == end) {
-			buf.append(start);
-		} else {
-			buf.append(start + "-" + end);
-		}
+		if (start == end) buf.append(start);
+		else buf.append(start).append("-").append(end);
 	}
 
 	public void configureMenu(JPopupMenu menu, Project proj) {

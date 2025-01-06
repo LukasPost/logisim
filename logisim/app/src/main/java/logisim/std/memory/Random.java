@@ -35,7 +35,7 @@ public class Random extends InstanceFactory {
 		super("Random", Strings.getter("randomComponent"));
 		setAttributes(
 				new Attribute[] { StdAttr.WIDTH, ATTR_SEED, StdAttr.EDGE_TRIGGER, StdAttr.LABEL, StdAttr.LABEL_FONT },
-				new Object[] { BitWidth.create(8), Integer.valueOf(0), StdAttr.TRIG_RISING, "",
+				new Object[] { BitWidth.create(8), 0, StdAttr.TRIG_RISING, "",
 						StdAttr.DEFAULT_LABEL_FONT });
 		setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
 
@@ -74,11 +74,8 @@ public class Random extends InstanceFactory {
 		Object triggerType = state.getAttributeValue(StdAttr.EDGE_TRIGGER);
 		boolean triggered = data.updateClock(state.getPort(CK), triggerType);
 
-		if (state.getPort(RST) == Value.TRUE) {
-			data.reset(state.getAttributeValue(ATTR_SEED));
-		} else if (triggered && state.getPort(NXT) != Value.FALSE) {
-			data.step();
-		}
+		if (state.getPort(RST) == Value.TRUE) data.reset(state.getAttributeValue(ATTR_SEED));
+		else if (triggered && state.getPort(NXT) != Value.FALSE) data.step();
 
 		state.setPort(OUT, Value.createKnown(dataWidth, data.value), 4);
 	}
@@ -105,10 +102,9 @@ public class Random extends InstanceFactory {
 		if (painter.getShowState()) {
 			int val = state == null ? 0 : state.value;
 			String str = StringUtil.toHexString(width, val);
-			if (str.length() <= 4) {
-				GraphicsUtil.drawText(g, str, bds.getX() + 15, bds.getY() + 4, GraphicsUtil.H_CENTER,
-						GraphicsUtil.V_TOP);
-			} else {
+			if (str.length() <= 4) GraphicsUtil.drawText(g, str, bds.getX() + 15, bds.getY() + 4, GraphicsUtil.H_CENTER,
+					GraphicsUtil.V_TOP);
+			else {
 				int split = str.length() - 4;
 				GraphicsUtil.drawText(g, str.substring(0, split), bds.getX() + 15, bds.getY() + 3,
 						GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
@@ -119,9 +115,9 @@ public class Random extends InstanceFactory {
 	}
 
 	private static class StateData extends ClockState implements InstanceData {
-		private final static long multiplier = 0x5DEECE66DL;
-		private final static long addend = 0xBL;
-		private final static long mask = (1L << 48) - 1;
+		private static final long multiplier = 0x5DEECE66DL;
+		private static final long addend = 0xBL;
+		private static final long mask = (1L << 48) - 1;
 
 		private long initSeed;
 		private long curSeed;
@@ -132,19 +128,17 @@ public class Random extends InstanceFactory {
 		}
 
 		void reset(Object seed) {
-			long start = seed instanceof Integer ? ((Integer) seed).intValue() : 0;
+			long start = seed instanceof Integer ? (Integer) seed : 0;
 			if (start == 0) {
 				// Prior to 2.7.0, this would reset to the seed at the time of
 				// the StateData's creation. It seems more likely that what
 				// would be intended was starting a new sequence entirely...
 				start = (System.currentTimeMillis() ^ multiplier) & mask;
-				if (start == initSeed) {
-					start = (start + multiplier) & mask;
-				}
+				if (start == initSeed) start = (start + multiplier) & mask;
 			}
-			this.initSeed = start;
-			this.curSeed = start;
-			this.value = (int) start;
+			initSeed = start;
+			curSeed = start;
+			value = (int) start;
 		}
 
 		void step() {
@@ -159,7 +153,7 @@ public class Random extends InstanceFactory {
 		@Override
 		public String getLogName(InstanceState state, Object option) {
 			String ret = state.getAttributeValue(StdAttr.LABEL);
-			return ret != null && !ret.equals("") ? ret : null;
+			return ret != null && !ret.isEmpty() ? ret : null;
 		}
 
 		@Override

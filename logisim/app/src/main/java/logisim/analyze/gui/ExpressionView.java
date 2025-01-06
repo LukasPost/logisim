@@ -52,10 +52,10 @@ class ExpressionView extends JPanel {
 		}
 	}
 
-	private MyListener myListener = new MyListener();
 	private RenderData renderData;
 
 	public ExpressionView() {
+		MyListener myListener = new MyListener();
 		addComponentListener(myListener);
 		setExpression(null);
 	}
@@ -93,7 +93,7 @@ class ExpressionView extends JPanel {
 
 	private static class ExpressionData {
 		String text;
-		final ArrayList<NotData> nots = new ArrayList<NotData>();
+		final ArrayList<NotData> nots = new ArrayList<>();
 		int[] badness;
 
 		ExpressionData(Expression expr) {
@@ -108,7 +108,7 @@ class ExpressionView extends JPanel {
 
 		private void computeText(Expression expr) {
 			final StringBuilder text = new StringBuilder();
-			expr.visit(new ExpressionVisitor<Object>() {
+			expr.visit(new ExpressionVisitor<>() {
 				public Object visitAnd(Expression a, Expression b) {
 					return binary(a, b, Expression.AND_LEVEL, " ");
 				}
@@ -126,17 +126,13 @@ class ExpressionView extends JPanel {
 						text.append("(");
 						a.visit(this);
 						text.append(")");
-					} else {
-						a.visit(this);
-					}
+					} else a.visit(this);
 					text.append(op);
 					if (b.getPrecedence() < level) {
 						text.append("(");
 						b.visit(this);
 						text.append(")");
-					} else {
-						b.visit(this);
-					}
+					} else b.visit(this);
 					return null;
 				}
 
@@ -155,7 +151,7 @@ class ExpressionView extends JPanel {
 				}
 
 				public Object visitConstant(int value) {
-					text.append("" + Integer.toString(value, 16));
+					text.append(Integer.toString(value, 16));
 					return null;
 				}
 			});
@@ -165,39 +161,31 @@ class ExpressionView extends JPanel {
 		private void computeBadnesses() {
 			badness = new int[text.length() + 1];
 			badness[text.length()] = 0;
-			if (text.length() == 0)
+			if (text.isEmpty())
 				return;
 
 			badness[0] = Integer.MAX_VALUE;
-			NotData curNot = nots.isEmpty() ? null : (NotData) nots.get(0);
+			NotData curNot = nots.isEmpty() ? null : nots.getFirst();
 			int curNotIndex = 0;
 			char prev = text.charAt(0);
 			for (int i = 1; i < text.length(); i++) {
 				// invariant: curNot.stopIndex >= i (and is first such),
 				// or curNot == null if none such exists
 				char cur = text.charAt(i);
-				if (cur == ' ') {
+				if (cur == ' ')
 					badness[i] = BADNESS_BEFORE_SPACE;
-					;
-				} else if (Character.isJavaIdentifierPart(cur)) {
-					if (Character.isJavaIdentifierPart(prev)) {
-						badness[i] = BADNESS_IDENT_BREAK;
-					} else {
-						badness[i] = BADNESS_BEFORE_AND;
-					}
-				} else if (cur == '+') {
-					badness[i] = BADNESS_BEFORE_OR;
-				} else if (cur == '^') {
-					badness[i] = BADNESS_BEFORE_XOR;
-				} else if (cur == ')') {
-					badness[i] = BADNESS_BEFORE_SPACE;
-				} else { // cur == '('
-					badness[i] = BADNESS_BEFORE_AND;
-				}
+				else if (Character.isJavaIdentifierPart(cur))
+					if (Character.isJavaIdentifierPart(prev)) badness[i] = BADNESS_IDENT_BREAK;
+					else badness[i] = BADNESS_BEFORE_AND;
+				else if (cur == '+') badness[i] = BADNESS_BEFORE_OR;
+				else if (cur == '^') badness[i] = BADNESS_BEFORE_XOR;
+				else // cur == '('
+					if (cur == ')') badness[i] = BADNESS_BEFORE_SPACE;
+					else badness[i] = BADNESS_BEFORE_AND;
 
 				while (curNot != null && curNot.stopIndex <= i) {
 					++curNotIndex;
-					curNot = (curNotIndex >= nots.size() ? null : (NotData) nots.get(curNotIndex));
+					curNot = (curNotIndex >= nots.size() ? null : nots.get(curNotIndex));
 				}
 
 				if (curNot != null && badness[i] < BADNESS_IDENT_BREAK) {
@@ -208,11 +196,9 @@ class ExpressionView extends JPanel {
 						if (nd.stopIndex > i)
 							++depth;
 						++ndi;
-						nd = ndi < nots.size() ? (NotData) nots.get(ndi) : null;
+						nd = ndi < nots.size() ? nots.get(ndi) : null;
 					}
-					if (depth > 0) {
-						badness[i] += BADNESS_NOT_BREAK + (depth - 1) * BADNESS_PER_NOT_BREAK;
-					}
+					if (depth > 0) badness[i] += BADNESS_NOT_BREAK + (depth - 1) * BADNESS_PER_NOT_BREAK;
 				}
 
 				prev = cur;
@@ -236,15 +222,15 @@ class ExpressionView extends JPanel {
 
 			if (fm == null) {
 				lineText = new String[] { exprData.text };
-				lineNots = new ArrayList<ArrayList<NotData>>();
+				lineNots = new ArrayList<>();
 				lineNots.add(exprData.nots);
 				computeNotDepths();
 				lineY = new int[] { MINIMUM_HEIGHT };
 			} else {
-				if (exprData.text.length() == 0) {
+				if (exprData.text.isEmpty()) {
 					lineText = new String[] { Strings.get("expressionEmpty") };
-					lineNots = new ArrayList<ArrayList<NotData>>();
-					lineNots.add(new ArrayList<NotData>());
+					lineNots = new ArrayList<>();
+					lineNots.add(new ArrayList<>());
 				} else {
 					computeLineText(fm);
 					computeLineNots();
@@ -265,7 +251,7 @@ class ExpressionView extends JPanel {
 			}
 
 			int startPos = 0;
-			ArrayList<String> lines = new ArrayList<String>();
+			ArrayList<String> lines = new ArrayList<>();
 			while (startPos < text.length()) {
 				int stopPos = startPos + 1;
 				String bestLine = text.substring(startPos, stopPos);
@@ -293,15 +279,13 @@ class ExpressionView extends JPanel {
 				lines.add(bestLine);
 				startPos = bestStopPos;
 			}
-			lineText = lines.toArray(new String[lines.size()]);
+			lineText = lines.toArray(new String[0]);
 		}
 
 		private void computeLineNots() {
 			ArrayList<NotData> allNots = exprData.nots;
-			lineNots = new ArrayList<ArrayList<NotData>>();
-			for (int i = 0; i < lineText.length; i++) {
-				lineNots.add(new ArrayList<NotData>());
-			}
+			lineNots = new ArrayList<>();
+			for (int i = 0; i < lineText.length; i++) lineNots.add(new ArrayList<>());
 			for (NotData nd : allNots) {
 				int pos = 0;
 				for (int j = 0; j < lineNots.size() && pos < nd.stopIndex; j++) {
@@ -349,10 +333,9 @@ class ExpressionView extends JPanel {
 			for (int i = 0; i < lineY.length; i++) {
 				int maxDepth = -1;
 				ArrayList<NotData> nots = lineNots.get(i);
-				for (NotData nd : nots) {
+				for (NotData nd : nots)
 					if (nd.depth > maxDepth)
 						maxDepth = nd.depth;
-				}
 				lineY[i] = curY + maxDepth * NOT_SEP;
 				curY = lineY[i] + fm.getHeight() + EXTRA_LEADING;
 			}

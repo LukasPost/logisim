@@ -8,8 +8,8 @@ import logisim.gui.main.Canvas;
 
 public class ComponentUserEvent {
 	private Canvas canvas;
-	private int x = 0;
-	private int y = 0;
+	private int x;
+	private int y;
 
 	ComponentUserEvent(Canvas canvas) {
 		this.canvas = canvas;

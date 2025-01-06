@@ -48,27 +48,21 @@ public class DotMatrix extends InstanceFactory {
 		setAttributes(
 				new Attribute<?>[] { ATTR_INPUT_TYPE, ATTR_MATRIX_COLS, ATTR_MATRIX_ROWS, Io.ATTR_ON_COLOR,
 						Io.ATTR_OFF_COLOR, ATTR_PERSIST, ATTR_DOT_SHAPE },
-				new Object[] { INPUT_COLUMN, Integer.valueOf(5), Integer.valueOf(7), Color.GREEN, Color.DARK_GRAY,
-						Integer.valueOf(0), SHAPE_SQUARE });
+				new Object[] { INPUT_COLUMN, 5, 7, Color.GREEN, Color.DARK_GRAY,
+						0, SHAPE_SQUARE });
 		setIconName("dotmat.gif");
 	}
 
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrs) {
 		Object input = attrs.getValue(ATTR_INPUT_TYPE);
-		int cols = attrs.getValue(ATTR_MATRIX_COLS).intValue();
-		int rows = attrs.getValue(ATTR_MATRIX_ROWS).intValue();
-		if (input == INPUT_COLUMN) {
-			return Bounds.create(-5, -10 * rows, 10 * cols, 10 * rows);
-		} else if (input == INPUT_ROW) {
-			return Bounds.create(0, -5, 10 * cols, 10 * rows);
-		} else { // input == INPUT_SELECT
-			if (rows == 1) {
-				return Bounds.create(0, -5, 10 * cols, 10 * rows);
-			} else {
-				return Bounds.create(0, -5 * rows + 5, 10 * cols, 10 * rows);
-			}
-		}
+		int cols = attrs.getValue(ATTR_MATRIX_COLS);
+		int rows = attrs.getValue(ATTR_MATRIX_ROWS);
+		if (input == INPUT_COLUMN) return Bounds.create(-5, -10 * rows, 10 * cols, 10 * rows);
+		else // input == INPUT_SELECT
+			if (input == INPUT_ROW) return Bounds.create(0, -5, 10 * cols, 10 * rows);
+			else if (rows == 1) return Bounds.create(0, -5, 10 * cols, 10 * rows);
+			else return Bounds.create(0, -5 * rows + 5, 10 * cols, 10 * rows);
 	}
 
 	@Override
@@ -87,68 +81,47 @@ public class DotMatrix extends InstanceFactory {
 
 	private void updatePorts(Instance instance) {
 		Object input = instance.getAttributeValue(ATTR_INPUT_TYPE);
-		int rows = instance.getAttributeValue(ATTR_MATRIX_ROWS).intValue();
-		int cols = instance.getAttributeValue(ATTR_MATRIX_COLS).intValue();
+		int rows = instance.getAttributeValue(ATTR_MATRIX_ROWS);
+		int cols = instance.getAttributeValue(ATTR_MATRIX_COLS);
 		Port[] ps;
 		if (input == INPUT_COLUMN) {
 			ps = new Port[cols];
-			for (int i = 0; i < cols; i++) {
-				ps[i] = new Port(10 * i, 0, Port.INPUT, rows);
-			}
+			for (int i = 0; i < cols; i++) ps[i] = new Port(10 * i, 0, Port.INPUT, rows);
 		} else if (input == INPUT_ROW) {
 			ps = new Port[rows];
-			for (int i = 0; i < rows; i++) {
-				ps[i] = new Port(0, 10 * i, Port.INPUT, cols);
-			}
-		} else {
-			if (rows <= 1) {
-				ps = new Port[] { new Port(0, 0, Port.INPUT, cols) };
-			} else if (cols <= 1) {
-				ps = new Port[] { new Port(0, 0, Port.INPUT, rows) };
-			} else {
-				ps = new Port[] { new Port(0, 0, Port.INPUT, cols), new Port(0, 10, Port.INPUT, rows) };
-			}
-		}
+			for (int i = 0; i < rows; i++) ps[i] = new Port(0, 10 * i, Port.INPUT, cols);
+		} else if (rows <= 1) ps = new Port[]{new Port(0, 0, Port.INPUT, cols)};
+		else if (cols <= 1) ps = new Port[]{new Port(0, 0, Port.INPUT, rows)};
+		else ps = new Port[]{new Port(0, 0, Port.INPUT, cols), new Port(0, 10, Port.INPUT, rows)};
 		instance.setPorts(ps);
 	}
 
 	private State getState(InstanceState state) {
-		int rows = state.getAttributeValue(ATTR_MATRIX_ROWS).intValue();
-		int cols = state.getAttributeValue(ATTR_MATRIX_COLS).intValue();
+		int rows = state.getAttributeValue(ATTR_MATRIX_ROWS);
+		int cols = state.getAttributeValue(ATTR_MATRIX_COLS);
 		long clock = state.getTickCount();
 
 		State data = (State) state.getData();
 		if (data == null) {
 			data = new State(rows, cols, clock);
 			state.setData(data);
-		} else {
-			data.updateSize(rows, cols, clock);
-		}
+		} else data.updateSize(rows, cols, clock);
 		return data;
 	}
 
 	@Override
 	public void propagate(InstanceState state) {
 		Object type = state.getAttributeValue(ATTR_INPUT_TYPE);
-		int rows = state.getAttributeValue(ATTR_MATRIX_ROWS).intValue();
-		int cols = state.getAttributeValue(ATTR_MATRIX_COLS).intValue();
+		int rows = state.getAttributeValue(ATTR_MATRIX_ROWS);
+		int cols = state.getAttributeValue(ATTR_MATRIX_COLS);
 		long clock = state.getTickCount();
-		long persist = clock + state.getAttributeValue(ATTR_PERSIST).intValue();
+		long persist = clock + state.getAttributeValue(ATTR_PERSIST);
 
 		State data = getState(state);
-		if (type == INPUT_ROW) {
-			for (int i = 0; i < rows; i++) {
-				data.setRow(i, state.getPort(i), persist);
-			}
-		} else if (type == INPUT_COLUMN) {
-			for (int i = 0; i < cols; i++) {
-				data.setColumn(i, state.getPort(i), persist);
-			}
-		} else if (type == INPUT_SELECT) {
-			data.setSelect(state.getPort(1), state.getPort(0), persist);
-		} else {
-			throw new RuntimeException("unexpected matrix type");
-		}
+		if (type == INPUT_ROW) for (int i = 0; i < rows; i++) data.setRow(i, state.getPort(i), persist);
+		else if (type == INPUT_COLUMN) for (int i = 0; i < cols; i++) data.setColumn(i, state.getPort(i), persist);
+		else if (type == INPUT_SELECT) data.setSelect(state.getPort(1), state.getPort(0), persist);
+		else throw new RuntimeException("unexpected matrix type");
 	}
 
 	@Override
@@ -164,7 +137,7 @@ public class DotMatrix extends InstanceFactory {
 		Graphics g = painter.getGraphics();
 		int rows = data.rows;
 		int cols = data.cols;
-		for (int j = 0; j < rows; j++) {
+		for (int j = 0; j < rows; j++)
 			for (int i = 0; i < cols; i++) {
 				int x = bds.getX() + 10 * i;
 				int y = bds.getY() + 10 * j;
@@ -183,12 +156,12 @@ public class DotMatrix extends InstanceFactory {
 						g.fillRect(x, y, 10, 10);
 					else
 						g.fillOval(x + 1, y + 1, 8, 8);
-				} else {
+				}
+				else {
 					g.setColor(Color.GRAY);
 					g.fillOval(x + 1, y + 1, 8, 8);
 				}
 			}
-		}
 		g.setColor(Color.BLACK);
 		GraphicsUtil.switchToWidth(g, 2);
 		g.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
@@ -212,8 +185,8 @@ public class DotMatrix extends InstanceFactory {
 		public Object clone() {
 			try {
 				State ret = (State) super.clone();
-				ret.grid = this.grid.clone();
-				ret.persistTo = this.persistTo.clone();
+				ret.grid = grid.clone();
+				ret.persistTo = persistTo.clone();
 				return ret;
 			}
 			catch (CloneNotSupportedException e) {
@@ -236,9 +209,7 @@ public class DotMatrix extends InstanceFactory {
 		private Value get(int row, int col, long curTick) {
 			int index = row * cols + col;
 			Value ret = grid[index];
-			if (ret == Value.FALSE && persistTo[index] - curTick >= 0) {
-				ret = Value.TRUE;
-			}
+			if (ret == Value.FALSE && persistTo[index] - curTick >= 0) return Value.TRUE;
 			return ret;
 		}
 
@@ -248,13 +219,9 @@ public class DotMatrix extends InstanceFactory {
 			Value[] vals = rowVector.getAll();
 			for (int i = 0; i < vals.length; i++, gridloc += stride) {
 				Value val = vals[i];
-				if (grid[gridloc] == Value.TRUE) {
-					persistTo[gridloc] = persist - 1;
-				}
+				if (grid[gridloc] == Value.TRUE) persistTo[gridloc] = persist - 1;
 				grid[gridloc] = vals[i];
-				if (val == Value.TRUE) {
-					persistTo[gridloc] = persist;
-				}
+				if (val == Value.TRUE) persistTo[gridloc] = persist;
 			}
 		}
 
@@ -264,13 +231,9 @@ public class DotMatrix extends InstanceFactory {
 			Value[] vals = colVector.getAll();
 			for (int i = 0; i < vals.length; i++, gridloc += stride) {
 				Value val = vals[i];
-				if (grid[gridloc] == Value.TRUE) {
-					persistTo[gridloc] = persist - 1;
-				}
+				if (grid[gridloc] == Value.TRUE) persistTo[gridloc] = persist - 1;
 				grid[gridloc] = val;
-				if (val == Value.TRUE) {
-					persistTo[gridloc] = persist;
-				}
+				if (val == Value.TRUE) persistTo[gridloc] = persist;
 			}
 		}
 
@@ -280,24 +243,17 @@ public class DotMatrix extends InstanceFactory {
 			int gridloc = 0;
 			for (int i = rowVals.length - 1; i >= 0; i--) {
 				Value wholeRow = rowVals[i];
-				if (wholeRow == Value.TRUE) {
-					for (int j = colVals.length - 1; j >= 0; j--, gridloc++) {
-						Value val = colVals[colVals.length - 1 - j];
-						if (grid[gridloc] == Value.TRUE) {
-							persistTo[gridloc] = persist - 1;
-						}
-						grid[gridloc] = val;
-						if (val == Value.TRUE) {
-							persistTo[gridloc] = persist;
-						}
-					}
-				} else {
+				if (wholeRow == Value.TRUE) for (int j = colVals.length - 1; j >= 0; j--, gridloc++) {
+					Value val = colVals[colVals.length - 1 - j];
+					if (grid[gridloc] == Value.TRUE) persistTo[gridloc] = persist - 1;
+					grid[gridloc] = val;
+					if (val == Value.TRUE) persistTo[gridloc] = persist;
+				}
+				else {
 					if (wholeRow != Value.FALSE)
 						wholeRow = Value.ERROR;
 					for (int j = colVals.length - 1; j >= 0; j--, gridloc++) {
-						if (grid[gridloc] == Value.TRUE) {
-							persistTo[gridloc] = persist - 1;
-						}
+						if (grid[gridloc] == Value.TRUE) persistTo[gridloc] = persist - 1;
 						grid[gridloc] = wholeRow;
 					}
 				}

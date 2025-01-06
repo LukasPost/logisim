@@ -15,8 +15,8 @@ class PinAttributes extends ProbeAttributes {
 	public static PinAttributes instance = new PinAttributes();
 
 	private static final List<Attribute<?>> ATTRIBUTES = Arrays
-			.asList(new Attribute<?>[] { StdAttr.FACING, Pin.ATTR_TYPE, StdAttr.WIDTH, Pin.ATTR_TRISTATE, Pin.ATTR_PULL,
-					StdAttr.LABEL, Pin.ATTR_LABEL_LOC, StdAttr.LABEL_FONT });
+			.asList(StdAttr.FACING, Pin.ATTR_TYPE, StdAttr.WIDTH, Pin.ATTR_TRISTATE, Pin.ATTR_PULL,
+					StdAttr.LABEL, Pin.ATTR_LABEL_LOC, StdAttr.LABEL_FONT);
 
 	BitWidth width = BitWidth.ONE;
 	boolean threeState = true;
@@ -55,15 +55,11 @@ class PinAttributes extends ProbeAttributes {
 
 	@Override
 	public <V> void setValue(Attribute<V> attr, V value) {
-		if (attr == StdAttr.WIDTH) {
-			width = (BitWidth) value;
-		} else if (attr == Pin.ATTR_TRISTATE) {
-			threeState = ((Boolean) value).booleanValue();
-		} else if (attr == Pin.ATTR_TYPE) {
-			type = ((Boolean) value).booleanValue() ? EndData.OUTPUT_ONLY : EndData.INPUT_ONLY;
-		} else if (attr == Pin.ATTR_PULL) {
-			pull = value;
-		} else {
+		if (attr == StdAttr.WIDTH) width = (BitWidth) value;
+		else if (attr == Pin.ATTR_TRISTATE) threeState = (Boolean) value;
+		else if (attr == Pin.ATTR_TYPE) type = (Boolean) value ? EndData.OUTPUT_ONLY : EndData.INPUT_ONLY;
+		else if (attr == Pin.ATTR_PULL) pull = value;
+		else {
 			super.setValue(attr, value);
 			return;
 		}

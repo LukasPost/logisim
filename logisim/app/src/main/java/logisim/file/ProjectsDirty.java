@@ -33,9 +33,7 @@ class ProjectsDirty {
 
 	private static class ProjectListListener implements PropertyChangeListener {
 		public synchronized void propertyChange(PropertyChangeEvent event) {
-			for (DirtyListener l : listeners) {
-				l.proj.removeLibraryListener(l);
-			}
+			for (DirtyListener l : listeners) l.proj.removeLibraryListener(l);
 			listeners.clear();
 			for (Project proj : Projects.getOpenProjects()) {
 				DirtyListener l = new DirtyListener(proj);
@@ -49,7 +47,7 @@ class ProjectsDirty {
 	}
 
 	private static ProjectListListener projectListListener = new ProjectListListener();
-	private static ArrayList<DirtyListener> listeners = new ArrayList<DirtyListener>();
+	private static ArrayList<DirtyListener> listeners = new ArrayList<>();
 
 	public static void initialize() {
 		Projects.addPropertyChangeListener(Projects.projectListProperty, projectListListener);

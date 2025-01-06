@@ -30,7 +30,6 @@ import logisim.util.GraphicsUtil;
 class TableTabCaret {
 	private static Color SELECT_COLOR = new Color(192, 192, 255);
 
-	private Listener listener = new Listener();
 	private TableTab table;
 	private int cursorRow;
 	private int cursorCol;
@@ -43,6 +42,7 @@ class TableTabCaret {
 		cursorCol = 0;
 		markRow = 0;
 		markCol = 0;
+		Listener listener = new Listener();
 		table.getTruthTable().addTruthTableListener(listener);
 		table.addMouseListener(listener);
 		table.addMouseMotionListener(listener);
@@ -104,17 +104,16 @@ class TableTabCaret {
 		if (col >= cols)
 			col = cols - 1;
 
-		if (row == cursorRow && col == cursorCol && (keepMark || (row == markRow && col == markCol))) {
+		if (row == cursorRow && col == cursorCol && (keepMark || (row == markRow && col == markCol)))
 			; // nothing is changing, so do nothing
-		} else if (!keepMark && markRow == cursorRow && markCol == cursorCol) {
+		else if (!keepMark && markRow == cursorRow && markCol == cursorCol) {
 			int oldRow = cursorRow;
-			int oldCol = cursorCol;
 			cursorRow = row;
 			cursorCol = col;
 			markRow = row;
 			markCol = col;
-			expose(oldRow, oldCol);
-			expose(cursorRow, cursorCol);
+			expose(oldRow);
+			expose(cursorRow);
 		} else {
 			int r0 = Math.min(row, Math.min(cursorRow, markRow));
 			int r1 = Math.max(row, Math.max(cursorRow, markRow));
@@ -144,7 +143,7 @@ class TableTabCaret {
 		table.scrollRectToVisible(new Rectangle(cx, cy, cw, ch));
 	}
 
-	private void expose(int row, int col) {
+	private void expose(int row) {
 		if (row >= 0) {
 			int x0 = table.getX(0);
 			int x1 = table.getX(table.getColumnCount() - 1) + table.getCellWidth();
@@ -271,11 +270,8 @@ class TableTabCaret {
 				int outputs = model.getOutputColumnCount();
 				if (cursorCol >= inputs) {
 					model.setOutputEntry(cursorRow, cursorCol - inputs, newEntry);
-					if (cursorCol >= inputs + outputs - 1) {
-						setCursor(cursorRow + 1, inputs, false);
-					} else {
-						setCursor(cursorRow, cursorCol + 1, false);
-					}
+					if (cursorCol >= inputs + outputs - 1) setCursor(cursorRow + 1, inputs, false);
+					else setCursor(cursorRow, cursorCol + 1, false);
 				}
 			}
 		}
@@ -334,12 +330,12 @@ class TableTabCaret {
 
 		public void focusGained(FocusEvent e) {
 			if (cursorRow >= 0)
-				expose(cursorRow, cursorCol);
+				expose(cursorRow);
 		}
 
 		public void focusLost(FocusEvent e) {
 			if (cursorRow >= 0)
-				expose(cursorRow, cursorCol);
+				expose(cursorRow);
 		}
 
 		public void cellsChanged(TruthTableEvent event) {

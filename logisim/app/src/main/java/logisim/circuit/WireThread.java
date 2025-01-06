@@ -3,22 +3,23 @@
 
 package logisim.circuit;
 
+import logisim.circuit.CircuitWires.ThreadBundle;
 import logisim.util.SmallSet;
 
 class WireThread {
 	private WireThread parent;
-	private SmallSet<CircuitWires.ThreadBundle> bundles = new SmallSet<CircuitWires.ThreadBundle>();
+	private SmallSet<ThreadBundle> bundles = new SmallSet<>();
 
 	WireThread() {
 		parent = this;
 	}
 
-	SmallSet<CircuitWires.ThreadBundle> getBundles() {
+	SmallSet<ThreadBundle> getBundles() {
 		return bundles;
 	}
 
 	void unite(WireThread other) {
-		WireThread group = this.find();
+		WireThread group = find();
 		WireThread group2 = other.find();
 		if (group != group2)
 			group.parent = group2;
@@ -30,7 +31,7 @@ class WireThread {
 			do
 				ret = ret.parent;
 			while (ret.parent != ret);
-			this.parent = ret;
+			parent = ret;
 		}
 		return ret;
 	}

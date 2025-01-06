@@ -51,8 +51,8 @@ abstract class RectangularTool extends AbstractTool {
 		Location loc = new Location(e.getX(), e.getY());
 		Bounds bds = Bounds.create(loc);
 		dragStart = loc;
-		lastMouseX = loc.getX();
-		lastMouseY = loc.getY();
+		lastMouseX = loc.x();
+		lastMouseY = loc.y();
 		active = canvas.getModel() != null;
 		repaintArea(canvas, bds);
 	}
@@ -83,9 +83,8 @@ abstract class RectangularTool extends AbstractTool {
 	@Override
 	public void keyPressed(Canvas canvas, KeyEvent e) {
 		int code = e.getKeyCode();
-		if (active && (code == KeyEvent.VK_SHIFT || code == KeyEvent.VK_ALT || code == KeyEvent.VK_CONTROL)) {
+		if (active && (code == KeyEvent.VK_SHIFT || code == KeyEvent.VK_ALT || code == KeyEvent.VK_CONTROL))
 			updateMouse(canvas, lastMouseX, lastMouseY, e.getModifiersEx());
-		}
 	}
 
 	@Override
@@ -105,17 +104,14 @@ abstract class RectangularTool extends AbstractTool {
 	private Bounds computeBounds(Canvas canvas, int mx, int my, int mods) {
 		lastMouseX = mx;
 		lastMouseY = my;
-		if (!active) {
-			return Bounds.EMPTY_BOUNDS;
-		} else {
+		if (!active) return Bounds.EMPTY_BOUNDS;
+		else {
 			Location start = dragStart;
-			int x0 = start.getX();
-			int y0 = start.getY();
+			int x0 = start.x();
+			int y0 = start.y();
 			int x1 = mx;
 			int y1 = my;
-			if (x0 == x1 && y0 == y1) {
-				return Bounds.EMPTY_BOUNDS;
-			}
+			if (x0 == x1 && y0 == y1) return Bounds.EMPTY_BOUNDS;
 
 			boolean ctrlDown = (mods & MouseEvent.CTRL_DOWN_MASK) != 0;
 			if (ctrlDown) {
@@ -127,23 +123,21 @@ abstract class RectangularTool extends AbstractTool {
 
 			boolean altDown = (mods & MouseEvent.ALT_DOWN_MASK) != 0;
 			boolean shiftDown = (mods & MouseEvent.SHIFT_DOWN_MASK) != 0;
-			if (altDown) {
-				if (shiftDown) {
-					int r = Math.min(Math.abs(x0 - x1), Math.abs(y0 - y1));
-					x1 = x0 + r;
-					y1 = y0 + r;
-					x0 -= r;
-					y0 -= r;
-				} else {
-					x0 = x0 - (x1 - x0);
-					y0 = y0 - (y1 - y0);
-				}
-			} else {
-				if (shiftDown) {
-					int r = Math.min(Math.abs(x0 - x1), Math.abs(y0 - y1));
-					y1 = y1 < y0 ? y0 - r : y0 + r;
-					x1 = x1 < x0 ? x0 - r : x0 + r;
-				}
+			if (altDown) if (shiftDown) {
+				int r = Math.min(Math.abs(x0 - x1), Math.abs(y0 - y1));
+				x1 = x0 + r;
+				y1 = y0 + r;
+				x0 -= r;
+				y0 -= r;
+			}
+			else {
+				x0 = x0 - (x1 - x0);
+				y0 = y0 - (y1 - y0);
+			}
+			else if (shiftDown) {
+				int r = Math.min(Math.abs(x0 - x1), Math.abs(y0 - y1));
+				y1 = y1 < y0 ? y0 - r : y0 + r;
+				x1 = x1 < x0 ? x0 - r : x0 + r;
 			}
 
 			int x = x0;

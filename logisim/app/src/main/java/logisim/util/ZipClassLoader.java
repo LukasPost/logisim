@@ -39,7 +39,7 @@ public class ZipClassLoader extends ClassLoader {
 		Request(int action, String resource) {
 			this.action = action;
 			this.resource = resource;
-			this.responseSent = false;
+			responseSent = false;
 		}
 
 		@Override
@@ -66,19 +66,14 @@ public class ZipClassLoader extends ClassLoader {
 					notifyAll();
 				}
 			}
-			if (aborted && DEBUG >= 1) {
-				System.err.println("request not handled successfully"); // OK
-			}
+			if (aborted && DEBUG >= 1) System.err.println("request not handled successfully"); // OK
 		}
 
 		Object getResponse() {
 			synchronized (this) {
-				while (!responseSent) {
-					try {
-						this.wait(1000);
-					}
-					catch (InterruptedException e) {
-					}
+				while (!responseSent) try {
+					wait(1000);
+				} catch (InterruptedException e) {
 				}
 				return response;
 			}
@@ -87,8 +82,8 @@ public class ZipClassLoader extends ClassLoader {
 
 	@SuppressWarnings("unused")
 	private class WorkThread extends Thread {
-		private LinkedList<Request> requests = new LinkedList<Request>();
-		private ZipFile zipFile = null;
+		private LinkedList<Request> requests = new LinkedList<>();
+		private ZipFile zipFile;
 
 		@Override
 		public void run() {
@@ -122,17 +117,14 @@ public class ZipClassLoader extends ClassLoader {
 					t.printStackTrace();
 				} // OK
 			} finally {
-				if (zipFile != null) {
-					try {
-						zipFile.close();
-						zipFile = null;
-						if (DEBUG >= 1)
-							System.err.println("  ZIP closed"); // OK
-					}
-					catch (IOException e) {
-						if (DEBUG >= 1)
-							System.err.println("Error closing ZIP file"); // OK
-					}
+				if (zipFile != null) try {
+					zipFile.close();
+					zipFile = null;
+					if (DEBUG >= 1)
+						System.err.println("  ZIP closed"); // OK
+				} catch (IOException e) {
+					if (DEBUG >= 1)
+						System.err.println("Error closing ZIP file"); // OK
 				}
 			}
 		}
@@ -211,42 +203,36 @@ public class ZipClassLoader extends ClassLoader {
 					System.err.println("  error retrieving data"); // OK
 				ex.printStackTrace();
 			} finally {
-				if (bis != null) {
-					try {
-						if (DEBUG >= 3)
-							System.err.println("  close file"); // OK
-						bis.close();
-					}
-					catch (IOException ioex) {
-						if (DEBUG >= 3)
-							System.err.println("  error closing data"); // OK
-					}
+				if (bis != null) try {
+					if (DEBUG >= 3)
+						System.err.println("  close file"); // OK
+					bis.close();
+				} catch (IOException ioex) {
+					if (DEBUG >= 3)
+						System.err.println("  error closing data"); // OK
 				}
 			}
 			req.setResponse(ret);
 		}
 
 		private void ensureZipOpen() {
-			if (zipFile == null) {
-				try {
-					if (DEBUG >= 3)
-						System.err.println("  open ZIP file"); // OK
-					zipFile = new ZipFile(zipPath);
-					if (DEBUG >= 1)
-						System.err.println("  ZIP opened"); // OK
-				}
-				catch (IOException e) {
-					if (DEBUG >= 1)
-						System.err.println("  error opening ZIP file"); // OK
-				}
+			if (zipFile == null) try {
+				if (DEBUG >= 3)
+					System.err.println("  open ZIP file"); // OK
+				zipFile = new ZipFile(zipPath);
+				if (DEBUG >= 1)
+					System.err.println("  ZIP opened"); // OK
+			} catch (IOException e) {
+				if (DEBUG >= 1)
+					System.err.println("  error opening ZIP file"); // OK
 			}
 		}
 	}
 
 	private File zipPath;
-	private HashMap<String, Object> classes = new HashMap<String, Object>();
-	private Object bgLock = new Object();
-	private WorkThread bgThread = null;
+	private final HashMap<String, Object> classes = new HashMap<>();
+	private final Object bgLock = new Object();
+	private WorkThread bgThread;
 
 	public ZipClassLoader(String zipFileName) {
 		this(new File(zipFileName));
@@ -262,17 +248,14 @@ public class ZipClassLoader extends ClassLoader {
 		if (DEBUG >= 3)
 			System.err.println("findResource " + resourceName); // OK
 		Object ret = request(REQUEST_FIND, resourceName);
-		if (ret instanceof URL) {
-			return (URL) ret;
-		} else {
-			return super.findResource(resourceName);
-		}
+		if (ret instanceof URL) return (URL) ret;
+		else return super.findResource(resourceName);
 	}
 
 	@Override
 	@SuppressWarnings("unused")
 	public Class<?> findClass(String className) throws ClassNotFoundException {
-		boolean found = false;
+		boolean found;
 		Object result = null;
 
 		// check whether we have loaded this class before
@@ -287,10 +270,9 @@ public class ZipClassLoader extends ClassLoader {
 			String resourceName = className.replace('.', '/') + ".class";
 			result = request(REQUEST_LOAD, resourceName);
 
-			if (result instanceof byte[]) {
+			if (result instanceof byte[] data) {
 				if (DEBUG >= 3)
 					System.err.println("  define class"); // OK
-				byte[] data = (byte[]) result;
 				result = defineClass(className, data, 0, data.length);
 				if (result != null) {
 					if (DEBUG >= 3)
@@ -307,15 +289,12 @@ public class ZipClassLoader extends ClassLoader {
 			}
 		}
 
-		if (result instanceof Class) {
-			return (Class<?>) result;
-		} else if (result instanceof ClassNotFoundException) {
-			throw (ClassNotFoundException) result;
-		} else if (result instanceof Error) {
-			throw (Error) result;
-		} else {
-			return super.findClass(className);
-		}
+		return switch (result) {
+			case Class aClass -> aClass;
+			case ClassNotFoundException classNotFoundException -> throw classNotFoundException;
+			case Error error -> throw error;
+			case null, default -> super.findClass(className);
+		};
 	}
 
 	private Object request(int action, String resourceName) {

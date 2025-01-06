@@ -29,10 +29,10 @@ public class SetAttributeAction extends Action {
 	public SetAttributeAction(Circuit circuit, StringGetter nameGetter) {
 		this.nameGetter = nameGetter;
 		this.circuit = circuit;
-		this.comps = new ArrayList<Component>();
-		this.attrs = new ArrayList<Attribute<Object>>();
-		this.values = new ArrayList<Object>();
-		this.oldValues = new ArrayList<Object>();
+		comps = new ArrayList<>();
+		attrs = new ArrayList<>();
+		values = new ArrayList<>();
+		oldValues = new ArrayList<>();
 	}
 
 	public void set(Component comp, Attribute<?> attr, Object value) {
@@ -85,9 +85,7 @@ public class SetAttributeAction extends Action {
 			Component comp = comps.get(i);
 			Attribute<Object> attr = attrs.get(i);
 			Object value = oldValues.get(i);
-			if (value != null) {
-				comp.getAttributeSet().setValue(attr, value);
-			}
+			if (value != null) comp.getAttributeSet().setValue(attr, value);
 		}
 	}
 }

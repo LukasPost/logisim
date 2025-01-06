@@ -58,15 +58,15 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 	public InstanceFactory(String name, StringGetter displayName) {
 		this.name = name;
 		this.displayName = displayName;
-		this.iconName = null;
-		this.icon = null;
-		this.attrs = null;
-		this.defaults = null;
-		this.bounds = Bounds.EMPTY_BOUNDS;
-		this.portList = Collections.emptyList();
-		this.keyConfigurator = null;
-		this.facingAttribute = null;
-		this.shouldSnap = Boolean.TRUE;
+		iconName = null;
+		icon = null;
+		attrs = null;
+		defaults = null;
+		bounds = Bounds.EMPTY_BOUNDS;
+		portList = Collections.emptyList();
+		keyConfigurator = null;
+		facingAttribute = null;
+		shouldSnap = Boolean.TRUE;
 	}
 
 	@Override
@@ -107,17 +107,10 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 			Icon i = icon;
 			if (i == null) {
 				String n = iconName;
-				if (n != null) {
-					i = Icons.getIcon(n);
-					if (i == null)
-						n = null;
-				}
+				if (n != null) i = Icons.getIcon(n);
 			}
-			if (i != null) {
-				i.paintIcon(context.getDestination(), g, x + 2, y + 2);
-			} else {
-				super.paintIcon(context, x, y, attrs);
-			}
+			if (i != null) i.paintIcon(context.getDestination(), g, x + 2, y + 2);
+			else super.paintIcon(context, x, y, attrs);
 		}
 	}
 
@@ -135,17 +128,14 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrs) {
 		Bounds ret = bounds;
-		if (ret == null) {
+		if (ret == null)
 			throw new RuntimeException("offset bounds unknown: " + "use setOffsetBounds or override getOffsetBounds");
-		}
 		return ret;
 	}
 
 	public boolean contains(Location loc, AttributeSet attrs) {
 		Bounds bds = getOffsetBounds(attrs);
-		if (bds == null)
-			return false;
-		return bds.contains(loc, 1);
+		return bds != null && bds.contains(loc, 1);
 	}
 
 	public Attribute<Direction> getFacingAttribute() {
@@ -172,19 +162,14 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 	@Override
 	public AttributeSet createAttributeSet() {
 		Attribute<?>[] as = attrs;
-		AttributeSet ret = as == null ? AttributeSets.EMPTY : AttributeSets.fixedSet(as, defaults);
-		return ret;
+		return as == null ? AttributeSets.EMPTY : AttributeSets.fixedSet(as, defaults);
 	}
 
 	@Override
 	public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
 		Attribute<?>[] as = attrs;
 		if (as != null) {
-			for (int i = 0; i < as.length; i++) {
-				if (as[i] == attr) {
-					return defaults[i];
-				}
-			}
+			for (int i = 0; i < as.length; i++) if (as[i] == attr) return defaults[i];
 			return null;
 		} else {
 			AttributeSet dfltSet = defaultSet;
@@ -197,7 +182,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 	}
 
 	public void setPorts(Port[] ports) {
-		portList = new UnmodifiableList<Port>(ports);
+		portList = new UnmodifiableList<>(ports);
 	}
 
 	public void setPorts(List<Port> ports) {
@@ -217,19 +202,15 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 	}
 
 	public void setInstancePoker(Class<? extends InstancePoker> pokerClass) {
-		if (isClassOk(pokerClass, InstancePoker.class)) {
-			this.pokerClass = pokerClass;
-		}
+		if (isClassOk(pokerClass, InstancePoker.class)) this.pokerClass = pokerClass;
 	}
 
 	public void setInstanceLogger(Class<? extends InstanceLogger> loggerClass) {
-		if (isClassOk(loggerClass, InstanceLogger.class)) {
-			this.loggerClass = loggerClass;
-		}
+		if (isClassOk(loggerClass, InstanceLogger.class)) this.loggerClass = loggerClass;
 	}
 
 	public void setShouldSnap(boolean value) {
-		shouldSnap = Boolean.valueOf(value);
+		shouldSnap = value;
 	}
 
 	private boolean isClassOk(Class<?> sub, Class<?> sup) {
@@ -239,7 +220,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 			return false;
 		}
 		try {
-			sub.getConstructor(new Class[0]);
+			sub.getConstructor();
 			return true;
 		}
 		catch (SecurityException e) {
@@ -271,9 +252,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 		painter.setFactory(this, attrs);
 		paintGhost(painter);
 		g.translate(-x, -y);
-		if (painter.getFactory() == null) {
-			super.drawGhost(context, color, x, y, attrs);
-		}
+		if (painter.getFactory() == null) super.drawGhost(context, color, x, y, attrs);
 	}
 
 	public void paintIcon(InstancePainter painter) {
@@ -296,13 +275,11 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 	}
 
 	protected Object getInstanceFeature(Instance instance, Object key) {
-		if (key == Pokable.class && pokerClass != null) {
+		if (key == Pokable.class && pokerClass != null)
 			return new InstancePokerAdapter(instance.getComponent(), pokerClass);
-		} else if (key == Loggable.class && loggerClass != null) {
+		else if (key == Loggable.class && loggerClass != null)
 			return new InstanceLoggerAdapter(instance.getComponent(), loggerClass);
-		} else {
-			return null;
-		}
+		else return null;
 	}
 
 	public InstanceState createInstanceState(CircuitState state, Instance instance) {

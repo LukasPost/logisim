@@ -10,8 +10,8 @@ public class TextFieldEvent {
 
 	public TextFieldEvent(TextField field, String old, String val) {
 		this.field = field;
-		this.oldval = old;
-		this.newval = val;
+		oldval = old;
+		newval = val;
 	}
 
 	public TextField getTextField() {

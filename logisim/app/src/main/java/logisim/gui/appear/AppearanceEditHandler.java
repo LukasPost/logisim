@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import draw.actions.ModelDeleteHandleAction;
 import draw.actions.ModelInsertHandleAction;
@@ -55,11 +56,11 @@ public class AppearanceEditHandler extends EditHandler
 		boolean canChange = proj.getLogisimFile().contains(circ);
 		boolean clipExists = !Clipboard.isEmpty();
 		boolean selHasRemovable = false;
-		for (CanvasObject o : sel.getSelected()) {
+		for (CanvasObject o : sel.getSelected())
 			if (!(o instanceof AppearanceElement)) {
 				selHasRemovable = true;
+				break;
 			}
-		}
 		boolean canRaise;
 		boolean canLower;
 		if (!selEmpty && canChange) {
@@ -67,16 +68,15 @@ public class AppearanceEditHandler extends EditHandler
 			int zmin = Integer.MAX_VALUE;
 			int zmax = Integer.MIN_VALUE;
 			int count = 0;
-			for (Map.Entry<CanvasObject, Integer> entry : zs.entrySet()) {
+			for (Entry<CanvasObject, Integer> entry : zs.entrySet())
 				if (!(entry.getKey() instanceof AppearanceElement)) {
 					count++;
-					int z = entry.getValue().intValue();
+					int z = entry.getValue();
 					if (z < zmin)
 						zmin = z;
 					if (z > zmax)
 						zmax = z;
 				}
-			}
 			int maxPoss = AppearanceCanvas.getMaxIndex(canvas.getModel());
 			if (count > 0 && count <= maxPoss) {
 				canRaise = zmin <= maxPoss - count;
@@ -114,57 +114,46 @@ public class AppearanceEditHandler extends EditHandler
 
 	@Override
 	public void cut() {
-		if (!canvas.getSelection().isEmpty()) {
-			canvas.getProject().doAction(ClipboardActions.cut(canvas));
-		}
+		if (!canvas.getSelection().isEmpty()) canvas.getProject().doAction(ClipboardActions.cut(canvas));
 	}
 
 	@Override
 	public void copy() {
-		if (!canvas.getSelection().isEmpty()) {
-			canvas.getProject().doAction(ClipboardActions.copy(canvas));
-		}
+		if (!canvas.getSelection().isEmpty()) canvas.getProject().doAction(ClipboardActions.copy(canvas));
 	}
 
 	@Override
 	public void paste() {
 		ClipboardContents clip = Clipboard.get();
 		Collection<CanvasObject> contents = clip.getElements();
-		List<CanvasObject> add = new ArrayList<CanvasObject>(contents.size());
-		for (CanvasObject o : contents) {
-			add.add(o.clone());
-		}
+		List<CanvasObject> add = new ArrayList<>(contents.size());
+		for (CanvasObject o : contents) add.add(o.clone());
 		if (add.isEmpty())
 			return;
 
 		// find how far we have to translate shapes so that at least one of the
 		// pasted shapes doesn't match what's already in the model
 		Collection<CanvasObject> raw = canvas.getModel().getObjectsFromBottom();
-		MatchingSet<CanvasObject> cur = new MatchingSet<CanvasObject>(raw);
+		MatchingSet<CanvasObject> cur = new MatchingSet<>(raw);
 		int dx = 0;
 		while (true) {
 			// if any shapes in "add" aren't in canvas, we are done
 			boolean allMatch = true;
-			for (CanvasObject o : add) {
+			for (CanvasObject o : add)
 				if (!cur.contains(o)) {
 					allMatch = false;
 					break;
 				}
-			}
 			if (!allMatch)
 				break;
 
 			// otherwise translate everything by 10 pixels and repeat test
-			for (CanvasObject o : add) {
-				o.translate(10, 10);
-			}
+			for (CanvasObject o : add) o.translate(10, 10);
 			dx += 10;
 		}
 
 		Location anchorLocation = clip.getAnchorLocation();
-		if (anchorLocation != null && dx != 0) {
-			anchorLocation = anchorLocation.translate(dx, dx);
-		}
+		if (anchorLocation != null && dx != 0) anchorLocation = anchorLocation.translate(dx, dx);
 
 		canvas.getProject().doAction(new SelectionAction(canvas, Strings.getter("pasteClipboardAction"), null, add, add,
 				anchorLocation, clip.getAnchorFacing()));
@@ -174,50 +163,43 @@ public class AppearanceEditHandler extends EditHandler
 	public void delete() {
 		Selection sel = canvas.getSelection();
 		int n = sel.getSelected().size();
-		List<CanvasObject> select = new ArrayList<CanvasObject>(n);
-		List<CanvasObject> remove = new ArrayList<CanvasObject>(n);
+		List<CanvasObject> select = new ArrayList<>(n);
+		List<CanvasObject> remove = new ArrayList<>(n);
 		Location anchorLocation = null;
 		Direction anchorFacing = null;
-		for (CanvasObject o : sel.getSelected()) {
-			if (o.canRemove()) {
-				remove.add(o);
-			} else {
+		for (CanvasObject o : sel.getSelected())
+			if (o.canRemove()) remove.add(o);
+			else {
 				select.add(o);
-				if (o instanceof AppearanceAnchor) {
-					AppearanceAnchor anchor = (AppearanceAnchor) o;
+				if (o instanceof AppearanceAnchor anchor) {
 					anchorLocation = anchor.getLocation();
 					anchorFacing = anchor.getFacing();
 				}
 			}
-		}
 
-		if (!remove.isEmpty()) {
+		if (!remove.isEmpty())
 			canvas.getProject().doAction(new SelectionAction(canvas, Strings.getter("deleteSelectionAction"), remove,
 					null, select, anchorLocation, anchorFacing));
-		}
 	}
 
 	@Override
 	public void duplicate() {
 		Selection sel = canvas.getSelection();
 		int n = sel.getSelected().size();
-		List<CanvasObject> select = new ArrayList<CanvasObject>(n);
-		List<CanvasObject> clones = new ArrayList<CanvasObject>(n);
-		for (CanvasObject o : sel.getSelected()) {
+		List<CanvasObject> select = new ArrayList<>(n);
+		List<CanvasObject> clones = new ArrayList<>(n);
+		for (CanvasObject o : sel.getSelected())
 			if (o.canRemove()) {
 				CanvasObject copy = o.clone();
 				copy.translate(10, 10);
 				clones.add(copy);
 				select.add(copy);
-			} else {
-				select.add(o);
 			}
-		}
+			else select.add(o);
 
-		if (!clones.isEmpty()) {
+		if (!clones.isEmpty())
 			canvas.getProject().doAction(new SelectionAction(canvas, Strings.getter("duplicateSelectionAction"), null,
 					clones, select, null, null));
-		}
 	}
 
 	@Override
@@ -230,35 +212,27 @@ public class AppearanceEditHandler extends EditHandler
 	@Override
 	public void raise() {
 		ModelReorderAction act = ModelReorderAction.createRaise(canvas.getModel(), canvas.getSelection().getSelected());
-		if (act != null) {
-			canvas.doAction(act);
-		}
+		if (act != null) canvas.doAction(act);
 	}
 
 	@Override
 	public void lower() {
 		ModelReorderAction act = ModelReorderAction.createLower(canvas.getModel(), canvas.getSelection().getSelected());
-		if (act != null) {
-			canvas.doAction(act);
-		}
+		if (act != null) canvas.doAction(act);
 	}
 
 	@Override
 	public void raiseTop() {
 		ModelReorderAction act = ModelReorderAction.createRaiseTop(canvas.getModel(),
 				canvas.getSelection().getSelected());
-		if (act != null) {
-			canvas.doAction(act);
-		}
+		if (act != null) canvas.doAction(act);
 	}
 
 	@Override
 	public void lowerBottom() {
 		ModelReorderAction act = ModelReorderAction.createLowerBottom(canvas.getModel(),
 				canvas.getSelection().getSelected());
-		if (act != null) {
-			canvas.doAction(act);
-		}
+		if (act != null) canvas.doAction(act);
 	}
 
 	@Override
@@ -283,13 +257,9 @@ public class AppearanceEditHandler extends EditHandler
 		String prop = e.getPropertyName();
 		if (prop.equals(Canvas.MODEL_PROPERTY)) {
 			CanvasModel oldModel = (CanvasModel) e.getOldValue();
-			if (oldModel != null) {
-				oldModel.removeCanvasModelListener(this);
-			}
+			if (oldModel != null) oldModel.removeCanvasModelListener(this);
 			CanvasModel newModel = (CanvasModel) e.getNewValue();
-			if (newModel != null) {
-				newModel.addCanvasModelListener(this);
-			}
+			if (newModel != null) newModel.addCanvasModelListener(this);
 		}
 	}
 

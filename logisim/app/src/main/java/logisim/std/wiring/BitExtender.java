@@ -60,18 +60,14 @@ public class BitExtender extends InstanceFactory {
 
 		painter.drawBounds();
 
-		String s0;
 		String type = getType(painter.getAttributeSet());
-		if (type.equals("zero"))
-			s0 = Strings.get("extenderZeroLabel");
-		else if (type.equals("one"))
-			s0 = Strings.get("extenderOneLabel");
-		else if (type.equals("sign"))
-			s0 = Strings.get("extenderSignLabel");
-		else if (type.equals("input"))
-			s0 = Strings.get("extenderInputLabel");
-		else
-			s0 = "???"; // should never happen
+		String s0 = switch (type) {
+			case "zero" -> Strings.get("extenderZeroLabel");
+			case "one" -> Strings.get("extenderOneLabel");
+			case "sign" -> Strings.get("extenderSignLabel");
+			case "input" -> Strings.get("extenderInputLabel");
+			case null, default -> "???"; // should never happen
+		};
 		String s1 = Strings.get("extenderMainLabel");
 		Bounds bds = painter.getBounds();
 		int x = bds.getX() + bds.getWidth() / 2;
@@ -84,7 +80,7 @@ public class BitExtender extends InstanceFactory {
 		BitWidth w1 = painter.getAttributeValue(ATTR_IN_WIDTH);
 		painter.drawPort(0, "" + w0.getWidth(), Direction.West);
 		painter.drawPort(1, "" + w1.getWidth(), Direction.East);
-		if (type.equals("input"))
+		if ("input".equals(type))
 			painter.drawPort(2);
 	}
 
@@ -102,20 +98,15 @@ public class BitExtender extends InstanceFactory {
 		if (attr == ATTR_TYPE) {
 			configurePorts(instance);
 			instance.fireInvalidated();
-		} else {
-			instance.fireInvalidated();
-		}
+		} else instance.fireInvalidated();
 	}
 
 	private void configurePorts(Instance instance) {
 		Port p0 = new Port(0, 0, Port.OUTPUT, ATTR_OUT_WIDTH);
 		Port p1 = new Port(-40, 0, Port.INPUT, ATTR_IN_WIDTH);
 		String type = getType(instance.getAttributeSet());
-		if (type.equals("input")) {
-			instance.setPorts(new Port[] { p0, p1, new Port(-20, -20, Port.INPUT, 1) });
-		} else {
-			instance.setPorts(new Port[] { p0, p1 });
-		}
+		if ("input".equals(type)) instance.setPorts(new Port[]{p0, p1, new Port(-20, -20, Port.INPUT, 1)});
+		else instance.setPorts(new Port[]{p0, p1});
 	}
 
 	@Override
@@ -124,17 +115,18 @@ public class BitExtender extends InstanceFactory {
 		BitWidth wout = state.getAttributeValue(ATTR_OUT_WIDTH);
 		String type = getType(state.getAttributeSet());
 		Value extend;
-		if (type.equals("one")) {
-			extend = Value.TRUE;
-		} else if (type.equals("sign")) {
-			int win = in.getWidth();
-			extend = win > 0 ? in.get(win - 1) : Value.ERROR;
-		} else if (type.equals("input")) {
-			extend = state.getPort(2);
-			if (extend.getWidth() != 1)
-				extend = Value.ERROR;
-		} else {
-			extend = Value.FALSE;
+		switch (type) {
+			case "one" -> extend = Value.TRUE;
+			case "sign" -> {
+				int win = in.getWidth();
+				extend = win > 0 ? in.get(win - 1) : Value.ERROR;
+			}
+			case "input" -> {
+				extend = state.getPort(2);
+				if (extend.getWidth() != 1)
+					extend = Value.ERROR;
+			}
+			case null, default -> extend = Value.FALSE;
 		}
 
 		Value out = in.extendWidth(wout.getWidth(), extend);

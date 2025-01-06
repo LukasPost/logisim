@@ -3,6 +3,7 @@
 
 package logisim.prefs;
 
+import java.util.Objects;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.Preferences;
 
@@ -14,7 +15,7 @@ class PrefMonitorString extends AbstractPrefMonitor<String> {
 		super(name);
 		this.dflt = dflt;
 		Preferences prefs = AppPreferences.getPrefs();
-		this.value = prefs.get(name, dflt);
+		value = prefs.get(name, dflt);
 		prefs.addPreferenceChangeListener(this);
 	}
 
@@ -45,6 +46,6 @@ class PrefMonitorString extends AbstractPrefMonitor<String> {
 	}
 
 	private static boolean isSame(String a, String b) {
-		return a == null ? b == null : a.equals(b);
+		return Objects.equals(a, b);
 	}
 }

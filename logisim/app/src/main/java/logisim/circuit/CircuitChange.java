@@ -113,26 +113,16 @@ class CircuitChange {
 	}
 
 	CircuitChange getReverseChange() {
-		switch (type) {
-		case CLEAR:
-			return CircuitChange.addAll(circuit, comps);
-		case ADD:
-			return CircuitChange.remove(circuit, comp);
-		case ADD_ALL:
-			return CircuitChange.removeAll(circuit, comps);
-		case REMOVE:
-			return CircuitChange.add(circuit, comp);
-		case REMOVE_ALL:
-			return CircuitChange.addAll(circuit, comps);
-		case SET:
-			return CircuitChange.set(circuit, comp, attr, newValue, oldValue);
-		case SET_FOR_CIRCUIT:
-			return CircuitChange.setForCircuit(circuit, attr, newValue, oldValue);
-		case REPLACE:
-			return CircuitChange.replace(circuit, ((ReplacementMap) newValue).getInverseMap());
-		default:
-			throw new IllegalArgumentException("unknown change type " + type);
-		}
+		return switch (type) {
+			case CLEAR, REMOVE_ALL -> CircuitChange.addAll(circuit, comps);
+			case ADD -> CircuitChange.remove(circuit, comp);
+			case ADD_ALL -> CircuitChange.removeAll(circuit, comps);
+			case REMOVE -> CircuitChange.add(circuit, comp);
+			case SET -> CircuitChange.set(circuit, comp, attr, newValue, oldValue);
+			case SET_FOR_CIRCUIT -> CircuitChange.setForCircuit(circuit, attr, newValue, oldValue);
+			case REPLACE -> CircuitChange.replace(circuit, ((ReplacementMap) newValue).getInverseMap());
+			default -> throw new IllegalArgumentException("unknown change type " + type);
+		};
 	}
 
 	void execute(CircuitMutator mutator, ReplacementMap prevReplacements) {
@@ -182,21 +172,18 @@ class CircuitChange {
 			return comp.getFactory() instanceof Pin;
 		case ADD_ALL:
 		case REMOVE_ALL:
-			for (Component comp : comps) {
+			for (Component comp : comps)
 				if (comp.getFactory() instanceof Pin)
 					return true;
-			}
 			return false;
 		case REPLACE:
 			ReplacementMap repl = (ReplacementMap) newValue;
-			for (Component comp : repl.getRemovals()) {
+			for (Component comp : repl.getRemovals())
 				if (comp.getFactory() instanceof Pin)
 					return true;
-			}
-			for (Component comp : repl.getAdditions()) {
+			for (Component comp : repl.getAdditions())
 				if (comp.getFactory() instanceof Pin)
 					return true;
-			}
 			return false;
 		case SET:
 			return comp.getFactory() instanceof Pin && (attr == StdAttr.WIDTH || attr == Pin.ATTR_TYPE);

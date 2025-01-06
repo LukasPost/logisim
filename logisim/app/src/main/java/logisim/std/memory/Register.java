@@ -72,9 +72,8 @@ public class Register extends InstanceFactory {
 		Object triggerType = state.getAttributeValue(StdAttr.TRIGGER);
 		boolean triggered = data.updateClock(state.getPort(CK), triggerType);
 
-		if (state.getPort(CLR) == Value.TRUE) {
-			data.value = 0;
-		} else if (triggered && state.getPort(EN) != Value.FALSE) {
+		if (state.getPort(CLR) == Value.TRUE) data.value = 0;
+		else if (triggered && state.getPort(EN) != Value.FALSE) {
 			Value in = state.getPort(IN);
 			if (in.isFullyDefined())
 				data.value = in.toIntValue();
@@ -98,9 +97,8 @@ public class Register extends InstanceFactory {
 		if (painter.getShowState()) {
 			int val = state == null ? 0 : state.value;
 			String str = StringUtil.toHexString(width, val);
-			if (str.length() <= 4) {
-				a = str;
-			} else {
+			if (str.length() <= 4) a = str;
+			else {
 				int split = str.length() - 4;
 				a = str.substring(0, split);
 				b = str.substring(split);
@@ -129,9 +127,9 @@ public class Register extends InstanceFactory {
 		painter.drawClock(CK, Direction.North);
 
 		// draw contents
-		if (b == null) {
+		if (b == null)
 			GraphicsUtil.drawText(g, a, bds.getX() + 15, bds.getY() + 4, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
-		} else {
+		else {
 			GraphicsUtil.drawText(g, a, bds.getX() + 15, bds.getY() + 3, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
 			GraphicsUtil.drawText(g, b, bds.getX() + 15, bds.getY() + 15, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
 		}

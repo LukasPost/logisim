@@ -6,7 +6,6 @@ package logisim.std.gates;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.Map;
 
 import logisim.analyze.model.Expression;
 import logisim.circuit.ExpressionComputer;
@@ -89,22 +88,16 @@ class Buffer extends InstanceFactory {
 		Port[] ports = new Port[2];
 		ports[0] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
 		Location out = new Location(0, 0).translate(facing, -20);
-		ports[1] = new Port(out.getX(), out.getY(), Port.INPUT, StdAttr.WIDTH);
+		ports[1] = new Port(out.x(), out.y(), Port.INPUT, StdAttr.WIDTH);
 		instance.setPorts(ports);
 	}
 
 	@Override
 	public Object getInstanceFeature(final Instance instance, Object key) {
-		if (key == ExpressionComputer.class) {
-			return new ExpressionComputer() {
-				public void computeExpression(Map<Location, Expression> expressionMap) {
-					Expression e = expressionMap.get(instance.getPortLocation(1));
-					if (e != null) {
-						expressionMap.put(instance.getPortLocation(0), e);
-					}
-				}
-			};
-		}
+		if (key == ExpressionComputer.class) return (ExpressionComputer) expressionMap -> {
+			Expression e = expressionMap.get(instance.getPortLocation(1));
+			if (e != null) expressionMap.put(instance.getPortLocation(0), e);
+		};
 		return super.getInstanceFeature(instance, key);
 	}
 
@@ -128,8 +121,8 @@ class Buffer extends InstanceFactory {
 	private void paintBase(InstancePainter painter) {
 		Direction facing = painter.getAttributeValue(StdAttr.FACING);
 		Location loc = painter.getLocation();
-		int x = loc.getX();
-		int y = loc.getY();
+		int x = loc.x();
+		int y = loc.y();
 		Graphics g = painter.getGraphics();
 		g.translate(x, y);
 		double rotate = 0.0;
@@ -151,9 +144,7 @@ class Buffer extends InstanceFactory {
 		yp[3] = 0;
 		g.drawPolyline(xp, yp, 4);
 
-		if (rotate != 0.0) {
-			((Graphics2D) g).rotate(-rotate);
-		}
+		if (rotate != 0.0) ((Graphics2D) g).rotate(-rotate);
 		g.translate(-x, -y);
 	}
 
@@ -177,9 +168,7 @@ class Buffer extends InstanceFactory {
 				vs[i] = ini.isFullyDefined() ? ini : Value.ERROR;
 			}
 			repaired = Value.create(vs);
-		} else {
-			repaired = v;
-		}
+		} else repaired = v;
 
 		Object outType = state.getAttributeValue(GateAttributes.ATTR_OUTPUT);
 		return AbstractGate.pullOutput(repaired, outType);

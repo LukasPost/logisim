@@ -27,21 +27,21 @@ public class Text extends InstanceFactory {
 	public static Attribute<AttributeOption> ATTR_HALIGN = Attributes.forOption("halign",
 			Strings.getter("textHorzAlignAttr"),
 			new AttributeOption[] {
-					new AttributeOption(Integer.valueOf(TextField.H_LEFT), "left",
+					new AttributeOption(TextField.H_LEFT, "left",
 							Strings.getter("textHorzAlignLeftOpt")),
-					new AttributeOption(Integer.valueOf(TextField.H_RIGHT), "right",
+					new AttributeOption(TextField.H_RIGHT, "right",
 							Strings.getter("textHorzAlignRightOpt")),
-					new AttributeOption(Integer.valueOf(TextField.H_CENTER), "center",
+					new AttributeOption(TextField.H_CENTER, "center",
 							Strings.getter("textHorzAlignCenterOpt")), });
 	public static Attribute<AttributeOption> ATTR_VALIGN = Attributes.forOption("valign",
 			Strings.getter("textVertAlignAttr"),
 			new AttributeOption[] {
-					new AttributeOption(Integer.valueOf(TextField.V_TOP), "top", Strings.getter("textVertAlignTopOpt")),
-					new AttributeOption(Integer.valueOf(TextField.V_BASELINE), "base",
+					new AttributeOption(TextField.V_TOP, "top", Strings.getter("textVertAlignTopOpt")),
+					new AttributeOption(TextField.V_BASELINE, "base",
 							Strings.getter("textVertAlignBaseOpt")),
-					new AttributeOption(Integer.valueOf(TextField.V_BOTTOM), "bottom",
+					new AttributeOption(TextField.V_BOTTOM, "bottom",
 							Strings.getter("textVertAlignBottomOpt")),
-					new AttributeOption(Integer.valueOf(TextField.H_CENTER), "center",
+					new AttributeOption(TextField.H_CENTER, "center",
 							Strings.getter("textVertAlignCenterOpt")), });
 
 	public static final Text FACTORY = new Text();
@@ -61,9 +61,8 @@ public class Text extends InstanceFactory {
 	public Bounds getOffsetBounds(AttributeSet attrsBase) {
 		TextAttributes attrs = (TextAttributes) attrsBase;
 		String text = attrs.getText();
-		if (text == null || text.equals("")) {
-			return Bounds.EMPTY_BOUNDS;
-		} else {
+		if (text == null || text.isEmpty()) return Bounds.EMPTY_BOUNDS;
+		else {
 			Bounds bds = attrs.getOffsetBounds();
 			if (bds == null) {
 				bds = estimateBounds(attrs);
@@ -76,30 +75,21 @@ public class Text extends InstanceFactory {
 	private Bounds estimateBounds(TextAttributes attrs) {
 		// TODO - you can imagine being more clever here
 		String text = attrs.getText();
-		if (text == null || text.length() == 0)
+		if (text == null || text.isEmpty())
 			return Bounds.EMPTY_BOUNDS;
 		int size = attrs.getFont().getSize();
-		int h = size;
 		int w = size * text.length() / 2;
 		int ha = attrs.getHorizontalAlign();
 		int va = attrs.getVerticalAlign();
 		int x;
 		int y;
-		if (ha == TextField.H_LEFT) {
-			x = 0;
-		} else if (ha == TextField.H_RIGHT) {
-			x = -w;
-		} else {
-			x = -w / 2;
-		}
-		if (va == TextField.V_TOP) {
-			y = 0;
-		} else if (va == TextField.V_CENTER) {
-			y = -h / 2;
-		} else {
-			y = -h;
-		}
-		return Bounds.create(x, y, w, h);
+		if (ha == TextField.H_LEFT) x = 0;
+		else if (ha == TextField.H_RIGHT) x = -w;
+		else x = -w / 2;
+		if (va == TextField.V_TOP) y = 0;
+		else if (va == TextField.V_CENTER) y = -size / 2;
+		else y = -size;
+		return Bounds.create(x, y, w, size);
 	}
 
 	//
@@ -109,7 +99,7 @@ public class Text extends InstanceFactory {
 	public void paintGhost(InstancePainter painter) {
 		TextAttributes attrs = (TextAttributes) painter.getAttributeSet();
 		String text = attrs.getText();
-		if (text == null || text.equals(""))
+		if (text == null || text.isEmpty())
 			return;
 
 		int halign = attrs.getHorizontalAlign();
@@ -121,9 +111,8 @@ public class Text extends InstanceFactory {
 
 		String textTrim = text.endsWith(" ") ? text.substring(0, text.length() - 1) : text;
 		Bounds newBds;
-		if (textTrim.equals("")) {
-			newBds = Bounds.EMPTY_BOUNDS;
-		} else {
+		if (textTrim.isEmpty()) newBds = Bounds.EMPTY_BOUNDS;
+		else {
 			Rectangle bdsOut = GraphicsUtil.getTextBounds(g, textTrim, 0, 0, halign, valign);
 			newBds = Bounds.create(bdsOut).expand(4);
 		}
@@ -139,8 +128,8 @@ public class Text extends InstanceFactory {
 	@Override
 	public void paintInstance(InstancePainter painter) {
 		Location loc = painter.getLocation();
-		int x = loc.getX();
-		int y = loc.getY();
+		int x = loc.x();
+		int y = loc.y();
 		Graphics g = painter.getGraphics();
 		g.translate(x, y);
 		g.setColor(Color.BLACK);
@@ -159,15 +148,13 @@ public class Text extends InstanceFactory {
 
 	@Override
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-		if (attr == ATTR_HALIGN || attr == ATTR_VALIGN) {
-			configureLabel(instance);
-		}
+		if (attr == ATTR_HALIGN || attr == ATTR_VALIGN) configureLabel(instance);
 	}
 
 	private void configureLabel(Instance instance) {
 		TextAttributes attrs = (TextAttributes) instance.getAttributeSet();
 		Location loc = instance.getLocation();
-		instance.setTextField(ATTR_TEXT, ATTR_FONT, loc.getX(), loc.getY(), attrs.getHorizontalAlign(),
+		instance.setTextField(ATTR_TEXT, ATTR_FONT, loc.x(), loc.y(), attrs.getHorizontalAlign(),
 				attrs.getVerticalAlign());
 	}
 

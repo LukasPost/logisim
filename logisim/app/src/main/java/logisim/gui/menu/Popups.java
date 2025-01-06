@@ -20,7 +20,6 @@ import logisim.gui.main.Frame;
 import logisim.gui.main.StatisticsDialog;
 import logisim.proj.Project;
 import logisim.tools.Library;
-import logisim.tools.Tool;
 
 public class Popups {
 	private static class ProjectPopup extends JPopupMenu implements ActionListener {
@@ -49,15 +48,10 @@ public class Popups {
 
 		public void actionPerformed(ActionEvent e) {
 			Object src = e.getSource();
-			if (src == add) {
-				ProjectCircuitActions.doAddCircuit(proj);
-			} else if (src == loadBuiltin) {
-				ProjectLibraryActions.doLoadBuiltinLibrary(proj);
-			} else if (src == loadLogisim) {
-				ProjectLibraryActions.doLoadLogisimLibrary(proj);
-			} else if (src == loadJar) {
-				ProjectLibraryActions.doLoadJarLibrary(proj);
-			}
+			if (src == add) ProjectCircuitActions.doAddCircuit(proj);
+			else if (src == loadBuiltin) ProjectLibraryActions.doLoadBuiltinLibrary(proj);
+			else if (src == loadLogisim) ProjectLibraryActions.doLoadLogisimLibrary(proj);
+			else if (src == loadJar) ProjectLibraryActions.doLoadJarLibrary(proj);
 		}
 	}
 
@@ -82,9 +76,8 @@ public class Popups {
 
 		public void actionPerformed(ActionEvent e) {
 			Object src = e.getSource();
-			if (src == unload) {
-				ProjectLibraryActions.doUnloadLibrary(proj, lib);
-			} else if (src == reload) {
+			if (src == unload) ProjectLibraryActions.doUnloadLibrary(proj, lib);
+			else if (src == reload) {
 				Loader loader = proj.getLogisimFile().getLoader();
 				loader.reload((LoadedLibrary) lib);
 			}
@@ -122,13 +115,9 @@ public class Popups {
 
 			boolean canChange = proj.getLogisimFile().contains(circuit);
 			LogisimFile file = proj.getLogisimFile();
-			if (circuit == proj.getCurrentCircuit()) {
-				if (proj.getFrame().getEditorView().equals(Frame.EDIT_APPEARANCE)) {
-					editAppearance.setEnabled(false);
-				} else {
-					editLayout.setEnabled(false);
-				}
-			}
+			if (circuit == proj.getCurrentCircuit())
+				if (proj.getFrame().getEditorView().equals(Frame.EDIT_APPEARANCE)) editAppearance.setEnabled(false);
+				else editLayout.setEnabled(false);
 			main.setEnabled(canChange && file.getMainCircuit() != circuit);
 			remove.setEnabled(canChange && file.getCircuitCount() > 1 && proj.getDependencies().canRemove(circuit));
 		}
@@ -141,25 +130,17 @@ public class Popups {
 			} else if (source == editAppearance) {
 				proj.setCurrentCircuit(circuit);
 				proj.getFrame().setEditorView(Frame.EDIT_APPEARANCE);
-			} else if (source == analyze) {
-				ProjectCircuitActions.doAnalyze(proj, circuit);
-			} else if (source == stats) {
+			} else if (source == analyze) ProjectCircuitActions.doAnalyze(proj, circuit);
+			else if (source == stats) {
 				JFrame frame = (JFrame) SwingUtilities.getRoot(this);
 				StatisticsDialog.show(frame, proj.getLogisimFile(), circuit);
-			} else if (source == main) {
-				ProjectCircuitActions.doSetAsMainCircuit(proj, circuit);
-			} else if (source == remove) {
-				ProjectCircuitActions.doRemoveCircuit(proj, circuit);
-			}
+			} else if (source == main) ProjectCircuitActions.doSetAsMainCircuit(proj, circuit);
+			else if (source == remove) ProjectCircuitActions.doRemoveCircuit(proj, circuit);
 		}
 	}
 
 	public static JPopupMenu forCircuit(Project proj, Circuit circ) {
 		return new CircuitPopup(proj, circ);
-	}
-
-	public static JPopupMenu forTool(Project proj, Tool tool) {
-		return null;
 	}
 
 	public static JPopupMenu forProject(Project proj) {

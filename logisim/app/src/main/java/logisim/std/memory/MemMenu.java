@@ -39,13 +39,11 @@ class MemMenu implements ActionListener, MenuExtender {
 
 	public void configureMenu(JPopupMenu menu, Project proj) {
 		this.proj = proj;
-		this.frame = proj.getFrame();
-		this.circState = proj.getCircuitState();
+		frame = proj.getFrame();
+		circState = proj.getCircuitState();
 
 		Object attrs = instance.getAttributeSet();
-		if (attrs instanceof RomAttributes) {
-			((RomAttributes) attrs).setProject(proj);
-		}
+		if (attrs instanceof RomAttributes) ((RomAttributes) attrs).setProject(proj);
 
 		boolean enabled = circState != null;
 		edit = createItem(enabled, Strings.get("ramEditMenuItem"));
@@ -96,9 +94,7 @@ class MemMenu implements ActionListener, MenuExtender {
 
 		int choice = JOptionPane.showConfirmDialog(frame, Strings.get("ramConfirmClearMsg"),
 				Strings.get("ramConfirmClearTitle"), JOptionPane.YES_NO_OPTION);
-		if (choice == JOptionPane.YES_OPTION) {
-			s.getContents().clear();
-		}
+		if (choice == JOptionPane.YES_OPTION) s.getContents().clear();
 	}
 
 	private void doLoad() {

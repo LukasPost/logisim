@@ -17,8 +17,6 @@ import java.awt.*;
 
 import javax.swing.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -112,20 +110,13 @@ public class ColorPicker extends JPanel {
 		comboBox.addItem("Green");
 		comboBox.addItem("Blue");
 
-		ActionListener checkboxListener = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Object src = e.getSource();
-				if (src == alphaCheckbox) {
-					picker.setOpacityVisible(alphaCheckbox.isSelected());
-				} else if (src == hsbCheckbox) {
-					picker.setHSBControlsVisible(hsbCheckbox.isSelected());
-				} else if (src == rgbCheckbox) {
-					picker.setRGBControlsVisible(rgbCheckbox.isSelected());
-				} else if (src == modeCheckbox) {
-					picker.setModeControlsVisible(modeCheckbox.isSelected());
-				}
-				demo.pack();
-			}
+		ActionListener checkboxListener = e -> {
+			Object src = e.getSource();
+			if (src == alphaCheckbox) picker.setOpacityVisible(alphaCheckbox.isSelected());
+			else if (src == hsbCheckbox) picker.setHSBControlsVisible(hsbCheckbox.isSelected());
+			else if (src == rgbCheckbox) picker.setRGBControlsVisible(rgbCheckbox.isSelected());
+			else if (src == modeCheckbox) picker.setModeControlsVisible(modeCheckbox.isSelected());
+			demo.pack();
 		};
 		picker.setOpacityVisible(false);
 		picker.setHSBControlsVisible(false);
@@ -133,55 +124,35 @@ public class ColorPicker extends JPanel {
 		picker.setHexControlsVisible(false);
 		picker.setPreviewSwatchVisible(false);
 
-		picker.addPropertyChangeListener(MODE_PROPERTY, new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent evt) {
-				int m = picker.getMode();
-				if (m == HUE) {
-					comboBox.setSelectedIndex(0);
-				} else if (m == SAT) {
-					comboBox.setSelectedIndex(1);
-				} else if (m == BRI) {
-					comboBox.setSelectedIndex(2);
-				} else if (m == RED) {
-					comboBox.setSelectedIndex(3);
-				} else if (m == GREEN) {
-					comboBox.setSelectedIndex(4);
-				} else if (m == BLUE) {
-					comboBox.setSelectedIndex(5);
-				}
-			}
+		picker.addPropertyChangeListener(MODE_PROPERTY, evt -> {
+			int m = picker.getMode();
+			if (m == HUE) comboBox.setSelectedIndex(0);
+			else if (m == SAT) comboBox.setSelectedIndex(1);
+			else if (m == BRI) comboBox.setSelectedIndex(2);
+			else if (m == RED) comboBox.setSelectedIndex(3);
+			else if (m == GREEN) comboBox.setSelectedIndex(4);
+			else if (m == BLUE) comboBox.setSelectedIndex(5);
 		});
 
 		alphaCheckbox.addActionListener(checkboxListener);
 		hsbCheckbox.addActionListener(checkboxListener);
 		rgbCheckbox.addActionListener(checkboxListener);
 		modeCheckbox.addActionListener(checkboxListener);
-		button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Color color = picker.getColor();
-				color = ColorPicker.showDialog(demo, color, true);
-				if (color != null)
-					picker.setColor(color);
-			}
+		button.addActionListener(e -> {
+			Color color = picker.getColor();
+			color = ColorPicker.showDialog(demo, color, true);
+			if (color != null)
+				picker.setColor(color);
 		});
 
-		comboBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				int i = ((JComboBox<?>) e.getSource()).getSelectedIndex();
-				if (i == 0) {
-					picker.setMode(ColorPicker.HUE);
-				} else if (i == 1) {
-					picker.setMode(ColorPicker.SAT);
-				} else if (i == 2) {
-					picker.setMode(ColorPicker.BRI);
-				} else if (i == 3) {
-					picker.setMode(ColorPicker.RED);
-				} else if (i == 4) {
-					picker.setMode(ColorPicker.GREEN);
-				} else if (i == 5) {
-					picker.setMode(ColorPicker.BLUE);
-				}
-			}
+		comboBox.addActionListener(e -> {
+			int i = ((JComboBox<?>) e.getSource()).getSelectedIndex();
+			if (i == 0) picker.setMode(ColorPicker.HUE);
+			else if (i == 1) picker.setMode(ColorPicker.SAT);
+			else if (i == 2) picker.setMode(ColorPicker.BRI);
+			else if (i == 3) picker.setMode(ColorPicker.RED);
+			else if (i == 4) picker.setMode(ColorPicker.GREEN);
+			else if (i == 5) picker.setMode(ColorPicker.BLUE);
 		});
 		comboBox.setSelectedIndex(2);
 
@@ -203,9 +174,8 @@ public class ColorPicker extends JPanel {
 	}
 
 	public static Color showDialog(Container owner, Color originalColor) {
-		if (owner instanceof Window) {
-			return showDialog((Window) owner, originalColor);
-		} else {
+		if (owner instanceof Window) return showDialog((Window) owner, originalColor);
+		else {
 			Logger.getLogger(ColorPicker.class.getName()).log(Level.SEVERE, "Not a Window subclass: " + owner);
 			Toolkit.getDefaultToolkit().beep();
 		}
@@ -259,14 +229,11 @@ public class ColorPicker extends JPanel {
 	 */
 	public static Color showDialog(Window owner, String title, Color originalColor, boolean includeOpacity) {
 		ColorPickerDialog d;
-		if (owner instanceof Frame || owner == null) {
+		if (owner instanceof Frame || owner == null)
 			d = new ColorPickerDialog((Frame) owner, originalColor, includeOpacity);
-		} else if (owner instanceof Dialog) {
-			d = new ColorPickerDialog((Dialog) owner, originalColor, includeOpacity);
-		} else {
-			throw new IllegalArgumentException(
-					"the owner (" + owner.getClass().getName() + ") must be a java.awt.Frame or a java.awt.Dialog");
-		}
+		else if (owner instanceof Dialog) d = new ColorPickerDialog((Dialog) owner, originalColor, includeOpacity);
+		else throw new IllegalArgumentException(
+				"the owner (" + owner.getClass().getName() + ") must be a java.awt.Frame or a java.awt.Dialog");
 
 		d.setTitle(title == null ? strings.getObject("ColorPickerDialogTitle").toString() : title);
 		d.pack();
@@ -368,19 +335,12 @@ public class ColorPicker extends JPanel {
 	ActionListener actionListener = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			Object src = e.getSource();
-			if (src == hue.radioButton) {
-				setMode(HUE);
-			} else if (src == bri.radioButton) {
-				setMode(BRI);
-			} else if (src == sat.radioButton) {
-				setMode(SAT);
-			} else if (src == red.radioButton) {
-				setMode(RED);
-			} else if (src == green.radioButton) {
-				setMode(GREEN);
-			} else if (src == blue.radioButton) {
-				setMode(BLUE);
-			}
+			if (src == hue.radioButton) setMode(HUE);
+			else if (src == bri.radioButton) setMode(BRI);
+			else if (src == sat.radioButton) setMode(SAT);
+			else if (src == red.radioButton) setMode(RED);
+			else if (src == green.radioButton) setMode(GREEN);
+			else if (src == blue.radioButton) setMode(BLUE);
 		}
 	};
 
@@ -389,19 +349,12 @@ public class ColorPicker extends JPanel {
 	 */
 	private Option getSelectedOption() {
 		int mode = getMode();
-		if (mode == HUE) {
-			return hue;
-		} else if (mode == SAT) {
-			return sat;
-		} else if (mode == BRI) {
-			return bri;
-		} else if (mode == RED) {
-			return red;
-		} else if (mode == GREEN) {
-			return green;
-		} else {
-			return blue;
-		}
+		if (mode == HUE) return hue;
+		else if (mode == SAT) return sat;
+		else if (mode == BRI) return bri;
+		else if (mode == RED) return red;
+		else if (mode == GREEN) return green;
+		else return blue;
 	}
 
 	/**
@@ -419,34 +372,27 @@ public class ColorPicker extends JPanel {
 		}
 
 		public void run() {
-			if (SwingUtilities.isEventDispatchThread() == false) {
+			if (!SwingUtilities.isEventDispatchThread()) {
 				long WAIT = 1500;
 
-				while (System.currentTimeMillis() - myStamp < WAIT) {
-					try {
-						long delay = WAIT - (System.currentTimeMillis() - myStamp);
-						if (delay < 1)
-							delay = 1;
-						Thread.sleep(delay);
-					}
-					catch (Exception e) {
-						Thread.yield();
-					}
+				while (System.currentTimeMillis() - myStamp < WAIT) try {
+					long delay = WAIT - (System.currentTimeMillis() - myStamp);
+					if (delay < 1)
+						delay = 1;
+					Thread.sleep(delay);
+				} catch (Exception e) {
+					Thread.yield();
 				}
 				SwingUtilities.invokeLater(this);
 				return;
 			}
 
-			if (myStamp != hexDocListener.lastTimeStamp) {
-				// another event has come along and trumped this one
-				return;
-			}
+			// another event has come along and trumped this one
+			if (myStamp != hexDocListener.lastTimeStamp) return;
 
 			if (text.length() > 6)
 				text = text.substring(0, 6);
-			while (text.length() < 6) {
-				text = text + "0";
-			}
+			while (text.length() < 6) text = text + "0";
 			if (hexField.getText().equals(text))
 				return;
 
@@ -469,23 +415,18 @@ public class ColorPicker extends JPanel {
 
 			String s = hexField.getText();
 			s = stripToHex(s);
-			if (s.length() == 6) {
-				// the user typed 6 digits: we can work with this:
-				try {
-					int i = Integer.parseInt(s, 16);
-					setRGB(((i >> 16) & 0xff), ((i >> 8) & 0xff), ((i) & 0xff));
-					return;
-				}
-				catch (NumberFormatException e2) {
-					// this shouldn't happen, since we already stripped out non-hex characters.
-					e2.printStackTrace();
-				}
+			// the user typed 6 digits: we can work with this:
+			if (s.length() == 6) try {
+				int i = Integer.parseInt(s, 16);
+				setRGB(((i >> 16) & 0xff), ((i >> 8) & 0xff), ((i) & 0xff));
+				return;
+			} catch (NumberFormatException e2) {
+				// this shouldn't happen, since we already stripped out non-hex characters.
+				e2.printStackTrace();
 			}
 			Thread thread = new HexUpdateThread(lastTimeStamp, s);
 			thread.start();
-			while (System.currentTimeMillis() - lastTimeStamp == 0) {
-				Thread.yield();
-			}
+			while (System.currentTimeMillis() - lastTimeStamp == 0) Thread.yield();
 		}
 
 		/** Strips a string down to only uppercase hex-supported characters. */
@@ -494,11 +435,8 @@ public class ColorPicker extends JPanel {
 			String s2 = "";
 			for (int a = 0; a < s.length(); a++) {
 				char c = s.charAt(a);
-				if (c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7'
-						|| c == '8' || c == '9' || c == '0' || c == 'A' || c == 'B' || c == 'C' || c == 'D' || c == 'E'
-						|| c == 'F') {
+				if (c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9' || c == 'A' || c == 'B' || c == 'C' || c == 'D' || c == 'E' || c == 'F')
 					s2 = s2 + c;
-				}
 			}
 			return s2;
 		}
@@ -510,7 +448,7 @@ public class ColorPicker extends JPanel {
 		public void removeUpdate(DocumentEvent e) {
 			changedUpdate(e);
 		}
-	};
+	}
 
 	private Option alpha = new Option(strings.getObject("alphaLabel").toString(), 255);
 	private Option hue = new Option(strings.getObject("hueLabel").toString(), 360);
@@ -528,35 +466,35 @@ public class ColorPicker extends JPanel {
 	 * events are triggered by the user and must be processed. If this is not equal to zero, then incoming events are
 	 * triggered by another method that's already responding to the user's actions.
 	 */
-	private int adjustingSpinners = 0;
+	private int adjustingSpinners;
 
 	/**
 	 * Used to indicate when we're internally adjusting the value of the slider. If this equals zero, then incoming
 	 * events are triggered by the user and must be processed. If this is not equal to zero, then incoming events are
 	 * triggered by another method that's already responding to the user's actions.
 	 */
-	private int adjustingSlider = 0;
+	private int adjustingSlider;
 
 	/**
 	 * Used to indicate when we're internally adjusting the selected color of the ColorPanel. If this equals zero, then
 	 * incoming events are triggered by the user and must be processed. If this is not equal to zero, then incoming
 	 * events are triggered by another method that's already responding to the user's actions.
 	 */
-	private int adjustingColorPanel = 0;
+	private int adjustingColorPanel;
 
 	/**
 	 * Used to indicate when we're internally adjusting the value of the hex field. If this equals zero, then incoming
 	 * events are triggered by the user and must be processed. If this is not equal to zero, then incoming events are
 	 * triggered by another method that's already responding to the user's actions.
 	 */
-	private int adjustingHexField = 0;
+	private int adjustingHexField;
 
 	/**
 	 * Used to indicate when we're internally adjusting the value of the opacity. If this equals zero, then incoming
 	 * events are triggered by the user and must be processed. If this is not equal to zero, then incoming events are
 	 * triggered by another method that's already responding to the user's actions.
 	 */
-	private int adjustingOpacity = 0;
+	private int adjustingOpacity;
 
 	/**
 	 * The "expert" controls are the controls on the right side of this panel: the labels/spinners/radio buttons.
@@ -598,26 +536,20 @@ public class ColorPicker extends JPanel {
 		ButtonGroup bg = new ButtonGroup();
 
 		// put them in order
-		Option[] optionsArray = new Option[] { hue, sat, bri, red, green, blue };
+		Option[] optionsArray = { hue, sat, bri, red, green, blue };
 
 		for (int a = 0; a < optionsArray.length; a++) {
-			if (a == 3 || a == 6) {
-				c.insets = new Insets(normalInsets.top + 10, normalInsets.left, normalInsets.bottom,
-						normalInsets.right);
-			} else {
-				c.insets = normalInsets;
-			}
+			if (a == 3) c.insets = new Insets(normalInsets.top + 10, normalInsets.left, normalInsets.bottom,
+					normalInsets.right);
+			else c.insets = normalInsets;
 			c.anchor = GridBagConstraints.EAST;
 			c.fill = GridBagConstraints.NONE;
 			options.add(optionsArray[a].label, c);
 			c.gridx++;
 			c.anchor = GridBagConstraints.WEST;
 			c.fill = GridBagConstraints.HORIZONTAL;
-			if (optionsArray[a].spinner != null) {
-				options.add(optionsArray[a].spinner, c);
-			} else {
-				options.add(optionsArray[a].slider, c);
-			}
+			if (optionsArray[a].spinner != null) options.add(optionsArray[a].spinner, c);
+			else options.add(optionsArray[a].slider, c);
 			c.gridx++;
 			c.fill = GridBagConstraints.NONE;
 			options.add(optionsArray[a].radioButton, c);
@@ -653,7 +585,6 @@ public class ColorPicker extends JPanel {
 		c.gridwidth = 2;
 		add(colorPanel, c);
 
-		c.gridwidth = 1;
 		c.insets = normalInsets;
 		c.gridx += 2;
 		c.weighty = 1;
@@ -832,12 +763,9 @@ public class ColorPicker extends JPanel {
 			slider.setValue(option.getIntValue());
 			slider.repaint();
 
-			if (mode == HUE || mode == SAT || mode == BRI) {
+			if (mode == HUE || mode == SAT || mode == BRI)
 				setHSB(hue.getFloatValue() / 360f, sat.getFloatValue() / 100f, bri.getFloatValue() / 100f);
-			} else {
-				setRGB(red.getIntValue(), green.getIntValue(), blue.getIntValue());
-
-			}
+			else setRGB(red.getIntValue(), green.getIntValue(), blue.getIntValue());
 		} finally {
 			adjustingSlider--;
 		}
@@ -850,8 +778,7 @@ public class ColorPicker extends JPanel {
 	 * <P>
 	 * Note these live inside the "expert controls", so if <code>setExpertControlsVisible(false)</code> has been called,
 	 * then these will never be visible.
-	 * 
-	 * @param b
+	 *
 	 */
 	public void setModeControlsVisible(boolean b) {
 		hue.radioButton.setVisible(b && hue.isVisible());
@@ -874,7 +801,7 @@ public class ColorPicker extends JPanel {
 		Integer i = (Integer) getClientProperty(MODE_PROPERTY);
 		if (i == null)
 			return -1;
-		return i.intValue();
+		return i;
 	}
 
 	/**
@@ -931,7 +858,7 @@ public class ColorPicker extends JPanel {
 			adjustingColorPanel--;
 		}
 		Color newColor = getColor();
-		if (lastColor.equals(newColor) == false)
+		if (!lastColor.equals(newColor))
 			firePropertyChange(SELECTED_COLOR_PROPERTY, lastColor, newColor);
 	}
 
@@ -951,19 +878,12 @@ public class ColorPicker extends JPanel {
 		adjustingSlider++;
 		try {
 			int mode = getMode();
-			if (mode == HUE) {
-				slider.setValue(hue.getIntValue());
-			} else if (mode == SAT) {
-				slider.setValue(sat.getIntValue());
-			} else if (mode == BRI) {
-				slider.setValue(bri.getIntValue());
-			} else if (mode == RED) {
-				slider.setValue(red.getIntValue());
-			} else if (mode == GREEN) {
-				slider.setValue(green.getIntValue());
-			} else if (mode == BLUE) {
-				slider.setValue(blue.getIntValue());
-			}
+			if (mode == HUE) slider.setValue(hue.getIntValue());
+			else if (mode == SAT) slider.setValue(sat.getIntValue());
+			else if (mode == BRI) slider.setValue(bri.getIntValue());
+			else if (mode == RED) slider.setValue(red.getIntValue());
+			else if (mode == GREEN) slider.setValue(green.getIntValue());
+			else if (mode == BLUE) slider.setValue(blue.getIntValue());
 		} finally {
 			adjustingSlider--;
 		}
@@ -1018,8 +938,7 @@ public class ColorPicker extends JPanel {
 	 * Note the alpha spinner live inside the "expert controls", so if <code>setExpertControlsVisible(false)</code> has
 	 * been called, then this method does not affect that spinner. However, the opacity slider is <i>not</i> affected by
 	 * the visibility of the export controls.
-	 * 
-	 * @param b
+	 *
 	 */
 	public void setOpacityVisible(boolean b) {
 		opacityLabel.setVisible(b);
@@ -1082,7 +1001,7 @@ public class ColorPicker extends JPanel {
 			adjustingColorPanel--;
 		}
 		Color newColor = getColor();
-		if (lastColor.equals(newColor) == false)
+		if (!lastColor.equals(newColor))
 			firePropertyChange(SELECTED_COLOR_PROPERTY, lastColor, newColor);
 	}
 
@@ -1097,7 +1016,7 @@ public class ColorPicker extends JPanel {
 			String s = Integer.toHexString(i).toUpperCase();
 			while (s.length() < 6)
 				s = "0" + s;
-			if (hexField.getText().equalsIgnoreCase(s) == false)
+			if (!hexField.getText().equalsIgnoreCase(s))
 				hexField.setText(s);
 		} finally {
 			adjustingHexField--;
@@ -1130,12 +1049,8 @@ public class ColorPicker extends JPanel {
 		}
 
 		public void setValue(int i) {
-			if (slider != null) {
-				slider.setValue(i);
-			}
-			if (spinner != null) {
-				spinner.setValue(i);
-			}
+			if (slider != null) slider.setValue(i);
+			if (spinner != null) spinner.setValue(i);
 		}
 
 		public int getMaximum() {
@@ -1166,7 +1081,7 @@ public class ColorPicker extends JPanel {
 			boolean radioButtonsAllowed = true;
 			Boolean z = (Boolean) getClientProperty(MODE_CONTROLS_VISIBLE_PROPERTY);
 			if (z != null)
-				radioButtonsAllowed = z.booleanValue();
+				radioButtonsAllowed = z;
 
 			radioButton.setVisible(b && radioButtonsAllowed);
 			if (slider != null)

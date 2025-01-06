@@ -15,8 +15,8 @@ import logisim.tools.Tool;
 import logisim.util.EventSourceWeakSupport;
 
 public class ToolbarData {
-	public static interface ToolbarListener {
-		public void toolbarChanged();
+	public interface ToolbarListener {
+		void toolbarChanged();
 	}
 
 	private EventSourceWeakSupport<ToolbarListener> listeners;
@@ -24,9 +24,9 @@ public class ToolbarData {
 	private ArrayList<Tool> contents;
 
 	public ToolbarData() {
-		listeners = new EventSourceWeakSupport<ToolbarListener>();
-		toolListeners = new EventSourceWeakSupport<AttributeListener>();
-		contents = new ArrayList<Tool>();
+		listeners = new EventSourceWeakSupport<>();
+		toolListeners = new EventSourceWeakSupport<>();
+		contents = new ArrayList<>();
 	}
 
 	//
@@ -41,24 +41,22 @@ public class ToolbarData {
 	}
 
 	public void addToolAttributeListener(AttributeListener l) {
-		for (Tool tool : contents) {
+		for (Tool tool : contents)
 			if (tool != null) {
 				AttributeSet attrs = tool.getAttributeSet();
 				if (attrs != null)
 					attrs.addAttributeListener(l);
 			}
-		}
 		toolListeners.add(l);
 	}
 
 	public void removeToolAttributeListener(AttributeListener l) {
-		for (Tool tool : contents) {
+		for (Tool tool : contents)
 			if (tool != null) {
 				AttributeSet attrs = tool.getAttributeSet();
 				if (attrs != null)
 					attrs.removeAttributeListener(l);
 			}
-		}
 		toolListeners.remove(l);
 	}
 
@@ -79,9 +77,7 @@ public class ToolbarData {
 	}
 
 	public void fireToolbarChanged() {
-		for (ToolbarListener l : listeners) {
-			l.toolbarChanged();
-		}
+		for (ToolbarListener l : listeners) l.toolbarChanged();
 	}
 
 	//
@@ -92,10 +88,9 @@ public class ToolbarData {
 	}
 
 	public Tool getFirstTool() {
-		for (Tool tool : contents) {
+		for (Tool tool : contents)
 			if (tool != null)
 				return tool;
-		}
 		return null;
 	}
 
@@ -113,25 +108,19 @@ public class ToolbarData {
 	public void copyFrom(ToolbarData other, LogisimFile file) {
 		if (this == other)
 			return;
-		for (Tool tool : contents) {
-			if (tool != null) {
-				removeAttributeListeners(tool);
-			}
-		}
-		this.contents.clear();
-		for (Tool srcTool : other.contents) {
-			if (srcTool == null) {
-				this.addSeparator();
-			} else {
+		for (Tool tool : contents) if (tool != null) removeAttributeListeners(tool);
+		contents.clear();
+		for (Tool srcTool : other.contents)
+			if (srcTool == null) addSeparator();
+			else {
 				Tool toolCopy = file.findTool(srcTool);
 				if (toolCopy != null) {
 					Tool dstTool = toolCopy.cloneTool();
 					AttributeSets.copy(srcTool.getAttributeSet(), dstTool.getAttributeSet());
-					this.addTool(dstTool);
+					addTool(dstTool);
 					addAttributeListeners(toolCopy);
 				}
 			}
-		}
 		fireToolbarChanged();
 	}
 
@@ -165,18 +154,17 @@ public class ToolbarData {
 	}
 
 	public Object remove(int pos) {
-		Object ret = contents.remove(pos);
-		if (ret instanceof Tool)
-			removeAttributeListeners((Tool) ret);
+		Tool ret = contents.remove(pos);
+		if (ret != null)
+			removeAttributeListeners(ret);
 		fireToolbarChanged();
 		return ret;
 	}
 
 	boolean usesToolFromSource(Tool query) {
-		for (Tool tool : contents) {
+		for (Tool tool : contents)
 			if (tool != null && tool.sharesSource(query))
 				return true;
-		}
 		return false;
 	}
 
@@ -186,17 +174,16 @@ public class ToolbarData {
 	void replaceAll(Map<Tool, Tool> toolMap) {
 		boolean changed = false;
 		for (ListIterator<Tool> it = contents.listIterator(); it.hasNext();) {
-			Object old = it.next();
+			Tool old = it.next();
 			if (toolMap.containsKey(old)) {
 				changed = true;
-				removeAttributeListeners((Tool) old);
+				removeAttributeListeners(old);
 				Tool newTool = toolMap.get(old);
-				if (newTool == null) {
-					it.remove();
-				} else {
+				if (newTool == null) it.remove();
+				else {
 					Tool addedTool = newTool.cloneTool();
 					addAttributeListeners(addedTool);
-					LoadedLibrary.copyAttributes(addedTool.getAttributeSet(), ((Tool) old).getAttributeSet());
+					LoadedLibrary.copyAttributes(addedTool.getAttributeSet(), old.getAttributeSet());
 					it.set(addedTool);
 				}
 			}

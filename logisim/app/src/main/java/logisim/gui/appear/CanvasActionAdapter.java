@@ -22,7 +22,7 @@ public class CanvasActionAdapter extends logisim.proj.Action {
 
 	public CanvasActionAdapter(Circuit circuit, Action action) {
 		this.circuit = circuit;
-		this.canvasAction = action;
+		canvasAction = action;
 	}
 
 	@Override
@@ -36,9 +36,7 @@ public class CanvasActionAdapter extends logisim.proj.Action {
 		if (affectsPorts()) {
 			ActionTransaction xn = new ActionTransaction(true);
 			xn.execute();
-		} else {
-			canvasAction.doIt();
-		}
+		} else canvasAction.doIt();
 	}
 
 	@Override
@@ -46,20 +44,13 @@ public class CanvasActionAdapter extends logisim.proj.Action {
 		if (affectsPorts()) {
 			ActionTransaction xn = new ActionTransaction(false);
 			xn.execute();
-		} else {
-			canvasAction.undo();
-		}
+		} else canvasAction.undo();
 		circuit.getAppearance().setDefaultAppearance(wasDefault);
 	}
 
 	private boolean affectsPorts() {
-		if (canvasAction instanceof ModelAction) {
-			for (CanvasObject o : ((ModelAction) canvasAction).getObjects()) {
-				if (o instanceof AppearanceElement) {
-					return true;
-				}
-			}
-		}
+		if (canvasAction instanceof ModelAction) for (CanvasObject o : ((ModelAction) canvasAction).getObjects())
+			if (o instanceof AppearanceElement) return true;
 		return false;
 	}
 
@@ -72,20 +63,15 @@ public class CanvasActionAdapter extends logisim.proj.Action {
 
 		@Override
 		protected Map<Circuit, Integer> getAccessedCircuits() {
-			Map<Circuit, Integer> accessMap = new HashMap<Circuit, Integer>();
-			for (Circuit supercirc : circuit.getCircuitsUsingThis()) {
-				accessMap.put(supercirc, READ_WRITE);
-			}
+			Map<Circuit, Integer> accessMap = new HashMap<>();
+			for (Circuit supercirc : circuit.getCircuitsUsingThis()) accessMap.put(supercirc, READ_WRITE);
 			return accessMap;
 		}
 
 		@Override
 		protected void run(CircuitMutator mutator) {
-			if (forward) {
-				canvasAction.doIt();
-			} else {
-				canvasAction.undo();
-			}
+			if (forward) canvasAction.doIt();
+			else canvasAction.undo();
 		}
 
 	}

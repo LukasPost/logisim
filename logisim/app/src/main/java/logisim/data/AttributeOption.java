@@ -12,7 +12,7 @@ public class AttributeOption implements AttributeOptionInterface {
 
 	public AttributeOption(Object value, StringGetter desc) {
 		this.value = value;
-		this.name = value.toString();
+		name = value.toString();
 		this.desc = desc;
 	}
 

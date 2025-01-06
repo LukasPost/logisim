@@ -4,7 +4,7 @@
 package draw.gui;
 
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Map.Entry;
 
 import draw.actions.ModelChangeAttributeAction;
 import draw.canvas.Canvas;
@@ -16,7 +16,6 @@ import draw.model.CanvasModel;
 import draw.model.CanvasObject;
 import logisim.data.Attribute;
 import logisim.data.AttributeSet;
-import logisim.gui.generic.AttrTableSetException;
 import logisim.gui.generic.AttributeSetTableModel;
 
 class AttrTableSelectionModel extends AttributeSetTableModel implements SelectionListener {
@@ -40,33 +39,23 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
 				firstObject = obj;
 				commonClass = obj.getClass();
 				commonCount = 1;
-			} else if (obj.getClass() == commonClass) {
-				commonCount++;
-			} else {
-				commonClass = null;
-			}
+			} else if (obj.getClass() == commonClass) commonCount++;
+			else commonClass = null;
 			totalCount++;
 		}
 
-		if (firstObject == null) {
-			return null;
-		} else if (commonClass == null) {
-			return Strings.get("selectionVarious", "" + totalCount);
-		} else if (commonCount == 1) {
-			return Strings.get("selectionOne", firstObject.getDisplayName());
-		} else {
-			return Strings.get("selectionMultiple", firstObject.getDisplayName(), "" + commonCount);
-		}
+		if (firstObject == null) return null;
+		else if (commonClass == null) return Strings.get("selectionVarious", "" + totalCount);
+		else if (commonCount == 1) return Strings.get("selectionOne", firstObject.getDisplayName());
+		else return Strings.get("selectionMultiple", firstObject.getDisplayName(), "" + commonCount);
 	}
 
 	@Override
-	public void setValueRequested(Attribute<Object> attr, Object value) throws AttrTableSetException {
+	public void setValueRequested(Attribute<Object> attr, Object value) {
 		SelectionAttributes attrs = (SelectionAttributes) getAttributeSet();
-		HashMap<AttributeMapKey, Object> oldVals;
-		oldVals = new HashMap<AttributeMapKey, Object>();
-		HashMap<AttributeMapKey, Object> newVals;
-		newVals = new HashMap<AttributeMapKey, Object>();
-		for (Map.Entry<AttributeSet, CanvasObject> ent : attrs.entries()) {
+		HashMap<AttributeMapKey, Object> oldVals = new HashMap<>();
+		HashMap<AttributeMapKey, Object> newVals = new HashMap<>();
+		for (Entry<AttributeSet, CanvasObject> ent : attrs.entries()) {
 			AttributeMapKey key = new AttributeMapKey(attr, ent.getValue());
 			oldVals.put(key, ent.getKey().getValue(attr));
 			newVals.put(key, value);

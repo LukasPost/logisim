@@ -29,7 +29,7 @@ class EvenParityGate extends AbstractGate {
 	}
 
 	@Override
-	protected void paintDinShape(InstancePainter painter, int width, int height, int inputs) {
+	protected void paintDinShape(InstancePainter painter, int width, int height) {
 		paintRectangular(painter, width, height);
 	}
 
@@ -41,9 +41,7 @@ class EvenParityGate extends AbstractGate {
 	@Override
 	protected Expression computeExpression(Expression[] inputs, int numInputs) {
 		Expression ret = inputs[0];
-		for (int i = 1; i < numInputs; i++) {
-			ret = Expressions.xor(ret, inputs[i]);
-		}
+		for (int i = 1; i < numInputs; i++) ret = Expressions.xor(ret, inputs[i]);
 		return Expressions.not(ret);
 	}
 

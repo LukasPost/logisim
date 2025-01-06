@@ -7,7 +7,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 
 import logisim.circuit.Circuit;
-import logisim.comp.Component;
 import logisim.comp.ComponentDrawContext;
 import logisim.comp.ComponentUserEvent;
 import logisim.comp.TextField;
@@ -26,7 +25,6 @@ import logisim.tools.SetAttributeAction;
 import logisim.tools.TextEditable;
 
 public class InstanceTextField implements AttributeListener, TextFieldListener, TextEditable {
-	private Canvas canvas;
 	private InstanceComponent comp;
 	private TextField field;
 	private Attribute<String> labelAttr;
@@ -38,17 +36,17 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
 
 	InstanceTextField(InstanceComponent comp) {
 		this.comp = comp;
-		this.field = null;
-		this.labelAttr = null;
-		this.fontAttr = null;
+		field = null;
+		labelAttr = null;
+		fontAttr = null;
 	}
 
 	void update(Attribute<String> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign) {
 		boolean wasReg = shouldRegister();
 		this.labelAttr = labelAttr;
 		this.fontAttr = fontAttr;
-		this.fieldX = x;
-		this.fieldY = y;
+		fieldX = x;
+		fieldY = y;
 		this.halign = halign;
 		this.valign = valign;
 		boolean shouldReg = shouldRegister();
@@ -63,21 +61,18 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
 
 	private void updateField(AttributeSet attrs) {
 		String text = attrs.getValue(labelAttr);
-		if (text == null || text.equals("")) {
+		if (text == null || text.isEmpty()) {
 			if (field != null) {
 				field.removeTextFieldListener(this);
 				field = null;
 			}
-		} else {
-			if (field == null) {
-				createField(attrs, text);
-			} else {
-				Font font = attrs.getValue(fontAttr);
-				if (font != null)
-					field.setFont(font);
-				field.setLocation(fieldX, fieldY, halign, valign);
-				field.setText(text);
-			}
+		} else if (field == null) createField(attrs, text);
+		else {
+			Font font = attrs.getValue(fontAttr);
+			if (font != null)
+				field.setFont(font);
+			field.setLocation(fieldX, fieldY, halign, valign);
+			field.setText(text);
 		}
 	}
 
@@ -96,7 +91,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
 		return field == null ? Bounds.EMPTY_BOUNDS : field.getBounds(g);
 	}
 
-	void draw(Component comp, ComponentDrawContext context) {
+	void draw(ComponentDrawContext context) {
 		if (field != null) {
 			Graphics g = context.getGraphics().create();
 			field.draw(g);
@@ -109,20 +104,15 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
 
 	public void attributeValueChanged(AttributeEvent e) {
 		Attribute<?> attr = e.getAttribute();
-		if (attr == labelAttr) {
-			updateField(comp.getAttributeSet());
-		} else if (attr == fontAttr) {
-			if (field != null)
-				field.setFont((Font) e.getValue());
-		}
+		if (attr == labelAttr) updateField(comp.getAttributeSet());
+		else if (attr == fontAttr) if (field != null)
+			field.setFont((Font) e.getValue());
 	}
 
 	public void textChanged(TextFieldEvent e) {
 		String prev = e.getOldText();
 		String next = e.getText();
-		if (!next.equals(prev)) {
-			comp.getAttributeSet().setValue(labelAttr, next);
-		}
+		if (!next.equals(prev)) comp.getAttributeSet().setValue(labelAttr, next);
 	}
 
 	public Action getCommitAction(Circuit circuit, String oldText, String newText) {
@@ -132,7 +122,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
 	}
 
 	public Caret getTextCaret(ComponentUserEvent event) {
-		canvas = event.getCanvas();
+		Canvas canvas = event.getCanvas();
 		Graphics g = canvas.getGraphics();
 
 		// if field is absent, create it empty
@@ -140,7 +130,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
 		if (field == null)
 			createField(comp.getAttributeSet(), "");
 		String text = field.getText();
-		if (text == null || text.equals(""))
+		if (text == null || text.isEmpty())
 			return field.getCaret(g, 0);
 
 		Bounds bds = field.getBounds(g);

@@ -86,11 +86,8 @@ public class ColorPickerPanel extends JPanel {
 				if (r > 1)
 					r = 1;
 
-				if (mode == ColorPicker.BRI) {
-					setHSB((float) (theta + .25f), (float) (r), bri);
-				} else {
-					setHSB((float) (theta + .25f), sat, (float) (r));
-				}
+				if (mode == ColorPicker.BRI) setHSB((float) (theta + .25f), (float) (r), bri);
+				else setHSB((float) (theta + .25f), sat, (float) (r));
 			} else if (mode == ColorPicker.HUE) {
 				float s = ((float) p.x) / ((float) size);
 				float b = ((float) p.y) / ((float) size);
@@ -115,13 +112,9 @@ public class ColorPickerPanel extends JPanel {
 				if (y2 > 255)
 					y2 = 255;
 
-				if (mode == ColorPicker.RED) {
-					setRGB(red, x2, y2);
-				} else if (mode == ColorPicker.GREEN) {
-					setRGB(x2, green, y2);
-				} else {
-					setRGB(x2, y2, blue);
-				}
+				if (mode == ColorPicker.RED) setRGB(red, x2, y2);
+				else if (mode == ColorPicker.GREEN) setRGB(x2, green, y2);
+				else setRGB(x2, y2, blue);
 			}
 		}
 
@@ -134,21 +127,13 @@ public class ColorPickerPanel extends JPanel {
 		public void keyPressed(KeyEvent e) {
 			int dx = 0;
 			int dy = 0;
-			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-				dx = -1;
-			} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				dx = 1;
-			} else if (e.getKeyCode() == KeyEvent.VK_UP) {
-				dy = -1;
-			} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-				dy = 1;
-			}
+			if (e.getKeyCode() == KeyEvent.VK_LEFT) dx = -1;
+			else if (e.getKeyCode() == KeyEvent.VK_RIGHT) dx = 1;
+			else if (e.getKeyCode() == KeyEvent.VK_UP) dy = -1;
+			else if (e.getKeyCode() == KeyEvent.VK_DOWN) dy = 1;
 			int multiplier = 1;
-			if (e.isShiftDown() && e.isAltDown()) {
-				multiplier = 10;
-			} else if (e.isShiftDown() || e.isAltDown()) {
-				multiplier = 5;
-			}
+			if (e.isShiftDown() && e.isAltDown()) multiplier = 10;
+			else if (e.isShiftDown() || e.isAltDown()) multiplier = 5;
 			if (dx != 0 || dy != 0) {
 				int size = Math.min(MAX_SIZE, Math.min(getWidth() - imagePadding.left - imagePadding.right,
 						getHeight() - imagePadding.top - imagePadding.bottom));
@@ -224,15 +209,12 @@ public class ColorPickerPanel extends JPanel {
 	protected void fireChangeListeners() {
 		if (changeListeners == null)
 			return;
-		for (int a = 0; a < changeListeners.size(); a++) {
-			ChangeListener l = (ChangeListener) changeListeners.get(a);
+		for (ChangeListener changeListener : changeListeners)
 			try {
-				l.stateChanged(new ChangeEvent(this));
-			}
-			catch (RuntimeException e) {
+				changeListener.stateChanged(new ChangeEvent(this));
+			} catch (RuntimeException e) {
 				e.printStackTrace();
 			}
-		}
 	}
 
 	Insets imagePadding = new Insets(6, 6, 6, 6);
@@ -249,16 +231,10 @@ public class ColorPickerPanel extends JPanel {
 
 		Shape shape;
 
-		if (mode == ColorPicker.SAT || mode == ColorPicker.BRI) {
-			shape = new Ellipse2D.Float(0, 0, size, size);
-		} else {
-			Rectangle r = new Rectangle(0, 0, size, size);
-			shape = r;
-		}
+		if (mode == ColorPicker.SAT || mode == ColorPicker.BRI) shape = new Ellipse2D.Float(0, 0, size, size);
+		else shape = new Rectangle(0, 0, size, size);
 
-		if (hasFocus()) {
-			PaintUtils.paintFocus(g2, shape, 5);
-		}
+		if (hasFocus()) PaintUtils.paintFocus(g2, shape, 5);
 
 		if (!(shape instanceof Rectangle)) {
 			// paint a circular shadow
@@ -274,10 +250,8 @@ public class ColorPickerPanel extends JPanel {
 
 		g2.drawImage(image, 0, 0, size, size, 0, 0, size, size, null);
 
-		if (shape instanceof Rectangle) {
-			Rectangle r = (Rectangle) shape;
-			PaintUtils.drawBevel(g2, r);
-		} else {
+		if (shape instanceof Rectangle r) PaintUtils.drawBevel(g2, r);
+		else {
 			g2.setColor(new Color(0, 0, 0, 120));
 			g2.draw(shape);
 		}
@@ -340,18 +314,10 @@ public class ColorPickerPanel extends JPanel {
 				blue = b;
 
 				if (mode == ColorPicker.RED) {
-					if (lastR != r) {
-						regenerateImage();
-					}
+					if (lastR != r) regenerateImage();
 				} else if (mode == ColorPicker.GREEN) {
-					if (lastG != g) {
-						regenerateImage();
-					}
-				} else if (mode == ColorPicker.BLUE) {
-					if (lastB != b) {
-						regenerateImage();
-					}
-				}
+					if (lastG != g) regenerateImage();
+				} else if (lastB != b) regenerateImage();
 			} else {
 				float[] hsb = new float[3];
 				Color.RGBtoHSB(r, g, b, hsb);
@@ -413,18 +379,10 @@ public class ColorPickerPanel extends JPanel {
 				sat = s;
 				bri = b;
 				if (mode == ColorPicker.HUE) {
-					if (lastHue != hue) {
-						regenerateImage();
-					}
+					if (lastHue != hue) regenerateImage();
 				} else if (mode == ColorPicker.SAT) {
-					if (lastSat != sat) {
-						regenerateImage();
-					}
-				} else if (mode == ColorPicker.BRI) {
-					if (lastBri != bri) {
-						regenerateImage();
-					}
-				}
+					if (lastSat != sat) regenerateImage();
+				} else if (lastBri != bri) regenerateImage();
 			} else {
 
 				Color c = new Color(Color.HSBtoRGB(h, s, b));
@@ -447,10 +405,9 @@ public class ColorPickerPanel extends JPanel {
 	private void regeneratePoint() {
 		int size = Math.min(MAX_SIZE, Math.min(getWidth() - imagePadding.left - imagePadding.right,
 				getHeight() - imagePadding.top - imagePadding.bottom));
-		if (mode == ColorPicker.HUE || mode == ColorPicker.SAT || mode == ColorPicker.BRI) {
-			if (mode == ColorPicker.HUE) {
-				point = new Point((int) (sat * size), (int) (bri * size));
-			} else if (mode == ColorPicker.SAT) {
+		if (mode == ColorPicker.HUE || mode == ColorPicker.SAT || mode == ColorPicker.BRI)
+			if (mode == ColorPicker.HUE) point = new Point((int) (sat * size), (int) (bri * size));
+			else if (mode == ColorPicker.SAT) {
 				double theta = hue * 2 * Math.PI - Math.PI / 2;
 				if (theta < 0)
 					theta += 2 * Math.PI;
@@ -458,7 +415,8 @@ public class ColorPickerPanel extends JPanel {
 				double r = bri * size / 2;
 				point = new Point((int) (r * Math.cos(theta) + .5 + size / 2.0),
 						(int) (r * Math.sin(theta) + .5 + size / 2.0));
-			} else if (mode == ColorPicker.BRI) {
+			}
+			else {
 				double theta = hue * 2 * Math.PI - Math.PI / 2;
 				if (theta < 0)
 					theta += 2 * Math.PI;
@@ -466,13 +424,12 @@ public class ColorPickerPanel extends JPanel {
 				point = new Point((int) (r * Math.cos(theta) + .5 + size / 2.0),
 						(int) (r * Math.sin(theta) + .5 + size / 2.0));
 			}
-		} else if (mode == ColorPicker.RED) {
+		else if (mode == ColorPicker.RED)
 			point = new Point((int) (green * size / 255f + .49f), (int) (blue * size / 255f + .49f));
-		} else if (mode == ColorPicker.GREEN) {
+		else if (mode == ColorPicker.GREEN)
 			point = new Point((int) (red * size / 255f + .49f), (int) (blue * size / 255f + .49f));
-		} else if (mode == ColorPicker.BLUE) {
+		else if (mode == ColorPicker.BLUE)
 			point = new Point((int) (red * size / 255f + .49f), (int) (green * size / 255f + .49f));
-		}
 	}
 
 	/** A row of pixel data we recycle every time we regenerate this image. */
@@ -484,8 +441,8 @@ public class ColorPickerPanel extends JPanel {
 				getHeight() - imagePadding.top - imagePadding.bottom));
 
 		if (mode == ColorPicker.BRI || mode == ColorPicker.SAT) {
-			float bri2 = this.bri;
-			float sat2 = this.sat;
+			float bri2 = bri;
+			float sat2 = sat;
 			float radius = ((float) size) / 2f;
 			float hue2;
 			float k = 1.2f; // the number of pixels to antialias
@@ -515,14 +472,12 @@ public class ColorPickerPanel extends JPanel {
 								alpha = 255;
 							row[x] = row[x] & 0xffffff + (alpha << 24);
 						}
-					} else {
-						row[x] = 0x00000000;
-					}
+					} else row[x] = 0x00000000;
 				}
 				image.getRaster().setDataElements(0, y, size, 1, row);
 			}
 		} else if (mode == ColorPicker.HUE) {
-			float hue2 = this.hue;
+			float hue2 = hue;
 			for (int y = 0; y < size; y++) {
 				float y2 = ((float) y) / ((float) size);
 				for (int x = 0; x < size; x++) {

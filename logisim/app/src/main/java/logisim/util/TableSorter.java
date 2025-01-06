@@ -21,7 +21,7 @@ import java.lang.reflect.InvocationTargetException;
  * underlying model after the row numbers have been translated via the internal mapping array. This way, the TableSorter
  * appears to hold another copy of the table with the rows in a different order.
  * <p/>
- * TableSorter registers itself as a listener to the underlying model, just as the JTable itself would. Events recieved
+ * TableSorter registers itself as a listener to the underlying model, just as the JTable itself would. Events received
  * from the model are examined, sometimes manipulated (typically widened), and then passed on to the TableSorter's
  * listeners (typically the JTable). If a change to the model has invalidated the order of TableSorter's rows, a note of
  * this is made and the sorter will resort the rows the next time a value is requested.
@@ -62,47 +62,34 @@ public class TableSorter extends AbstractTableModel {
 
 	private static Directive EMPTY_DIRECTIVE = new Directive(-1, NOT_SORTED);
 
-	public static final Comparator<Object> COMPARABLE_COMPARATOR = new Comparator<Object>() {
-		public int compare(Object o1, Object o2) {
-			Method m;
-			try {
-				// See if o1 is capable of comparing itself to o2
-				m = o1.getClass().getDeclaredMethod("compareTo", o2.getClass());
-			}
-			catch (NoSuchMethodException e) {
-				throw new ClassCastException();
-			}
-
-			Object retVal;
-			try {
-				// make the comparison
-				retVal = m.invoke(o1, o2);
-			}
-			catch (IllegalAccessException e) {
-				throw new ClassCastException();
-			}
-			catch (InvocationTargetException e) {
-				throw new ClassCastException();
-			}
-
-			// Comparable.compareTo() is supposed to return int but invoke()
-			// returns Object. We can't cast an Object to an int but we can
-			// cast it to an Integer and then extract the int from the Integer.
-			// But first, make sure it can be done.
-			Integer i = 0;
-			if (!i.getClass().isInstance(retVal)) {
-				throw new ClassCastException();
-			}
-
-			return i.getClass().cast(retVal).intValue();
+	public static final Comparator<Object> COMPARABLE_COMPARATOR = (o1, o2) -> {
+		Method m;
+		try {
+			// See if o1 is capable of comparing itself to o2
+			m = o1.getClass().getDeclaredMethod("compareTo", o2.getClass());
+		} catch (NoSuchMethodException e) {
+			throw new ClassCastException();
 		}
+
+		Object retVal;
+		try {
+			// make the comparison
+			retVal = m.invoke(o1, o2);
+		} catch (IllegalAccessException | InvocationTargetException e) {
+			throw new ClassCastException();
+		}
+
+		// Comparable.compareTo() is supposed to return int but invoke()
+		// returns Object. We can't cast an Object to an int, but we can
+		// cast it to an Integer and then extract the int from the Integer.
+		// But first, make sure it can be done.
+		Integer i = 0;
+		if (!i.getClass().isInstance(retVal)) throw new ClassCastException();
+
+		return i.getClass().cast(retVal).intValue();
 	};
 
-	public static final Comparator<Object> LEXICAL_COMPARATOR = new Comparator<Object>() {
-		public int compare(Object o1, Object o2) {
-			return o1.toString().compareTo(o2.toString());
-		}
-	};
+	public static final Comparator<Object> LEXICAL_COMPARATOR = Comparator.comparing(Object::toString);
 
 	private Row[] viewToModel;
 	private int[] modelToView;
@@ -110,12 +97,12 @@ public class TableSorter extends AbstractTableModel {
 	private JTableHeader tableHeader;
 	private MouseListener mouseListener;
 	private TableModelListener tableModelListener;
-	private Map<Class<?>, Comparator<Object>> columnComparators = new HashMap<Class<?>, Comparator<Object>>();
-	private List<Directive> sortingColumns = new ArrayList<Directive>();
+	private Map<Class<?>, Comparator<Object>> columnComparators = new HashMap<>();
+	private List<Directive> sortingColumns = new ArrayList<>();
 
 	public TableSorter() {
-		this.mouseListener = new MouseHandler();
-		this.tableModelListener = new TableModelHandler();
+		mouseListener = new MouseHandler();
+		tableModelListener = new TableModelHandler();
 	}
 
 	public TableSorter(TableModel tableModel) {
@@ -139,14 +126,10 @@ public class TableSorter extends AbstractTableModel {
 	}
 
 	public void setTableModel(TableModel tableModel) {
-		if (this.tableModel != null) {
-			this.tableModel.removeTableModelListener(tableModelListener);
-		}
+		if (this.tableModel != null) this.tableModel.removeTableModelListener(tableModelListener);
 
 		this.tableModel = tableModel;
-		if (this.tableModel != null) {
-			this.tableModel.addTableModelListener(tableModelListener);
-		}
+		if (this.tableModel != null) this.tableModel.addTableModelListener(tableModelListener);
 
 		clearSortingState();
 		fireTableStructureChanged();
@@ -160,9 +143,8 @@ public class TableSorter extends AbstractTableModel {
 		if (this.tableHeader != null) {
 			this.tableHeader.removeMouseListener(mouseListener);
 			TableCellRenderer defaultRenderer = this.tableHeader.getDefaultRenderer();
-			if (defaultRenderer instanceof SortableHeaderRenderer) {
+			if (defaultRenderer instanceof SortableHeaderRenderer)
 				this.tableHeader.setDefaultRenderer(((SortableHeaderRenderer) defaultRenderer).tableCellRenderer);
-			}
 		}
 		this.tableHeader = tableHeader;
 		if (this.tableHeader != null) {
@@ -176,12 +158,7 @@ public class TableSorter extends AbstractTableModel {
 	}
 
 	private Directive getDirective(int column) {
-		for (int i = 0; i < sortingColumns.size(); i++) {
-			Directive directive = sortingColumns.get(i);
-			if (directive.column == column) {
-				return directive;
-			}
-		}
+		for (Directive directive : sortingColumns) if (directive.column == column) return directive;
 		return EMPTY_DIRECTIVE;
 	}
 
@@ -192,27 +169,19 @@ public class TableSorter extends AbstractTableModel {
 	private void sortingStatusChanged() {
 		clearSortingState();
 		fireTableDataChanged();
-		if (tableHeader != null) {
-			tableHeader.repaint();
-		}
+		if (tableHeader != null) tableHeader.repaint();
 	}
 
 	public void setSortingStatus(int column, int status) {
 		Directive directive = getDirective(column);
-		if (directive != EMPTY_DIRECTIVE) {
-			sortingColumns.remove(directive);
-		}
-		if (status != NOT_SORTED) {
-			sortingColumns.add(new Directive(column, status));
-		}
+		if (directive != EMPTY_DIRECTIVE) sortingColumns.remove(directive);
+		if (status != NOT_SORTED) sortingColumns.add(new Directive(column, status));
 		sortingStatusChanged();
 	}
 
 	protected Icon getHeaderRendererIcon(int column, int size) {
 		Directive directive = getDirective(column);
-		if (directive == EMPTY_DIRECTIVE) {
-			return null;
-		}
+		if (directive == EMPTY_DIRECTIVE) return null;
 		return new Arrow(directive.direction == DESCENDING, size, sortingColumns.indexOf(directive));
 	}
 
@@ -222,9 +191,8 @@ public class TableSorter extends AbstractTableModel {
 	}
 
 	public void setColumnComparator(Class<?> type, Comparator<?> comparator) {
-		if (comparator == null) {
-			columnComparators.remove(type);
-		} else {
+		if (comparator == null) columnComparators.remove(type);
+		else {
 			@SuppressWarnings("unchecked")
 			Comparator<Object> castComparator = (Comparator<Object>) comparator;
 			columnComparators.put(type, castComparator);
@@ -234,12 +202,8 @@ public class TableSorter extends AbstractTableModel {
 	protected Comparator<Object> getComparator(int column) {
 		Class<?> columnType = tableModel.getColumnClass(column);
 		Comparator<Object> comparator = columnComparators.get(columnType);
-		if (comparator != null) {
-			return comparator;
-		}
-		if (Comparable.class.isAssignableFrom(columnType)) {
-			return COMPARABLE_COMPARATOR;
-		}
+		if (comparator != null) return comparator;
+		if (Comparable.class.isAssignableFrom(columnType)) return COMPARABLE_COMPARATOR;
 		return LEXICAL_COMPARATOR;
 	}
 
@@ -247,13 +211,9 @@ public class TableSorter extends AbstractTableModel {
 		if (viewToModel == null) {
 			int tableModelRowCount = tableModel.getRowCount();
 			viewToModel = new Row[tableModelRowCount];
-			for (int row = 0; row < tableModelRowCount; row++) {
-				viewToModel[row] = new Row(row);
-			}
+			for (int row = 0; row < tableModelRowCount; row++) viewToModel[row] = new Row(row);
 
-			if (isSorting()) {
-				Arrays.sort(viewToModel);
-			}
+			if (isSorting()) Arrays.sort(viewToModel);
 		}
 		return viewToModel;
 	}
@@ -266,9 +226,7 @@ public class TableSorter extends AbstractTableModel {
 		if (modelToView == null) {
 			int n = getViewToModel().length;
 			modelToView = new int[n];
-			for (int i = 0; i < n; i++) {
-				modelToView[modelIndex(i)] = i;
-			}
+			for (int i = 0; i < n; i++) modelToView[modelIndex(i)] = i;
 		}
 		return modelToView;
 	}
@@ -309,34 +267,26 @@ public class TableSorter extends AbstractTableModel {
 		private int modelIndex;
 
 		public Row(int index) {
-			this.modelIndex = index;
+			modelIndex = index;
 		}
 
 		public int compareTo(Row o) {
 			int row1 = modelIndex;
 			int row2 = o.modelIndex;
 
-			for (Iterator<Directive> it = sortingColumns.iterator(); it.hasNext();) {
-				Directive directive = it.next();
+			for (Directive directive : sortingColumns) {
 				int column = directive.column;
 
 				Object o1 = tableModel.getValueAt(row1, column);
 				Object o2 = tableModel.getValueAt(row2, column);
 
-				int comparison = 0;
+				int comparison;
 				// Define null less than everything, except null.
-				if (o1 == null && o2 == null) {
-					comparison = 0;
-				} else if (o1 == null) {
-					comparison = -1;
-				} else if (o2 == null) {
-					comparison = 1;
-				} else {
-					comparison = getComparator(column).compare(o1, o2);
-				}
-				if (comparison != 0) {
-					return directive.direction == DESCENDING ? -comparison : comparison;
-				}
+				if (o1 == null && o2 == null) comparison = 0;
+				else if (o1 == null) comparison = -1;
+				else if (o2 == null) comparison = 1;
+				else comparison = getComparator(column).compare(o1, o2);
+				if (comparison != 0) return directive.direction == DESCENDING ? -comparison : comparison;
 			}
 			return 0;
 		}
@@ -389,7 +339,6 @@ public class TableSorter extends AbstractTableModel {
 			// Something has happened to the data that may have invalidated the row order.
 			clearSortingState();
 			fireTableDataChanged();
-			return;
 		}
 	}
 
@@ -401,9 +350,7 @@ public class TableSorter extends AbstractTableModel {
 			int column = columnModel.getColumn(viewColumn).getModelIndex();
 			if (column != -1) {
 				int status = getSortingStatus(column);
-				if (!e.isControlDown()) {
-					cancelSorting();
-				}
+				if (!e.isControlDown()) cancelSorting();
 				// Cycle the sorting states through {NOT_SORTED, ASCENDING, DESCENDING} or
 				// {NOT_SORTED, DESCENDING, ASCENDING} depending on whether shift is pressed.
 				status = status + (e.isShiftDown() ? -1 : 1);
@@ -426,9 +373,9 @@ public class TableSorter extends AbstractTableModel {
 
 		public void paintIcon(Component c, Graphics g, int x, int y) {
 			Color color = c == null ? Color.GRAY : c.getBackground();
-			// In a compound sort, make each succesive triangle 20%
+			// In a compound sort, make each successive triangle 20%
 			// smaller than the previous one.
-			int dx = (int) (size / 2 * Math.pow(0.8, priority));
+			int dx = (int) ((double) size / 2 * Math.pow(0.8, priority));
 			int dy = descending ? dx : -dx;
 			// Align icon (roughly) with font baseline.
 			y = y + 5 * size / 6 + (descending ? -dy : 0);
@@ -446,11 +393,8 @@ public class TableSorter extends AbstractTableModel {
 			g.drawLine(dx / 2, dy + shift, dx, shift);
 
 			// Horizontal line.
-			if (descending) {
-				g.setColor(color.darker().darker());
-			} else {
-				g.setColor(color.brighter().brighter());
-			}
+			if (descending) g.setColor(color.darker().darker());
+			else g.setColor(color.brighter().brighter());
 			g.drawLine(dx, 0, 0, 0);
 
 			g.setColor(color);
@@ -477,8 +421,7 @@ public class TableSorter extends AbstractTableModel {
 				int row, int column) {
 			Component c = tableCellRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
 					column);
-			if (c instanceof JLabel) {
-				JLabel l = (JLabel) c;
+			if (c instanceof JLabel l) {
 				l.setHorizontalTextPosition(JLabel.LEFT);
 				int modelColumn = table.convertColumnIndexToModel(column);
 				l.setIcon(getHeaderRendererIcon(modelColumn, l.getFont().getSize()));

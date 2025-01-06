@@ -33,10 +33,8 @@ class MenuEdit extends Menu {
 		public void actionPerformed(ActionEvent e) {
 			Object src = e.getSource();
 			Project proj = menubar.getProject();
-			if (src == undo) {
-				if (proj != null)
-					proj.undoAction();
-			}
+			if (src == undo) if (proj != null)
+				proj.undoAction();
 		}
 	}
 
@@ -113,7 +111,7 @@ class MenuEdit extends Menu {
 	}
 
 	public void localeChanged() {
-		this.setText(Strings.get("editMenu"));
+		setText(Strings.get("editMenu"));
 		myListener.projectChanged(null);
 		cut.setText(Strings.get("editCutItem"));
 		copy.setText(Strings.get("editCopyItem"));

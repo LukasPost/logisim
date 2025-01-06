@@ -40,11 +40,11 @@ public class ComponentDrawContext {
 		this.circuitState = circuitState;
 		this.base = base;
 		this.g = g;
-		this.showState = true;
-		this.showColor = true;
+		showState = true;
+		showColor = true;
 		this.printView = printView;
-		this.highlightedWires = WireSet.EMPTY;
-		this.instancePainter = new InstancePainter(this, null);
+		highlightedWires = WireSet.EMPTY;
+		instancePainter = new InstancePainter(this, null);
 	}
 
 	public ComponentDrawContext(java.awt.Component dest, Circuit circuit, CircuitState circuitState, Graphics base,
@@ -65,7 +65,7 @@ public class ComponentDrawContext {
 	}
 
 	public void setHighlightedWires(WireSet value) {
-		this.highlightedWires = value == null ? WireSet.EMPTY : value;
+		highlightedWires = value == null ? WireSet.EMPTY : value;
 	}
 
 	public WireSet getHighlightedWires() {
@@ -131,14 +131,13 @@ public class ComponentDrawContext {
 	public void drawRectangle(int x, int y, int width, int height, String label) {
 		GraphicsUtil.switchToWidth(g, 2);
 		g.drawRect(x, y, width, height);
-		if (label != null && !label.equals("")) {
+		if (label != null && !label.isEmpty()) {
 			FontMetrics fm = base.getFontMetrics(g.getFont());
 			int lwid = fm.stringWidth(label);
-			if (height > 20) { // centered at top edge
-				g.drawString(label, x + (width - lwid) / 2, y + 2 + fm.getAscent());
-			} else { // centered overall
-				g.drawString(label, x + (width - lwid) / 2, y + (height + fm.getAscent()) / 2 - 1);
-			}
+			// centered overall
+			// centered at top edge
+			if (height > 20) g.drawString(label, x + (width - lwid) / 2, y + 2 + fm.getAscent());
+			else g.drawString(label, x + (width - lwid) / 2, y + (height + fm.getAscent()) / 2 - 1);
 		}
 	}
 
@@ -150,14 +149,13 @@ public class ComponentDrawContext {
 	public void drawRectangle(ComponentFactory source, int x, int y, int width, int height, String label) {
 		GraphicsUtil.switchToWidth(g, 2);
 		g.drawRect(x + 1, y + 1, width - 1, height - 1);
-		if (label != null && !label.equals("")) {
+		if (label != null && !label.isEmpty()) {
 			FontMetrics fm = base.getFontMetrics(g.getFont());
 			int lwid = fm.stringWidth(label);
-			if (height > 20) { // centered at top edge
-				g.drawString(label, x + (width - lwid) / 2, y + 2 + fm.getAscent());
-			} else { // centered overall
-				g.drawString(label, x + (width - lwid) / 2, y + (height + fm.getAscent()) / 2 - 1);
-			}
+			// centered overall
+			// centered at top edge
+			if (height > 20) g.drawString(label, x + (width - lwid) / 2, y + 2 + fm.getAscent());
+			else g.drawString(label, x + (width - lwid) / 2, y + (height + fm.getAscent()) / 2 - 1);
 		}
 	}
 
@@ -172,25 +170,22 @@ public class ComponentDrawContext {
 			return;
 		EndData e = comp.getEnd(i);
 		Location pt = e.getLocation();
-		int x = pt.getX();
-		int y = pt.getY();
+		int x = pt.x();
+		int y = pt.y();
 		if (getShowState()) {
 			CircuitState state = getCircuitState();
 			g.setColor(state.getValue(pt).getColor());
-		} else {
-			g.setColor(Color.BLACK);
-		}
+		} else g.setColor(Color.BLACK);
 		g.fillOval(x - PIN_OFFS, y - PIN_OFFS, PIN_RAD, PIN_RAD);
 		g.setColor(curColor);
-		if (dir == Direction.East) {
+		if (dir == Direction.East)
 			GraphicsUtil.drawText(g, label, x + 3, y, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
-		} else if (dir == Direction.West) {
+		else if (dir == Direction.West)
 			GraphicsUtil.drawText(g, label, x - 3, y, GraphicsUtil.H_RIGHT, GraphicsUtil.V_CENTER);
-		} else if (dir == Direction.South) {
+		else if (dir == Direction.South)
 			GraphicsUtil.drawText(g, label, x, y - 3, GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
-		} else if (dir == Direction.North) {
+		else if (dir == Direction.North)
 			GraphicsUtil.drawText(g, label, x, y + 3, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
-		}
 	}
 
 	public void drawPin(Component comp, int i) {
@@ -200,10 +195,8 @@ public class ComponentDrawContext {
 		if (getShowState()) {
 			CircuitState state = getCircuitState();
 			g.setColor(state.getValue(pt).getColor());
-		} else {
-			g.setColor(Color.BLACK);
-		}
-		g.fillOval(pt.getX() - PIN_OFFS, pt.getY() - PIN_OFFS, PIN_RAD, PIN_RAD);
+		} else g.setColor(Color.BLACK);
+		g.fillOval(pt.x() - PIN_OFFS, pt.y() - PIN_OFFS, PIN_RAD, PIN_RAD);
 		g.setColor(curColor);
 	}
 
@@ -214,10 +207,8 @@ public class ComponentDrawContext {
 			if (getShowState()) {
 				CircuitState state = getCircuitState();
 				g.setColor(state.getValue(pt).getColor());
-			} else {
-				g.setColor(Color.BLACK);
-			}
-			g.fillOval(pt.getX() - PIN_OFFS, pt.getY() - PIN_OFFS, PIN_RAD, PIN_RAD);
+			} else g.setColor(Color.BLACK);
+			g.fillOval(pt.x() - PIN_OFFS, pt.y() - PIN_OFFS, PIN_RAD, PIN_RAD);
 		}
 		g.setColor(curColor);
 	}
@@ -229,8 +220,8 @@ public class ComponentDrawContext {
 
 		EndData e = comp.getEnd(i);
 		Location pt = e.getLocation();
-		int x = pt.getX();
-		int y = pt.getY();
+		int x = pt.x();
+		int y = pt.y();
 		final int CLK_SZ = 4;
 		final int CLK_SZD = CLK_SZ - 1;
 		if (dir == Direction.North) {
@@ -264,7 +255,7 @@ public class ComponentDrawContext {
 	}
 
 	public void drawHandle(Location loc) {
-		drawHandle(loc.getX(), loc.getY());
+		drawHandle(loc.x(), loc.y());
 	}
 
 	public void drawHandle(int x, int y) {

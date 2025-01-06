@@ -21,7 +21,7 @@ class PainterDin {
 	static final int XOR = 2;
 	static final int XNOR = 3;
 
-	private static HashMap<Integer, int[]> orLenArrays = new HashMap<Integer, int[]>();
+	private static HashMap<Integer, int[]> orLenArrays = new HashMap<>();
 
 	static void paintAnd(InstancePainter painter, int width, int height, boolean drawBubble) {
 		paint(painter, width, height, drawBubble, AND);
@@ -43,15 +43,11 @@ class PainterDin {
 		Graphics g = painter.getGraphics();
 		int xMid = -width;
 		int y0 = -height / 2;
-		if (drawBubble) {
-			width -= 8;
-		}
+		if (drawBubble) width -= 8;
 		int diam = Math.min(height, 2 * width);
-		if (dinType == AND) {
-			; // nothing to do
-		} else if (dinType == OR) {
-			paintOrLines(painter, width, height, drawBubble);
-		} else if (dinType == XOR || dinType == XNOR) {
+		if (dinType == AND) ; // nothing to do
+		else if (dinType == OR) paintOrLines(painter, width, height, drawBubble);
+		else if (dinType == XOR || dinType == XNOR) {
 			int elen = Math.min(diam / 2 - 10, 20);
 			int ex0 = xMid + (diam / 2 - elen) / 2;
 			int ex1 = ex0 + elen;
@@ -62,9 +58,7 @@ class PainterDin {
 				int exMid = ex0 + elen / 2;
 				g.drawLine(exMid, -8, exMid, 8);
 			}
-		} else {
-			throw new IllegalArgumentException("unrecognized shape");
-		}
+		} else throw new IllegalArgumentException("unrecognized shape");
 
 		GraphicsUtil.switchToWidth(g, 2);
 		int x0 = xMid - diam / 2;
@@ -75,9 +69,8 @@ class PainterDin {
 		}
 		g.drawLine(x0 + diam, 0, 0, 0);
 		g.setColor(oldColor);
-		if (height <= diam) {
-			g.drawArc(x0, y0, diam, diam, -90, 180);
-		} else {
+		if (height <= diam) g.drawArc(x0, y0, diam, diam, -90, 180);
+		else {
 			int x1 = x0 + diam;
 			int yy0 = -(height - diam) / 2;
 			int yy1 = (height - diam) / 2;
@@ -86,10 +79,7 @@ class PainterDin {
 			g.drawArc(x0, y0 + height - diam, diam, diam, -90, 90);
 		}
 		g.drawLine(xMid, y0, xMid, y0 + height);
-		if (drawBubble) {
-			g.fillOval(x0 + diam - 4, -4, 8, 8);
-			xMid += 4;
-		}
+		if (drawBubble) g.fillOval(x0 + diam - 4, -4, 8, 8);
 	}
 
 	private static void paintOrLines(InstancePainter painter, int width, int height, boolean hasBubble) {
@@ -103,19 +93,18 @@ class PainterDin {
 		// draw state if appropriate
 		// ignore lines if in print view
 		int r = Math.min(height / 2, width);
-		Integer hash = Integer.valueOf(r << 4 | inputs);
+		Integer hash = r << 4 | inputs;
 		int[] lens = orLenArrays.get(hash);
 		if (lens == null) {
 			lens = new int[inputs];
 			orLenArrays.put(hash, lens);
 			int yCurveStart = height / 2 - r;
 			for (int i = 0; i < inputs; i++) {
-				int y = OrGate.FACTORY.getInputOffset(attrs, i).getY();
+				int y = OrGate.FACTORY.getInputOffset(attrs, i).y();
 				if (y < 0)
 					y = -y;
-				if (y <= yCurveStart) {
-					lens[i] = r;
-				} else {
+				if (y <= yCurveStart) lens[i] = r;
+				else {
 					int dy = y - yCurveStart;
 					lens[i] = (int) (Math.sqrt(r * r - dy * dy) + 0.5);
 				}
@@ -125,13 +114,12 @@ class PainterDin {
 		AbstractGate factory = hasBubble ? NorGate.FACTORY : OrGate.FACTORY;
 		boolean printView = painter.isPrintView() && painter.getInstance() != null;
 		GraphicsUtil.switchToWidth(g, 2);
-		for (int i = 0; i < inputs; i++) {
+		for (int i = 0; i < inputs; i++)
 			if (!printView || painter.isPortConnected(i)) {
 				Location loc = factory.getInputOffset(attrs, i);
-				int x = loc.getX();
-				int y = loc.getY();
+				int x = loc.x();
+				int y = loc.y();
 				g.drawLine(x, y, x + lens[i], y);
 			}
-		}
 	}
 }

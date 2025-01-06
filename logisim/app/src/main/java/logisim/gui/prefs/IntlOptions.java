@@ -24,14 +24,13 @@ class IntlOptions extends OptionsPanel {
 	}
 
 	private JLabel localeLabel = new RestrictedLabel();
-	private JComponent locale;
 	private PrefBoolean replAccents;
 	private PrefOptionList gateShape;
 
 	public IntlOptions(PreferencesFrame window) {
 		super(window);
 
-		locale = Strings.createLocaleSelector();
+		JComponent locale = Strings.createLocaleSelector();
 		replAccents = new PrefBoolean(AppPreferences.ACCENTS_REPLACE, Strings.getter("intlReplaceAccents"));
 		gateShape = new PrefOptionList(AppPreferences.GATE_SHAPE, Strings.getter("intlGateShape"),
 				new PrefOption[] { new PrefOption(AppPreferences.SHAPE_SHAPED, Strings.get("shapeShaped")),

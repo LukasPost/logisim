@@ -9,7 +9,7 @@ class CanvasPaintThread extends Thread {
 	private static final int REPAINT_TIMESPAN = 50; // 50 ms between repaints
 
 	private Canvas canvas;
-	private Object lock;
+	private final Object lock;
 	private boolean repaintRequested;
 	private long nextRepaint;
 	private boolean alive;
@@ -33,9 +33,7 @@ class CanvasPaintThread extends Thread {
 	public void requentRepaint(Rectangle rect) {
 		synchronized (lock) {
 			if (repaintRequested) {
-				if (repaintRectangle != null) {
-					repaintRectangle.add(rect);
-				}
+				if (repaintRectangle != null) repaintRectangle.add(rect);
 			} else {
 				repaintRequested = true;
 				repaintRectangle = rect;
@@ -62,11 +60,8 @@ class CanvasPaintThread extends Thread {
 				long wait = nextRepaint - now;
 				while (alive && !(repaintRequested && wait <= 0)) {
 					try {
-						if (wait > 0) {
-							lock.wait(wait);
-						} else {
-							lock.wait();
-						}
+						if (wait > 0) lock.wait(wait);
+						else lock.wait();
 					}
 					catch (InterruptedException e) {
 					}

@@ -14,7 +14,7 @@ import logisim.util.PropertyChangeWeakSupport;
 class Clipboard {
 	public static final String contentsProperty = "contents";
 
-	private static Clipboard current = null;
+	private static Clipboard current;
 	private static PropertyChangeWeakSupport propertySupport = new PropertyChangeWeakSupport(Clipboard.class);
 
 	public static boolean isEmpty() {
@@ -62,7 +62,7 @@ class Clipboard {
 	private AttributeSet newAttrs;
 
 	private Clipboard(Selection sel, AttributeSet viewAttrs) {
-		components = new HashSet<Component>();
+		components = new HashSet<>();
 		oldAttrs = null;
 		newAttrs = null;
 		for (Component base : sel.getComponents()) {

@@ -26,20 +26,15 @@ public class Curve extends FillableCanvasObject {
 	private Bounds bounds;
 
 	public Curve(Location end0, Location end1, Location ctrl) {
-		this.p0 = end0;
-		this.p1 = ctrl;
-		this.p2 = end1;
+		p0 = end0;
+		p1 = ctrl;
+		p2 = end1;
 		bounds = CurveUtil.getBounds(toArray(p0), toArray(p1), toArray(p2));
 	}
 
 	@Override
 	public boolean matches(CanvasObject other) {
-		if (other instanceof Curve) {
-			Curve that = (Curve) other;
-			return this.p0.equals(that.p0) && this.p1.equals(that.p1) && this.p2.equals(that.p2) && super.matches(that);
-		} else {
-			return false;
-		}
+		return other instanceof Curve that && p0.equals(that.p0) && p1.equals(that.p1) && p2.equals(that.p2) && super.matches(that);
 	}
 
 	@Override
@@ -69,7 +64,7 @@ public class Curve extends FillableCanvasObject {
 	}
 
 	public QuadCurve2D getCurve2D() {
-		return new QuadCurve2D.Double(p0.getX(), p0.getY(), p1.getX(), p1.getY(), p2.getX(), p2.getY());
+		return new QuadCurve2D.Double(p0.x(), p0.y(), p1.x(), p1.y(), p2.x(), p2.y());
 	}
 
 	@Override
@@ -90,9 +85,7 @@ public class Curve extends FillableCanvasObject {
 	@Override
 	public boolean contains(Location loc, boolean assumeFilled) {
 		Object type = getPaintType();
-		if (assumeFilled && type == DrawAttr.PAINT_STROKE) {
-			type = DrawAttr.PAINT_STROKE_FILL;
-		}
+		if (assumeFilled && type == DrawAttr.PAINT_STROKE) type = DrawAttr.PAINT_STROKE_FILL;
 		if (type != DrawAttr.PAINT_FILL) {
 			int stroke = getStrokeWidth();
 			double[] q = toArray(loc);
@@ -104,20 +97,13 @@ public class Curve extends FillableCanvasObject {
 				return false;
 
 			int thr;
-			if (type == DrawAttr.PAINT_STROKE) {
-				thr = Math.max(Line.ON_LINE_THRESH, stroke / 2);
-			} else {
-				thr = stroke / 2;
-			}
-			if (LineUtil.distanceSquared(p[0], p[1], q[0], q[1]) < thr * thr) {
-				return true;
-			}
+			if (type == DrawAttr.PAINT_STROKE) thr = Math.max(Line.ON_LINE_THRESH, stroke / 2);
+			else thr = stroke / 2;
+			if (LineUtil.distanceSquared(p[0], p[1], q[0], q[1]) < thr * thr) return true;
 		}
 		if (type != DrawAttr.PAINT_STROKE) {
 			QuadCurve2D curve = getCurve(null);
-			if (curve.contains(loc.getX(), loc.getY())) {
-				return true;
-			}
+			return curve.contains(loc.x(), loc.y());
 		}
 		return false;
 	}
@@ -140,33 +126,28 @@ public class Curve extends FillableCanvasObject {
 	}
 
 	private Handle[] getHandleArray(HandleGesture gesture) {
-		if (gesture == null) {
-			return new Handle[] { new Handle(this, p0), new Handle(this, p1), new Handle(this, p2) };
-		} else {
+		if (gesture == null) return new Handle[]{new Handle(this, p0), new Handle(this, p1), new Handle(this, p2)};
+		else {
 			Handle g = gesture.getHandle();
 			int gx = g.getX() + gesture.getDeltaX();
 			int gy = g.getY() + gesture.getDeltaY();
 			Handle[] ret = { new Handle(this, p0), new Handle(this, p1), new Handle(this, p2) };
-			if (g.isAt(p0)) {
+			if (g.isAt(p0)) if (gesture.isShiftDown()) {
+				Location p = LineUtil.snapTo8Cardinals(p2, gx, gy);
+				ret[0] = new Handle(this, p);
+			}
+			else ret[0] = new Handle(this, gx, gy);
+			else if (g.isAt(p2)) if (gesture.isShiftDown()) {
+				Location p = LineUtil.snapTo8Cardinals(p0, gx, gy);
+				ret[2] = new Handle(this, p);
+			}
+			else ret[2] = new Handle(this, gx, gy);
+			else if (g.isAt(p1)) {
 				if (gesture.isShiftDown()) {
-					Location p = LineUtil.snapTo8Cardinals(p2, gx, gy);
-					ret[0] = new Handle(this, p);
-				} else {
-					ret[0] = new Handle(this, gx, gy);
-				}
-			} else if (g.isAt(p2)) {
-				if (gesture.isShiftDown()) {
-					Location p = LineUtil.snapTo8Cardinals(p0, gx, gy);
-					ret[2] = new Handle(this, p);
-				} else {
-					ret[2] = new Handle(this, gx, gy);
-				}
-			} else if (g.isAt(p1)) {
-				if (gesture.isShiftDown()) {
-					double x0 = p0.getX();
-					double y0 = p0.getY();
-					double x1 = p2.getX();
-					double y1 = p2.getY();
+					double x0 = p0.x();
+					double y0 = p0.y();
+					double x1 = p2.x();
+					double y1 = p2.y();
 					double midx = (x0 + x1) / 2;
 					double midy = (y0 + y1) / 2;
 					double dx = x1 - x0;
@@ -176,8 +157,8 @@ public class Curve extends FillableCanvasObject {
 					gy = (int) Math.round(p[1]);
 				}
 				if (gesture.isAltDown()) {
-					double[] e0 = { p0.getX(), p0.getY() };
-					double[] e1 = { p2.getX(), p2.getY() };
+					double[] e0 = { p0.x(), p0.y() };
+					double[] e1 = { p2.x(), p2.y() };
 					double[] mid = { gx, gy };
 					double[] ct = CurveUtil.interpolate(e0, e1, mid);
 					gx = (int) Math.round(ct[0]);
@@ -197,32 +178,18 @@ public class Curve extends FillableCanvasObject {
 	@Override
 	public Handle moveHandle(HandleGesture gesture) {
 		Handle[] hs = getHandleArray(gesture);
-		Handle ret = null;
-		if (!hs[0].equals(p0)) {
-			p0 = hs[0].getLocation();
-			ret = hs[0];
-		}
-		if (!hs[1].equals(p1)) {
-			p1 = hs[1].getLocation();
-			ret = hs[1];
-		}
-		if (!hs[2].equals(p2)) {
-			p2 = hs[2].getLocation();
-			ret = hs[2];
-		}
+		p0 = hs[0].getLocation();
+		p1 = hs[1].getLocation();
+		p2 = hs[2].getLocation();
 		bounds = CurveUtil.getBounds(toArray(p0), toArray(p1), toArray(p2));
-		return ret;
+		return hs[2];
 	}
 
 	@Override
 	public void paint(Graphics g, HandleGesture gesture) {
 		QuadCurve2D curve = getCurve(gesture);
-		if (setForFill(g)) {
-			((Graphics2D) g).fill(curve);
-		}
-		if (setForStroke(g)) {
-			((Graphics2D) g).draw(curve);
-		}
+		if (setForFill(g)) ((Graphics2D) g).fill(curve);
+		if (setForStroke(g)) ((Graphics2D) g).draw(curve);
 	}
 
 	private QuadCurve2D getCurve(HandleGesture gesture) {
@@ -231,6 +198,6 @@ public class Curve extends FillableCanvasObject {
 	}
 
 	private static double[] toArray(Location loc) {
-		return new double[] { loc.getX(), loc.getY() };
+		return new double[] { loc.x(), loc.y() };
 	}
 }

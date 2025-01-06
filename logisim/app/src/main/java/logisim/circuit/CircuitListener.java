@@ -4,5 +4,5 @@
 package logisim.circuit;
 
 public interface CircuitListener {
-	public void circuitChanged(CircuitEvent event);
+	void circuitChanged(CircuitEvent event);
 }

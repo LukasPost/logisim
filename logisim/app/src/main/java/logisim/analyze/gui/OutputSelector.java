@@ -44,32 +44,25 @@ class OutputSelector {
 			case VariableListEvent.ALL_REPLACED:
 				computePrototypeValue();
 				fireContentsChanged(this, 0, getSize());
-				if (source.isEmpty()) {
-					select.setSelectedItem(null);
-				} else {
-					select.setSelectedItem(source.get(0));
-				}
+				if (source.isEmpty()) select.setSelectedItem(null);
+				else select.setSelectedItem(source.get(0));
 				break;
 			case VariableListEvent.ADD:
 				variable = event.getVariable();
-				if (prototypeValue == null || variable.length() > prototypeValue.length()) {
-					computePrototypeValue();
-				}
+				if (prototypeValue == null || variable.length() > prototypeValue.length()) computePrototypeValue();
 
 				index = source.indexOf(variable);
 				fireIntervalAdded(this, index, index);
-				if (select.getSelectedItem() == null) {
-					select.setSelectedItem(variable);
-				}
+				if (select.getSelectedItem() == null) select.setSelectedItem(variable);
 				break;
 			case VariableListEvent.REMOVE:
 				variable = event.getVariable();
 				if (variable.equals(prototypeValue))
 					computePrototypeValue();
-				index = ((Integer) event.getData()).intValue();
+				index = (Integer) event.getData();
 				fireIntervalRemoved(this, index, index);
 				selection = select.getSelectedItem();
-				if (selection != null && selection.equals(variable)) {
+				if (variable.equals(selection)) {
 					selection = source.isEmpty() ? null : source.get(0);
 					select.setSelectedItem(selection);
 				}
@@ -81,12 +74,10 @@ class OutputSelector {
 				variable = event.getVariable();
 				if (variable.equals(prototypeValue))
 					computePrototypeValue();
-				index = ((Integer) event.getData()).intValue();
+				index = (Integer) event.getData();
 				fireContentsChanged(this, index, index);
 				selection = select.getSelectedItem();
-				if (selection != null && selection.equals(variable)) {
-					select.setSelectedItem(event.getSource().get(index));
-				}
+				if (variable.equals(selection)) select.setSelectedItem(event.getSource().get(index));
 				break;
 			}
 		}
@@ -95,10 +86,10 @@ class OutputSelector {
 	private VariableList source;
 	private JLabel label = new JLabel();
 	private JComboBox<String> select = new JComboBox<>();
-	private String prototypeValue = null;
+	private String prototypeValue;
 
 	public OutputSelector(AnalyzerModel model) {
-		this.source = model.getOutputs();
+		source = model.getOutputs();
 
 		Model listModel = new Model();
 		select.setModel(listModel);
@@ -135,11 +126,8 @@ class OutputSelector {
 	public String getSelectedOutput() {
 		String value = (String) select.getSelectedItem();
 		if (value != null && !source.contains(value)) {
-			if (source.isEmpty()) {
-				value = null;
-			} else {
-				value = source.get(0);
-			}
+			if (source.isEmpty()) value = null;
+			else value = source.get(0);
 			select.setSelectedItem(value);
 		}
 		return value;
@@ -147,9 +135,8 @@ class OutputSelector {
 
 	private void computePrototypeValue() {
 		String newValue;
-		if (source.isEmpty()) {
-			newValue = "xx";
-		} else {
+		if (source.isEmpty()) newValue = "xx";
+		else {
 			newValue = "xx";
 			for (int i = 0, n = source.size(); i < n; i++) {
 				String candidate = source.get(i);

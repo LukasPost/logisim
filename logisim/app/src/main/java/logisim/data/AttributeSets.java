@@ -61,13 +61,9 @@ public class AttributeSets {
 	}
 
 	public static AttributeSet fixedSet(Attribute<?>[] attrs, Object[] initValues) {
-		if (attrs.length > 1) {
-			return new FixedSet(attrs, initValues);
-		} else if (attrs.length == 1) {
-			return new SingletonSet(attrs[0], initValues[0]);
-		} else {
-			return EMPTY;
-		}
+		if (attrs.length > 1) return new FixedSet(attrs, initValues);
+		else if (attrs.length == 1) return new SingletonSet(attrs[0], initValues[0]);
+		else return EMPTY;
 	}
 
 	public static void copy(AttributeSet src, AttributeSet dst) {
@@ -84,20 +80,20 @@ public class AttributeSets {
 	private static class SingletonSet extends AbstractAttributeSet {
 		private List<Attribute<?>> attrs;
 		private Object value;
-		private boolean readOnly = false;
+		private boolean readOnly;
 
 		SingletonSet(Attribute<?> attr, Object initValue) {
-			this.attrs = new ArrayList<Attribute<?>>(1);
-			this.attrs.add(attr);
-			this.value = initValue;
+			attrs = new ArrayList<>(1);
+			attrs.add(attr);
+			value = initValue;
 		}
 
 		@Override
 		protected void copyInto(AbstractAttributeSet destSet) {
 			SingletonSet dest = (SingletonSet) destSet;
-			dest.attrs = this.attrs;
-			dest.value = this.value;
-			dest.readOnly = this.readOnly;
+			dest.attrs = attrs;
+			dest.value = value;
+			dest.readOnly = readOnly;
 		}
 
 		@Override
@@ -141,25 +137,22 @@ public class AttributeSets {
 	private static class FixedSet extends AbstractAttributeSet {
 		private List<Attribute<?>> attrs;
 		private Object[] values;
-		private int readOnly = 0;
+		private int readOnly;
 
 		FixedSet(Attribute<?>[] attrs, Object[] initValues) {
-			if (attrs.length != initValues.length) {
+			if (attrs.length != initValues.length)
 				throw new IllegalArgumentException("attribute and value arrays must have same length");
-			}
-			if (attrs.length > 32) {
-				throw new IllegalArgumentException("cannot handle more than 32 attributes");
-			}
+			if (attrs.length > 32) throw new IllegalArgumentException("cannot handle more than 32 attributes");
 			this.attrs = Arrays.asList(attrs);
-			this.values = initValues.clone();
+			values = initValues.clone();
 		}
 
 		@Override
 		protected void copyInto(AbstractAttributeSet destSet) {
 			FixedSet dest = (FixedSet) destSet;
-			dest.attrs = this.attrs;
-			dest.values = this.values.clone();
-			dest.readOnly = this.readOnly;
+			dest.attrs = attrs;
+			dest.values = values.clone();
+			dest.readOnly = readOnly;
 		}
 
 		@Override
@@ -170,9 +163,7 @@ public class AttributeSets {
 		@Override
 		public boolean isReadOnly(Attribute<?> attr) {
 			int index = attrs.indexOf(attr);
-			if (index < 0)
-				return true;
-			return isReadOnly(index);
+			return index < 0 || isReadOnly(index);
 		}
 
 		@Override
@@ -190,9 +181,8 @@ public class AttributeSets {
 		@Override
 		public <V> V getValue(Attribute<V> attr) {
 			int index = attrs.indexOf(attr);
-			if (index < 0) {
-				return null;
-			} else {
+			if (index < 0) return null;
+			else {
 				@SuppressWarnings("unchecked")
 				V ret = (V) values[index];
 				return ret;

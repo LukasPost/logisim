@@ -19,7 +19,7 @@ class XmlReaderException extends Exception {
 
 	@Override
 	public String getMessage() {
-		return messages.get(0);
+		return messages.getFirst();
 	}
 
 	public List<String> getMessages() {

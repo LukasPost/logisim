@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -38,27 +37,21 @@ public class SelectionActions {
 	}
 
 	public static Action drop(Selection sel, Collection<Component> comps) {
-		HashSet<Component> floating = new HashSet<Component>(sel.getFloatingComponents());
-		HashSet<Component> anchored = new HashSet<Component>(sel.getAnchoredComponents());
-		ArrayList<Component> toDrop = new ArrayList<Component>();
-		ArrayList<Component> toIgnore = new ArrayList<Component>();
-		for (Component comp : comps) {
-			if (floating.contains(comp)) {
-				toDrop.add(comp);
-			} else if (anchored.contains(comp)) {
+		HashSet<Component> floating = new HashSet<>(sel.getFloatingComponents());
+		HashSet<Component> anchored = new HashSet<>(sel.getAnchoredComponents());
+		ArrayList<Component> toDrop = new ArrayList<>();
+		ArrayList<Component> toIgnore = new ArrayList<>();
+		for (Component comp : comps)
+			if (floating.contains(comp)) toDrop.add(comp);
+			else if (anchored.contains(comp)) {
 				toDrop.add(comp);
 				toIgnore.add(comp);
 			}
-		}
 		int numDrop = toDrop.size() - toIgnore.size();
 		if (numDrop == 0) {
-			for (Component comp : toIgnore) {
-				sel.remove(null, comp);
-			}
+			for (Component comp : toIgnore) sel.remove(null, comp);
 			return null;
-		} else {
-			return new Drop(sel, toDrop, numDrop);
-		}
+		} else return new Drop(sel, toDrop, numDrop);
 	}
 
 	public static Action dropAll(Selection sel) {
@@ -99,10 +92,10 @@ public class SelectionActions {
 
 		Drop(Selection sel, Collection<Component> toDrop, int numDrops) {
 			this.sel = sel;
-			this.drops = new Component[toDrop.size()];
-			toDrop.toArray(this.drops);
+			drops = new Component[toDrop.size()];
+			toDrop.toArray(drops);
 			this.numDrops = numDrops;
-			this.before = SelectionSave.create(sel);
+			before = SelectionSave.create(sel);
 		}
 
 		@Override
@@ -114,9 +107,7 @@ public class SelectionActions {
 		public void doIt(Project proj) {
 			Circuit circuit = proj.getCurrentCircuit();
 			CircuitMutation xn = new CircuitMutation(circuit);
-			for (Component comp : drops) {
-				sel.remove(xn, comp);
-			}
+			for (Component comp : drops) sel.remove(xn, comp);
 			CircuitTransactionResult result = xn.execute();
 			xnReverse = result.getReverseTransaction();
 		}
@@ -135,12 +126,9 @@ public class SelectionActions {
 				last = other;
 
 			SelectionSave otherAfter = null;
-			if (last instanceof Paste) {
-				otherAfter = ((Paste) last).after;
-			} else if (last instanceof Duplicate) {
-				otherAfter = ((Duplicate) last).after;
-			}
-			return otherAfter != null && otherAfter.equals(this.before);
+			if (last instanceof Paste) otherAfter = ((Paste) last).after;
+			else if (last instanceof Duplicate) otherAfter = ((Duplicate) last).after;
+			return otherAfter != null && otherAfter.equals(before);
 		}
 	}
 
@@ -261,54 +249,43 @@ public class SelectionActions {
 	}
 
 	private static HashMap<Component, Component> getReplacementMap(Project proj) {
-		HashMap<Component, Component> replMap;
-		replMap = new HashMap<Component, Component>();
+		HashMap<Component, Component> replMap = new HashMap<>();
 
 		LogisimFile file = proj.getLogisimFile();
-		ArrayList<Library> libs = new ArrayList<Library>();
+		ArrayList<Library> libs = new ArrayList<>();
 		libs.add(file);
 		libs.addAll(file.getLibraries());
 
 		ArrayList<String> dropped = null;
 		Clipboard clip = Clipboard.get();
 		Collection<Component> comps = clip.getComponents();
-		HashMap<ComponentFactory, ComponentFactory> factoryReplacements;
-		factoryReplacements = new HashMap<ComponentFactory, ComponentFactory>();
+		HashMap<ComponentFactory, ComponentFactory> factoryReplacements = new HashMap<>();
 		for (Component comp : comps) {
 			if (comp instanceof Wire)
 				continue;
 
 			ComponentFactory compFactory = comp.getFactory();
 			ComponentFactory copyFactory = findComponentFactory(compFactory, libs, false);
-			if (factoryReplacements.containsKey(compFactory)) {
-				copyFactory = factoryReplacements.get(compFactory);
-			} else if (copyFactory == null) {
+			if (factoryReplacements.containsKey(compFactory)) copyFactory = factoryReplacements.get(compFactory);
+			else if (copyFactory == null) {
 				ComponentFactory candidate = findComponentFactory(compFactory, libs, true);
 				if (candidate == null) {
-					if (dropped == null) {
-						dropped = new ArrayList<String>();
-					}
+					if (dropped == null) dropped = new ArrayList<>();
 					dropped.add(compFactory.getDisplayName());
 				} else {
 					String msg = Strings.get("pasteCloneQuery", compFactory.getName());
 					Object[] opts = { Strings.get("pasteCloneReplace"), Strings.get("pasteCloneIgnore"),
 							Strings.get("pasteCloneCancel") };
-					int select = JOptionPane.showOptionDialog(proj.getFrame(), msg, Strings.get("pasteCloneTitle"), 0,
+					int select = JOptionPane.showOptionDialog(proj.getFrame(), msg, Strings.get("pasteCloneTitle"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, opts, opts[0]);
-					if (select == 0) {
-						copyFactory = candidate;
-					} else if (select == 1) {
-						copyFactory = null;
-					} else {
-						return null;
-					}
+					if (select == 0) copyFactory = candidate;
+					else return null;
 					factoryReplacements.put(compFactory, copyFactory);
 				}
 			}
 
-			if (copyFactory == null) {
-				replMap.put(comp, null);
-			} else if (copyFactory != compFactory) {
+			if (copyFactory == null) replMap.put(comp, null);
+			else if (copyFactory != compFactory) {
 				Location copyLoc = comp.getLocation();
 				AttributeSet copyAttrs = (AttributeSet) comp.getAttributeSet().clone();
 				Component copy = copyFactory.createComponent(copyLoc, copyAttrs);
@@ -320,20 +297,17 @@ public class SelectionActions {
 			Collections.sort(dropped);
 			StringBuilder droppedStr = new StringBuilder();
 			droppedStr.append(Strings.get("pasteDropMessage"));
-			String curName = dropped.get(0);
+			String curName = dropped.getFirst();
 			int curCount = 1;
 			int lines = 1;
 			for (int i = 1; i <= dropped.size(); i++) {
 				String nextName = i == dropped.size() ? "" : dropped.get(i);
-				if (nextName.equals(curName)) {
-					curCount++;
-				} else {
+				if (nextName.equals(curName)) curCount++;
+				else {
 					lines++;
 					droppedStr.append("\n  ");
 					droppedStr.append(curName);
-					if (curCount > 1) {
-						droppedStr.append(" \u00d7 " + curCount);
-					}
+					if (curCount > 1) droppedStr.append(" × ").append(curCount);
 
 					curName = nextName;
 					curCount = 1;
@@ -356,23 +330,15 @@ public class SelectionActions {
 	private static ComponentFactory findComponentFactory(ComponentFactory factory, ArrayList<Library> libs,
 			boolean acceptNameMatch) {
 		String name = factory.getName();
-		for (Library lib : libs) {
-			for (Tool tool : lib.getTools()) {
-				if (tool instanceof AddTool) {
-					AddTool addTool = (AddTool) tool;
-					if (name.equals(addTool.getName())) {
-						ComponentFactory fact = addTool.getFactory(true);
-						if (acceptNameMatch) {
-							return fact;
-						} else if (fact == factory) {
-							return fact;
-						} else if (fact.getClass() == factory.getClass() && !(fact instanceof SubcircuitFactory)) {
-							return fact;
-						}
-					}
+		for (Library lib : libs)
+			for (Tool tool : lib.getTools())
+				if (tool instanceof AddTool addTool) if (name.equals(addTool.getName())) {
+					ComponentFactory fact = addTool.getFactory(true);
+					if (acceptNameMatch) return fact;
+					else if (fact == factory) return fact;
+					else if (fact.getClass() == factory.getClass() && !(fact instanceof SubcircuitFactory))
+						return fact;
 				}
-			}
-		}
 		return null;
 	}
 
@@ -384,7 +350,7 @@ public class SelectionActions {
 
 		Paste(Selection sel, HashMap<Component, Component> replacements) {
 			this.sel = sel;
-			this.componentReplacements = replacements;
+			componentReplacements = replacements;
 		}
 
 		@Override
@@ -399,38 +365,29 @@ public class SelectionActions {
 			CircuitMutation xn = new CircuitMutation(circuit);
 			Collection<Component> comps = clip.getComponents();
 			Collection<Component> toAdd = computeAdditions(comps);
-			if (toAdd.size() > 0) {
+			if (!toAdd.isEmpty()) {
 				sel.pasteHelper(xn, toAdd);
 				CircuitTransactionResult result = xn.execute();
 				xnReverse = result.getReverseTransaction();
 				after = SelectionSave.create(sel);
-			} else {
-				xnReverse = null;
-			}
+			} else xnReverse = null;
 		}
 
 		private Collection<Component> computeAdditions(Collection<Component> comps) {
 			HashMap<Component, Component> replMap = componentReplacements;
-			ArrayList<Component> toAdd = new ArrayList<Component>(comps.size());
-			for (Iterator<Component> it = comps.iterator(); it.hasNext();) {
-				Component comp = it.next();
+			ArrayList<Component> toAdd = new ArrayList<>(comps.size());
+			for (Component comp : comps)
 				if (replMap.containsKey(comp)) {
 					Component repl = replMap.get(comp);
-					if (repl != null) {
-						toAdd.add(repl);
-					}
-				} else {
-					toAdd.add(comp);
+					if (repl != null) toAdd.add(repl);
 				}
-			}
+				else toAdd.add(comp);
 			return toAdd;
 		}
 
 		@Override
 		public void undo(Project proj) {
-			if (xnReverse != null) {
-				xnReverse.execute();
-			}
+			if (xnReverse != null) xnReverse.execute();
 		}
 	}
 
@@ -447,7 +404,7 @@ public class SelectionActions {
 			this.dx = dx;
 			this.dy = dy;
 			this.replacements = replacements;
-			this.before = SelectionSave.create(sel);
+			before = SelectionSave.create(sel);
 		}
 
 		@Override
@@ -461,9 +418,7 @@ public class SelectionActions {
 			CircuitMutation xn = new CircuitMutation(circuit);
 
 			sel.translateHelper(xn, dx, dy);
-			if (replacements != null) {
-				xn.replace(replacements);
-			}
+			if (replacements != null) xn.replace(replacements);
 
 			CircuitTransactionResult result = xn.execute();
 			xnReverse = result.getReverseTransaction();
@@ -483,12 +438,9 @@ public class SelectionActions {
 				last = other;
 
 			SelectionSave otherAfter = null;
-			if (last instanceof Paste) {
-				otherAfter = ((Paste) last).after;
-			} else if (last instanceof Duplicate) {
-				otherAfter = ((Duplicate) last).after;
-			}
-			return otherAfter != null && otherAfter.equals(this.before);
+			if (last instanceof Paste) otherAfter = ((Paste) last).after;
+			else if (last instanceof Duplicate) otherAfter = ((Duplicate) last).after;
+			return otherAfter != null && otherAfter.equals(before);
 		}
 	}
 }

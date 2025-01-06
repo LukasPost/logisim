@@ -49,9 +49,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 			ps[0] = new Port(-40, 0, Port.INPUT, 1);
 			ps[1] = new Port(-40, 20, Port.INPUT, 1);
 			ps[2] = new Port(-40, 10, Port.INPUT, 1);
-		} else {
-			throw new RuntimeException("flip-flop input > 2");
-		}
+		} else throw new RuntimeException("flip-flop input > 2");
 		ps[numInputs + 1] = new Port(0, 0, Port.OUTPUT, 1);
 		ps[numInputs + 2] = new Port(0, 20, Port.OUTPUT, 1);
 		ps[numInputs + 3] = new Port(-10, 30, Port.INPUT, 1);
@@ -102,12 +100,10 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 		else if (triggered && state.getPort(n + 5) != Value.FALSE) {
 			// Clock has triggered and flip-flop is enabled: Update the state
 			Value[] inputs = new Value[n];
-			for (int i = 0; i < n; i++) 
-				inputs[i] = state.getPort(i);
+			for (int i = 0; i < n; i++) inputs[i] = state.getPort(i);
 
 			Value newVal = computeValue(inputs, data.curValue);
-			if (newVal == Value.TRUE || newVal == Value.FALSE) 
-				data.curValue = newVal;
+			if (newVal == Value.TRUE || newVal == Value.FALSE) data.curValue = newVal;
 		}
 
 		state.setPort(n + 1, data.curValue, Memory.DELAY);
@@ -123,8 +119,8 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 			Location loc = painter.getLocation();
 			StateData myState = (StateData) painter.getData();
 			if (myState != null) {
-				int x = loc.getX();
-				int y = loc.getY();
+				int x = loc.x();
+				int y = loc.y();
 				g.setColor(myState.curValue.getColor());
 				g.fillOval(x - 26, y + 4, 13, 13);
 				g.setColor(Color.WHITE);
@@ -139,9 +135,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 		painter.drawPort(n + 4, "1", Direction.South);
 		painter.drawPort(n + 5, Strings.get("memEnableLabel"), Direction.South);
 		g.setColor(Color.BLACK);
-		for (int i = 0; i < n; i++) {
-			painter.drawPort(i, getInputName(i), Direction.East);
-		}
+		for (int i = 0; i < n; i++) painter.drawPort(i, getInputName(i), Direction.East);
 		painter.drawClock(n, Direction.East);
 		painter.drawPort(n + 1, "Q", Direction.West);
 		painter.drawPort(n + 2);
@@ -155,7 +149,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 		@Override
 		public String getLogName(InstanceState state, Object option) {
 			String ret = state.getAttributeValue(StdAttr.LABEL);
-			return ret != null && !ret.equals("") ? ret : null;
+			return ret != null && !ret.isEmpty() ? ret : null;
 		}
 
 		@Override
@@ -177,8 +171,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 		public void mouseReleased(InstanceState state, MouseEvent e) {
 			if (isPressed && isInside(state, e)) {
 				StateData myState = (StateData) state.getData();
-				if (myState == null)
-					return;
+				if (myState == null) return;
 
 				myState.curValue = myState.curValue.not();
 				state.fireInvalidated();
@@ -188,8 +181,8 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
 		private boolean isInside(InstanceState state, MouseEvent e) {
 			Location loc = state.getInstance().getLocation();
-			int dx = e.getX() - (loc.getX() - 20);
-			int dy = e.getY() - (loc.getY() + 10);
+			int dx = e.getX() - (loc.x() - 20);
+			int dy = e.getY() - (loc.y() + 10);
 			int d2 = dx * dx + dy * dy;
 			return d2 < 8 * 8;
 		}

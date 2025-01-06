@@ -7,9 +7,9 @@ public enum Direction implements AttributeOptionInterface {
 
 	East(0), North(1), West(2), South(3);
 
-	private int id;
+	private final int id;
 
-	private Direction(int id) {
+	Direction(int id) {
 		this.id = id;
 	}
 
@@ -32,14 +32,14 @@ public enum Direction implements AttributeOptionInterface {
 		return cardinals[x];
 	}
 
-	private static String[] displayStrings = { Strings.get("directionEastOption"), Strings.get("directionNorthOption"),
+	private static final String[] displayStrings = { Strings.get("directionEastOption"), Strings.get("directionNorthOption"),
 			Strings.get("directionWestOption"), Strings.get("directionSouthOption") };
 
 	public String toDisplayString() {
 		return displayStrings[id];
 	}
 
-	private static String[] displayStringsVertical = { Strings.get("directionEastVertical"),
+	private static final String[] displayStringsVertical = { Strings.get("directionEastVertical"),
 			Strings.get("directionNorthVertical"), Strings.get("directionWestVertical"),
 			Strings.get("directionSouthVertical") };
 

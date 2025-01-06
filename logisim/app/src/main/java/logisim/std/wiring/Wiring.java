@@ -4,6 +4,7 @@
 package logisim.std.wiring;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import logisim.circuit.SplitterFactory;
@@ -36,7 +37,7 @@ public class Wiring extends Library {
 			new FactoryDescription("Bit Extender", Strings.getter("extenderComponent"), "extender.gif",
 					"BitExtender"), };
 
-	private List<Tool> tools = null;
+	private List<Tool> tools;
 
 	public Wiring() {
 	}
@@ -54,10 +55,8 @@ public class Wiring extends Library {
 	@Override
 	public List<Tool> getTools() {
 		if (tools == null) {
-			List<Tool> ret = new ArrayList<Tool>(ADD_TOOLS.length + DESCRIPTIONS.length);
-			for (Tool a : ADD_TOOLS) {
-				ret.add(a);
-			}
+			List<Tool> ret = new ArrayList<>(ADD_TOOLS.length + DESCRIPTIONS.length);
+			Collections.addAll(ret, ADD_TOOLS);
 			ret.addAll(FactoryDescription.getTools(Wiring.class, DESCRIPTIONS));
 			tools = ret;
 		}

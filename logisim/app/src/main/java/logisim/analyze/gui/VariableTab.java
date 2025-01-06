@@ -72,16 +72,15 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 				fireIntervalAdded(this, index, index);
 				return;
 			case VariableListEvent.REMOVE:
-				index = ((Integer) event.getData()).intValue();
+				index = (Integer) event.getData();
 				fireIntervalRemoved(this, index, index);
 				return;
 			case VariableListEvent.MOVE:
 				fireContentsChanged(this, 0, getSize());
 				return;
 			case VariableListEvent.REPLACE:
-				index = ((Integer) event.getData()).intValue();
+				index = (Integer) event.getData();
 				fireContentsChanged(this, index, index);
-				return;
 			}
 		}
 	}
@@ -91,34 +90,32 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 			Object src = event.getSource();
 			if ((src == add || src == field) && add.isEnabled()) {
 				String name = field.getText().trim();
-				if (!name.equals("")) {
+				if (!name.isEmpty()) {
 					data.add(name);
-					if (data.contains(name)) {
-						list.setSelectedValue(name, true);
-					}
+					if (data.contains(name)) list.setSelectedValue(name, true);
 					field.setText("");
 					field.grabFocus();
 				}
 			} else if (src == rename) {
-				String oldName = (String) list.getSelectedValue();
+				String oldName = list.getSelectedValue();
 				String newName = field.getText().trim();
-				if (oldName != null && !newName.equals("")) {
+				if (oldName != null && !newName.isEmpty()) {
 					data.replace(oldName, newName);
 					field.setText("");
 					field.grabFocus();
 				}
 			} else if (src == remove) {
-				String name = (String) list.getSelectedValue();
+				String name = list.getSelectedValue();
 				if (name != null)
 					data.remove(name);
 			} else if (src == moveUp) {
-				String name = (String) list.getSelectedValue();
+				String name = list.getSelectedValue();
 				if (name != null) {
 					data.move(name, -1);
 					list.setSelectedValue(name, true);
 				}
 			} else if (src == moveDown) {
-				String name = (String) list.getSelectedValue();
+				String name = list.getSelectedValue();
 				if (name != null) {
 					data.move(name, 1);
 					list.setSelectedValue(name, true);
@@ -144,7 +141,6 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 	}
 
 	private VariableList data;
-	private MyListener myListener = new MyListener();
 
 	private JList<String> list = new JList<>();
 	private JTextField field = new JTextField();
@@ -160,6 +156,7 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 
 		list.setModel(new VariableListModel(data));
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		MyListener myListener = new MyListener();
 		list.addListSelectionListener(myListener);
 		remove.addActionListener(myListener);
 		moveUp.addActionListener(myListener);
@@ -222,7 +219,6 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 		computeEnabled();
 	}
 
-	@Override
 	void localeChanged() {
 		remove.setText(Strings.get("variableRemoveButton"));
 		moveUp.setText(Strings.get("variableMoveUpButton"));
@@ -248,7 +244,7 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 		boolean selected = index >= 0 && index < max;
 		remove.setEnabled(selected);
 		moveUp.setEnabled(selected && index > 0);
-		moveDown.setEnabled(selected && index < max);
+		moveDown.setEnabled(selected);
 
 		boolean ok = validateInput();
 		add.setEnabled(ok && data.size() < data.getMaximumSize());
@@ -259,37 +255,29 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 		String text = field.getText().trim();
 		boolean ok = true;
 		boolean errorShown = true;
-		if (text.length() == 0) {
+		if (text.isEmpty()) {
 			errorShown = false;
 			ok = false;
 		} else if (!Character.isJavaIdentifierStart(text.charAt(0))) {
 			error.setText(Strings.get("variableStartError"));
 			ok = false;
-		} else {
-			for (int i = 1; i < text.length() && ok; i++) {
-				char c = text.charAt(i);
-				if (!Character.isJavaIdentifierPart(c)) {
-					error.setText(StringUtil.format(Strings.get("variablePartError"), "" + c));
-					ok = false;
-				}
+		} else for (int i = 1; i < text.length() && ok; i++) {
+			char c = text.charAt(i);
+			if (!Character.isJavaIdentifierPart(c)) {
+				error.setText(StringUtil.format(Strings.get("variablePartError"), "" + c));
+				ok = false;
 			}
 		}
-		if (ok) {
-			for (int i = 0, n = data.size(); i < n && ok; i++) {
-				String other = data.get(i);
-				if (text.equals(other)) {
-					error.setText(Strings.get("variableDuplicateError"));
-					ok = false;
-				}
+		if (ok) for (int i = 0, n = data.size(); i < n && ok; i++) {
+			String other = data.get(i);
+			if (text.equals(other)) {
+				error.setText(Strings.get("variableDuplicateError"));
+				ok = false;
 			}
 		}
-		if (ok || !errorShown) {
-			if (data.size() >= data.getMaximumSize()) {
-				error.setText(StringUtil.format(Strings.get("variableMaximumError"), "" + data.getMaximumSize()));
-			} else {
-				error.setText(" ");
-			}
-		}
+		if (ok || !errorShown) if (data.size() >= data.getMaximumSize())
+			error.setText(StringUtil.format(Strings.get("variableMaximumError"), "" + data.getMaximumSize()));
+		else error.setText(" ");
 		return ok;
 	}
 

@@ -4,13 +4,13 @@
 package logisim.circuit;
 
 public class CircuitEvent {
-	public final static int ACTION_SET_NAME = 0; // name changed
-	public final static int ACTION_ADD = 1; // component added
-	public final static int ACTION_REMOVE = 2; // component removed
-	public final static int ACTION_CHANGE = 3; // component changed
-	public final static int ACTION_INVALIDATE = 4; // component invalidated (pin types changed)
-	public final static int ACTION_CLEAR = 5; // entire circuit cleared
-	public final static int TRANSACTION_DONE = 6;
+	public static final int ACTION_SET_NAME = 0; // name changed
+	public static final int ACTION_ADD = 1; // component added
+	public static final int ACTION_REMOVE = 2; // component removed
+	public static final int ACTION_CHANGE = 3; // component changed
+	public static final int ACTION_INVALIDATE = 4; // component invalidated (pin types changed)
+	public static final int ACTION_CLEAR = 5; // entire circuit cleared
+	public static final int TRANSACTION_DONE = 6;
 
 	private int action;
 	private Circuit circuit;

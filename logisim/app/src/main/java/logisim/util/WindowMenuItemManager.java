@@ -17,9 +17,7 @@ public abstract class WindowMenuItemManager {
 
 		public void windowClosing(WindowEvent event) {
 			JFrame frame = getJFrame(false);
-			if (frame.getDefaultCloseOperation() == JFrame.HIDE_ON_CLOSE) {
-				removeFromManager();
-			}
+			if (frame.getDefaultCloseOperation() == JFrame.HIDE_ON_CLOSE) removeFromManager();
 		}
 
 		public void windowClosed(WindowEvent event) {
@@ -47,16 +45,14 @@ public abstract class WindowMenuItemManager {
 	private MyListener myListener = new MyListener();
 	private String text;
 	private boolean persistent;
-	private boolean listenerAdded = false;
-	private boolean inManager = false;
-	private HashMap<WindowMenu, JRadioButtonMenuItem> menuItems = new HashMap<WindowMenu, JRadioButtonMenuItem>();
+	private boolean listenerAdded;
+	private boolean inManager;
+	private HashMap<WindowMenu, JRadioButtonMenuItem> menuItems = new HashMap<>();
 
 	public WindowMenuItemManager(String text, boolean persistent) {
 		this.text = text;
 		this.persistent = persistent;
-		if (persistent) {
-			WindowMenuManager.addManager(this);
-		}
+		if (persistent) WindowMenuManager.addManager(this);
 	}
 
 	public abstract JFrame getJFrame(boolean create);
@@ -92,7 +88,7 @@ public abstract class WindowMenuItemManager {
 			inManager = false;
 			for (WindowMenu menu : WindowMenuManager.getMenus()) {
 				JRadioButtonMenuItem menuItem = menuItems.get(menu);
-				menu.removeMenuItem(this, menuItem);
+				menu.removeMenuItem(menuItem);
 			}
 			WindowMenuManager.removeManager(this);
 		}
@@ -104,9 +100,7 @@ public abstract class WindowMenuItemManager {
 
 	public void setText(String value) {
 		text = value;
-		for (JRadioButtonMenuItem menuItem : menuItems.values()) {
-			menuItem.setText(text);
-		}
+		for (JRadioButtonMenuItem menuItem : menuItems.values()) menuItem.setText(text);
 	}
 
 	JRadioButtonMenuItem getMenuItem(WindowMenu key) {
@@ -116,18 +110,16 @@ public abstract class WindowMenuItemManager {
 	void createMenuItem(WindowMenu menu) {
 		WindowMenuItem ret = new WindowMenuItem(this);
 		menuItems.put(menu, ret);
-		menu.addMenuItem(this, ret, persistent);
+		menu.addMenuItem(ret, persistent);
 	}
 
 	void removeMenuItem(WindowMenu menu) {
 		JRadioButtonMenuItem item = menuItems.remove(menu);
 		if (item != null)
-			menu.removeMenuItem(this, item);
+			menu.removeMenuItem(item);
 	}
 
 	void setSelected(boolean selected) {
-		for (JRadioButtonMenuItem item : menuItems.values()) {
-			item.setSelected(selected);
-		}
+		for (JRadioButtonMenuItem item : menuItems.values()) item.setSelected(selected);
 	}
 }

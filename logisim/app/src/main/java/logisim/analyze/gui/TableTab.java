@@ -36,7 +36,6 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 		}
 	}
 
-	private MyListener myListener = new MyListener();
 	private TruthTable table;
 	private int cellWidth = 25; // reasonable start values
 	private int cellHeight = 15;
@@ -44,12 +43,13 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 	private int tableHeight;
 	private int provisionalX;
 	private int provisionalY;
-	private Entry provisionalValue = null;
+	private Entry provisionalValue;
 	private TableTabCaret caret;
 	private TableTabClip clip;
 
 	public TableTab(TruthTable table) {
 		this.table = table;
+		MyListener myListener = new MyListener();
 		table.addTruthTableListener(myListener);
 		setToolTipText(" ");
 		caret = new TableTabCaret(this);
@@ -78,7 +78,7 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 		int ret = (x + COLUMN_SEP / 2) / (cellWidth + COLUMN_SEP);
 		if (inputs == 0)
 			ret--;
-		return ret >= 0 ? ret < cols ? ret : cols : -1;
+		return ret >= 0 ? Math.min(ret, cols) : -1;
 	}
 
 	int getColumnCount() {
@@ -101,7 +101,7 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 			return -1;
 		int ret = (y - cellHeight - HEADER_SEP) / cellHeight;
 		int rows = table.getRowCount();
-		return ret >= 0 ? ret < rows ? ret : rows : -1;
+		return ret >= 0 ? Math.min(ret, rows) : -1;
 	}
 
 	public void setEntryProvisional(int y, int x, Entry value) {
@@ -151,20 +151,10 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 		FontMetrics headerMetric = g.getFontMetrics();
 		int x = left;
 		int y = top + headerMetric.getAscent() + 1;
-		if (inputs == 0) {
-			x = paintHeader(Strings.get("tableNullHeader"), x, y, g, headerMetric);
-		} else {
-			for (int i = 0; i < inputs; i++) {
-				x = paintHeader(table.getInputHeader(i), x, y, g, headerMetric);
-			}
-		}
-		if (outputs == 0) {
-			x = paintHeader(Strings.get("tableNullHeader"), x, y, g, headerMetric);
-		} else {
-			for (int i = 0; i < outputs; i++) {
-				x = paintHeader(table.getOutputHeader(i), x, y, g, headerMetric);
-			}
-		}
+		if (inputs == 0) x = paintHeader(Strings.get("tableNullHeader"), x, y, g, headerMetric);
+		else for (int i = 0; i < inputs; i++) x = paintHeader(table.getInputHeader(i), x, y, g, headerMetric);
+		if (outputs == 0) paintHeader(Strings.get("tableNullHeader"), x, y, g, headerMetric);
+		else for (int i = 0; i < outputs; i++) x = paintHeader(table.getOutputHeader(i), x, y, g, headerMetric);
 
 		g.setFont(BODY_FONT);
 		FontMetrics bodyMetric = g.getFontMetrics();
@@ -196,9 +186,7 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 					g.setColor(Color.GREEN);
 					g.drawString(label, x + (cellWidth - width) / 2, y + bodyMetric.getAscent());
 					g.setColor(Color.BLACK);
-				} else {
-					g.drawString(label, x + (cellWidth - width) / 2, y + bodyMetric.getAscent());
-				}
+				} else g.drawString(label, x + (cellWidth - width) / 2, y + bodyMetric.getAscent());
 				x += cellWidth + COLUMN_SEP;
 			}
 			y += cellHeight;
@@ -252,9 +240,8 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 			FontMetrics fm = g.getFontMetrics(HEAD_FONT);
 			cellHeight = fm.getHeight();
 			cellWidth = 24;
-			if (inputs == 0 || outputs == 0) {
+			if (inputs == 0 || outputs == 0)
 				cellWidth = Math.max(cellWidth, fm.stringWidth(Strings.get("tableNullHeader")));
-			}
 			for (int i = 0; i < inputs + outputs; i++) {
 				String header = i < inputs ? table.getInputHeader(i) : table.getOutputHeader(i - inputs);
 				cellWidth = Math.max(cellWidth, fm.stringWidth(header));
@@ -277,11 +264,8 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 			@Override
 			public int getUnitIncrement(int direction) {
 				int curY = getValue();
-				if (direction > 0) {
-					return curY > 0 ? cellHeight : cellHeight + HEADER_SEP;
-				} else {
-					return curY > cellHeight + HEADER_SEP ? cellHeight : cellHeight + HEADER_SEP;
-				}
+				if (direction > 0) return curY > 0 ? cellHeight : cellHeight + HEADER_SEP;
+				else return curY > cellHeight + HEADER_SEP ? cellHeight : cellHeight + HEADER_SEP;
 			}
 
 			@Override
@@ -291,11 +275,9 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 				int numCells = curHeight / cellHeight - 1;
 				if (numCells <= 0)
 					numCells = 1;
-				if (direction > 0) {
-					return curY > 0 ? numCells * cellHeight : numCells * cellHeight + HEADER_SEP;
-				} else {
+				if (direction > 0) return curY > 0 ? numCells * cellHeight : numCells * cellHeight + HEADER_SEP;
+				else
 					return curY > cellHeight + HEADER_SEP ? numCells * cellHeight : numCells * cellHeight + HEADER_SEP;
-				}
 			}
 		};
 	}
@@ -329,13 +311,8 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 			c1 = t;
 		}
 		int inputs = table.getInputColumnCount();
-		for (int c = c0; c <= c1; c++) {
-			if (c >= inputs) {
-				for (int r = r0; r <= r1; r++) {
-					table.setOutputEntry(r, c - inputs, Entry.DONT_CARE);
-				}
-			}
-		}
+		for (int c = c0; c <= c1; c++)
+			if (c >= inputs) for (int r = r0; r <= r1; r++) table.setOutputEntry(r, c - inputs, Entry.DONT_CARE);
 	}
 
 	public void selectAll() {

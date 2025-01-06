@@ -22,6 +22,7 @@ package com.connectina.swing.fontchooser;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -31,7 +32,7 @@ import javax.swing.event.EventListenerList;
  * A generic implementation of <code>FontSelectionModel</code>.
  *
  * @author Christos Bohoris
- * @see java.awt.Font
+ * @see Font
  */
 public class DefaultFontSelectionModel implements FontSelectionModel {
 
@@ -39,7 +40,7 @@ public class DefaultFontSelectionModel implements FontSelectionModel {
      * Only one <code>ChangeEvent</code> is needed per model instance since the event's only (read-only) state is the
      * source property. The source of events generated here is always "this".
      */
-    protected transient ChangeEvent changeEvent = null;
+    protected transient ChangeEvent changeEvent;
 
     /**
      * A list of registered event listeners.
@@ -70,9 +71,7 @@ public class DefaultFontSelectionModel implements FontSelectionModel {
         selectedFont = font;
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         String[] families = ge.getAvailableFontFamilyNames();
-        for (int i = 0; i < families.length; i++) {
-            availableFontNames.add(families[i]);
-        }
+		Collections.addAll(availableFontNames, families);
     }
 
     /**
@@ -135,7 +134,7 @@ public class DefaultFontSelectionModel implements FontSelectionModel {
      * @return all of the <code>ChangeListener</code>s added, or an empty array if no listeners have been added
      */
     public ChangeListener[] getChangeListeners() {
-        return (ChangeListener[]) listenerList.getListeners(ChangeListener.class);
+        return listenerList.getListeners(ChangeListener.class);
     }
 
     /**
@@ -143,14 +142,11 @@ public class DefaultFontSelectionModel implements FontSelectionModel {
      */
     protected void fireStateChanged() {
         Object[] listeners = listenerList.getListenerList();
-        for (int i = listeners.length - 2; i >= 0; i -= 2) {
-            if (listeners[i] == ChangeListener.class) {
-                if (changeEvent == null) {
-                    changeEvent = new ChangeEvent(this);
-                }
-                ((ChangeListener) listeners[i + 1]).stateChanged(changeEvent);
-            }
-        }
+        for (int i = listeners.length - 2; i >= 0; i -= 2)
+			if (listeners[i] == ChangeListener.class) {
+				if (changeEvent == null) changeEvent = new ChangeEvent(this);
+				((ChangeListener) listeners[i + 1]).stateChanged(changeEvent);
+			}
     }
 
 }

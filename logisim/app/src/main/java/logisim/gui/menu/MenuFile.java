@@ -83,7 +83,7 @@ class MenuFile extends Menu implements ActionListener {
 	}
 
 	public void localeChanged() {
-		this.setText(Strings.get("fileMenu"));
+		setText(Strings.get("fileMenu"));
 		newi.setText(Strings.get("fileNewItem"));
 		open.setText(Strings.get("fileOpenItem"));
 		openRecent.localeChanged();
@@ -105,11 +105,9 @@ class MenuFile extends Menu implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Object src = e.getSource();
 		Project proj = menubar.getProject();
-		if (src == newi) {
-			ProjectActions.doNew(proj);
-		} else if (src == open) {
-			ProjectActions.doOpen(proj == null ? null : proj.getFrame().getCanvas(), proj);
-		} else if (src == close) {
+		if (src == newi) ProjectActions.doNew(proj);
+		else if (src == open) ProjectActions.doOpen(proj == null ? null : proj.getFrame().getCanvas(), proj);
+		else if (src == close) {
 			Frame frame = proj.getFrame();
 			if (frame.confirmClose()) {
 				frame.dispose();
@@ -117,14 +115,9 @@ class MenuFile extends Menu implements ActionListener {
 				if (f != null)
 					f.dispose();
 			}
-		} else if (src == save) {
-			ProjectActions.doSave(proj);
-		} else if (src == saveAs) {
-			ProjectActions.doSaveAs(proj);
-		} else if (src == prefs) {
-			PreferencesFrame.showPreferences();
-		} else if (src == quit) {
-			ProjectActions.doQuit();
-		}
+		} else if (src == save) ProjectActions.doSave(proj);
+		else if (src == saveAs) ProjectActions.doSaveAs(proj);
+		else if (src == prefs) PreferencesFrame.showPreferences();
+		else if (src == quit) ProjectActions.doQuit();
 	}
 }

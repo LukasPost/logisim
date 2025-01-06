@@ -50,9 +50,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 			String prop = evt.getPropertyName();
 			if (prop.equals(GridPainter.ZOOM_PROPERTY)) {
 				CanvasTool t = getTool();
-				if (t != null) {
-					t.zoomFactorChanged(AppearanceCanvas.this);
-				}
+				if (t != null) t.zoomFactorChanged(AppearanceCanvas.this);
 			}
 		}
 	}
@@ -68,13 +66,13 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
 	public AppearanceCanvas(CanvasTool selectTool) {
 		this.selectTool = selectTool;
-		this.grid = new GridPainter(this);
-		this.listener = new Listener();
-		this.oldPreferredSize = null;
+		grid = new GridPainter(this);
+		listener = new Listener();
+		oldPreferredSize = null;
 		setSelection(new AppearanceSelection());
 		setTool(selectTool);
 
-		CanvasModel model = super.getModel();
+		CanvasModel model = getModel();
 		if (model != null)
 			model.addCanvasModelListener(listener);
 		grid.addPropertyChangeListener(GridPainter.ZOOM_PROPERTY, listener);
@@ -99,14 +97,10 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
 	@Override
 	public void setModel(CanvasModel value, ActionDispatcher dispatcher) {
-		CanvasModel oldModel = super.getModel();
-		if (oldModel != null) {
-			oldModel.removeCanvasModelListener(listener);
-		}
+		CanvasModel oldModel = getModel();
+		if (oldModel != null) oldModel.removeCanvasModelListener(listener);
 		super.setModel(value, dispatcher);
-		if (value != null) {
-			value.addCanvasModelListener(listener);
-		}
+		if (value != null) value.addCanvasModelListener(listener);
 	}
 
 	public void setCircuit(Project proj, CircuitState circuitState) {
@@ -135,53 +129,34 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 	@Override
 	public void doAction(Action canvasAction) {
 		Circuit circuit = circuitState.getCircuit();
-		if (!proj.getLogisimFile().contains(circuit)) {
-			return;
-		}
+		if (!proj.getLogisimFile().contains(circuit)) return;
 
-		if (canvasAction instanceof ModelReorderAction) {
+		if (canvasAction instanceof ModelReorderAction reorder) {
 			int max = getMaxIndex(getModel());
-			ModelReorderAction reorder = (ModelReorderAction) canvasAction;
 			List<ReorderRequest> rs = reorder.getReorderRequests();
-			List<ReorderRequest> mod = new ArrayList<ReorderRequest>(rs.size());
+			List<ReorderRequest> mod = new ArrayList<>(rs.size());
 			boolean changed = false;
-			boolean movedToMax = false;
 			for (ReorderRequest r : rs) {
 				CanvasObject o = r.getObject();
-				if (o instanceof AppearanceElement) {
+				if (o instanceof AppearanceElement) changed = true;
+				else if (r.getToIndex() > max) {
+					int from = r.getFromIndex();
 					changed = true;
-				} else {
-					if (r.getToIndex() > max) {
-						int from = r.getFromIndex();
-						changed = true;
-						movedToMax = true;
-						if (from == max && !movedToMax) {
-							; // this change is ineffective - don't add it
-						} else {
-							mod.add(new ReorderRequest(o, from, max));
-						}
-					} else {
-						if (r.getToIndex() == max)
-							movedToMax = true;
-						mod.add(r);
-					}
+					mod.add(new ReorderRequest(o, from, max));
 				}
+				else
+					mod.add(r);
 			}
 			if (changed) {
-				if (mod.isEmpty()) {
-					return;
-				}
+				if (mod.isEmpty()) return;
 				canvasAction = new ModelReorderAction(getModel(), mod);
 			}
 		}
 
-		if (canvasAction instanceof ModelAddAction) {
-			ModelAddAction addAction = (ModelAddAction) canvasAction;
+		if (canvasAction instanceof ModelAddAction addAction) {
 			int cur = addAction.getDestinationIndex();
 			int max = getMaxIndex(getModel());
-			if (cur > max) {
-				canvasAction = new ModelAddAction(getModel(), addAction.getObjects(), max + 1);
-			}
+			if (cur > max) canvasAction = new ModelAddAction(getModel(), addAction.getObjects(), max + 1);
 		}
 
 		proj.doAction(new CanvasActionAdapter(circuit, canvasAction));
@@ -194,20 +169,14 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
 	@Override
 	public int snapX(int x) {
-		if (x < 0) {
-			return -((-x + 5) / 10 * 10);
-		} else {
-			return (x + 5) / 10 * 10;
-		}
+		if (x < 0) return -((-x + 5) / 10 * 10);
+		else return (x + 5) / 10 * 10;
 	}
 
 	@Override
 	public int snapY(int y) {
-		if (y < 0) {
-			return -((-y + 5) / 10 * 10);
-		} else {
-			return (y + 5) / 10 * 10;
-		}
+		if (y < 0) return -((-y + 5) / 10 * 10);
+		else return (y + 5) / 10 * 10;
 	}
 
 	@Override
@@ -220,9 +189,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 	protected void paintForeground(Graphics g) {
 		double zoom = grid.getZoomFactor();
 		Graphics gScaled = g.create();
-		if (zoom != 1.0 && zoom != 0.0 && gScaled instanceof Graphics2D) {
-			((Graphics2D) gScaled).scale(zoom, zoom);
-		}
+		if (zoom != 1.0 && zoom != 0.0 && gScaled instanceof Graphics2D) ((Graphics2D) gScaled).scale(zoom, zoom);
 		super.paintForeground(gScaled);
 		gScaled.dispose();
 	}
@@ -266,9 +233,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
 	private void hidePopup() {
 		LayoutPopupManager man = popupManager;
-		if (man != null) {
-			man.hideCurrentPopup();
-		}
+		if (man != null) man.hideCurrentPopup();
 	}
 
 	private void repairEvent(MouseEvent e, double zoom) {
@@ -285,25 +250,17 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 		hidePopup();
 		Bounds bounds;
 		CircuitState circState = circuitState;
-		if (circState == null) {
-			bounds = Bounds.create(0, 0, 50, 50);
-		} else {
-			bounds = circState.getCircuit().getAppearance().getAbsoluteBounds();
-		}
+		if (circState == null) bounds = Bounds.create(0, 0, 50, 50);
+		else bounds = circState.getCircuit().getAppearance().getAbsoluteBounds();
 		int width = bounds.getX() + bounds.getWidth() + BOUNDS_BUFFER;
 		int height = bounds.getY() + bounds.getHeight() + BOUNDS_BUFFER;
 		Dimension dim;
-		if (canvasPane == null) {
-			dim = new Dimension(width, height);
-		} else {
-			dim = canvasPane.supportPreferredSize(width, height);
-		}
+		if (canvasPane == null) dim = new Dimension(width, height);
+		else dim = canvasPane.supportPreferredSize(width, height);
 		if (!immediate) {
 			Bounds old = oldPreferredSize;
 			if (old != null && Math.abs(old.getWidth() - dim.width) < THRESH_SIZE_UPDATE
-					&& Math.abs(old.getHeight() - dim.height) < THRESH_SIZE_UPDATE) {
-				return;
-			}
+					&& Math.abs(old.getHeight() - dim.height) < THRESH_SIZE_UPDATE) return;
 		}
 		oldPreferredSize = Bounds.create(0, 0, dim.width, dim.height);
 		setPreferredSize(dim);
@@ -329,7 +286,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 	}
 
 	public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-		return canvasPane.supportScrollableBlockIncrement(visibleRect, orientation, direction);
+		return canvasPane.supportScrollableBlockIncrement(visibleRect, direction);
 	}
 
 	public boolean getScrollableTracksViewportHeight() {
@@ -341,16 +298,12 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 	}
 
 	public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-		return canvasPane.supportScrollableUnitIncrement(visibleRect, orientation, direction);
+		return canvasPane.supportScrollableUnitIncrement();
 	}
 
 	static int getMaxIndex(CanvasModel model) {
 		List<CanvasObject> objects = model.getObjectsFromBottom();
-		for (int i = objects.size() - 1; i >= 0; i--) {
-			if (!(objects.get(i) instanceof AppearanceElement)) {
-				return i;
-			}
-		}
+		for (int i = objects.size() - 1; i >= 0; i--) if (!(objects.get(i) instanceof AppearanceElement)) return i;
 		return -1;
 	}
 }

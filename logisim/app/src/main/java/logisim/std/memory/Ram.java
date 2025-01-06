@@ -45,10 +45,10 @@ public class Ram extends Mem {
 	private static final int WE = MEM_INPUTS + 3;
 	private static final int DIN = MEM_INPUTS + 4;
 
-	private static Object[][] logOptions = new Object[9][];
+	private static final Object[][] logOptions = new Object[9][];
 
 	public Ram() {
-		super("RAM", Strings.getter("ramComponent"), 3);
+		super("RAM", Strings.getter("ramComponent"));
 		setIconName("ram.gif");
 		setInstanceLogger(Logger.class);
 	}
@@ -70,8 +70,8 @@ public class Ram extends Mem {
 		Object bus = instance.getAttributeValue(ATTR_BUS);
 		if (bus == null)
 			bus = BUS_COMBINED;
-		boolean asynch = bus == null ? false : bus.equals(BUS_ASYNCH);
-		boolean separate = bus == null ? false : bus.equals(BUS_SEPARATE);
+		boolean asynch = bus != null && bus.equals(BUS_ASYNCH);
+		boolean separate = bus != null && bus.equals(BUS_SEPARATE);
 
 		int portCount = MEM_INPUTS;
 		if (asynch)
@@ -82,7 +82,7 @@ public class Ram extends Mem {
 			portCount += 3;
 		Port[] ps = new Port[portCount];
 
-		configureStandardPorts(instance, ps);
+		configureStandardPorts(ps);
 		ps[OE] = new Port(-50, 40, Port.INPUT, 1);
 		ps[OE].setToolTip(Strings.getter("ramOETip"));
 		ps[CLR] = new Port(-30, 40, Port.INPUT, 1);
@@ -96,9 +96,7 @@ public class Ram extends Mem {
 			ps[WE].setToolTip(Strings.getter("ramWETip"));
 			ps[DIN] = new Port(-140, 20, Port.INPUT, DATA_ATTR);
 			ps[DIN].setToolTip(Strings.getter("ramInTip"));
-		} else {
-			ps[DATA].setToolTip(Strings.getter("ramBusTip"));
-		}
+		} else ps[DATA].setToolTip(Strings.getter("ramBusTip"));
 		instance.setPorts(ps);
 	}
 
@@ -118,9 +116,7 @@ public class Ram extends Mem {
 			Instance instance = state.getInstance();
 			myState = new RamState(instance, contents, new MemListener(instance));
 			state.setData(myState);
-		} else {
-			myState.setRam(state.getInstance());
-		}
+		} else myState.setRam(state.getInstance());
 		return myState;
 	}
 
@@ -134,9 +130,7 @@ public class Ram extends Mem {
 			MemContents contents = MemContents.create(addrBits.getWidth(), dataBits.getWidth());
 			myState = new RamState(instance, contents, new MemListener(instance));
 			instance.setData(state, myState);
-		} else {
-			myState.setRam(instance);
-		}
+		} else myState.setRam(instance);
 		return myState;
 	}
 
@@ -151,8 +145,8 @@ public class Ram extends Mem {
 		RamState myState = (RamState) getState(state);
 		BitWidth dataBits = state.getAttributeValue(DATA_ATTR);
 		Object busVal = state.getAttributeValue(ATTR_BUS);
-		boolean asynch = busVal == null ? false : busVal.equals(BUS_ASYNCH);
-		boolean separate = busVal == null ? false : busVal.equals(BUS_SEPARATE);
+		boolean asynch = busVal != null && busVal.equals(BUS_ASYNCH);
+		boolean separate = busVal != null && busVal.equals(BUS_SEPARATE);
 
 		Value addrValue = state.getPort(ADDR);
 		boolean chipSelect = state.getPort(CS) != Value.FALSE;
@@ -160,9 +154,7 @@ public class Ram extends Mem {
 		boolean outputEnabled = state.getPort(OE) != Value.FALSE;
 		boolean shouldClear = state.getPort(CLR) == Value.TRUE;
 
-		if (shouldClear) {
-			myState.getContents().clear();
-		}
+		if (shouldClear) myState.getContents().clear();
 
 		if (!chipSelect) {
 			myState.setCurrent(-1);
@@ -180,11 +172,8 @@ public class Ram extends Mem {
 
 		if (!shouldClear && triggered) {
 			boolean shouldStore;
-			if (separate) {
-				shouldStore = state.getPort(WE) != Value.FALSE;
-			} else {
-				shouldStore = !outputEnabled;
-			}
+			if (separate) shouldStore = state.getPort(WE) != Value.FALSE;
+			else shouldStore = !outputEnabled;
 			if (shouldStore) {
 				Value dataValue = state.getPort(separate ? DIN : DATA);
 				myState.getContents().set(addr, dataValue.toIntValue());
@@ -194,17 +183,15 @@ public class Ram extends Mem {
 		if (outputEnabled) {
 			int val = myState.getContents().get(addr);
 			state.setPort(DATA, Value.createKnown(dataBits, val), DELAY);
-		} else {
-			state.setPort(DATA, Value.createUnknown(dataBits), DELAY);
-		}
+		} else state.setPort(DATA, Value.createUnknown(dataBits), DELAY);
 	}
 
 	@Override
 	public void paintInstance(InstancePainter painter) {
 		super.paintInstance(painter);
 		Object busVal = painter.getAttributeValue(ATTR_BUS);
-		boolean asynch = busVal == null ? false : busVal.equals(BUS_ASYNCH);
-		boolean separate = busVal == null ? false : busVal.equals(BUS_SEPARATE);
+		boolean asynch = busVal != null && busVal.equals(BUS_ASYNCH);
+		boolean separate = busVal != null && busVal.equals(BUS_SEPARATE);
 
 		if (!asynch)
 			painter.drawClock(CLK, Direction.North);
@@ -221,14 +208,14 @@ public class Ram extends Mem {
 	private static class RamState extends MemState implements AttributeListener {
 		private Instance parent;
 		private MemListener listener;
-		private HexFrame hexFrame = null;
+		private HexFrame hexFrame;
 		private ClockState clockState;
 
 		RamState(Instance parent, MemContents contents, MemListener listener) {
 			super(contents);
 			this.parent = parent;
 			this.listener = listener;
-			this.clockState = new ClockState();
+			clockState = new ClockState();
 			if (parent != null)
 				parent.getAttributeSet().addAttributeListener(this);
 			contents.addHexModelListener(listener);
@@ -248,7 +235,7 @@ public class Ram extends Mem {
 		public RamState clone() {
 			RamState ret = (RamState) super.clone();
 			ret.parent = null;
-			ret.clockState = this.clockState.clone();
+			ret.clockState = clockState.clone();
 			ret.getContents().addHexModelListener(listener);
 			return ret;
 		}
@@ -296,9 +283,7 @@ public class Ram extends Mem {
 				if (ret == null) {
 					ret = new Object[1 << addrBits];
 					logOptions[addrBits] = ret;
-					for (int i = 0; i < ret.length; i++) {
-						ret[i] = Integer.valueOf(i);
-					}
+					for (int i = 0; i < ret.length; i++) ret[i] = i;
 				}
 				return ret;
 			}
@@ -310,20 +295,16 @@ public class Ram extends Mem {
 				String disp = Strings.get("ramComponent");
 				Location loc = state.getInstance().getLocation();
 				return disp + loc + "[" + option + "]";
-			} else {
-				return null;
-			}
+			} else return null;
 		}
 
 		@Override
 		public Value getLogValue(InstanceState state, Object option) {
 			if (option instanceof Integer) {
 				MemState s = (MemState) state.getData();
-				int addr = ((Integer) option).intValue();
+				int addr = (Integer) option;
 				return Value.createKnown(BitWidth.create(s.getDataBits()), s.getContents().get(addr));
-			} else {
-				return Value.NIL;
-			}
+			} else return Value.NIL;
 		}
 	}
 }

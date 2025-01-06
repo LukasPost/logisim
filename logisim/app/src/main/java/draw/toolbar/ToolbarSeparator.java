@@ -22,8 +22,8 @@ public class ToolbarSeparator implements ToolbarItem {
 	public void paintIcon(Component destination, Graphics g) {
 		Dimension dim = destination.getSize();
 		g.setColor(Color.GRAY);
-		int x = 0;
-		int y = 0;
+		int x;
+		int y;
 		int w = dim.width;
 		int h = dim.height;
 		if (h >= w) { // separator is a vertical line in horizontal toolbar

@@ -7,13 +7,13 @@ import java.awt.Component;
 import java.awt.Window;
 
 public interface AttrTableModelRow {
-	public String getLabel();
+	String getLabel();
 
-	public String getValue();
+	String getValue();
 
-	public boolean isValueEditable();
+	boolean isValueEditable();
 
-	public Component getEditor(Window parent);
+	Component getEditor(Window parent);
 
-	public void setValue(Object value) throws AttrTableSetException;
+	void setValue(Object value) throws AttrTableSetException;
 }

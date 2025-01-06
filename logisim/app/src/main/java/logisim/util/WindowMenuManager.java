@@ -10,30 +10,24 @@ class WindowMenuManager {
 	private WindowMenuManager() {
 	}
 
-	private static ArrayList<WindowMenu> menus = new ArrayList<WindowMenu>();
-	private static ArrayList<WindowMenuItemManager> managers = new ArrayList<WindowMenuItemManager>();
-	private static WindowMenuItemManager currentManager = null;
+	private static ArrayList<WindowMenu> menus = new ArrayList<>();
+	private static ArrayList<WindowMenuItemManager> managers = new ArrayList<>();
+	private static WindowMenuItemManager currentManager;
 
 	public static void addMenu(WindowMenu menu) {
-		for (WindowMenuItemManager manager : managers) {
-			manager.createMenuItem(menu);
-		}
+		for (WindowMenuItemManager manager : managers) manager.createMenuItem(menu);
 		menus.add(menu);
 	}
 
 	// TODO frames should call removeMenu when they're destroyed
 
 	public static void addManager(WindowMenuItemManager manager) {
-		for (WindowMenu menu : menus) {
-			manager.createMenuItem(menu);
-		}
+		for (WindowMenu menu : menus) manager.createMenuItem(menu);
 		managers.add(manager);
 	}
 
 	public static void removeManager(WindowMenuItemManager manager) {
-		for (WindowMenu menu : menus) {
-			manager.removeMenuItem(menu);
-		}
+		for (WindowMenu menu : menus) manager.removeMenuItem(menu);
 		managers.remove(manager);
 	}
 
@@ -70,14 +64,10 @@ class WindowMenuManager {
 	}
 
 	private static void setNullItems(boolean value) {
-		for (WindowMenu menu : menus) {
-			menu.setNullItemSelected(value);
-		}
+		for (WindowMenu menu : menus) menu.setNullItemSelected(value);
 	}
 
 	private static void enableAll() {
-		for (WindowMenu menu : menus) {
-			menu.computeEnabled();
-		}
+		for (WindowMenu menu : menus) menu.computeEnabled();
 	}
 }

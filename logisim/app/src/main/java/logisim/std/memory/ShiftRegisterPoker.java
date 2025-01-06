@@ -33,7 +33,7 @@ public class ShiftRegisterPoker extends InstancePoker {
 
 		int y = bds.getY();
 		String label = state.getAttributeValue(StdAttr.LABEL);
-		if (label == null || label.equals(""))
+		if (label == null || label.isEmpty())
 			y += bds.getHeight() / 2;
 		else
 			y += 3 * bds.getHeight() / 4;
@@ -42,9 +42,9 @@ public class ShiftRegisterPoker extends InstancePoker {
 			return -1;
 
 		int x = e.getX() - (bds.getX() + 15);
-		if (!loadObj.booleanValue() || widObj.getWidth() > 4)
+		if (!loadObj || widObj.getWidth() > 4)
 			return -1;
-		if (x < 0 || x >= lenObj.intValue() * 10)
+		if (x < 0 || x >= lenObj * 10)
 			return -1;
 		return x / 10;
 	}
@@ -58,7 +58,7 @@ public class ShiftRegisterPoker extends InstancePoker {
 		int x = bds.getX() + 15 + loc * 10;
 		int y = bds.getY();
 		String label = painter.getAttributeValue(StdAttr.LABEL);
-		if (label == null || label.equals(""))
+		if (label == null || label.isEmpty())
 			y += bds.getHeight() / 2;
 		else
 			y += 3 * bds.getHeight() / 4;
@@ -102,7 +102,7 @@ public class ShiftRegisterPoker extends InstancePoker {
 		char c = e.getKeyChar();
 		if (c == ' ') {
 			Integer lenObj = state.getAttributeValue(ShiftRegister.ATTR_LENGTH);
-			if (loc < lenObj.intValue() - 1) {
+			if (loc < lenObj - 1) {
 				this.loc = loc + 1;
 				state.fireInvalidated();
 			}
@@ -111,23 +111,19 @@ public class ShiftRegisterPoker extends InstancePoker {
 				this.loc = loc - 1;
 				state.fireInvalidated();
 			}
-		} else {
-			try {
-				int val = Integer.parseInt("" + e.getKeyChar(), 16);
-				BitWidth widObj = state.getAttributeValue(StdAttr.WIDTH);
-				if ((val & ~widObj.getMask()) != 0)
-					return;
-				Value valObj = Value.createKnown(widObj, val);
-				ShiftRegisterData data = (ShiftRegisterData) state.getData();
-				int i = data.getLength() - 1 - loc;
-				if (!data.get(i).equals(valObj)) {
-					data.set(i, valObj);
-					state.fireInvalidated();
-				}
-			}
-			catch (NumberFormatException ex) {
+		} else try {
+			int val = Integer.parseInt("" + e.getKeyChar(), 16);
+			BitWidth widObj = state.getAttributeValue(StdAttr.WIDTH);
+			if ((val & ~widObj.getMask()) != 0)
 				return;
+			Value valObj = Value.createKnown(widObj, val);
+			ShiftRegisterData data = (ShiftRegisterData) state.getData();
+			int i = data.getLength() - 1 - loc;
+			if (!data.get(i).equals(valObj)) {
+				data.set(i, valObj);
+				state.fireInvalidated();
 			}
+		} catch (NumberFormatException ex) {
 		}
 	}
 }

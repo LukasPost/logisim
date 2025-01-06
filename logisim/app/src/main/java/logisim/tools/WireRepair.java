@@ -4,5 +4,5 @@
 package logisim.tools;
 
 public interface WireRepair {
-	public boolean shouldRepairWire(WireRepairData data);
+	boolean shouldRepairWire(WireRepairData data);
 }

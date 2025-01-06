@@ -27,7 +27,6 @@ import logisim.instance.InstanceState;
 import logisim.instance.Port;
 import logisim.instance.StdAttr;
 import logisim.tools.WireRepair;
-import logisim.tools.WireRepairData;
 import logisim.tools.key.BitWidthConfigurator;
 import logisim.util.GraphicsUtil;
 import logisim.util.Icons;
@@ -53,17 +52,14 @@ class ControlledBuffer extends InstanceFactory {
 				isInverter ? Strings.getter("controlledInverterComponent")
 						: Strings.getter("controlledBufferComponent"));
 		this.isInverter = isInverter;
-		if (isInverter) {
-			setAttributes(
-					new Attribute[] { StdAttr.FACING, StdAttr.WIDTH, NotGate.ATTR_SIZE, ATTR_CONTROL, StdAttr.LABEL,
-							StdAttr.LABEL_FONT },
-					new Object[] { Direction.East, BitWidth.ONE, NotGate.SIZE_WIDE, RIGHT_HANDED, "",
-							StdAttr.DEFAULT_LABEL_FONT });
-		} else {
-			setAttributes(
-					new Attribute[] { StdAttr.FACING, StdAttr.WIDTH, ATTR_CONTROL, StdAttr.LABEL, StdAttr.LABEL_FONT },
-					new Object[] { Direction.East, BitWidth.ONE, RIGHT_HANDED, "", StdAttr.DEFAULT_LABEL_FONT });
-		}
+		if (isInverter) setAttributes(
+				new Attribute[]{StdAttr.FACING, StdAttr.WIDTH, NotGate.ATTR_SIZE, ATTR_CONTROL, StdAttr.LABEL,
+						StdAttr.LABEL_FONT},
+				new Object[]{Direction.East, BitWidth.ONE, NotGate.SIZE_WIDE, RIGHT_HANDED, "",
+						StdAttr.DEFAULT_LABEL_FONT});
+		else setAttributes(
+				new Attribute[]{StdAttr.FACING, StdAttr.WIDTH, ATTR_CONTROL, StdAttr.LABEL, StdAttr.LABEL_FONT},
+				new Object[]{Direction.East, BitWidth.ONE, RIGHT_HANDED, "", StdAttr.DEFAULT_LABEL_FONT});
 		setFacingAttribute(StdAttr.FACING);
 		setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
 	}
@@ -71,9 +67,7 @@ class ControlledBuffer extends InstanceFactory {
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrs) {
 		int w = 20;
-		if (isInverter && !NotGate.SIZE_NARROW.equals(attrs.getValue(NotGate.ATTR_SIZE))) {
-			w = 30;
-		}
+		if (isInverter && !NotGate.SIZE_NARROW.equals(attrs.getValue(NotGate.ATTR_SIZE))) w = 30;
 		Direction facing = attrs.getValue(StdAttr.FACING);
 		if (facing == Direction.North)
 			return Bounds.create(-10, 0, 20, w);
@@ -96,13 +90,12 @@ class ControlledBuffer extends InstanceFactory {
 	public void paintIcon(InstancePainter painter) {
 		Graphics g = painter.getGraphics();
 		Icon icon = isInverter ? ICON_INVERTER : ICON_BUFFER;
-		if (icon != null) {
-			icon.paintIcon(painter.getDestination(), g, 2, 2);
-		} else {
+		if (icon != null) icon.paintIcon(painter.getDestination(), g, 2, 2);
+		else {
 			int x = isInverter ? 0 : 2;
 			g.setColor(Color.BLACK);
-			int[] xp = new int[] { x + 15, x + 1, x + 1, x + 15 };
-			int[] yp = new int[] { 10, 3, 17, 10 };
+			int[] xp = { x + 15, x + 1, x + 1, x + 15 };
+			int[] yp = { 10, 3, 17, 10 };
 			g.drawPolyline(xp, yp, 4);
 			if (isInverter)
 				g.drawOval(x + 13, 8, 4, 4);
@@ -121,15 +114,10 @@ class ControlledBuffer extends InstanceFactory {
 		GraphicsUtil.switchToWidth(g, 3);
 		Location pt0 = painter.getInstance().getPortLocation(2);
 		Location pt1;
-		if (painter.getAttributeValue(ATTR_CONTROL) == LEFT_HANDED) {
-			pt1 = pt0.translate(face, 0, 6);
-		} else {
-			pt1 = pt0.translate(face, 0, -6);
-		}
-		if (painter.getShowState()) {
-			g.setColor(painter.getPort(2).getColor());
-		}
-		g.drawLine(pt0.getX(), pt0.getY(), pt1.getX(), pt1.getY());
+		if (painter.getAttributeValue(ATTR_CONTROL) == LEFT_HANDED) pt1 = pt0.translate(face, 0, 6);
+		else pt1 = pt0.translate(face, 0, -6);
+		if (painter.getShowState()) g.setColor(painter.getPort(2).getColor());
+		g.drawLine(pt0.x(), pt0.y(), pt1.x(), pt1.y());
 
 		// draw triangle
 		g.setColor(Color.BLACK);
@@ -146,8 +134,8 @@ class ControlledBuffer extends InstanceFactory {
 	private void paintShape(InstancePainter painter) {
 		Direction facing = painter.getAttributeValue(StdAttr.FACING);
 		Location loc = painter.getLocation();
-		int x = loc.getX();
-		int y = loc.getY();
+		int x = loc.x();
+		int y = loc.y();
 		double rotate = 0.0;
 		Graphics g = painter.getGraphics();
 		g.translate(x, y);
@@ -156,20 +144,17 @@ class ControlledBuffer extends InstanceFactory {
 			((Graphics2D) g).rotate(rotate);
 		}
 
-		if (isInverter) {
-			PainterShaped.paintNot(painter);
-		} else {
+		if (isInverter) PainterShaped.paintNot(painter);
+		else {
 			GraphicsUtil.switchToWidth(g, 2);
 			int d = isInverter ? 10 : 0;
-			int[] xp = new int[] { -d, -19 - d, -19 - d, -d };
-			int[] yp = new int[] { 0, -7, 7, 0 };
+			int[] xp = { -d, -19 - d, -19 - d, -d };
+			int[] yp = { 0, -7, 7, 0 };
 			g.drawPolyline(xp, yp, 4);
 			// if (isInverter) g.drawOval(-9, -4, 9, 9);
 		}
 
-		if (rotate != 0.0) {
-			((Graphics2D) g).rotate(-rotate);
-		}
+		if (rotate != 0.0) ((Graphics2D) g).rotate(-rotate);
 		g.translate(-x, -y);
 	}
 
@@ -202,16 +187,14 @@ class ControlledBuffer extends InstanceFactory {
 		Location loc0 = new Location(0, 0);
 		Location loc1 = loc0.translate(facing.reverse(), 20 + d);
 		Location loc2;
-		if (instance.getAttributeValue(ATTR_CONTROL) == LEFT_HANDED) {
+		if (instance.getAttributeValue(ATTR_CONTROL) == LEFT_HANDED)
 			loc2 = loc0.translate(facing.reverse(), 10 + d, 10);
-		} else {
-			loc2 = loc0.translate(facing.reverse(), 10 + d, -10);
-		}
+		else loc2 = loc0.translate(facing.reverse(), 10 + d, -10);
 
 		Port[] ports = new Port[3];
 		ports[0] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
-		ports[1] = new Port(loc1.getX(), loc1.getY(), Port.INPUT, StdAttr.WIDTH);
-		ports[2] = new Port(loc2.getX(), loc2.getY(), Port.INPUT, 1);
+		ports[1] = new Port(loc1.x(), loc1.y(), Port.INPUT, StdAttr.WIDTH);
+		ports[2] = new Port(loc2.x(), loc2.y(), Port.INPUT, 1);
 		instance.setPorts(ports);
 	}
 
@@ -222,34 +205,26 @@ class ControlledBuffer extends InstanceFactory {
 		if (control == Value.TRUE) {
 			Value in = state.getPort(1);
 			state.setPort(0, isInverter ? in.not() : in, GateAttributes.DELAY);
-		} else if (control == Value.ERROR || control == Value.UNKNOWN) {
+		} else if (control == Value.ERROR || control == Value.UNKNOWN)
 			state.setPort(0, Value.createError(width), GateAttributes.DELAY);
-		} else {
+		else {
 			Value out;
-			if (control == Value.UNKNOWN || control == Value.NIL) {
+			if (control == Value.NIL) {
 				AttributeSet opts = state.getProject().getOptions().getAttributeSet();
-				if (opts.getValue(Options.ATTR_GATE_UNDEFINED).equals(Options.GATE_UNDEFINED_ERROR)) {
+				if (opts.getValue(Options.ATTR_GATE_UNDEFINED).equals(Options.GATE_UNDEFINED_ERROR))
 					out = Value.createError(width);
-				} else {
-					out = Value.createUnknown(width);
-				}
-			} else {
-				out = Value.createUnknown(width);
-			}
+				else out = Value.createUnknown(width);
+			} else out = Value.createUnknown(width);
 			state.setPort(0, out, GateAttributes.DELAY);
 		}
 	}
 
 	@Override
 	public Object getInstanceFeature(final Instance instance, Object key) {
-		if (key == WireRepair.class) {
-			return new WireRepair() {
-				public boolean shouldRepairWire(WireRepairData data) {
-					Location port2 = instance.getPortLocation(2);
-					return data.getPoint().equals(port2);
-				}
-			};
-		}
+		if (key == WireRepair.class) return (WireRepair) data -> {
+			Location port2 = instance.getPortLocation(2);
+			return data.getPoint().equals(port2);
+		};
 		return super.getInstanceFeature(instance, key);
 	}
 }

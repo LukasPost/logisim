@@ -9,7 +9,6 @@ import draw.toolbar.ToolbarModel;
 import draw.tools.DrawingAttributeSet;
 import draw.tools.SelectTool;
 import logisim.circuit.CircuitState;
-import logisim.data.AttributeSet;
 import logisim.gui.generic.AttrTable;
 import logisim.gui.generic.BasicZoomModel;
 import logisim.gui.generic.CanvasPane;
@@ -61,10 +60,6 @@ public class AppearanceView {
 
 	public EditHandler getEditHandler() {
 		return editHandler;
-	}
-
-	public AttributeSet getAttributeSet() {
-		return attrs;
 	}
 
 	public AttrTableDrawManager getAttrTableDrawManager(AttrTable table) {

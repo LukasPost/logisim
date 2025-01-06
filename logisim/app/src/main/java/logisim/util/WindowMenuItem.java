@@ -4,7 +4,6 @@
 package logisim.util;
 
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JRadioButtonMenuItem;
@@ -22,7 +21,7 @@ class WindowMenuItem extends JRadioButtonMenuItem {
 		return manager.getJFrame(true);
 	}
 
-	public void actionPerformed(ActionEvent event) {
+	public void actionPerformed() {
 		JFrame frame = getJFrame();
 		frame.setExtendedState(Frame.NORMAL);
 		frame.setVisible(true);

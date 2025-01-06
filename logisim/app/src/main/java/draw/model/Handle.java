@@ -17,7 +17,7 @@ public class Handle {
 	}
 
 	public Handle(CanvasObject object, Location loc) {
-		this(object, loc.getX(), loc.getY());
+		this(object, loc.x(), loc.y());
 	}
 
 	public CanvasObject getObject() {
@@ -37,7 +37,7 @@ public class Handle {
 	}
 
 	public boolean isAt(Location loc) {
-		return x == loc.getX() && y == loc.getY();
+		return x == loc.x() && y == loc.y();
 	}
 
 	public boolean isAt(int xq, int yq) {
@@ -46,16 +46,11 @@ public class Handle {
 
 	@Override
 	public boolean equals(Object other) {
-		if (other instanceof Handle) {
-			Handle that = (Handle) other;
-			return this.object.equals(that.object) && this.x == that.x && this.y == that.y;
-		} else {
-			return false;
-		}
+		return other instanceof Handle that && object.equals(that.object) && x == that.x && y == that.y;
 	}
 
 	@Override
 	public int hashCode() {
-		return (this.object.hashCode() * 31 + x) * 31 + y;
+		return (object.hashCode() * 31 + x) * 31 + y;
 	}
 }

@@ -9,7 +9,7 @@ import logisim.circuit.Wire;
 import logisim.data.Direction;
 import logisim.data.Location;
 
-class ConnectionData {
+public class ConnectionData {
 	private Location loc;
 
 	private Direction dir;
@@ -46,12 +46,7 @@ class ConnectionData {
 
 	@Override
 	public boolean equals(Object other) {
-		if (other instanceof ConnectionData) {
-			ConnectionData o = (ConnectionData) other;
-			return this.loc.equals(o.loc) && this.dir.equals(o.dir);
-		} else {
-			return false;
-		}
+		return other instanceof ConnectionData o && loc.equals(o.loc) && dir == o.dir;
 	}
 
 	@Override

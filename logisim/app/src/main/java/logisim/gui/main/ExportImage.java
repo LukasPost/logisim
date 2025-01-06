@@ -61,7 +61,7 @@ class ExportImage {
 		CircuitJList list = new CircuitJList(proj, true);
 		if (list.getModel().getSize() == 0) {
 			JOptionPane.showMessageDialog(proj.getFrame(), Strings.get("exportEmptyCircuitsMessage"),
-					Strings.get("exportEmptyCircuitsTitle"), JOptionPane.YES_NO_OPTION);
+					Strings.get("exportEmptyCircuitsTitle"), JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		OptionsPanel options = new OptionsPanel(list);
@@ -117,14 +117,12 @@ class ExportImage {
 				if (confirm != JOptionPane.YES_OPTION)
 					return;
 			}
-		} else {
-			if (circuits.size() > 1) {
-				boolean created = dest.mkdir();
-				if (!created) {
-					JOptionPane.showMessageDialog(proj.getFrame(), Strings.get("exportNewDirectoryErrorMessage"),
-							Strings.get("exportNewDirectoryErrorTitle"), JOptionPane.YES_NO_OPTION);
-					return;
-				}
+		} else if (circuits.size() > 1) {
+			boolean created = dest.mkdir();
+			if (!created) {
+				JOptionPane.showMessageDialog(proj.getFrame(), Strings.get("exportNewDirectoryErrorMessage"),
+						Strings.get("exportNewDirectoryErrorTitle"), JOptionPane.ERROR_MESSAGE);
+				return;
 			}
 		}
 
@@ -248,18 +246,15 @@ class ExportImage {
 			this.type = type;
 			this.desc = desc;
 			extensions = new String[exts.length];
-			for (int i = 0; i < exts.length; i++) {
-				extensions[i] = "." + exts[i].toLowerCase();
-			}
+			for (int i = 0; i < exts.length; i++) extensions[i] = "." + exts[i].toLowerCase();
 		}
 
 		@Override
 		public boolean accept(File f) {
 			String name = f.getName().toLowerCase();
-			for (int i = 0; i < extensions.length; i++) {
-				if (name.endsWith(extensions[i]))
+			for (String extension : extensions)
+				if (name.endsWith(extension))
 					return true;
-			}
 			return f.isDirectory();
 		}
 
@@ -284,7 +279,7 @@ class ExportImage {
 			this.frame = frame;
 			this.canvas = canvas;
 			this.dest = dest;
-			this.filter = f;
+			filter = f;
 			this.circuits = circuits;
 			this.scale = scale;
 			this.printerView = printerView;
@@ -293,9 +288,7 @@ class ExportImage {
 
 		@Override
 		public void run() {
-			for (Circuit circ : circuits) {
-				export(circ);
-			}
+			for (Circuit circ : circuits) export(circ);
 		}
 
 		private void export(Circuit circuit) {
@@ -310,7 +303,7 @@ class ExportImage {
 			g.setColor(Color.black);
 			if (g instanceof Graphics2D) {
 				((Graphics2D) g).scale(scale, scale);
-				((Graphics2D) g).translate(-bds.getX(), -bds.getY());
+				g.translate(-bds.getX(), -bds.getY());
 			} else {
 				JOptionPane.showMessageDialog(frame, Strings.get("couldNotCreateImage"));
 				monitor.close();
@@ -322,11 +315,9 @@ class ExportImage {
 			circuit.draw(context, null);
 
 			File where;
-			if (dest.isDirectory()) {
-				where = new File(dest, circuit.getName() + filter.extensions[0]);
-			} else if (filter.accept(dest)) {
-				where = dest;
-			} else {
+			if (dest.isDirectory()) where = new File(dest, circuit.getName() + filter.extensions[0]);
+			else if (filter.accept(dest)) where = dest;
+			else {
 				String newName = dest.getName() + filter.extensions[0];
 				where = new File(dest.getParentFile(), newName);
 			}

@@ -25,6 +25,7 @@ import logisim.data.Location;
 import logisim.tools.CustomHandles;
 import logisim.util.Cache;
 import logisim.util.GraphicsUtil;
+import org.jetbrains.annotations.NotNull;
 
 public final class Wire implements Component, AttributeSet, CustomHandles, Iterable<Location> {
 	/** Stroke width when drawing wires. */
@@ -38,7 +39,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
 			Strings.getter("wireDirectionAttr"), new AttributeOption[] { VALUE_HORZ, VALUE_VERT });
 	public static final Attribute<Integer> len_attr = Attributes.forInteger("length", Strings.getter("wireLengthAttr"));
 
-	private static final List<Attribute<?>> ATTRIBUTES = Arrays.asList(new Attribute<?>[] { dir_attr, len_attr });
+	private static final List<Attribute<?>> ATTRIBUTES = Arrays.asList(dir_attr, len_attr);
 	private static final Cache cache = new Cache();
 
 	public static Wire create(Location e0, Location e1) {
@@ -62,32 +63,28 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
 	final boolean is_x_equal;
 
 	private Wire(Location e0, Location e1) {
-		this.is_x_equal = e0.getX() == e1.getX();
-		if (is_x_equal) {
-			if (e0.getY() > e1.getY()) {
-				this.e0 = e1;
-				this.e1 = e0;
-			} else {
-				this.e0 = e0;
-				this.e1 = e1;
-			}
-		} else {
-			if (e0.getX() > e1.getX()) {
-				this.e0 = e1;
-				this.e1 = e0;
-			} else {
-				this.e0 = e0;
-				this.e1 = e1;
-			}
+		is_x_equal = e0.x() == e1.x();
+		if (is_x_equal) if (e0.y() > e1.y()) {
+			this.e0 = e1;
+			this.e1 = e0;
+		}
+		else {
+			this.e0 = e0;
+			this.e1 = e1;
+		}
+		else if (e0.x() > e1.x()) {
+			this.e0 = e1;
+			this.e1 = e0;
+		}
+		else {
+			this.e0 = e0;
+			this.e1 = e1;
 		}
 	}
 
 	@Override
 	public boolean equals(Object other) {
-		if (!(other instanceof Wire))
-			return false;
-		Wire w = (Wire) other;
-		return w.e0.equals(this.e0) && w.e1.equals(this.e1);
+		return other instanceof Wire w && w.e0.equals(e0) && w.e1.equals(e1);
 	}
 
 	@Override
@@ -96,7 +93,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
 	}
 
 	public int getLength() {
-		return (e1.getY() - e0.getY()) + (e1.getX() - e0.getX());
+		return (e1.y() - e0.y()) + (e1.x() - e0.x());
 	}
 
 	@Override
@@ -128,9 +125,9 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
 	}
 
 	public Bounds getBounds() {
-		int x0 = e0.getX();
-		int y0 = e0.getY();
-		return Bounds.create(x0 - 2, y0 - 2, e1.getX() - x0 + 5, e1.getY() - y0 + 5);
+		int x0 = e0.x();
+		int y0 = e0.y();
+		return Bounds.create(x0 - 2, y0 - 2, e1.x() - x0 + 5, e1.y() - y0 + 5);
 	}
 
 	public Bounds getBounds(Graphics g) {
@@ -138,14 +135,14 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
 	}
 
 	public boolean contains(Location q) {
-		int qx = q.getX();
-		int qy = q.getY();
+		int qx = q.x();
+		int qy = q.y();
 		if (is_x_equal) {
-			int wx = e0.getX();
-			return qx >= wx - 2 && qx <= wx + 2 && e0.getY() <= qy && qy <= e1.getY();
+			int wx = e0.x();
+			return qx >= wx - 2 && qx <= wx + 2 && e0.y() <= qy && qy <= e1.y();
 		} else {
-			int wy = e0.getY();
-			return qy >= wy - 2 && qy <= wy + 2 && e0.getX() <= qx && qx <= e1.getX();
+			int wy = e0.y();
+			return qy >= wy - 2 && qy <= wy + 2 && e0.x() <= qx && qx <= e1.x();
 		}
 	}
 
@@ -181,9 +178,9 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
 	//
 	public void expose(ComponentDrawContext context) {
 		java.awt.Component dest = context.getDestination();
-		int x0 = e0.getX();
-		int y0 = e0.getY();
-		dest.repaint(x0 - 5, y0 - 5, e1.getX() - x0 + 10, e1.getY() - y0 + 10);
+		int x0 = e0.x();
+		int y0 = e0.y();
+		dest.repaint(x0 - 5, y0 - 5, e1.x() - x0 + 10, e1.y() - y0 + 10);
 	}
 
 	public void draw(ComponentDrawContext context) {
@@ -192,7 +189,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
 
 		GraphicsUtil.switchToWidth(g, WIDTH);
 		g.setColor(state.getValue(e0).getColor());
-		g.drawLine(e0.getX(), e0.getY(), e1.getX(), e1.getY());
+		g.drawLine(e0.x(), e0.y(), e1.x(), e1.y());
 	}
 
 	public Object getFeature(Object key) {
@@ -227,10 +224,9 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
 	}
 
 	public Attribute<?> getAttribute(String name) {
-		for (Attribute<?> attr : ATTRIBUTES) {
+		for (Attribute<?> attr : ATTRIBUTES)
 			if (name.equals(attr.getName()))
 				return attr;
-		}
 		return null;
 	}
 
@@ -248,13 +244,9 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
 
 	@SuppressWarnings("unchecked")
 	public <V> V getValue(Attribute<V> attr) {
-		if (attr == dir_attr) {
-			return (V) (is_x_equal ? VALUE_VERT : VALUE_HORZ);
-		} else if (attr == len_attr) {
-			return (V) Integer.valueOf(getLength());
-		} else {
-			return null;
-		}
+		if (attr == dir_attr) return (V) (is_x_equal ? VALUE_VERT : VALUE_HORZ);
+		else if (attr == len_attr) return (V) Integer.valueOf(getLength());
+		else return null;
 	}
 
 	public <V> void setValue(Attribute<V> attr, V value) {
@@ -285,8 +277,8 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
 	}
 
 	public boolean sharesEnd(Wire other) {
-		return this.e0.equals(other.e0) || this.e1.equals(other.e0) || this.e0.equals(other.e1)
-				|| this.e1.equals(other.e1);
+		return e0.equals(other.e0) || e1.equals(other.e0) || e0.equals(other.e1)
+				|| e1.equals(other.e1);
 	}
 
 	public boolean overlaps(Wire other, boolean includeEnds) {
@@ -295,31 +287,25 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
 
 	private boolean overlaps(Location q0, Location q1, boolean includeEnds) {
 		if (is_x_equal) {
-			int x0 = q0.getX();
-			if (x0 != q1.getX() || x0 != e0.getX())
+			int x0 = q0.x();
+			if (x0 != q1.x() || x0 != e0.x())
 				return false;
-			if (includeEnds) {
-				return e1.getY() >= q0.getY() && e0.getY() <= q1.getY();
-			} else {
-				return e1.getY() > q0.getY() && e0.getY() < q1.getY();
-			}
+			if (includeEnds) return e1.y() >= q0.y() && e0.y() <= q1.y();
+			else return e1.y() > q0.y() && e0.y() < q1.y();
 		} else {
-			int y0 = q0.getY();
-			if (y0 != q1.getY() || y0 != e0.getY())
+			int y0 = q0.y();
+			if (y0 != q1.y() || y0 != e0.y())
 				return false;
-			if (includeEnds) {
-				return e1.getX() >= q0.getX() && e0.getX() <= q1.getX();
-			} else {
-				return e1.getX() > q0.getX() && e0.getX() < q1.getX();
-			}
+			if (includeEnds) return e1.x() >= q0.x() && e0.x() <= q1.x();
+			else return e1.x() > q0.x() && e0.x() < q1.x();
 		}
 	}
 
 	public boolean isParallel(Wire other) {
-		return this.is_x_equal == other.is_x_equal;
+		return is_x_equal == other.is_x_equal;
 	}
 
-	public Iterator<Location> iterator() {
+	public @NotNull Iterator<Location> iterator() {
 		return new WireIterator(e0, e1);
 	}
 

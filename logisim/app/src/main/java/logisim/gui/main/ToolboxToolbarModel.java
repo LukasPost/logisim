@@ -7,27 +7,24 @@ import java.util.List;
 
 import draw.toolbar.AbstractToolbarModel;
 import draw.toolbar.ToolbarItem;
+import logisim.gui.main.MenuListener.EnabledListener;
 import logisim.gui.menu.LogisimMenuBar;
 import logisim.util.UnmodifiableList;
 
-class ToolboxToolbarModel extends AbstractToolbarModel implements MenuListener.EnabledListener {
-	private LogisimToolbarItem itemAdd;
-	private LogisimToolbarItem itemUp;
-	private LogisimToolbarItem itemDown;
-	private LogisimToolbarItem itemDelete;
+class ToolboxToolbarModel extends AbstractToolbarModel implements EnabledListener {
 	private List<ToolbarItem> items;
 
 	public ToolboxToolbarModel(MenuListener menu) {
-		itemAdd = new LogisimToolbarItem(menu, "projadd.gif", LogisimMenuBar.ADD_CIRCUIT,
+		LogisimToolbarItem itemAdd = new LogisimToolbarItem(menu, "projadd.gif", LogisimMenuBar.ADD_CIRCUIT,
 				Strings.getter("projectAddCircuitTip"));
-		itemUp = new LogisimToolbarItem(menu, "projup.gif", LogisimMenuBar.MOVE_CIRCUIT_UP,
+		LogisimToolbarItem itemUp = new LogisimToolbarItem(menu, "projup.gif", LogisimMenuBar.MOVE_CIRCUIT_UP,
 				Strings.getter("projectMoveCircuitUpTip"));
-		itemDown = new LogisimToolbarItem(menu, "projdown.gif", LogisimMenuBar.MOVE_CIRCUIT_DOWN,
+		LogisimToolbarItem itemDown = new LogisimToolbarItem(menu, "projdown.gif", LogisimMenuBar.MOVE_CIRCUIT_DOWN,
 				Strings.getter("projectMoveCircuitDownTip"));
-		itemDelete = new LogisimToolbarItem(menu, "projdel.gif", LogisimMenuBar.REMOVE_CIRCUIT,
+		LogisimToolbarItem itemDelete = new LogisimToolbarItem(menu, "projdel.gif", LogisimMenuBar.REMOVE_CIRCUIT,
 				Strings.getter("projectRemoveCircuitTip"));
 
-		items = UnmodifiableList.create(new ToolbarItem[] { itemAdd, itemUp, itemDown, itemDelete, });
+		items = UnmodifiableList.create(new ToolbarItem[] {itemAdd, itemUp, itemDown, itemDelete, });
 
 		menu.addEnabledListener(this);
 	}
@@ -44,9 +41,7 @@ class ToolboxToolbarModel extends AbstractToolbarModel implements MenuListener.E
 
 	@Override
 	public void itemSelected(ToolbarItem item) {
-		if (item instanceof LogisimToolbarItem) {
-			((LogisimToolbarItem) item).doAction();
-		}
+		if (item instanceof LogisimToolbarItem) ((LogisimToolbarItem) item).doAction();
 	}
 
 	//

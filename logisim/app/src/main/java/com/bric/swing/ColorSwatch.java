@@ -73,7 +73,7 @@ public class ColorSwatch extends JPanel {
 		addMouseListener(mouseListener);
 	}
 
-	private static TexturePaint checkerPaint = null;
+	private static TexturePaint checkerPaint;
 
 	private static TexturePaint getCheckerPaint() {
 		if (checkerPaint == null) {

@@ -11,32 +11,32 @@ public abstract class Expression {
 	public static final int AND_LEVEL = 2;
 	public static final int NOT_LEVEL = 3;
 
-	static interface Visitor {
-		public void visitAnd(Expression a, Expression b);
+	interface Visitor {
+		void visitAnd(Expression a, Expression b);
 
-		public void visitOr(Expression a, Expression b);
+		void visitOr(Expression a, Expression b);
 
-		public void visitXor(Expression a, Expression b);
+		void visitXor(Expression a, Expression b);
 
-		public void visitNot(Expression a);
+		void visitNot(Expression a);
 
-		public void visitVariable(String name);
+		void visitVariable(String name);
 
-		public void visitConstant(int value);
+		void visitConstant(int value);
 	}
 
-	static interface IntVisitor {
-		public int visitAnd(Expression a, Expression b);
+	interface IntVisitor {
+		int visitAnd(Expression a, Expression b);
 
-		public int visitOr(Expression a, Expression b);
+		int visitOr(Expression a, Expression b);
 
-		public int visitXor(Expression a, Expression b);
+		int visitXor(Expression a, Expression b);
 
-		public int visitNot(Expression a);
+		int visitNot(Expression a);
 
-		public int visitVariable(String name);
+		int visitVariable(String name);
 
-		public int visitConstant(int value);
+		int visitConstant(int value);
 	}
 
 	public abstract int getPrecedence();
@@ -97,17 +97,13 @@ public abstract class Expression {
 					text.append("(");
 					a.visit(this);
 					text.append(")");
-				} else {
-					a.visit(this);
-				}
+				} else a.visit(this);
 				text.append(op);
 				if (b.getPrecedence() < level) {
 					text.append("(");
 					b.visit(this);
 					text.append(")");
-				} else {
-					b.visit(this);
-				}
+				} else b.visit(this);
 			}
 
 			public void visitNot(Expression a) {
@@ -116,9 +112,7 @@ public abstract class Expression {
 					text.append("(");
 					a.visit(this);
 					text.append(")");
-				} else {
-					a.visit(this);
-				}
+				} else a.visit(this);
 			}
 
 			public void visitVariable(String name) {
@@ -126,14 +120,14 @@ public abstract class Expression {
 			}
 
 			public void visitConstant(int value) {
-				text.append("" + Integer.toString(value, 16));
+				text.append(Integer.toString(value, 16));
 			}
 		});
 		return text.toString();
 	}
 
 	public boolean isCircular() {
-		final HashSet<Expression> visited = new HashSet<Expression>();
+		final HashSet<Expression> visited = new HashSet<>();
 		visited.add(this);
 		return 1 == visit(new IntVisitor() {
 			public int visitAnd(Expression a, Expression b) {
@@ -184,7 +178,7 @@ public abstract class Expression {
 	}
 
 	Expression removeVariable(final String input) {
-		return visit(new ExpressionVisitor<Expression>() {
+		return visit(new ExpressionVisitor<>() {
 			public Expression visitAnd(Expression a, Expression b) {
 				Expression l = a.visit(this);
 				Expression r = b.visit(this);
@@ -233,7 +227,7 @@ public abstract class Expression {
 	}
 
 	Expression replaceVariable(final String oldName, final String newName) {
-		return visit(new ExpressionVisitor<Expression>() {
+		return visit(new ExpressionVisitor<>() {
 			public Expression visitAnd(Expression a, Expression b) {
 				Expression l = a.visit(this);
 				Expression r = b.visit(this);
@@ -297,7 +291,7 @@ public abstract class Expression {
 
 	public boolean isCnf() {
 		return 1 == visit(new IntVisitor() {
-			int level = 0;
+			int level;
 
 			public int visitAnd(Expression a, Expression b) {
 				if (level > 1)

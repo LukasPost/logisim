@@ -10,6 +10,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -38,7 +39,7 @@ public class ProjectCircuitActions {
 	}
 
 	public static void doAddCircuit(Project proj) {
-		String name = promptForCircuitName(proj.getFrame(), proj.getLogisimFile(), "");
+		String name = promptForCircuitName(proj.getFrame(), proj.getLogisimFile());
 		if (name != null) {
 			Circuit circuit = new Circuit(name);
 			proj.doAction(LogisimFileActions.addCircuit(circuit));
@@ -46,10 +47,10 @@ public class ProjectCircuitActions {
 		}
 	}
 
-	private static String promptForCircuitName(JFrame frame, Library lib, String initialValue) {
+	private static String promptForCircuitName(JFrame frame, Library lib) {
 		JLabel label = new JLabel(Strings.get("circuitNamePrompt"));
 		final JTextField field = new JTextField(15);
-		field.setText(initialValue);
+		field.setText("");
 		JLabel error = new JLabel(" ");
 		GridBagLayout gb = new GridBagLayout();
 		GridBagConstraints gc = new GridBagConstraints();
@@ -87,21 +88,13 @@ public class ProjectCircuitActions {
 			dlog.setVisible(true);
 			field.requestFocusInWindow();
 			Object action = pane.getValue();
-			if (action == null || !(action instanceof Integer)
-					|| ((Integer) action).intValue() != JOptionPane.OK_OPTION) {
-				return null;
-			}
+			if (!(action instanceof Integer)
+					|| (Integer) action != JOptionPane.OK_OPTION) return null;
 
 			String name = field.getText().trim();
-			if (name.equals("")) {
-				error.setText(Strings.get("circuitNameMissingError"));
-			} else {
-				if (lib.getTool(name) == null) {
-					return name;
-				} else {
-					error.setText(Strings.get("circuitNameDuplicateError"));
-				}
-			}
+			if (name.isEmpty()) error.setText(Strings.get("circuitNameMissingError"));
+			else if (lib.getTool(name) == null) return name;
+			else error.setText(Strings.get("circuitNameDuplicateError"));
 		}
 	}
 
@@ -111,9 +104,7 @@ public class ProjectCircuitActions {
 			int oldPos = proj.getLogisimFile().getCircuits().indexOf(cur);
 			int newPos = oldPos + delta;
 			int toolsCount = proj.getLogisimFile().getTools().size();
-			if (newPos >= 0 && newPos < toolsCount) {
-				proj.doAction(LogisimFileActions.moveCircuit(tool, newPos));
-			}
+			if (newPos >= 0 && newPos < toolsCount) proj.doAction(LogisimFileActions.moveCircuit(tool, newPos));
 		}
 	}
 
@@ -122,35 +113,27 @@ public class ProjectCircuitActions {
 	}
 
 	public static void doRemoveCircuit(Project proj, Circuit circuit) {
-		if (proj.getLogisimFile().getTools().size() == 1) {
+		if (proj.getLogisimFile().getTools().size() == 1)
 			JOptionPane.showMessageDialog(proj.getFrame(), Strings.get("circuitRemoveLastError"),
 					Strings.get("circuitRemoveErrorTitle"), JOptionPane.ERROR_MESSAGE);
-		} else if (!proj.getDependencies().canRemove(circuit)) {
+		else if (!proj.getDependencies().canRemove(circuit))
 			JOptionPane.showMessageDialog(proj.getFrame(), Strings.get("circuitRemoveUsedError"),
 					Strings.get("circuitRemoveErrorTitle"), JOptionPane.ERROR_MESSAGE);
-		} else {
-			proj.doAction(LogisimFileActions.removeCircuit(circuit));
-		}
+		else proj.doAction(LogisimFileActions.removeCircuit(circuit));
 	}
 
 	public static void doAnalyze(Project proj, Circuit circuit) {
 		Map<Instance, String> pinNames = Analyze.getPinLabels(circuit);
-		ArrayList<String> inputNames = new ArrayList<String>();
-		ArrayList<String> outputNames = new ArrayList<String>();
-		for (Map.Entry<Instance, String> entry : pinNames.entrySet()) {
+		ArrayList<String> inputNames = new ArrayList<>();
+		ArrayList<String> outputNames = new ArrayList<>();
+		for (Entry<Instance, String> entry : pinNames.entrySet()) {
 			Instance pin = entry.getKey();
 			boolean isInput = Pin.FACTORY.isInputPin(pin);
-			if (isInput) {
-				inputNames.add(entry.getValue());
-			} else {
-				outputNames.add(entry.getValue());
-			}
+			if (isInput) inputNames.add(entry.getValue());
+			else outputNames.add(entry.getValue());
 			if (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1) {
-				if (isInput) {
-					analyzeError(proj, Strings.get("analyzeMultibitInputError"));
-				} else {
-					analyzeError(proj, Strings.get("analyzeMultibitOutputError"));
-				}
+				if (isInput) analyzeError(proj, Strings.get("analyzeMultibitInputError"));
+				else analyzeError(proj, Strings.get("analyzeMultibitOutputError"));
 				return;
 			}
 		}
@@ -207,6 +190,5 @@ public class ProjectCircuitActions {
 	private static void analyzeError(Project proj, String message) {
 		JOptionPane.showMessageDialog(proj.getFrame(), message, Strings.get("analyzeErrorTitle"),
 				JOptionPane.ERROR_MESSAGE);
-		return;
 	}
 }

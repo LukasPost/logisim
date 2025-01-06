@@ -41,7 +41,7 @@ public class Io extends Library {
 			new FactoryDescription("DotMatrix", Strings.getter("dotMatrixComponent"), "dotmat.gif", "DotMatrix"),
 			new FactoryDescription("TTY", Strings.getter("ttyComponent"), "tty.gif", "Tty"), };
 
-	private List<Tool> tools = null;
+	private List<Tool> tools;
 
 	public Io() {
 	}
@@ -58,9 +58,7 @@ public class Io extends Library {
 
 	@Override
 	public List<Tool> getTools() {
-		if (tools == null) {
-			tools = FactoryDescription.getTools(Io.class, DESCRIPTIONS);
-		}
+		if (tools == null) tools = FactoryDescription.getTools(Io.class, DESCRIPTIONS);
 		return tools;
 	}
 }

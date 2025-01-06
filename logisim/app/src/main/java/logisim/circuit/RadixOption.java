@@ -22,11 +22,7 @@ public abstract class RadixOption extends AttributeOption {
 			OPTIONS);
 
 	public static RadixOption decode(String value) {
-		for (RadixOption opt : OPTIONS) {
-			if (value.equals(opt.saveName)) {
-				return opt;
-			}
-		}
+		for (RadixOption opt : OPTIONS) if (value.equals(opt.saveName)) return opt;
 		return RADIX_2;
 	}
 
@@ -101,51 +97,19 @@ public abstract class RadixOption extends AttributeOption {
 
 		@Override
 		public int getMaxLength(BitWidth width) {
-			switch (width.getWidth()) {
-			case 2:
-			case 3:
-			case 4:
-				return 2; // 2..8
-			case 5:
-			case 6:
-			case 7:
-				return 3; // 16..64
-			case 8:
-			case 9:
-			case 10:
-				return 4; // 128..512
-			case 11:
-			case 12:
-			case 13:
-			case 14:
-				return 5; // 1K..8K
-			case 15:
-			case 16:
-			case 17:
-				return 6; // 16K..64K
-			case 18:
-			case 19:
-			case 20:
-				return 7; // 128K..256K
-			case 21:
-			case 22:
-			case 23:
-			case 24:
-				return 8; // 1M..8M
-			case 25:
-			case 26:
-			case 27:
-				return 9; // 16M..64M
-			case 28:
-			case 29:
-			case 30:
-				return 10; // 128M..512M
-			case 31:
-			case 32:
-				return 11; // 1G..2G
-			default:
-				return 1;
-			}
+			return switch (width.getWidth()) {
+				case 2, 3, 4 -> 2; // 2..8
+				case 5, 6, 7 -> 3; // 16..64
+				case 8, 9, 10 -> 4; // 128..512
+				case 11, 12, 13, 14 -> 5; // 1K..8K
+				case 15, 16, 17 -> 6; // 16K..64K
+				case 18, 19, 20 -> 7; // 128K..256K
+				case 21, 22, 23, 24 -> 8; // 1M..8M
+				case 25, 26, 27 -> 9; // 16M..64M
+				case 28, 29, 30 -> 10; // 128M..512M
+				case 31, 32 -> 11; // 1G..2G
+				default -> 1;
+			};
 		}
 	}
 
@@ -161,48 +125,18 @@ public abstract class RadixOption extends AttributeOption {
 
 		@Override
 		public int getMaxLength(BitWidth width) {
-			switch (width.getWidth()) {
-			case 4:
-			case 5:
-			case 6:
-				return 2;
-			case 7:
-			case 8:
-			case 9:
-				return 3;
-			case 10:
-			case 11:
-			case 12:
-			case 13:
-				return 4;
-			case 14:
-			case 15:
-			case 16:
-				return 5;
-			case 17:
-			case 18:
-			case 19:
-				return 6;
-			case 20:
-			case 21:
-			case 22:
-			case 23:
-				return 7;
-			case 24:
-			case 25:
-			case 26:
-				return 8;
-			case 27:
-			case 28:
-			case 29:
-				return 9;
-			case 30:
-			case 31:
-			case 32:
-				return 10;
-			default:
-				return 1;
-			}
+			return switch (width.getWidth()) {
+				case 4, 5, 6 -> 2;
+				case 7, 8, 9 -> 3;
+				case 10, 11, 12, 13 -> 4;
+				case 14, 15, 16 -> 5;
+				case 17, 18, 19 -> 6;
+				case 20, 21, 22, 23 -> 7;
+				case 24, 25, 26 -> 8;
+				case 27, 28, 29 -> 9;
+				case 30, 31, 32 -> 10;
+				default -> 1;
+			};
 		}
 	}
 

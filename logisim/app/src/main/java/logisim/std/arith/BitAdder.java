@@ -30,7 +30,7 @@ public class BitAdder extends InstanceFactory {
 	public BitAdder() {
 		super("BitAdder", Strings.getter("bitAdderComponent"));
 		setAttributes(new Attribute[] { StdAttr.WIDTH, NUM_INPUTS },
-				new Object[] { BitWidth.create(8), Integer.valueOf(1) });
+				new Object[] { BitWidth.create(8), 1});
 		setKeyConfigurator(JoinedConfigurator.create(new IntegerConfigurator(NUM_INPUTS, 1, 32, 0),
 				new BitWidthConfigurator(StdAttr.WIDTH)));
 		setIconName("bitadder.gif");
@@ -38,7 +38,7 @@ public class BitAdder extends InstanceFactory {
 
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrs) {
-		int inputs = attrs.getValue(NUM_INPUTS).intValue();
+		int inputs = attrs.getValue(NUM_INPUTS);
 		int h = Math.max(40, 10 * inputs);
 		int y = inputs < 4 ? 20 : (((inputs - 1) / 2) * 10 + 5);
 		return Bounds.create(-40, -y, 40, h);
@@ -52,9 +52,8 @@ public class BitAdder extends InstanceFactory {
 
 	@Override
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-		if (attr == StdAttr.WIDTH) {
-			configurePorts(instance);
-		} else if (attr == NUM_INPUTS) {
+		if (attr == StdAttr.WIDTH) configurePorts(instance);
+		else if (attr == NUM_INPUTS) {
 			configurePorts(instance);
 			instance.recomputeBounds();
 		}
@@ -62,7 +61,7 @@ public class BitAdder extends InstanceFactory {
 
 	private void configurePorts(Instance instance) {
 		BitWidth inWidth = instance.getAttributeValue(StdAttr.WIDTH);
-		int inputs = instance.getAttributeValue(NUM_INPUTS).intValue();
+		int inputs = instance.getAttributeValue(NUM_INPUTS);
 		int outWidth = computeOutputBits(inWidth.getWidth(), inputs);
 
 		int y;
@@ -103,7 +102,7 @@ public class BitAdder extends InstanceFactory {
 	@Override
 	public void propagate(InstanceState state) {
 		int width = state.getAttributeValue(StdAttr.WIDTH).getWidth();
-		int inputs = state.getAttributeValue(NUM_INPUTS).intValue();
+		int inputs = state.getAttributeValue(NUM_INPUTS);
 
 		// compute the number of 1 bits
 		int minCount = 0; // number that are definitely 1
@@ -111,8 +110,7 @@ public class BitAdder extends InstanceFactory {
 		for (int i = 1; i <= inputs; i++) {
 			Value v = state.getPort(i);
 			Value[] bits = v.getAll();
-			for (int j = 0; j < bits.length; j++) {
-				Value b = bits[j];
+			for (Value b : bits) {
 				if (b == Value.TRUE)
 					minCount++;
 				if (b != Value.FALSE)
@@ -122,20 +120,13 @@ public class BitAdder extends InstanceFactory {
 
 		// compute which output bits should be error bits
 		int unknownMask = 0;
-		for (int i = minCount + 1; i <= maxCount; i++) {
-			unknownMask |= (minCount ^ i);
-		}
+		for (int i = minCount + 1; i <= maxCount; i++) unknownMask |= (minCount ^ i);
 
 		Value[] out = new Value[computeOutputBits(width, inputs)];
-		for (int i = 0; i < out.length; i++) {
-			if (((unknownMask >> i) & 1) != 0) {
-				out[i] = Value.ERROR;
-			} else if (((minCount >> i) & 1) != 0) {
-				out[i] = Value.TRUE;
-			} else {
-				out[i] = Value.FALSE;
-			}
-		}
+		for (int i = 0; i < out.length; i++)
+			if (((unknownMask >> i) & 1) != 0) out[i] = Value.ERROR;
+			else if (((minCount >> i) & 1) != 0) out[i] = Value.TRUE;
+			else out[i] = Value.FALSE;
 
 		int delay = out.length * Adder.PER_DELAY;
 		state.setPort(0, Value.create(out), delay);
@@ -149,8 +140,8 @@ public class BitAdder extends InstanceFactory {
 
 		GraphicsUtil.switchToWidth(g, 2);
 		Location loc = painter.getLocation();
-		int x = loc.getX() - 10;
-		int y = loc.getY();
+		int x = loc.x() - 10;
+		int y = loc.y();
 		g.drawLine(x - 2, y - 5, x - 2, y + 5);
 		g.drawLine(x + 2, y - 5, x + 2, y + 5);
 		g.drawLine(x - 5, y - 2, x + 5, y - 2);

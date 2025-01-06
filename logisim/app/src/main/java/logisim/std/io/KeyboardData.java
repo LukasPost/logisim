@@ -28,7 +28,7 @@ class KeyboardData implements InstanceData, Cloneable {
 	public Object clone() {
 		try {
 			KeyboardData ret = (KeyboardData) super.clone();
-			ret.buffer = this.buffer.clone();
+			ret.buffer = buffer.clone();
 			return ret;
 		}
 		catch (CloneNotSupportedException e) {
@@ -197,7 +197,7 @@ class KeyboardData implements InstanceData, Cloneable {
 		String str = toString();
 		int len = str.length();
 		int max = Keyboard.WIDTH - 8 - 4;
-		if (str.equals("") || fm.stringWidth(str) <= max) {
+		if (str.isEmpty() || fm.stringWidth(str) <= max) {
 			i0 = 0;
 			i1 = len;
 		} else {
@@ -214,7 +214,7 @@ class KeyboardData implements InstanceData, Cloneable {
 					i1 += pos - i0;
 					i0 = pos;
 				}
-				if (pos == i0 && i0 > 0) {
+				if (i0 > 0) {
 					i0--;
 					i1--;
 				}
@@ -224,7 +224,7 @@ class KeyboardData implements InstanceData, Cloneable {
 					i0 += pos - i1;
 					i1 = pos;
 				}
-				if (pos == i1 && i1 < len) {
+				if (i1 < len) {
 					i0++;
 					i1++;
 				}
@@ -233,22 +233,21 @@ class KeyboardData implements InstanceData, Cloneable {
 				i0 = 0;
 
 			// resize segment to fit
+			// should shrink
 			if (fits(fm, str, w0, w1, i0, i1, max)) { // maybe should grow
 				while (fits(fm, str, w0, w1, i0, i1 + 1, max))
 					i1++;
 				while (fits(fm, str, w0, w1, i0 - 1, i1, max))
 					i0--;
-			} else { // should shrink
-				if (pos < (i0 + i1) / 2) {
+			} else if (pos < (i0 + i1) / 2) {
+				i1--;
+				while (!fits(fm, str, w0, w1, i0, i1, max))
 					i1--;
-					while (!fits(fm, str, w0, w1, i0, i1, max))
-						i1--;
-				} else {
+			}
+			else {
+				i0++;
+				while (!fits(fm, str, w0, w1, i0, i1, max))
 					i0++;
-					while (!fits(fm, str, w0, w1, i0, i1, max))
-						i0++;
-				}
-
 			}
 			if (i0 == 1)
 				i0 = 0;

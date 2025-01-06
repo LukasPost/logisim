@@ -3,8 +3,6 @@
 
 package logisim.gui.prefs;
 
-import java.awt.LayoutManager;
-
 import javax.swing.JPanel;
 
 abstract class OptionsPanel extends JPanel {
@@ -12,12 +10,7 @@ abstract class OptionsPanel extends JPanel {
 
 	public OptionsPanel(PreferencesFrame frame) {
 		super();
-		this.optionsFrame = frame;
-	}
-
-	public OptionsPanel(PreferencesFrame frame, LayoutManager manager) {
-		super(manager);
-		this.optionsFrame = frame;
+		optionsFrame = frame;
 	}
 
 	public abstract String getTitle();

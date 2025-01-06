@@ -34,11 +34,9 @@ class TablePanel extends LogPanel {
 			computeRowCount();
 			if (oldCount == rowCount) {
 				int value = vsb.getValue();
-				if (value > vsb.getMinimum() && value < vsb.getMaximum() - vsb.getVisibleAmount()) {
+				if (value > vsb.getMinimum() && value < vsb.getMaximum() - vsb.getVisibleAmount())
 					vsb.setValue(vsb.getValue() - vsb.getUnitIncrement(-1));
-				} else {
-					repaint();
-				}
+				else repaint();
 			}
 		}
 
@@ -72,11 +70,8 @@ class TablePanel extends LogPanel {
 		@Override
 		public int getUnitIncrement(int direction) {
 			int curY = getValue();
-			if (direction > 0) {
-				return curY > 0 ? cellHeight : cellHeight + HEADER_SEP;
-			} else {
-				return curY > cellHeight + HEADER_SEP ? cellHeight : cellHeight + HEADER_SEP;
-			}
+			if (direction > 0) return curY > 0 ? cellHeight : cellHeight + HEADER_SEP;
+			else return curY > cellHeight + HEADER_SEP ? cellHeight : cellHeight + HEADER_SEP;
 		}
 
 		@Override
@@ -86,20 +81,15 @@ class TablePanel extends LogPanel {
 			int numCells = curHeight / cellHeight - 1;
 			if (numCells <= 0)
 				numCells = 1;
-			if (direction > 0) {
-				return curY > 0 ? numCells * cellHeight : numCells * cellHeight + HEADER_SEP;
-			} else {
-				return curY > cellHeight + HEADER_SEP ? numCells * cellHeight : numCells * cellHeight + HEADER_SEP;
-			}
+			if (direction > 0) return curY > 0 ? numCells * cellHeight : numCells * cellHeight + HEADER_SEP;
+			else return curY > cellHeight + HEADER_SEP ? numCells * cellHeight : numCells * cellHeight + HEADER_SEP;
 		}
 
 		public void stateChanged(ChangeEvent event) {
 			int newMaximum = getMaximum();
 			int newExtent = getVisibleAmount();
 			if (oldMaximum != newMaximum || oldExtent != newExtent) {
-				if (getValue() + oldExtent >= oldMaximum) {
-					setValue(newMaximum - newExtent);
-				}
+				if (getValue() + oldExtent >= oldMaximum) setValue(newMaximum - newExtent);
 				oldMaximum = newMaximum;
 				oldExtent = newExtent;
 			}
@@ -109,7 +99,7 @@ class TablePanel extends LogPanel {
 	private MyListener myListener = new MyListener();
 	private int cellWidth = 25; // reasonable start values
 	private int cellHeight = 15;
-	private int rowCount = 0;
+	private int rowCount;
 	private int tableWidth;
 	private int tableHeight;
 	private VerticalScrollBar vsb;
@@ -188,9 +178,7 @@ class TablePanel extends LogPanel {
 		FontMetrics headerMetric = g.getFontMetrics();
 		int x = left;
 		int y = top + headerMetric.getAscent() + 1;
-		for (int i = 0; i < columns; i++) {
-			x = paintHeader(sel.get(i).toShortString(), x, y, g, headerMetric);
-		}
+		for (int i = 0; i < columns; i++) x = paintHeader(sel.get(i).toShortString(), x, y, g, headerMetric);
 
 		g.setFont(BODY_FONT);
 		FontMetrics bodyMetric = g.getFontMetrics();

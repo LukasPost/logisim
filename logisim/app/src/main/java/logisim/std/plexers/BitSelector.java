@@ -57,9 +57,7 @@ public class BitSelector extends InstanceFactory {
 		if (attr == StdAttr.FACING) {
 			instance.recomputeBounds();
 			updatePorts(instance);
-		} else if (attr == StdAttr.WIDTH || attr == GROUP_ATTR) {
-			updatePorts(instance);
-		}
+		} else if (attr == StdAttr.WIDTH || attr == GROUP_ATTR) updatePorts(instance);
 	}
 
 	private void updatePorts(Instance instance) {
@@ -68,11 +66,9 @@ public class BitSelector extends InstanceFactory {
 		BitWidth group = instance.getAttributeValue(GROUP_ATTR);
 		int groups = (data.getWidth() + group.getWidth() - 1) / group.getWidth() - 1;
 		int selectBits = 1;
-		if (groups > 0) {
-			while (groups != 1) {
-				groups >>= 1;
-				selectBits++;
-			}
+		if (groups > 0) while (groups != 1) {
+			groups >>= 1;
+			selectBits++;
 		}
 		BitWidth select = BitWidth.create(selectBits);
 
@@ -94,8 +90,8 @@ public class BitSelector extends InstanceFactory {
 
 		Port[] ps = new Port[3];
 		ps[0] = new Port(0, 0, Port.OUTPUT, group.getWidth());
-		ps[1] = new Port(inPt.getX(), inPt.getY(), Port.INPUT, data.getWidth());
-		ps[2] = new Port(selPt.getX(), selPt.getY(), Port.INPUT, select.getWidth());
+		ps[1] = new Port(inPt.x(), inPt.y(), Port.INPUT, data.getWidth());
+		ps[2] = new Port(selPt.x(), selPt.y(), Port.INPUT, select.getWidth());
 		ps[0].setToolTip(Strings.getter("bitSelectorOutputTip"));
 		ps[1].setToolTip(Strings.getter("bitSelectorDataTip"));
 		ps[2].setToolTip(Strings.getter("bitSelectorSelectTip"));
@@ -108,23 +104,16 @@ public class BitSelector extends InstanceFactory {
 		Value select = state.getPort(2);
 		BitWidth groupBits = state.getAttributeValue(GROUP_ATTR);
 		Value group;
-		if (!select.isFullyDefined()) {
-			group = Value.createUnknown(groupBits);
-		} else {
+		if (!select.isFullyDefined()) group = Value.createUnknown(groupBits);
+		else {
 			int shift = select.toIntValue() * groupBits.getWidth();
-			if (shift >= data.getWidth()) {
-				group = Value.createKnown(groupBits, 0);
-			} else if (groupBits.getWidth() == 1) {
-				group = data.get(shift);
-			} else {
+			if (shift >= data.getWidth()) group = Value.createKnown(groupBits, 0);
+			else if (groupBits.getWidth() == 1) group = data.get(shift);
+			else {
 				Value[] bits = new Value[groupBits.getWidth()];
-				for (int i = 0; i < bits.length; i++) {
-					if (shift + i >= data.getWidth()) {
-						bits[i] = Value.FALSE;
-					} else {
-						bits[i] = data.get(shift + i);
-					}
-				}
+				for (int i = 0; i < bits.length; i++)
+					if (shift + i >= data.getWidth()) bits[i] = Value.FALSE;
+					else bits[i] = data.get(shift + i);
 				group = Value.create(bits);
 			}
 		}

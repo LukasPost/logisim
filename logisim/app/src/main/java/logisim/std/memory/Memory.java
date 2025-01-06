@@ -27,7 +27,7 @@ public class Memory extends Library {
 			new FactoryDescription("RAM", Strings.getter("ramComponent"), "ram.gif", "Ram"),
 			new FactoryDescription("ROM", Strings.getter("romComponent"), "rom.gif", "Rom"), };
 
-	private List<Tool> tools = null;
+	private List<Tool> tools;
 
 	public Memory() {
 	}
@@ -44,9 +44,7 @@ public class Memory extends Library {
 
 	@Override
 	public List<Tool> getTools() {
-		if (tools == null) {
-			tools = FactoryDescription.getTools(Memory.class, DESCRIPTIONS);
-		}
+		if (tools == null) tools = FactoryDescription.getTools(Memory.class, DESCRIPTIONS);
 		return tools;
 	}
 }

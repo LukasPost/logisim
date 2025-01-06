@@ -12,7 +12,6 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.Icon;
 
-import logisim.LogisimVersion;
 import logisim.circuit.Circuit;
 import logisim.circuit.ReplacementMap;
 import logisim.circuit.Wire;
@@ -45,6 +44,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 public class SelectTool extends Tool {
@@ -87,13 +87,11 @@ public class SelectTool extends Tool {
 	private boolean drawConnections;
 	private MoveGesture moveGesture;
 	private HashMap<Component, KeyConfigurator> keyHandlers;
-	private HashSet<Selection> selectionsAdded;
 	private Listener selListener;
 
 	public SelectTool() {
 		start = null;
 		state = IDLE;
-		selectionsAdded = new HashSet<Selection>();
 		selListener = new Listener();
 		keyHandlers = null;
 	}
@@ -129,7 +127,7 @@ public class SelectTool extends Tool {
 	}
 
 	@Override
-	public boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver) {
+	public boolean isAllDefaultValues(AttributeSet attrs) {
 		return true;
 	}
 
@@ -152,27 +150,27 @@ public class SelectTool extends Tool {
 					for (Wire w : wiresToAdd) {
 						Location loc0 = w.getEnd0();
 						Location loc1 = w.getEnd1();
-						g.drawLine(loc0.getX(), loc0.getY(), loc1.getX(), loc1.getY());
+						g.drawLine(loc0.x(), loc0.y(), loc1.x(), loc1.y());
 					}
 					GraphicsUtil.switchToWidth(g, 1);
 					g.setColor(COLOR_UNMATCHED);
 					for (Location conn : result.getUnconnectedLocations()) {
-						int connX = conn.getX();
-						int connY = conn.getY();
+						int connX = conn.x();
+						int connY = conn.y();
 						g.fillOval(connX - 3, connY - 3, 6, 6);
 						g.fillOval(connX + dx - 3, connY + dy - 3, 6, 6);
 					}
 				}
 			}
 		} else if (state == RECT_SELECT) {
-			int left = start.getX();
+			int left = start.x();
 			int right = left + dx;
 			if (left > right) {
 				int i = left;
 				left = right;
 				right = i;
 			}
-			int top = start.getY();
+			int top = start.y();
 			int bot = top + dy;
 			if (top > bot) {
 				int i = top;
@@ -194,7 +192,7 @@ public class SelectTool extends Tool {
 				Location cloc = c.getLocation();
 				Graphics gDup = gBase.create();
 				context.setGraphics(gDup);
-				c.getFactory().drawGhost(context, COLOR_RECT_SELECT, cloc.getX(), cloc.getY(), c.getAttributeSet());
+				c.getFactory().drawGhost(context, COLOR_RECT_SELECT, cloc.x(), cloc.y(), c.getAttributeSet());
 				gDup.dispose();
 			}
 
@@ -211,9 +209,7 @@ public class SelectTool extends Tool {
 	@Override
 	public void select(Canvas canvas) {
 		Selection sel = canvas.getSelection();
-		if (!selectionsAdded.contains(sel)) {
-			sel.addListener(selListener);
-		}
+		sel.addListener(selListener);
 	}
 
 	@Override
@@ -239,36 +235,26 @@ public class SelectTool extends Tool {
 		// if the user clicks into the selection,
 		// selection is being modified
 		Collection<Component> in_sel = sel.getComponentsContaining(start, g);
-		if (!in_sel.isEmpty()) {
-			if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0) {
-				setState(proj, MOVING);
-				proj.repaintCanvas();
-				return;
-			} else {
-				Action act = SelectionActions.drop(sel, in_sel);
-				if (act != null) {
-					proj.doAction(act);
-				}
-			}
+		if (!in_sel.isEmpty()) if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0) {
+			setState(proj, MOVING);
+			proj.repaintCanvas();
+			return;
+		}
+		else {
+			Action act = SelectionActions.drop(sel, in_sel);
+			if (act != null) proj.doAction(act);
 		}
 
 		// if the user clicks into a component outside selection, user
 		// wants to add/reset selection
 		Collection<Component> clicked = circuit.getAllContaining(start, g);
 		if (!clicked.isEmpty()) {
-			if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0) {
+			if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0)
 				if (sel.getComponentsContaining(start).isEmpty()) {
 					Action act = SelectionActions.dropAll(sel);
-					if (act != null) {
-						proj.doAction(act);
-					}
+					if (act != null) proj.doAction(act);
 				}
-			}
-			for (Component comp : clicked) {
-				if (!in_sel.contains(comp)) {
-					sel.add(comp);
-				}
-			}
+			for (Component comp : clicked) if (!in_sel.contains(comp)) sel.add(comp);
 			setState(proj, MOVING);
 			proj.repaintCanvas();
 			return;
@@ -278,9 +264,7 @@ public class SelectTool extends Tool {
 		// selection (maybe with the shift key down).
 		if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0) {
 			Action act = SelectionActions.dropAll(sel);
-			if (act != null) {
-				proj.doAction(act);
-			}
+			if (act != null) proj.doAction(act);
 		}
 		setState(proj, RECT_SELECT);
 		proj.repaintCanvas();
@@ -294,14 +278,14 @@ public class SelectTool extends Tool {
 			handleMoveDrag(canvas, curDx, curDy, e.getModifiersEx());
 		} else if (state == RECT_SELECT) {
 			Project proj = canvas.getProject();
-			curDx = e.getX() - start.getX();
-			curDy = e.getY() - start.getY();
+			curDx = e.getX() - start.x();
+			curDy = e.getY() - start.y();
 			proj.repaintCanvas();
 		}
 	}
 
 	private void handleMoveDrag(Canvas canvas, int dx, int dy, int modsEx) {
-		boolean connect = shouldConnect(canvas, modsEx);
+		boolean connect = shouldConnect(modsEx);
 		drawConnections = connect;
 		if (connect) {
 			MoveGesture gesture = moveGesture;
@@ -317,23 +301,17 @@ public class SelectTool extends Tool {
 					// maybe CPU scheduled led the request to be satisfied
 					// just before the "if(queued)" statement. In any case, it
 					// doesn't hurt to check to ensure the message belongs.
-					if (gesture.findResult(dx, dy) != null) {
-						clearCanvasMessage(canvas, dx, dy);
-					}
+					if (gesture.findResult(dx, dy) != null) clearCanvasMessage(canvas, dx, dy);
 				}
 			}
 		}
 		canvas.repaint();
 	}
 
-	private boolean shouldConnect(Canvas canvas, int modsEx) {
+	private boolean shouldConnect(int modsEx) {
 		boolean shiftReleased = (modsEx & MouseEvent.SHIFT_DOWN_MASK) == 0;
 		boolean dflt = AppPreferences.MOVE_KEEP_CONNECT.getBoolean();
-		if (shiftReleased) {
-			return dflt;
-		} else {
-			return !dflt;
-		}
+		return shiftReleased == dflt;
 	}
 
 	@Override
@@ -344,47 +322,40 @@ public class SelectTool extends Tool {
 			computeDxDy(proj, e, g);
 			int dx = curDx;
 			int dy = curDy;
-			if (dx != 0 || dy != 0) {
-				if (!proj.getLogisimFile().contains(canvas.getCircuit())) {
-					canvas.setErrorMessage(Strings.getter("cannotModifyError"));
-				} else if (proj.getSelection().hasConflictWhenMoved(dx, dy)) {
-					canvas.setErrorMessage(Strings.getter("exclusiveError"));
-				} else {
-					boolean connect = shouldConnect(canvas, e.getModifiersEx());
-					drawConnections = false;
-					ReplacementMap repl;
-					if (connect) {
-						MoveGesture gesture = moveGesture;
-						if (gesture == null) {
-							gesture = new MoveGesture(new MoveRequestHandler(canvas), canvas.getCircuit(),
-									canvas.getSelection().getAnchoredComponents());
-						}
-						canvas.setErrorMessage(new ComputingMessage(dx, dy), COLOR_COMPUTING);
-						MoveResult result = gesture.forceRequest(dx, dy);
-						clearCanvasMessage(canvas, dx, dy);
-						repl = result.getReplacementMap();
-					} else {
-						repl = null;
-					}
-					Selection sel = proj.getSelection();
-					proj.doAction(SelectionActions.translate(sel, dx, dy, repl));
+			if (dx != 0 || dy != 0) if (!proj.getLogisimFile().contains(canvas.getCircuit()))
+				canvas.setErrorMessage(Strings.getter("cannotModifyError"));
+			else if (proj.getSelection().hasConflictWhenMoved(dx, dy))
+				canvas.setErrorMessage(Strings.getter("exclusiveError"));
+			else {
+				boolean connect = shouldConnect(e.getModifiersEx());
+				drawConnections = false;
+				ReplacementMap repl;
+				if (connect) {
+					MoveGesture gesture = moveGesture;
+					if (gesture == null)
+						gesture = new MoveGesture(new MoveRequestHandler(canvas), canvas.getCircuit(),
+								canvas.getSelection().getAnchoredComponents());
+					canvas.setErrorMessage(new ComputingMessage(dx, dy), COLOR_COMPUTING);
+					MoveResult result = gesture.forceRequest(dx, dy);
+					clearCanvasMessage(canvas, dx, dy);
+					repl = result.getReplacementMap();
 				}
+				else repl = null;
+				Selection sel = proj.getSelection();
+				proj.doAction(SelectionActions.translate(sel, dx, dy, repl));
 			}
 			moveGesture = null;
 			proj.repaintCanvas();
 		} else if (state == RECT_SELECT) {
-			Bounds bds = Bounds.create(start).add(start.getX() + curDx, start.getY() + curDy);
+			Bounds bds = Bounds.create(start).add(start.x() + curDx, start.y() + curDy);
 			Circuit circuit = canvas.getCircuit();
 			Selection sel = proj.getSelection();
 			Collection<Component> in_sel = sel.getComponentsWithin(bds, g);
-			for (Component comp : circuit.getAllWithin(bds, g)) {
+			for (Component comp : circuit.getAllWithin(bds, g))
 				if (!in_sel.contains(comp))
 					sel.add(comp);
-			}
 			Action act = SelectionActions.drop(sel, in_sel);
-			if (act != null) {
-				proj.doAction(act);
-			}
+			if (act != null) proj.doAction(act);
 			setState(proj, IDLE);
 			proj.repaintCanvas();
 		}
@@ -392,10 +363,9 @@ public class SelectTool extends Tool {
 
 	@Override
 	public void keyPressed(Canvas canvas, KeyEvent e) {
-		if (state == MOVING && e.getKeyCode() == KeyEvent.VK_SHIFT) {
+		if (state == MOVING && e.getKeyCode() == KeyEvent.VK_SHIFT)
 			handleMoveDrag(canvas, curDx, curDy, e.getModifiersEx());
-		} else {
-			switch (e.getKeyCode()) {
+		else switch (e.getKeyCode()) {
 			case KeyEvent.VK_BACK_SPACE:
 			case KeyEvent.VK_DELETE:
 				if (!canvas.getSelection().isEmpty()) {
@@ -406,17 +376,14 @@ public class SelectTool extends Tool {
 				break;
 			default:
 				processKeyEvent(canvas, e, KeyConfigurationEvent.KEY_PRESSED);
-			}
 		}
 	}
 
 	@Override
 	public void keyReleased(Canvas canvas, KeyEvent e) {
-		if (state == MOVING && e.getKeyCode() == KeyEvent.VK_SHIFT) {
+		if (state == MOVING && e.getKeyCode() == KeyEvent.VK_SHIFT)
 			handleMoveDrag(canvas, curDx, curDy, e.getModifiersEx());
-		} else {
-			processKeyEvent(canvas, e, KeyConfigurationEvent.KEY_RELEASED);
-		}
+		else processKeyEvent(canvas, e, KeyConfigurationEvent.KEY_RELEASED);
 	}
 
 	@Override
@@ -427,7 +394,7 @@ public class SelectTool extends Tool {
 	private void processKeyEvent(Canvas canvas, KeyEvent e, int type) {
 		HashMap<Component, KeyConfigurator> handlers = keyHandlers;
 		if (handlers == null) {
-			handlers = new HashMap<Component, KeyConfigurator>();
+			handlers = new HashMap<>();
 			Selection sel = canvas.getSelection();
 			for (Component comp : sel.getComponents()) {
 				ComponentFactory factory = comp.getFactory();
@@ -443,34 +410,26 @@ public class SelectTool extends Tool {
 
 		if (!handlers.isEmpty()) {
 			boolean consume = false;
-			ArrayList<KeyConfigurationResult> results;
-			results = new ArrayList<KeyConfigurationResult>();
-			for (Map.Entry<Component, KeyConfigurator> entry : handlers.entrySet()) {
+			ArrayList<KeyConfigurationResult> results = new ArrayList<>();
+			for (Entry<Component, KeyConfigurator> entry : handlers.entrySet()) {
 				Component comp = entry.getKey();
 				KeyConfigurator handler = entry.getValue();
 				KeyConfigurationEvent event = new KeyConfigurationEvent(type, comp.getAttributeSet(), e, comp);
 				KeyConfigurationResult result = handler.keyEventReceived(event);
 				consume |= event.isConsumed();
-				if (result != null) {
-					results.add(result);
-				}
+				if (result != null) results.add(result);
 			}
-			if (consume) {
-				e.consume();
-			}
+			if (consume) e.consume();
 			if (!results.isEmpty()) {
 				SetAttributeAction act = new SetAttributeAction(canvas.getCircuit(),
 						Strings.getter("changeComponentAttributesAction"));
 				for (KeyConfigurationResult result : results) {
 					Component comp = (Component) result.getEvent().getData();
 					Map<Attribute<?>, Object> newValues = result.getAttributeValues();
-					for (Map.Entry<Attribute<?>, Object> entry : newValues.entrySet()) {
+					for (Entry<Attribute<?>, Object> entry : newValues.entrySet())
 						act.set(comp, entry.getKey(), entry.getValue());
-					}
 				}
-				if (!act.isEmpty()) {
-					canvas.getProject().doAction(act);
-				}
+				if (!act.isEmpty()) canvas.getProject().doAction(act);
 			}
 		}
 	}
@@ -480,11 +439,11 @@ public class SelectTool extends Tool {
 		int dx;
 		int dy;
 		if (bds == Bounds.EMPTY_BOUNDS) {
-			dx = e.getX() - start.getX();
-			dy = e.getY() - start.getY();
+			dx = e.getX() - start.x();
+			dy = e.getY() - start.y();
 		} else {
-			dx = Math.max(e.getX() - start.getX(), -bds.getX());
-			dy = Math.max(e.getY() - start.getY(), -bds.getY());
+			dx = Math.max(e.getX() - start.x(), -bds.getX());
+			dy = Math.max(e.getY() - start.y(), -bds.getY());
 		}
 
 		Selection sel = proj.getSelection();
@@ -499,12 +458,11 @@ public class SelectTool extends Tool {
 	@Override
 	public void paintIcon(ComponentDrawContext c, int x, int y) {
 		Graphics g = c.getGraphics();
-		if (toolIcon != null) {
-			toolIcon.paintIcon(c.getDestination(), g, x + 2, y + 2);
-		} else {
+		if (toolIcon != null) toolIcon.paintIcon(c.getDestination(), g, x + 2, y + 2);
+		else {
 			int[] xp = { x + 5, x + 5, x + 9, x + 12, x + 14, x + 11, x + 16 };
 			int[] yp = { y, y + 17, y + 12, y + 18, y + 18, y + 12, y + 12 };
-			g.setColor(java.awt.Color.black);
+			g.setColor(Color.black);
 			g.fillPolygon(xp, yp, xp.length);
 		}
 	}
@@ -519,24 +477,20 @@ public class SelectTool extends Tool {
 		if (state == MOVING) {
 			int dx = curDx;
 			int dy = curDy;
-			if (dx == 0 && dy == 0) {
-				return null;
-			}
+			if (dx == 0 && dy == 0) return null;
 
 			Set<Component> sel = canvas.getSelection().getComponents();
 			MoveGesture gesture = moveGesture;
 			if (gesture != null && drawConnections) {
 				MoveResult result = gesture.findResult(dx, dy);
 				if (result != null) {
-					HashSet<Component> ret = new HashSet<Component>(sel);
+					HashSet<Component> ret = new HashSet<>(sel);
 					ret.addAll(result.getReplacementMap().getRemovals());
 					return ret;
 				}
 			}
 			return sel;
-		} else {
-			return null;
-		}
+		} else return null;
 	}
 
 	private void setState(Project proj, int new_state) {
@@ -549,12 +503,9 @@ public class SelectTool extends Tool {
 
 	private static void clearCanvasMessage(Canvas canvas, int dx, int dy) {
 		Object getter = canvas.getErrorMessage();
-		if (getter instanceof ComputingMessage) {
-			ComputingMessage msg = (ComputingMessage) getter;
-			if (msg.dx == dx && msg.dy == dy) {
-				canvas.setErrorMessage(null);
-				canvas.repaint();
-			}
+		if (getter instanceof ComputingMessage msg) if (msg.dx == dx && msg.dy == dy) {
+			canvas.setErrorMessage(null);
+			canvas.repaint();
 		}
 	}
 

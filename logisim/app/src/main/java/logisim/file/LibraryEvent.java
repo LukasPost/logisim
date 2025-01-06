@@ -6,13 +6,13 @@ package logisim.file;
 import logisim.tools.Library;
 
 public class LibraryEvent {
-	public final static int ADD_TOOL = 0;
-	public final static int REMOVE_TOOL = 1;
-	public final static int MOVE_TOOL = 2;
-	public final static int ADD_LIBRARY = 3;
-	public final static int REMOVE_LIBRARY = 4;
-	public final static int SET_MAIN = 5;
-	public final static int SET_NAME = 6;
+	public static final int ADD_TOOL = 0;
+	public static final int REMOVE_TOOL = 1;
+	public static final int MOVE_TOOL = 2;
+	public static final int ADD_LIBRARY = 3;
+	public static final int REMOVE_LIBRARY = 4;
+	public static final int SET_MAIN = 5;
+	public static final int SET_NAME = 6;
 	public static final int DIRTY_STATE = 7;
 
 	private Library source;

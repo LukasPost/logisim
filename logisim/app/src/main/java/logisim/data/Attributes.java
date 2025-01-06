@@ -106,7 +106,7 @@ public class Attributes {
 	}
 
 	public static <V> Attribute<V> forOption(String name, StringGetter disp, V[] vals) {
-		return new OptionAttribute<V>(name, disp, vals);
+		return new OptionAttribute<>(name, disp, vals);
 	}
 
 	public static Attribute<Integer> forInteger(String name, StringGetter disp) {
@@ -194,27 +194,20 @@ public class Attributes {
 
 		@Override
 		public String toDisplayString(V value) {
-			if (value instanceof AttributeOptionInterface) {
-				return ((AttributeOptionInterface) value).toDisplayString();
-			} else {
-				return value.toString();
-			}
+			if (value instanceof AttributeOptionInterface) return ((AttributeOptionInterface) value).toDisplayString();
+			else return value.toString();
 		}
 
 		@Override
 		public V parse(String value) {
-			for (int i = 0; i < vals.length; i++) {
-				if (value.equals(vals[i].toString())) {
-					return vals[i];
-				}
-			}
+			for (V val : vals) if (value.equals(val.toString())) return val;
 			throw new NumberFormatException("value not among choices");
 		}
 
 		@Override
-		public java.awt.Component getCellEditor(Object value) {
-			JComboBox<V> combo = new JComboBox<V>(vals);
-			combo.setRenderer(new OptionComboRenderer<V>(this));
+		public Component getCellEditor(Object value) {
+			JComboBox<V> combo = new JComboBox<>(vals);
+			combo.setRenderer(new OptionComboRenderer<>(this));
 			if (value == null)
 				combo.setSelectedIndex(-1);
 			else
@@ -241,7 +234,7 @@ public class Attributes {
 
 		@Override
 		public String toDisplayString(Integer value) {
-			int val = value.intValue();
+			int val = value;
 			return "0x" + Integer.toHexString(val);
 		}
 
@@ -255,16 +248,14 @@ public class Attributes {
 			value = value.toLowerCase();
 			if (value.startsWith("0x")) {
 				value = value.substring(2);
-				return Integer.valueOf((int) Long.parseLong(value, 16));
+				return (int) Long.parseLong(value, 16);
 			} else if (value.startsWith("0b")) {
 				value = value.substring(2);
-				return Integer.valueOf((int) Long.parseLong(value, 2));
+				return (int) Long.parseLong(value, 2);
 			} else if (value.startsWith("0")) {
 				value = value.substring(1);
-				return Integer.valueOf((int) Long.parseLong(value, 8));
-			} else {
-				return Integer.valueOf((int) Long.parseLong(value, 10));
-			}
+				return (int) Long.parseLong(value, 8);
+			} else return (int) Long.parseLong(value, 10);
 
 		}
 	}
@@ -289,7 +280,7 @@ public class Attributes {
 
 		@Override
 		public String toDisplayString(Boolean value) {
-			if (value.booleanValue())
+			if (value)
 				return Strings.get("booleanTrueOption");
 			else
 				return Strings.get("booleanFalseOption");
@@ -297,13 +288,13 @@ public class Attributes {
 
 		@Override
 		public Boolean parse(String value) {
-			Boolean b = Boolean.valueOf(value);
-			return vals[b.booleanValue() ? 0 : 1];
+			boolean b = Boolean.parseBoolean(value);
+			return vals[b ? 0 : 1];
 		}
 	}
 
 	private static class IntegerRangeAttribute extends Attribute<Integer> {
-		Integer[] options = null;
+		Integer[] options;
 		int start;
 		int end;
 
@@ -320,21 +311,18 @@ public class Attributes {
 				throw new NumberFormatException("integer too small");
 			if (v > end)
 				throw new NumberFormatException("integer too large");
-			return Integer.valueOf(v);
+			return v;
 		}
 
 		@Override
-		public java.awt.Component getCellEditor(Integer value) {
-			if (end - start + 1 > 32) {
-				return super.getCellEditor(value);
-			} else {
+		public Component getCellEditor(Integer value) {
+			if (end - start + 1 > 32) return super.getCellEditor(value);
+			else {
 				if (options == null) {
 					options = new Integer[end - start + 1];
-					for (int i = start; i <= end; i++) {
-						options[i - start] = Integer.valueOf(i);
-					}
+					for (int i = start; i <= end; i++) options[i - start] = i;
 				}
-				JComboBox<Integer> combo = new JComboBox<Integer>(options);
+				JComboBox<Integer> combo = new JComboBox<>(options);
 				if (value == null)
 					combo.setSelectedIndex(-1);
 				else
@@ -383,7 +371,7 @@ public class Attributes {
 		}
 
 		@Override
-		public java.awt.Component getCellEditor(Font value) {
+		public Component getCellEditor(Font value) {
 			return new FontChooser(value);
 		}
 	}
@@ -444,13 +432,11 @@ public class Attributes {
 				int b = Integer.parseInt(value.substring(5, 7), 16);
 				int a = Integer.parseInt(value.substring(7, 9), 16);
 				return new Color(r, g, b, a);
-			} else {
-				return Color.decode(value);
-			}
+			} else return Color.decode(value);
 		}
 
 		@Override
-		public java.awt.Component getCellEditor(Color value) {
+		public Component getCellEditor(Color value) {
 			Color init = value == null ? Color.BLACK : value;
 			return new ColorChooser(init);
 		}

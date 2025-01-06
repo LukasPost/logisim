@@ -65,10 +65,9 @@ public class LogisimMenuBar extends JMenuBar {
 	}
 
 	private JFrame parent;
-	private MyListener listener;
 	private Project proj;
-	private SimulateListener simulateListener = null;
-	private HashMap<LogisimMenuItem, MenuItem> menuItems = new HashMap<LogisimMenuItem, MenuItem>();
+	private SimulateListener simulateListener;
+	private HashMap<LogisimMenuItem, MenuItem> menuItems = new HashMap<>();
 	private ArrayList<ChangeListener> enableListeners;
 
 	private MenuFile file;
@@ -79,9 +78,9 @@ public class LogisimMenuBar extends JMenuBar {
 
 	public LogisimMenuBar(JFrame parent, Project proj) {
 		this.parent = parent;
-		this.listener = new MyListener();
+		MyListener listener = new MyListener();
 		this.proj = proj;
-		this.enableListeners = new ArrayList<ChangeListener>();
+		enableListeners = new ArrayList<>();
 
 		add(file = new MenuFile(this));
 		add(edit = new MenuEdit(this));
@@ -122,9 +121,7 @@ public class LogisimMenuBar extends JMenuBar {
 
 	void fireEnableChanged() {
 		ChangeEvent e = new ChangeEvent(this);
-		for (ChangeListener listener : enableListeners) {
-			listener.stateChanged(e);
-		}
+		for (ChangeListener listener : enableListeners) listener.stateChanged(e);
 	}
 
 	public void setSimulateListener(SimulateListener l) {
@@ -148,9 +145,7 @@ public class LogisimMenuBar extends JMenuBar {
 	}
 
 	void fireStateChanged(Simulator sim, CircuitState state) {
-		if (simulateListener != null) {
-			simulateListener.stateChangeRequested(sim, state);
-		}
+		if (simulateListener != null) simulateListener.stateChangeRequested(sim, state);
 	}
 
 	public void doAction(LogisimMenuItem which) {

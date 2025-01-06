@@ -15,10 +15,10 @@ import logisim.proj.Project;
 
 class RomAttributes extends AbstractAttributeSet {
 	private static List<Attribute<?>> ATTRIBUTES = Arrays
-			.asList(new Attribute<?>[] { Mem.ADDR_ATTR, Mem.DATA_ATTR, Rom.CONTENTS_ATTR });
+			.asList(Mem.ADDR_ATTR, Mem.DATA_ATTR, Rom.CONTENTS_ATTR);
 
-	private static WeakHashMap<MemContents, RomContentsListener> listenerRegistry = new WeakHashMap<MemContents, RomContentsListener>();
-	private static WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<MemContents, HexFrame>();
+	private static WeakHashMap<MemContents, RomContentsListener> listenerRegistry = new WeakHashMap<>();
+	private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<>();
 
 	static void register(MemContents value, Project proj) {
 		if (proj == null || listenerRegistry.containsKey(value))
@@ -84,9 +84,7 @@ class RomAttributes extends AbstractAttributeSet {
 		} else if (attr == Mem.DATA_ATTR) {
 			dataBits = (BitWidth) value;
 			contents.setDimensions(addrBits.getWidth(), dataBits.getWidth());
-		} else if (attr == Rom.CONTENTS_ATTR) {
-			contents = (MemContents) value;
-		}
+		} else if (attr == Rom.CONTENTS_ATTR) contents = (MemContents) value;
 		fireAttributeValueChanged(attr, value);
 	}
 }

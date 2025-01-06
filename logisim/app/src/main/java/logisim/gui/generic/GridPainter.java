@@ -28,10 +28,10 @@ public class GridPainter {
 			String prop = event.getPropertyName();
 			Object val = event.getNewValue();
 			if (prop.equals(ZoomModel.ZOOM)) {
-				setZoomFactor(((Double) val).doubleValue());
+				setZoomFactor((Double) val);
 				destination.repaint();
 			} else if (prop.equals(ZoomModel.SHOW_GRID)) {
-				setShowGrid(((Boolean) val).booleanValue());
+				setShowGrid((Boolean) val);
 				destination.repaint();
 			}
 		}
@@ -84,7 +84,7 @@ public class GridPainter {
 		if (oldValue != value) {
 			zoomFactor = value;
 			updateGridImage(gridSize, value);
-			support.firePropertyChange(ZOOM_PROPERTY, Double.valueOf(oldValue), Double.valueOf(value));
+			support.firePropertyChange(ZOOM_PROPERTY, oldValue, value);
 		}
 	}
 
@@ -95,9 +95,7 @@ public class GridPainter {
 	public void setZoomModel(ZoomModel model) {
 		ZoomModel old = zoomModel;
 		if (model != old) {
-			if (listener == null) {
-				listener = new Listener();
-			}
+			if (listener == null) listener = new Listener();
 			if (old != null) {
 				old.removePropertyChangeListener(ZoomModel.ZOOM, listener);
 				old.removePropertyChangeListener(ZoomModel.SHOW_GRID, listener);
@@ -130,11 +128,8 @@ public class GridPainter {
 		}
 		int x0 = (clip.x / w) * w; // round down to multiple of w
 		int y0 = (clip.y / w) * w;
-		for (int x = 0; x < clip.width + w; x += w) {
-			for (int y = 0; y < clip.height + w; y += w) {
-				g.drawImage(img, x0 + x, y0 + y, dest);
-			}
-		}
+		for (int x = 0; x < clip.width + w; x += w)
+			for (int y = 0; y < clip.height + w; y += w) g.drawImage(img, x0 + x, y0 + y, dest);
 	}
 
 	private void paintGridOld(Graphics g, int size, double f, Rectangle clip) {
@@ -142,11 +137,8 @@ public class GridPainter {
 		if (f == 1.0) {
 			int start_x = ((clip.x + 9) / size) * size;
 			int start_y = ((clip.y + 9) / size) * size;
-			for (int x = 0; x < clip.width; x += size) {
-				for (int y = 0; y < clip.height; y += size) {
-					g.fillRect(start_x + x, start_y + y, 1, 1);
-				}
-			}
+			for (int x = 0; x < clip.width; x += size)
+				for (int y = 0; y < clip.height; y += size) g.fillRect(start_x + x, start_y + y, 1, 1);
 		} else {
 			/* Kevin Walsh of Cornell suggested the code below instead. */
 			int x0 = size * (int) Math.ceil(clip.x / f / size);
@@ -155,25 +147,23 @@ public class GridPainter {
 			int y1 = y0 + (int) (clip.height / f);
 			if (f <= 0.5)
 				g.setColor(GRID_ZOOMED_OUT_COLOR);
-			for (double x = x0; x < x1; x += size) {
+			for (double x = x0; x < x1; x += size)
 				for (double y = y0; y < y1; y += size) {
 					int sx = (int) Math.round(f * x);
 					int sy = (int) Math.round(f * y);
 					g.fillRect(sx, sy, 1, 1);
 				}
-			}
 			if (f <= 0.5) { // make every 5th pixel darker
 				int size5 = 5 * size;
 				g.setColor(Color.GRAY);
 				x0 = size5 * (int) Math.ceil(clip.x / f / size5);
 				y0 = size5 * (int) Math.ceil(clip.y / f / size5);
-				for (double x = x0; x < x1; x += size5) {
+				for (double x = x0; x < x1; x += size5)
 					for (double y = y0; y < y1; y += size5) {
 						int sx = (int) Math.round(f * x);
 						int sy = (int) Math.round(f * y);
 						g.fillRect(sx, sy, 1, 1);
 					}
-				}
 			}
 
 			/*
@@ -201,11 +191,8 @@ public class GridPainter {
 
 		if (f == 1.0) {
 			int lineStep = size * w;
-			for (int j = 0; j < pix.length; j += lineStep) {
-				for (int i = 0; i < w; i += size) {
-					pix[i + j] = GRID_DOT_COLOR;
-				}
-			}
+			for (int j = 0; j < pix.length; j += lineStep)
+				for (int i = 0; i < w; i += size) pix[i + j] = GRID_DOT_COLOR;
 		} else {
 			int off0 = 0;
 			int off1 = 1;
@@ -221,21 +208,17 @@ public class GridPainter {
 				if (y + off0 >= w)
 					break;
 
-				for (int yo = y + off0; yo < y + off1; yo++) {
+				for (int yo = y + off0; yo < y + off1; yo++)
 					if (yo >= 0 && yo < w) {
 						int base = yo * w;
 						for (int i = 0; true; i += size) {
 							int x = (int) Math.round(f * i);
 							if (x + off0 >= w)
 								break;
-							for (int xo = x + off0; xo < x + off1; xo++) {
-								if (xo >= 0 && xo < w) {
-									pix[base + xo] = dotColor;
-								}
-							}
+							for (int xo = x + off0; xo < x + off1; xo++)
+								if (xo >= 0 && xo < w) pix[base + xo] = dotColor;
 						}
 					}
-				}
 			}
 			if (f <= 0.5) { // repaint over every 5th pixel so it is darker
 				int size5 = size * 5;

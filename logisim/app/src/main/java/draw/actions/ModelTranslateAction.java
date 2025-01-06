@@ -18,7 +18,7 @@ public class ModelTranslateAction extends ModelAction {
 
 	public ModelTranslateAction(CanvasModel model, Collection<CanvasObject> moved, int dx, int dy) {
 		super(model);
-		this.moved = new HashSet<CanvasObject>(moved);
+		this.moved = new HashSet<>(moved);
 		this.dx = dx;
 		this.dy = dy;
 	}
@@ -45,22 +45,13 @@ public class ModelTranslateAction extends ModelAction {
 
 	@Override
 	public boolean shouldAppendTo(Action other) {
-		if (other instanceof ModelTranslateAction) {
-			ModelTranslateAction o = (ModelTranslateAction) other;
-			return this.moved.equals(o.moved);
-		} else {
-			return false;
-		}
+		return other instanceof ModelTranslateAction o && moved.equals(o.moved);
 	}
 
 	@Override
 	public Action append(Action other) {
-		if (other instanceof ModelTranslateAction) {
-			ModelTranslateAction o = (ModelTranslateAction) other;
-			if (this.moved.equals(o.moved)) {
-				return new ModelTranslateAction(getModel(), moved, this.dx + o.dx, this.dy + o.dy);
-			}
-		}
+		if (other instanceof ModelTranslateAction o)
+			if (moved.equals(o.moved)) return new ModelTranslateAction(getModel(), moved, dx + o.dx, dy + o.dy);
 		return super.append(other);
 	}
 }

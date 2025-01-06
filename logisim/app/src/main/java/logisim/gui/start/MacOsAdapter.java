@@ -20,7 +20,7 @@ class MacOsAdapter { // MAC extends ApplicationAdapter {
 		}
 	}
 
-	static void addListeners(boolean added) {
+	static void addListeners() {
 		@SuppressWarnings("unused")
 		MyListener myListener = new MyListener();
 		/*

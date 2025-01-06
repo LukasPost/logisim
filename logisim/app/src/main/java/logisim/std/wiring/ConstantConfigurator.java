@@ -17,20 +17,14 @@ class ConstantConfigurator extends IntegerConfigurator {
 	public int getMaximumValue(AttributeSet attrs) {
 		BitWidth width = attrs.getValue(StdAttr.WIDTH);
 		int ret = width.getMask();
-		if (ret >= 0) {
-			return ret;
-		} else {
-			return Integer.MAX_VALUE;
-		}
+		if (ret >= 0) return ret;
+		else return Integer.MAX_VALUE;
 	}
 
 	@Override
 	public int getMinimumValue(AttributeSet attrs) {
 		BitWidth width = attrs.getValue(StdAttr.WIDTH);
-		if (width.getWidth() < 32) {
-			return 0;
-		} else {
-			return Integer.MIN_VALUE;
-		}
+		if (width.getWidth() < 32) return 0;
+		else return Integer.MIN_VALUE;
 	}
 }

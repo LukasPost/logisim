@@ -23,17 +23,17 @@ class FactoryAttributes implements AttributeSet, AttributeListener, Cloneable {
 	public FactoryAttributes(Class<? extends Library> descBase, FactoryDescription desc) {
 		this.descBase = descBase;
 		this.desc = desc;
-		this.factory = null;
-		this.baseAttrs = null;
-		this.listeners = new ArrayList<AttributeListener>();
+		factory = null;
+		baseAttrs = null;
+		listeners = new ArrayList<>();
 	}
 
 	public FactoryAttributes(ComponentFactory factory) {
-		this.descBase = null;
-		this.desc = null;
+		descBase = null;
+		desc = null;
 		this.factory = factory;
-		this.baseAttrs = null;
-		this.listeners = new ArrayList<AttributeListener>();
+		baseAttrs = null;
+		listeners = new ArrayList<>();
 	}
 
 	boolean isFactoryInstantiated() {
@@ -48,9 +48,8 @@ class FactoryAttributes implements AttributeSet, AttributeListener, Cloneable {
 				fact = desc.getFactory(descBase);
 				factory = fact;
 			}
-			if (fact == null) {
-				ret = AttributeSets.EMPTY;
-			} else {
+			if (fact == null) ret = AttributeSets.EMPTY;
+			else {
 				ret = fact.createAttributeSet();
 				ret.addAttributeListener(this);
 			}
@@ -107,9 +106,7 @@ class FactoryAttributes implements AttributeSet, AttributeListener, Cloneable {
 	public void attributeListChanged(AttributeEvent baseEvent) {
 		AttributeEvent e = null;
 		for (AttributeListener l : listeners) {
-			if (e == null) {
-				e = new AttributeEvent(this, baseEvent.getAttribute(), baseEvent.getValue());
-			}
+			if (e == null) e = new AttributeEvent(this, baseEvent.getAttribute(), baseEvent.getValue());
 			l.attributeListChanged(e);
 		}
 	}
@@ -117,9 +114,7 @@ class FactoryAttributes implements AttributeSet, AttributeListener, Cloneable {
 	public void attributeValueChanged(AttributeEvent baseEvent) {
 		AttributeEvent e = null;
 		for (AttributeListener l : listeners) {
-			if (e == null) {
-				e = new AttributeEvent(this, baseEvent.getAttribute(), baseEvent.getValue());
-			}
+			if (e == null) e = new AttributeEvent(this, baseEvent.getAttribute(), baseEvent.getValue());
 			l.attributeValueChanged(e);
 		}
 	}

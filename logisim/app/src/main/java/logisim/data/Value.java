@@ -45,9 +45,7 @@ public class Value {
 				unknown |= mask;
 			else if (values[i] == ERROR)
 				error |= mask;
-			else {
-				throw new RuntimeException("unrecognized value " + values[i]);
-			}
+			else throw new RuntimeException("unrecognized value " + values[i]);
 		}
 		return Value.create(width, error, unknown, value);
 	}
@@ -65,18 +63,16 @@ public class Value {
 	}
 
 	private static Value create(int width, int error, int unknown, int value) {
-		if (width == 0) {
-			return Value.NIL;
-		} else if (width == 1) {
-			if ((error & 1) != 0)
-				return Value.ERROR;
-			else if ((unknown & 1) != 0)
-				return Value.UNKNOWN;
-			else if ((value & 1) != 0)
-				return Value.TRUE;
-			else
-				return Value.FALSE;
-		} else {
+		if (width == 0) return Value.NIL;
+		else if (width == 1) if ((error & 1) != 0)
+			return Value.ERROR;
+		else if ((unknown & 1) != 0)
+			return Value.UNKNOWN;
+		else if ((value & 1) != 0)
+			return Value.TRUE;
+		else
+			return Value.FALSE;
+		else {
 			int mask = (width == 32 ? -1 : ~(-1 << width));
 			error = error & mask;
 			unknown = unknown & mask & ~error;
@@ -151,8 +147,8 @@ public class Value {
 			return val;
 		else {
 			int mask = ~(1 << which);
-			return Value.create(this.width, (this.error & mask) | (val.error << which),
-					(this.unknown & mask) | (val.unknown << which), (this.value & mask) | (val.value << which));
+			return Value.create(width, (error & mask) | (val.error << which),
+					(unknown & mask) | (val.unknown << which), (value & mask) | (val.value << which));
 		}
 	}
 
@@ -187,12 +183,8 @@ public class Value {
 
 	@Override
 	public boolean equals(Object other_obj) {
-		if (!(other_obj instanceof Value))
-			return false;
-		Value other = (Value) other_obj;
-		boolean ret = this.width == other.width && this.error == other.error && this.unknown == other.unknown
-				&& this.value == other.value;
-		return ret;
+		return other_obj instanceof Value other && width == other.width && error == other.error && unknown == other.unknown
+				&& value == other.value;
 	}
 
 	@Override
@@ -238,9 +230,8 @@ public class Value {
 	}
 
 	public String toOctalString() {
-		if (width <= 1) {
-			return toString();
-		} else {
+		if (width <= 1) return toString();
+		else {
 			Value[] vals = getAll();
 			char[] c = new char[(vals.length + 2) / 3];
 			for (int i = 0; i < c.length; i++) {
@@ -270,9 +261,8 @@ public class Value {
 	}
 
 	public String toHexString() {
-		if (width <= 1) {
-			return toString();
-		} else {
+		if (width <= 1) return toString();
+		else {
 			Value[] vals = getAll();
 			char[] c = new char[(vals.length + 3) / 4];
 			for (int i = 0; i < c.length; i++) {
@@ -311,13 +301,9 @@ public class Value {
 
 		int value = toIntValue();
 		if (signed) {
-			if (width < 32 && (value >> (width - 1)) != 0) {
-				value |= (-1) << width;
-			}
+			if (width < 32 && (value >> (width - 1)) != 0) value |= (-1) << width;
 			return "" + value;
-		} else {
-			return "" + ((long) value & 0xFFFFFFFFL);
-		}
+		} else return "" + ((long) value & 0xFFFFFFFFL);
 	}
 
 	public String toDisplayString(int radix) {
@@ -370,7 +356,7 @@ public class Value {
 			return other;
 		if (other == NIL)
 			return this;
-		if (this.width == 1 && other.width == 1) {
+		if (width == 1 && other.width == 1) {
 			if (this == other)
 				return this;
 			if (this == UNKNOWN)
@@ -379,52 +365,52 @@ public class Value {
 				return this;
 			return ERROR;
 		} else {
-			int disagree = (this.value ^ other.value) & ~(this.unknown | other.unknown);
-			return Value.create(Math.max(this.width, other.width), this.error | other.error | disagree,
-					this.unknown & other.unknown, (this.value & ~this.unknown) | (other.value & ~other.unknown));
+			int disagree = (value ^ other.value) & ~(unknown | other.unknown);
+			return Value.create(Math.max(width, other.width), error | other.error | disagree,
+					unknown & other.unknown, (value & ~unknown) | (other.value & ~other.unknown));
 		}
 	}
 
 	public Value and(Value other) {
 		if (other == null)
 			return this;
-		if (this.width == 1 && other.width == 1) {
+		if (width == 1 && other.width == 1) {
 			if (this == FALSE || other == FALSE)
 				return FALSE;
 			if (this == TRUE && other == TRUE)
 				return TRUE;
 			return ERROR;
 		} else {
-			int false0 = ~this.value & ~this.error & ~this.unknown;
+			int false0 = ~value & ~error & ~unknown;
 			int false1 = ~other.value & ~other.error & ~other.unknown;
 			int falses = false0 | false1;
-			return Value.create(Math.max(this.width, other.width),
-					(this.error | other.error | this.unknown | other.unknown) & ~falses, 0, this.value & other.value);
+			return Value.create(Math.max(width, other.width),
+					(error | other.error | unknown | other.unknown) & ~falses, 0, value & other.value);
 		}
 	}
 
 	public Value or(Value other) {
 		if (other == null)
 			return this;
-		if (this.width == 1 && other.width == 1) {
+		if (width == 1 && other.width == 1) {
 			if (this == TRUE || other == TRUE)
 				return TRUE;
 			if (this == FALSE && other == FALSE)
 				return FALSE;
 			return ERROR;
 		} else {
-			int true0 = this.value & ~this.error & ~this.unknown;
+			int true0 = value & ~error & ~unknown;
 			int true1 = other.value & ~other.error & ~other.unknown;
 			int trues = true0 | true1;
-			return Value.create(Math.max(this.width, other.width),
-					(this.error | other.error | this.unknown | other.unknown) & ~trues, 0, this.value | other.value);
+			return Value.create(Math.max(width, other.width),
+					(error | other.error | unknown | other.unknown) & ~trues, 0, value | other.value);
 		}
 	}
 
 	public Value xor(Value other) {
 		if (other == null)
 			return this;
-		if (this.width <= 1 && other.width <= 1) {
+		if (width <= 1 && other.width <= 1) {
 			if (this == ERROR || other == ERROR)
 				return ERROR;
 			if (this == UNKNOWN || other == UNKNOWN)
@@ -434,10 +420,8 @@ public class Value {
 			if ((this == TRUE) == (other == TRUE))
 				return FALSE;
 			return TRUE;
-		} else {
-			return Value.create(Math.max(this.width, other.width),
-					this.error | other.error | this.unknown | other.unknown, 0, this.value ^ other.value);
-		}
+		} else return Value.create(Math.max(width, other.width),
+				error | other.error | unknown | other.unknown, 0, value ^ other.value);
 	}
 
 	public Value not() {
@@ -448,7 +432,7 @@ public class Value {
 				return TRUE;
 			return ERROR;
 		} else
-			return Value.create(this.width, this.error | this.unknown, 0, ~this.value);
+			return Value.create(width, error | unknown, 0, ~value);
 	}
 
 	public Color getColor() {
@@ -456,14 +440,13 @@ public class Value {
 			return ERROR_COLOR;
 		else if (width == 0)
 			return NIL_COLOR;
-		else if (width == 1) {
-			if (this == UNKNOWN)
-				return UNKNOWN_COLOR;
-			else if (this == TRUE)
-				return TRUE_COLOR;
-			else
-				return FALSE_COLOR;
-		} else
+		else if (width == 1) if (this == UNKNOWN)
+			return UNKNOWN_COLOR;
+		else if (this == TRUE)
+			return TRUE_COLOR;
+		else
+			return FALSE_COLOR;
+		else
 			return MULTI_COLOR;
 	}
 }

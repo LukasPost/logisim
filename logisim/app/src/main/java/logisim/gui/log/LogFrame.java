@@ -55,15 +55,11 @@ public class LogFrame extends LFrame {
 		}
 
 		public void projectChanged(ProjectEvent event) {
-			if (event.getAction() == ProjectEvent.ACTION_SET_FILE) {
-				localeChanged();
-			}
+			if (event.getAction() == ProjectEvent.ACTION_SET_FILE) localeChanged();
 		}
 
 		public void libraryChanged(LibraryEvent event) {
-			if (event.getAction() == LibraryEvent.SET_NAME) {
-				localeChanged();
-			}
+			if (event.getAction() == LibraryEvent.SET_NAME) localeChanged();
 		}
 	}
 
@@ -73,24 +69,20 @@ public class LogFrame extends LFrame {
 			Object src = event.getSource();
 			if (src == close) {
 				WindowEvent e = new WindowEvent(LogFrame.this, WindowEvent.WINDOW_CLOSING);
-				LogFrame.this.processWindowEvent(e);
+				processWindowEvent(e);
 			}
 		}
 
 		public void projectChanged(ProjectEvent event) {
 			int action = event.getAction();
-			if (action == ProjectEvent.ACTION_SET_STATE) {
+			if (action == ProjectEvent.ACTION_SET_STATE)
 				setSimulator(event.getProject().getSimulator(), event.getProject().getCircuitState());
-			} else if (action == ProjectEvent.ACTION_SET_FILE) {
-				setTitle(computeTitle(curModel, project));
-			}
+			else if (action == ProjectEvent.ACTION_SET_FILE) setTitle(computeTitle(curModel, project));
 		}
 
 		public void libraryChanged(LibraryEvent event) {
 			int action = event.getAction();
-			if (action == LibraryEvent.SET_NAME) {
-				setTitle(computeTitle(curModel, project));
-			}
+			if (action == LibraryEvent.SET_NAME) setTitle(computeTitle(curModel, project));
 		}
 
 		public void localeChanged() {
@@ -116,9 +108,9 @@ public class LogFrame extends LFrame {
 	}
 
 	private Project project;
-	private Simulator curSimulator = null;
+	private Simulator curSimulator;
 	private Model curModel;
-	private Map<CircuitState, Model> modelMap = new HashMap<CircuitState, Model>();
+	private Map<CircuitState, Model> modelMap = new HashMap<>();
 	private MyListener myListener = new MyListener();
 	private WindowMenuManager windowManager;
 
@@ -128,7 +120,7 @@ public class LogFrame extends LFrame {
 
 	public LogFrame(Project project) {
 		this.project = project;
-		this.windowManager = new WindowMenuManager();
+		windowManager = new WindowMenuManager();
 		project.addProjectListener(myListener);
 		project.addLibraryListener(myListener);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
@@ -137,10 +129,7 @@ public class LogFrame extends LFrame {
 
 		panels = new LogPanel[] { new SelectionPanel(this), new ScrollPanel(this), new FilePanel(this), };
 		tabbedPane = new JTabbedPane();
-		for (int index = 0; index < panels.length; index++) {
-			LogPanel panel = panels[index];
-			tabbedPane.addTab(panel.getTitle(), null, panel, panel.getToolTipText());
-		}
+		for (LogPanel panel : panels) tabbedPane.addTab(panel.getTitle(), null, panel, panel.getToolTipText());
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(close);
@@ -165,10 +154,9 @@ public class LogFrame extends LFrame {
 	}
 
 	private void setSimulator(Simulator value, CircuitState state) {
-		if ((value == null) == (curModel == null)) {
+		if ((value == null) == (curModel == null))
 			if (value == null || value.getCircuitState() == curModel.getCircuitState())
 				return;
-		}
 
 		LogisimMenuBar menubar = (LogisimMenuBar) getJMenuBar();
 		menubar.setCircuitState(value, state);
@@ -176,7 +164,7 @@ public class LogFrame extends LFrame {
 		if (curSimulator != null)
 			curSimulator.removeSimulatorListener(myListener);
 		if (curModel != null)
-			curModel.setSelected(this, false);
+			curModel.setSelected(false);
 
 		Model oldModel = curModel;
 		Model data = null;
@@ -193,20 +181,14 @@ public class LogFrame extends LFrame {
 		if (curSimulator != null)
 			curSimulator.addSimulatorListener(myListener);
 		if (curModel != null)
-			curModel.setSelected(this, true);
+			curModel.setSelected(true);
 		setTitle(computeTitle(curModel, project));
-		if (panels != null) {
-			for (int i = 0; i < panels.length; i++) {
-				panels[i].modelChanged(oldModel, curModel);
-			}
-		}
+		if (panels != null) for (LogPanel panel : panels) panel.modelChanged(oldModel, curModel);
 	}
 
 	@Override
 	public void setVisible(boolean value) {
-		if (value) {
-			windowManager.frameOpened(this);
-		}
+		if (value) windowManager.frameOpened(this);
 		super.setVisible(value);
 	}
 

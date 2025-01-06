@@ -80,8 +80,8 @@ public class Subtractor extends InstanceFactory {
 		painter.drawPort(B_OUT, "b out", Direction.South);
 
 		Location loc = painter.getLocation();
-		int x = loc.getX();
-		int y = loc.getY();
+		int x = loc.x();
+		int y = loc.y();
 		GraphicsUtil.switchToWidth(g, 2);
 		g.setColor(Color.BLACK);
 		g.drawLine(x - 15, y, x - 5, y);

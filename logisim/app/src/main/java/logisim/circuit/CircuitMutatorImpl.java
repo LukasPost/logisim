@@ -19,13 +19,13 @@ class CircuitMutatorImpl implements CircuitMutator {
 	private HashSet<Circuit> modified;
 
 	public CircuitMutatorImpl() {
-		log = new ArrayList<CircuitChange>();
-		replacements = new HashMap<Circuit, ReplacementMap>();
-		modified = new HashSet<Circuit>();
+		log = new ArrayList<>();
+		replacements = new HashMap<>();
+		modified = new HashSet<>();
 	}
 
 	public void clear(Circuit circuit) {
-		HashSet<Component> comps = new HashSet<Component>(circuit.getNonWires());
+		HashSet<Component> comps = new HashSet<>(circuit.getNonWires());
 		comps.addAll(circuit.getWires());
 		if (!comps.isEmpty())
 			modified.add(circuit);
@@ -75,12 +75,8 @@ class CircuitMutatorImpl implements CircuitMutator {
 			repl.freeze();
 			getMap(circuit).append(repl);
 
-			for (Component c : repl.getRemovals()) {
-				circuit.mutatorRemove(c);
-			}
-			for (Component c : repl.getAdditions()) {
-				circuit.mutatorAdd(c);
-			}
+			for (Component c : repl.getRemovals()) circuit.mutatorRemove(c);
+			for (Component c : repl.getAdditions()) circuit.mutatorAdd(c);
 		}
 	}
 
@@ -117,9 +113,7 @@ class CircuitMutatorImpl implements CircuitMutator {
 	CircuitTransaction getReverseTransaction() {
 		CircuitMutation ret = new CircuitMutation();
 		ArrayList<CircuitChange> log = this.log;
-		for (int i = log.size() - 1; i >= 0; i--) {
-			ret.change(log.get(i).getReverseChange());
-		}
+		for (int i = log.size() - 1; i >= 0; i--) ret.change(log.get(i).getReverseChange());
 		return ret;
 	}
 

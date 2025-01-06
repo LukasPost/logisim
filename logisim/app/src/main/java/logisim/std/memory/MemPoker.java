@@ -24,11 +24,8 @@ public class MemPoker extends InstancePoker {
 		long addr = data.getAddressAt(event.getX() - bds.getX(), event.getY() - bds.getY());
 
 		// See if outside box
-		if (addr < 0) {
-			sub = new AddrPoker();
-		} else {
-			sub = new DataPoker(state, data, addr);
-		}
+		if (addr < 0) sub = new AddrPoker();
+		else sub = new DataPoker(state, data, addr);
 		return true;
 	}
 
@@ -59,9 +56,7 @@ public class MemPoker extends InstancePoker {
 			Object attrs = state.getInstance().getAttributeSet();
 			if (attrs instanceof RomAttributes) {
 				Project proj = state.getProject();
-				if (proj != null) {
-					((RomAttributes) attrs).setProject(proj);
-				}
+				if (proj != null) ((RomAttributes) attrs).setProject(proj);
 			}
 		}
 
@@ -96,13 +91,9 @@ public class MemPoker extends InstancePoker {
 				curValue = curValue * 16 + val;
 				data.getContents().set(data.getCursor(), curValue);
 				state.fireInvalidated();
-			} else if (c == ' ' || c == '\t') {
-				moveTo(data, data.getCursor() + 1);
-			} else if (c == '\r' || c == '\n') {
-				moveTo(data, data.getCursor() + data.getColumns());
-			} else if (c == '\u0008' || c == '\u007f') {
-				moveTo(data, data.getCursor() - 1);
-			}
+			} else if (c == ' ' || c == '\t') moveTo(data, data.getCursor() + 1);
+			else if (c == '\r' || c == '\n') moveTo(data, data.getCursor() + data.getColumns());
+			else if (c == '\u0008' || c == '\u007f') moveTo(data, data.getCursor() - 1);
 		}
 
 		private void moveTo(MemState data, long addr) {
@@ -139,13 +130,9 @@ public class MemPoker extends InstancePoker {
 			if (val >= 0) {
 				long newScroll = (data.getScroll() * 16 + val) & (data.getLastAddress());
 				data.setScroll(newScroll);
-			} else if (c == ' ') {
-				data.setScroll(data.getScroll() + (data.getRows() - 1) * data.getColumns());
-			} else if (c == '\r' || c == '\n') {
-				data.setScroll(data.getScroll() + data.getColumns());
-			} else if (c == '\u0008' || c == '\u007f') {
-				data.setScroll(data.getScroll() - data.getColumns());
-			}
+			} else if (c == ' ') data.setScroll(data.getScroll() + (long) (data.getRows() - 1) * data.getColumns());
+			else if (c == '\r' || c == '\n') data.setScroll(data.getScroll() + data.getColumns());
+			else if (c == '\u0008' || c == '\u007f') data.setScroll(data.getScroll() - data.getColumns());
 		}
 	}
 }

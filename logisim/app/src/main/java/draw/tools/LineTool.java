@@ -71,8 +71,8 @@ public class LineTool extends AbstractTool {
 		Location loc = new Location(x, y);
 		mouseStart = loc;
 		mouseEnd = loc;
-		lastMouseX = loc.getX();
-		lastMouseY = loc.getY();
+		lastMouseX = loc.x();
+		lastMouseY = loc.y();
 		active = canvas.getModel() != null;
 		repaintArea(canvas);
 	}
@@ -106,9 +106,8 @@ public class LineTool extends AbstractTool {
 	@Override
 	public void keyPressed(Canvas canvas, KeyEvent e) {
 		int code = e.getKeyCode();
-		if (active && (code == KeyEvent.VK_SHIFT || code == KeyEvent.VK_CONTROL)) {
+		if (active && (code == KeyEvent.VK_SHIFT || code == KeyEvent.VK_CONTROL))
 			updateMouse(canvas, lastMouseX, lastMouseY, e.getModifiersEx());
-		}
 	}
 
 	@Override
@@ -120,15 +119,12 @@ public class LineTool extends AbstractTool {
 		if (active) {
 			boolean shift = (mods & MouseEvent.SHIFT_DOWN_MASK) != 0;
 			Location newEnd;
-			if (shift) {
-				newEnd = LineUtil.snapTo8Cardinals(mouseStart, mx, my);
-			} else {
-				newEnd = new Location(mx, my);
-			}
+			if (shift) newEnd = LineUtil.snapTo8Cardinals(mouseStart, mx, my);
+			else newEnd = new Location(mx, my);
 
 			if ((mods & InputEvent.CTRL_DOWN_MASK) != 0) {
-				int x = newEnd.getX();
-				int y = newEnd.getY();
+				int x = newEnd.x();
+				int y = newEnd.y();
 				x = canvas.snapX(x);
 				y = canvas.snapY(y);
 				newEnd = new Location(x, y);
@@ -153,20 +149,15 @@ public class LineTool extends AbstractTool {
 			Location start = mouseStart;
 			Location end = mouseEnd;
 			g.setColor(Color.GRAY);
-			g.drawLine(start.getX(), start.getY(), end.getX(), end.getY());
+			g.drawLine(start.x(), start.y(), end.x(), end.y());
 		}
 	}
 
 	static Location snapTo4Cardinals(Location from, int mx, int my) {
-		int px = from.getX();
-		int py = from.getY();
-		if (mx != px && my != py) {
-			if (Math.abs(my - py) < Math.abs(mx - px)) {
-				return new Location(mx, py);
-			} else {
-				return new Location(px, my);
-			}
-		}
+		int px = from.x();
+		int py = from.y();
+		if (mx != px && my != py) if (Math.abs(my - py) < Math.abs(mx - px)) return new Location(mx, py);
+		else return new Location(px, my);
 		return new Location(mx, my); // should never happen
 	}
 }

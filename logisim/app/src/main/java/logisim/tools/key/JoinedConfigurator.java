@@ -28,24 +28,18 @@ public class JoinedConfigurator implements KeyConfigurator, Cloneable {
 			e.printStackTrace();
 			return null;
 		}
-		int len = this.handlers.length;
+		int len = handlers.length;
 		ret.handlers = new KeyConfigurator[len];
-		for (int i = 0; i < len; i++) {
-			ret.handlers[i] = this.handlers[i].clone();
-		}
+		for (int i = 0; i < len; i++) ret.handlers[i] = handlers[i].clone();
 		return ret;
 	}
 
 	public KeyConfigurationResult keyEventReceived(KeyConfigurationEvent event) {
 		KeyConfigurator[] hs = handlers;
-		if (event.isConsumed()) {
-			return null;
-		}
-		for (int i = 0; i < hs.length; i++) {
-			KeyConfigurationResult result = hs[i].keyEventReceived(event);
-			if (result != null || event.isConsumed()) {
-				return result;
-			}
+		if (event.isConsumed()) return null;
+		for (KeyConfigurator h : hs) {
+			KeyConfigurationResult result = h.keyEventReceived(event);
+			if (result != null || event.isConsumed()) return result;
 		}
 		return null;
 	}

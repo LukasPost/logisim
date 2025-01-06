@@ -12,8 +12,8 @@ public class Dag<E> {
 	private static class Node<E> {
 		@SuppressWarnings("unused")
 		E data;
-		HashSet<Node<E>> succs = new HashSet<Node<E>>(); // of Nodes
-		int numPreds = 0;
+		HashSet<Node<E>> succs = new HashSet<>(); // of Nodes
+		int numPreds;
 		boolean mark;
 
 		Node(E data) {
@@ -21,7 +21,7 @@ public class Dag<E> {
 		}
 	}
 
-	private HashMap<E, Node<E>> nodes = new HashMap<E, Node<E>>();
+	private HashMap<E, Node<E>> nodes = new HashMap<>();
 
 	public Dag() {
 	}
@@ -39,11 +39,8 @@ public class Dag<E> {
 	public boolean canFollow(Object query, Object base) {
 		Node<E> queryNode = findNode(query);
 		Node<E> baseNode = findNode(base);
-		if (baseNode == null || queryNode == null) {
-			return !base.equals(query);
-		} else {
-			return canFollow(queryNode, baseNode);
-		}
+		if (baseNode == null || queryNode == null) return !base.equals(query);
+		else return canFollow(queryNode, baseNode);
 	}
 
 	public boolean addEdge(E srcData, E dstData) {
@@ -86,13 +83,7 @@ public class Dag<E> {
 				it.remove();
 		}
 
-		if (n.numPreds > 0) {
-			for (Iterator<Node<E>> it = nodes.values().iterator(); it.hasNext();) {
-				Node<E> q = it.next();
-				if (q.succs.remove(n) && q.numPreds == 0 && q.succs.isEmpty())
-					it.remove();
-			}
-		}
+		if (n.numPreds > 0) nodes.values().removeIf(q -> q.succs.remove(n) && q.numPreds == 0 && q.succs.isEmpty());
 	}
 
 	private Node<E> findNode(Object data) {
@@ -118,9 +109,7 @@ public class Dag<E> {
 			return false;
 
 		// mark all as unvisited
-		for (Node<E> n : nodes.values()) {
-			n.mark = false; // will become true once reached
-		}
+		for (Node<E> n : nodes.values()) n.mark = false; // will become true once reached
 
 		// Search starting at query: If base is found, then it follows
 		// the query already, and so query cannot follow base.
@@ -128,14 +117,13 @@ public class Dag<E> {
 		fringe.add(query);
 		while (!fringe.isEmpty()) {
 			Node<E> n = fringe.removeFirst();
-			for (Node<E> next : n.succs) {
+			for (Node<E> next : n.succs)
 				if (!next.mark) {
 					if (next == base)
 						return false;
 					next.mark = true;
 					fringe.addLast(next);
 				}
-			}
 		}
 		return true;
 	}

@@ -38,9 +38,7 @@ class CanvasListener implements MouseListener, MouseMotionListener, KeyListener,
 			if (value != null) {
 				value.toolSelected(canvas);
 				canvas.setCursor(value.getCursor(canvas));
-			} else {
-				canvas.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-			}
+			} else canvas.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
 	}
 
@@ -51,22 +49,17 @@ class CanvasListener implements MouseListener, MouseMotionListener, KeyListener,
 
 	public void mousePressed(MouseEvent e) {
 		canvas.requestFocus();
-		if (e.isPopupTrigger()) {
-			handlePopupTrigger(e);
-		} else if (e.getButton() == 1) {
-			if (tool != null)
-				tool.mousePressed(canvas, e);
-		}
+		if (e.isPopupTrigger()) handlePopupTrigger(e);
+		else if (e.getButton() == 1) if (tool != null)
+			tool.mousePressed(canvas, e);
 	}
 
 	public void mouseDragged(MouseEvent e) {
 		if (isButton1(e)) {
 			if (tool != null)
 				tool.mouseDragged(canvas, e);
-		} else {
-			if (tool != null)
-				tool.mouseMoved(canvas, e);
-		}
+		} else if (tool != null)
+			tool.mouseMoved(canvas, e);
 	}
 
 	public void mouseReleased(MouseEvent e) {
@@ -74,10 +67,8 @@ class CanvasListener implements MouseListener, MouseMotionListener, KeyListener,
 			if (tool != null)
 				tool.cancelMousePress(canvas);
 			handlePopupTrigger(e);
-		} else if (e.getButton() == 1) {
-			if (tool != null)
-				tool.mouseReleased(canvas, e);
-		}
+		} else if (e.getButton() == 1) if (tool != null)
+			tool.mouseReleased(canvas, e);
 	}
 
 	public void mouseClicked(MouseEvent e) {
@@ -121,20 +112,16 @@ class CanvasListener implements MouseListener, MouseMotionListener, KeyListener,
 		Location loc = new Location(e.getX(), e.getY());
 		List<CanvasObject> objects = canvas.getModel().getObjectsFromTop();
 		CanvasObject clicked = null;
-		for (CanvasObject o : objects) {
+		for (CanvasObject o : objects)
 			if (o.contains(loc, false)) {
 				clicked = o;
 				break;
 			}
-		}
-		if (clicked == null) {
-			for (CanvasObject o : objects) {
-				if (o.contains(loc, true)) {
-					clicked = o;
-					break;
-				}
+		if (clicked == null) for (CanvasObject o : objects)
+			if (o.contains(loc, true)) {
+				clicked = o;
+				break;
 			}
-		}
 		canvas.showPopupMenu(e, clicked);
 	}
 }

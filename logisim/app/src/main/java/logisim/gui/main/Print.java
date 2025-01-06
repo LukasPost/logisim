@@ -44,7 +44,7 @@ public class Print {
 		Frame frame = proj.getFrame();
 		if (list.getModel().getSize() == 0) {
 			JOptionPane.showMessageDialog(proj.getFrame(), Strings.get("printEmptyCircuitsMessage"),
-					Strings.get("printEmptyCircuitsTitle"), JOptionPane.YES_NO_OPTION);
+					Strings.get("printEmptyCircuitsTitle"), JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		ParmsPanel parmsPanel = new ParmsPanel(list);
@@ -62,7 +62,7 @@ public class Print {
 
 		PrinterJob job = PrinterJob.getPrinterJob();
 		job.setPrintable(print, format);
-		if (job.printDialog() == false)
+		if (!job.printDialog())
 			return;
 		try {
 			job.print();
@@ -160,7 +160,7 @@ public class Print {
 			Graphics g = base.create();
 			Graphics2D g2 = g instanceof Graphics2D ? (Graphics2D) g : null;
 			FontMetrics fm = g.getFontMetrics();
-			String head = (header != null && !header.equals(""))
+			String head = (header != null && !header.isEmpty())
 					? format(header, pageIndex + 1, circuits.size(), circ.getName())
 					: null;
 			int headHeight = (head == null ? 0 : fm.getHeight());
@@ -186,9 +186,7 @@ public class Print {
 							g2.translate(imWidth, 0);
 							g2.rotate(Math.PI / 2);
 						}
-						double t = imHeight;
-						imHeight = imWidth;
-						imWidth = t;
+						imWidth = imHeight;
 					}
 				}
 			}
@@ -196,10 +194,7 @@ public class Print {
 			// Draw the header line if appropriate
 			if (head != null) {
 				g.drawString(head, (int) Math.round((imWidth - fm.stringWidth(head)) / 2), fm.getAscent());
-				if (g2 != null) {
-					imHeight -= headHeight;
-					g2.translate(0, headHeight);
-				}
+				if (g2 != null) g2.translate(0, headHeight);
 			}
 
 			// Now change coordinate system for circuit, including
@@ -208,7 +203,6 @@ public class Print {
 				if (scale < 1.0) {
 					g2.scale(scale, scale);
 					imWidth /= scale;
-					imHeight /= scale;
 				}
 				double dx = Math.max(0.0, (imWidth - bds.getWidth()) / 2);
 				g2.translate(-bds.getX() + dx, -bds.getY());
@@ -237,27 +231,25 @@ public class Print {
 		StringBuilder ret = new StringBuilder();
 		int start = 0;
 		for (; mark >= 0 && mark + 1 < header.length(); start = mark + 2, mark = header.indexOf('%', start)) {
-			ret.append(header.substring(start, mark));
+			ret.append(header, start, mark);
 			switch (header.charAt(mark + 1)) {
 			case 'n':
 				ret.append(circName);
 				break;
 			case 'p':
-				ret.append("" + index);
+				ret.append(index);
 				break;
 			case 'P':
-				ret.append("" + max);
+				ret.append(max);
 				break;
 			case '%':
 				ret.append("%");
 				break;
 			default:
-				ret.append("%" + header.charAt(mark + 1));
+				ret.append("%").append(header.charAt(mark + 1));
 			}
 		}
-		if (start < header.length()) {
-			ret.append(header.substring(start));
-		}
+		if (start < header.length()) ret.append(header.substring(start));
 		return ret.toString();
 	}
 }

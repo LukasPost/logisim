@@ -9,6 +9,8 @@ import logisim.data.Attribute;
 import logisim.util.StringGetter;
 import logisim.util.StringUtil;
 
+import java.awt.Component;
+
 public class DurationAttribute extends Attribute<Integer> {
 	private int min;
 	private int max;
@@ -22,12 +24,11 @@ public class DurationAttribute extends Attribute<Integer> {
 	@Override
 	public Integer parse(String value) {
 		try {
-			Integer ret = Integer.valueOf(value);
-			if (ret.intValue() < min) {
+			int ret = Integer.parseInt(value);
+			if (ret < min)
 				throw new NumberFormatException(StringUtil.format(Strings.get("durationSmallMessage"), "" + min));
-			} else if (ret.intValue() > max) {
+			else if (ret > max)
 				throw new NumberFormatException(StringUtil.format(Strings.get("durationLargeMessage"), "" + max));
-			}
 			return ret;
 		}
 		catch (NumberFormatException e) {
@@ -37,15 +38,12 @@ public class DurationAttribute extends Attribute<Integer> {
 
 	@Override
 	public String toDisplayString(Integer value) {
-		if (value.equals(Integer.valueOf(1))) {
-			return Strings.get("clockDurationOneValue");
-		} else {
-			return StringUtil.format(Strings.get("clockDurationValue"), value.toString());
-		}
+		if (value.equals(1)) return Strings.get("clockDurationOneValue");
+		else return StringUtil.format(Strings.get("clockDurationValue"), value.toString());
 	}
 
 	@Override
-	public java.awt.Component getCellEditor(Integer value) {
+	public Component getCellEditor(Integer value) {
 		JTextField field = new JTextField();
 		field.setText(value.toString());
 		return field;

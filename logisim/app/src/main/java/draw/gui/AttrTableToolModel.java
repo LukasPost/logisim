@@ -6,7 +6,6 @@ package draw.gui;
 import draw.tools.AbstractTool;
 import draw.tools.DrawingAttributeSet;
 import logisim.data.Attribute;
-import logisim.gui.generic.AttrTableSetException;
 import logisim.gui.generic.AttributeSetTableModel;
 
 class AttrTableToolModel extends AttributeSetTableModel {
@@ -16,7 +15,7 @@ class AttrTableToolModel extends AttributeSetTableModel {
 	public AttrTableToolModel(DrawingAttributeSet defaults, AbstractTool tool) {
 		super(defaults.createSubset(tool));
 		this.defaults = defaults;
-		this.currentTool = tool;
+		currentTool = tool;
 	}
 
 	public void setTool(AbstractTool value) {
@@ -31,7 +30,7 @@ class AttrTableToolModel extends AttributeSetTableModel {
 	}
 
 	@Override
-	public void setValueRequested(Attribute<Object> attr, Object value) throws AttrTableSetException {
+	public void setValueRequested(Attribute<Object> attr, Object value) {
 		defaults.setValue(attr, value);
 	}
 }

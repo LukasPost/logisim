@@ -37,9 +37,9 @@ public class WindowManagers {
 		}
 	}
 
-	private static boolean initialized = false;
+	private static boolean initialized;
 	private static MyListener myListener = new MyListener();
-	private static HashMap<Project, ProjectManager> projectMap = new LinkedHashMap<Project, ProjectManager>();
+	private static HashMap<Project, ProjectManager> projectMap = new LinkedHashMap<>();
 
 	private static class MyListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent event) {
@@ -64,22 +64,18 @@ public class WindowManagers {
 		}
 
 		public void projectChanged(ProjectEvent event) {
-			if (event.getAction() == ProjectEvent.ACTION_SET_FILE) {
-				setText(proj.getLogisimFile().getName());
-			}
+			if (event.getAction() == ProjectEvent.ACTION_SET_FILE) setText(proj.getLogisimFile().getName());
 		}
 
 		public void libraryChanged(LibraryEvent event) {
-			if (event.getAction() == LibraryEvent.SET_NAME) {
-				setText((String) event.getData());
-			}
+			if (event.getAction() == LibraryEvent.SET_NAME) setText((String) event.getData());
 		}
 	}
 
 	private static void computeListeners() {
 		List<Project> nowOpen = Projects.getOpenProjects();
 
-		HashSet<Project> closed = new HashSet<Project>(projectMap.keySet());
+		HashSet<Project> closed = new HashSet<>(projectMap.keySet());
 		closed.removeAll(nowOpen);
 		for (Project proj : closed) {
 			ProjectManager manager = projectMap.get(proj);
@@ -87,7 +83,7 @@ public class WindowManagers {
 			projectMap.remove(proj);
 		}
 
-		HashSet<Project> opened = new LinkedHashSet<Project>(nowOpen);
+		HashSet<Project> opened = new LinkedHashSet<>(nowOpen);
 		opened.removeAll(projectMap.keySet());
 		for (Project proj : opened) {
 			ProjectManager manager = new ProjectManager(proj);

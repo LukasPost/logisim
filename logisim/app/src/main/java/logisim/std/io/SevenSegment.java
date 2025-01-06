@@ -16,7 +16,7 @@ import logisim.instance.InstanceState;
 import logisim.instance.Port;
 
 public class SevenSegment extends InstanceFactory {
-	static Bounds[] SEGMENTS = null;
+	static Bounds[] SEGMENTS;
 	static Color DEFAULT_OFF = new Color(220, 220, 220);
 
 	public SevenSegment() {
@@ -38,13 +38,10 @@ public class SevenSegment extends InstanceFactory {
 			if (val == Value.TRUE)
 				summary |= 1 << i;
 		}
-		Object value = Integer.valueOf(summary);
+		Object value = summary;
 		InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
-		if (data == null) {
-			state.setData(new InstanceDataSingleton(value));
-		} else {
-			data.setValue(value);
-		}
+		if (data == null) state.setData(new InstanceDataSingleton(value));
+		else data.setValue(value);
 	}
 
 	@Override
@@ -55,9 +52,9 @@ public class SevenSegment extends InstanceFactory {
 	static void drawBase(InstancePainter painter) {
 		ensureSegments();
 		InstanceDataSingleton data = (InstanceDataSingleton) painter.getData();
-		int summ = (data == null ? 0 : ((Integer) data.getValue()).intValue());
+		int summ = (data == null ? 0 : (Integer) data.getValue());
 		Boolean active = painter.getAttributeValue(Io.ATTR_ACTIVE);
-		int desired = active == null || active.booleanValue() ? 1 : 0;
+		int desired = active == null || active ? 1 : 0;
 
 		Bounds bds = painter.getBounds();
 		int x = bds.getX() + 5;
@@ -75,24 +72,18 @@ public class SevenSegment extends InstanceFactory {
 		painter.drawBounds();
 		g.setColor(Color.DARK_GRAY);
 		for (int i = 0; i <= 7; i++) {
-			if (painter.getShowState()) {
-				g.setColor(((summ >> i) & 1) == desired ? onColor : offColor);
-			}
+			if (painter.getShowState()) g.setColor(((summ >> i) & 1) == desired ? onColor : offColor);
 			if (i < 7) {
 				Bounds seg = SEGMENTS[i];
 				g.fillRect(x + seg.getX(), y + seg.getY(), seg.getWidth(), seg.getHeight());
-			} else {
-				g.fillOval(x + 28, y + 48, 5, 5); // draw decimal point
-			}
+			} else g.fillOval(x + 28, y + 48, 5, 5); // draw decimal point
 		}
 		painter.drawPorts();
 	}
 
 	static void ensureSegments() {
-		if (SEGMENTS == null) {
-			SEGMENTS = new Bounds[] { Bounds.create(3, 8, 19, 4), Bounds.create(23, 10, 4, 19),
-					Bounds.create(23, 30, 4, 19), Bounds.create(3, 47, 19, 4), Bounds.create(-2, 30, 4, 19),
-					Bounds.create(-2, 10, 4, 19), Bounds.create(3, 28, 19, 4) };
-		}
+		if (SEGMENTS == null) SEGMENTS = new Bounds[]{Bounds.create(3, 8, 19, 4), Bounds.create(23, 10, 4, 19),
+				Bounds.create(23, 30, 4, 19), Bounds.create(3, 47, 19, 4), Bounds.create(-2, 30, 4, 19),
+				Bounds.create(-2, 10, 4, 19), Bounds.create(3, 28, 19, 4)};
 	}
 }

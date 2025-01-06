@@ -24,8 +24,8 @@ public class AnalyzerManager extends WindowMenuItemManager implements LocaleList
 		return analysisWindow;
 	}
 
-	private static Analyzer analysisWindow = null;
-	private static AnalyzerManager analysisManager = null;
+	private static Analyzer analysisWindow;
+	private static AnalyzerManager analysisManager;
 
 	private AnalyzerManager() {
 		super(Strings.get("analyzerWindowTitle"), true);
@@ -34,11 +34,8 @@ public class AnalyzerManager extends WindowMenuItemManager implements LocaleList
 
 	@Override
 	public JFrame getJFrame(boolean create) {
-		if (create) {
-			return getAnalyzer();
-		} else {
-			return analysisWindow;
-		}
+		if (create) return getAnalyzer();
+		else return analysisWindow;
 	}
 
 	public void localeChanged() {

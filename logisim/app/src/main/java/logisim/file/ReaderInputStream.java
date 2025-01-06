@@ -16,9 +16,12 @@
  */
 package logisim.file;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.charset.Charset;
 
 /**
  * Adapts a <code>Reader</code> as an <code>InputStream</code>. Adapted from <CODE>StringInputStream</CODE>.
@@ -29,7 +32,7 @@ public class ReaderInputStream extends InputStream {
 	/** Source Reader */
 	private Reader in;
 
-	private String encoding = System.getProperty("file.encoding");
+	private String encoding = Charset.defaultCharset().displayName();
 
 	private byte[] slack;
 
@@ -52,11 +55,8 @@ public class ReaderInputStream extends InputStream {
 	 */
 	public ReaderInputStream(Reader reader, String encoding) {
 		this(reader);
-		if (encoding == null) {
-			throw new IllegalArgumentException("encoding must not be null");
-		} else {
-			this.encoding = encoding;
-		}
+		if (encoding == null) throw new IllegalArgumentException("encoding must not be null");
+		else this.encoding = encoding;
 	}
 
 	/**
@@ -68,29 +68,17 @@ public class ReaderInputStream extends InputStream {
 	 */
 	@Override
 	public synchronized int read() throws IOException {
-		if (in == null) {
+		if (in == null)
 			throw new IOException("Stream Closed");
-		}
 
-		byte result;
-		if (slack != null && begin < slack.length) {
-			result = slack[begin];
-			if (++begin == slack.length) {
-				slack = null;
-			}
-		} else {
-			byte[] buf = new byte[1];
-			if (read(buf, 0, 1) <= 0) {
-				result = -1;
-			}
-			result = buf[0];
-		}
+		if (slack == null || begin >= slack.length)
+			return 0;
 
-		if (result < -1) {
-			result += 256;
-		}
+		byte result = slack[begin];
+		if (++begin == slack.length)
+			slack = null;
 
-		return result;
+		return result & 0xFF;
 	}
 
 	/**
@@ -103,32 +91,24 @@ public class ReaderInputStream extends InputStream {
 	 * @exception IOException if an error occurs
 	 */
 	@Override
-	public synchronized int read(byte[] b, int off, int len) throws IOException {
-		if (in == null) {
-			throw new IOException("Stream Closed");
-		}
+	public synchronized int read(byte @NotNull [] b, int off, int len) throws IOException {
+		if (in == null) throw new IOException("Stream Closed");
 
 		while (slack == null) {
 			char[] buf = new char[len]; // might read too much
 			int n = in.read(buf);
-			if (n == -1) {
-				return -1;
-			}
+			if (n == -1) return -1;
 			if (n > 0) {
 				slack = new String(buf, 0, n).getBytes(encoding);
 				begin = 0;
 			}
 		}
 
-		if (len > slack.length - begin) {
-			len = slack.length - begin;
-		}
+		if (len > slack.length - begin) len = slack.length - begin;
 
 		System.arraycopy(slack, begin, b, off, len);
 
-		if ((begin += len) >= slack.length) {
-			slack = null;
-		}
+		if ((begin += len) >= slack.length) slack = null;
 
 		return len;
 	}
@@ -154,17 +134,10 @@ public class ReaderInputStream extends InputStream {
 	 */
 	@Override
 	public synchronized int available() throws IOException {
-		if (in == null) {
-			throw new IOException("Stream Closed");
-		}
-		if (slack != null) {
-			return slack.length - begin;
-		}
-		if (in.ready()) {
-			return 1;
-		} else {
-			return 0;
-		}
+		if (in == null) throw new IOException("Stream Closed");
+		if (slack != null) return slack.length - begin;
+		if (in.ready()) return 1;
+		else return 0;
 	}
 
 	/**
@@ -182,9 +155,7 @@ public class ReaderInputStream extends InputStream {
 	 */
 	@Override
 	public synchronized void reset() throws IOException {
-		if (in == null) {
-			throw new IOException("Stream Closed");
-		}
+		if (in == null) throw new IOException("Stream Closed");
 		slack = null;
 		in.reset();
 	}

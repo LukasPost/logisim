@@ -19,8 +19,8 @@ public class AnalyzerModel {
 	private VariableList outputs = new VariableList(MAX_OUTPUTS);
 	private TruthTable table;
 	private OutputExpressions outputExpressions;
-	private Project currentProject = null;
-	private Circuit currentCircuit = null;
+	private Project currentProject;
+	private Circuit currentCircuit;
 
 	public AnalyzerModel() {
 		// the order here is important, because the output expressions

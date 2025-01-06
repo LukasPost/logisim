@@ -45,7 +45,7 @@ abstract class CircuitDetermination {
 	//
 	static class Gate extends CircuitDetermination {
 		private ComponentFactory factory;
-		private ArrayList<CircuitDetermination> inputs = new ArrayList<CircuitDetermination>();
+		private ArrayList<CircuitDetermination> inputs = new ArrayList<>();
 
 		private Gate(ComponentFactory factory) {
 			this.factory = factory;
@@ -61,11 +61,8 @@ abstract class CircuitDetermination {
 
 		@Override
 		void convertToTwoInputs() {
-			if (inputs.size() <= 2) {
-				for (CircuitDetermination a : inputs) {
-					a.convertToTwoInputs();
-				}
-			} else {
+			if (inputs.size() <= 2) for (CircuitDetermination a : inputs) a.convertToTwoInputs();
+			else {
 				ComponentFactory subFactory;
 				if (factory == NorGate.FACTORY)
 					subFactory = OrGate.FACTORY;
@@ -102,32 +99,24 @@ abstract class CircuitDetermination {
 		@Override
 		void convertToNands() {
 			// first recurse to clean up any children
-			for (CircuitDetermination sub : inputs) {
-				sub.convertToNands();
-			}
+			for (CircuitDetermination sub : inputs) sub.convertToNands();
 
 			// repair large XOR/XNORs to odd/even parity gates
-			if (factory == NotGate.FACTORY) {
-				inputs.add(inputs.get(0));
-			} else if (factory == AndGate.FACTORY) {
-				notOutput();
-			} else if (factory == OrGate.FACTORY) {
-				notAllInputs();
-			} else if (factory == NorGate.FACTORY) {
+			if (factory == NotGate.FACTORY) inputs.add(inputs.getFirst());
+			else if (factory == AndGate.FACTORY) notOutput();
+			else if (factory == OrGate.FACTORY) notAllInputs();
+			else if (factory == NorGate.FACTORY) {
 				notAllInputs(); // the order of these two lines is significant
 				notOutput();
-			} else if (factory == NandGate.FACTORY) {
-				;
-			} else {
-				throw new IllegalArgumentException("Cannot handle " + factory.getDisplayName());
-			}
+			} else if (factory == NandGate.FACTORY) ;
+			else throw new IllegalArgumentException("Cannot handle " + factory.getDisplayName());
 			factory = NandGate.FACTORY;
 		}
 
 		private void notOutput() {
 			Gate sub = new Gate(NandGate.FACTORY);
-			sub.inputs = this.inputs;
-			this.inputs = new ArrayList<CircuitDetermination>();
+			sub.inputs = inputs;
+			inputs = new ArrayList<>();
 			inputs.add(sub);
 			inputs.add(sub);
 		}
@@ -135,9 +124,8 @@ abstract class CircuitDetermination {
 		private void notAllInputs() {
 			for (int i = 0; i < inputs.size(); i++) {
 				CircuitDetermination old = inputs.get(i);
-				if (old.isNandNot()) {
-					inputs.set(i, ((Gate) old).inputs.get(0));
-				} else {
+				if (old.isNandNot()) inputs.set(i, ((Gate) old).inputs.getFirst());
+				else {
 					Gate now = new Gate(NandGate.FACTORY);
 					now.inputs.add(old);
 					now.inputs.add(old);
@@ -158,7 +146,7 @@ abstract class CircuitDetermination {
 			if (num > GateAttributes.MAX_INPUTS) {
 				int newNum = (num + GateAttributes.MAX_INPUTS - 1) / GateAttributes.MAX_INPUTS;
 				ArrayList<CircuitDetermination> oldInputs = inputs;
-				inputs = new ArrayList<CircuitDetermination>();
+				inputs = new ArrayList<>();
 
 				ComponentFactory subFactory = factory;
 				if (subFactory == NandGate.FACTORY)
@@ -181,18 +169,11 @@ abstract class CircuitDetermination {
 			}
 
 			// repair large XOR/XNORs to odd/even parity gates
-			if (inputs.size() > 2) {
-				if (factory == XorGate.FACTORY) {
-					factory = OddParityGate.FACTORY;
-				} else if (factory == XnorGate.FACTORY) {
-					factory = EvenParityGate.FACTORY;
-				}
-			}
+			if (inputs.size() > 2) if (factory == XorGate.FACTORY) factory = OddParityGate.FACTORY;
+			else if (factory == XnorGate.FACTORY) factory = EvenParityGate.FACTORY;
 
 			// finally, recurse to clean up any children
-			for (CircuitDetermination sub : inputs) {
-				sub.repair();
-			}
+			for (CircuitDetermination sub : inputs) sub.repair();
 		}
 	}
 
@@ -240,27 +221,18 @@ abstract class CircuitDetermination {
 		}
 
 		private Gate binary(CircuitDetermination aret, CircuitDetermination bret, ComponentFactory factory) {
-			if (aret instanceof Gate) {
-				Gate a = (Gate) aret;
-				if (a.factory == factory) {
-					if (bret instanceof Gate) {
-						Gate b = (Gate) bret;
-						if (b.factory == factory) {
-							a.inputs.addAll(b.inputs);
-							return a;
-						}
-					}
-					a.inputs.add(bret);
+			if (aret instanceof Gate a) if (a.factory == factory) {
+				if (bret instanceof Gate b) if (b.factory == factory) {
+					a.inputs.addAll(b.inputs);
 					return a;
 				}
+				a.inputs.add(bret);
+				return a;
 			}
 
-			if (bret instanceof Gate) {
-				Gate b = (Gate) bret;
-				if (b.factory == factory) {
-					b.inputs.add(aret);
-					return b;
-				}
+			if (bret instanceof Gate b) if (b.factory == factory) {
+				b.inputs.add(aret);
+				return b;
 			}
 
 			Gate ret = new Gate(factory);
@@ -271,18 +243,17 @@ abstract class CircuitDetermination {
 
 		public CircuitDetermination visitNot(Expression aBase) {
 			CircuitDetermination aret = aBase.visit(this);
-			if (aret instanceof Gate) {
-				Gate a = (Gate) aret;
-				if (a.factory == AndGate.FACTORY) {
-					a.factory = NandGate.FACTORY;
-					return a;
-				} else if (a.factory == OrGate.FACTORY) {
-					a.factory = NorGate.FACTORY;
-					return a;
-				} else if (a.factory == XorGate.FACTORY) {
-					a.factory = XnorGate.FACTORY;
-					return a;
-				}
+			if (aret instanceof Gate a) if (a.factory == AndGate.FACTORY) {
+				a.factory = NandGate.FACTORY;
+				return a;
+			}
+			else if (a.factory == OrGate.FACTORY) {
+				a.factory = NorGate.FACTORY;
+				return a;
+			}
+			else if (a.factory == XorGate.FACTORY) {
+				a.factory = XnorGate.FACTORY;
+				return a;
 			}
 
 			Gate ret = new Gate(NotGate.FACTORY);

@@ -3,6 +3,8 @@
 
 package logisim.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.AbstractList;
 import java.util.AbstractSet;
 import java.util.Iterator;
@@ -25,7 +27,7 @@ public class CollectionUtil {
 		}
 
 		@Override
-		public Iterator<E> iterator() {
+		public @NotNull Iterator<E> iterator() {
 			return IteratorUtil.createJoinedIterator(a.iterator(), b.iterator());
 		}
 	}
@@ -46,13 +48,8 @@ public class CollectionUtil {
 
 		@Override
 		public E get(int index) {
-			E ret;
-			if (index < a.size()) {
-				ret = a.get(index);
-			} else {
-				ret = a.get(index - a.size());
-			}
-			return ret;
+			if (index < a.size()) return a.get(index);
+			else return a.get(index - a.size());
 		}
 	}
 
@@ -60,10 +57,10 @@ public class CollectionUtil {
 	}
 
 	public static <E> Set<E> createUnmodifiableSetUnion(Set<? extends E> a, Set<? extends E> b) {
-		return new UnionSet<E>(a, b);
+		return new UnionSet<>(a, b);
 	}
 
 	public static <E> List<E> createUnmodifiableListUnion(List<? extends E> a, List<? extends E> b) {
-		return new UnionList<E>(a, b);
+		return new UnionList<>(a, b);
 	}
 }

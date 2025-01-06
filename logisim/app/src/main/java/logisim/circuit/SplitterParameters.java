@@ -28,13 +28,9 @@ class SplitterParameters {
 		Direction facing = attrs.facing;
 
 		int justify;
-		if (appear == SplitterAttributes.APPEAR_CENTER || appear == SplitterAttributes.APPEAR_LEGACY) {
-			justify = 0;
-		} else if (appear == SplitterAttributes.APPEAR_RIGHT) {
-			justify = 1;
-		} else {
-			justify = -1;
-		}
+		if (appear == SplitterAttributes.APPEAR_CENTER || appear == SplitterAttributes.APPEAR_LEGACY) justify = 0;
+		else if (appear == SplitterAttributes.APPEAR_RIGHT) justify = 1;
+		else justify = -1;
 		int width = 20;
 
 		int offs = 6;

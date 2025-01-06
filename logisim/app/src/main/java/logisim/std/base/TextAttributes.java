@@ -6,6 +6,7 @@ package logisim.std.base;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import logisim.data.AbstractAttributeSet;
 import logisim.data.Attribute;
@@ -15,7 +16,7 @@ import logisim.instance.StdAttr;
 
 class TextAttributes extends AbstractAttributeSet {
 	private static final List<Attribute<?>> ATTRIBUTES = Arrays
-			.asList(new Attribute<?>[] { Text.ATTR_TEXT, Text.ATTR_FONT, Text.ATTR_HALIGN, Text.ATTR_VALIGN });
+			.asList(Text.ATTR_TEXT, Text.ATTR_FONT, Text.ATTR_HALIGN, Text.ATTR_VALIGN);
 
 	private String text;
 	private Font font;
@@ -40,11 +41,11 @@ class TextAttributes extends AbstractAttributeSet {
 	}
 
 	int getHorizontalAlign() {
-		return ((Integer) halign.getValue()).intValue();
+		return (Integer) halign.getValue();
 	}
 
 	int getVerticalAlign() {
-		return ((Integer) valign.getValue()).intValue();
+		return (Integer) valign.getValue();
 	}
 
 	Bounds getOffsetBounds() {
@@ -53,16 +54,14 @@ class TextAttributes extends AbstractAttributeSet {
 
 	boolean setOffsetBounds(Bounds value) {
 		Bounds old = offsetBounds;
-		boolean same = old == null ? value == null : old.equals(value);
-		if (!same) {
-			offsetBounds = value;
-		}
+		boolean same = Objects.equals(old, value);
+		if (!same) offsetBounds = value;
 		return !same;
 	}
 
 	@Override
 	protected void copyInto(AbstractAttributeSet destObj) {
-		; // nothing to do
+		// nothing to do
 	}
 
 	@Override
@@ -86,17 +85,11 @@ class TextAttributes extends AbstractAttributeSet {
 
 	@Override
 	public <V> void setValue(Attribute<V> attr, V value) {
-		if (attr == Text.ATTR_TEXT) {
-			text = (String) value;
-		} else if (attr == Text.ATTR_FONT) {
-			font = (Font) value;
-		} else if (attr == Text.ATTR_HALIGN) {
-			halign = (AttributeOption) value;
-		} else if (attr == Text.ATTR_VALIGN) {
-			valign = (AttributeOption) value;
-		} else {
-			throw new IllegalArgumentException("unknown attribute");
-		}
+		if (attr == Text.ATTR_TEXT) text = (String) value;
+		else if (attr == Text.ATTR_FONT) font = (Font) value;
+		else if (attr == Text.ATTR_HALIGN) halign = (AttributeOption) value;
+		else if (attr == Text.ATTR_VALIGN) valign = (AttributeOption) value;
+		else throw new IllegalArgumentException("unknown attribute");
 		offsetBounds = null;
 		fireAttributeValueChanged(attr, value);
 	}

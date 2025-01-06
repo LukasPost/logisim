@@ -6,6 +6,7 @@ package draw.actions;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 
 import draw.model.AttributeMapKey;
 import draw.model.CanvasModel;
@@ -26,10 +27,8 @@ public class ModelChangeAttributeAction extends ModelAction {
 
 	@Override
 	public Collection<CanvasObject> getObjects() {
-		HashSet<CanvasObject> ret = new HashSet<CanvasObject>();
-		for (AttributeMapKey key : newValues.keySet()) {
-			ret.add(key.getObject());
-		}
+		HashSet<CanvasObject> ret = new HashSet<>();
+		for (AttributeMapKey key : newValues.keySet()) ret.add(key.getObject());
 		return ret;
 	}
 
@@ -41,7 +40,7 @@ public class ModelChangeAttributeAction extends ModelAction {
 			for (AttributeMapKey key : newValues.keySet()) {
 				Attribute<?> at = key.getAttribute();
 				if (found) {
-					if (a == null ? at != null : !a.equals(at)) {
+					if (!Objects.equals(a, at)) {
 						a = null;
 						break;
 					}
@@ -52,11 +51,8 @@ public class ModelChangeAttributeAction extends ModelAction {
 			}
 			attr = a;
 		}
-		if (a == null) {
-			return Strings.get("actionChangeAttributes");
-		} else {
-			return Strings.get("actionChangeAttribute", a.getDisplayName());
-		}
+		if (a == null) return Strings.get("actionChangeAttributes");
+		else return Strings.get("actionChangeAttribute", a.getDisplayName());
 	}
 
 	@Override

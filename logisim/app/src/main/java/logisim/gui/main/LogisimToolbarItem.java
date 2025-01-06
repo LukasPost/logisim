@@ -26,13 +26,13 @@ class LogisimToolbarItem implements ToolbarItem {
 
 	public LogisimToolbarItem(MenuListener menu, String iconName, LogisimMenuItem action, StringGetter toolTip) {
 		this.menu = menu;
-		this.icon = Icons.getIcon(iconName);
+		icon = Icons.getIcon(iconName);
 		this.action = action;
 		this.toolTip = toolTip;
 	}
 
 	public void setIcon(String iconName) {
-		this.icon = Icons.getIcon(iconName);
+		icon = Icons.getIcon(iconName);
 	}
 
 	public void setToolTip(StringGetter toolTip) {
@@ -40,9 +40,7 @@ class LogisimToolbarItem implements ToolbarItem {
 	}
 
 	public void doAction() {
-		if (menu != null && menu.isEnabled(action)) {
-			menu.doAction(action);
-		}
+		if (menu != null && menu.isEnabled(action)) menu.doAction(action);
 	}
 
 	public boolean isSelectable() {
@@ -62,23 +60,17 @@ class LogisimToolbarItem implements ToolbarItem {
 			g.drawLine(4, 4, 12, 12);
 			g.drawLine(4, 12, 12, 4);
 			g.drawRect(4, 4, 8, 8);
-		} else {
-			icon.paintIcon(destination, g, 0, 1);
-		}
+		} else icon.paintIcon(destination, g, 0, 1);
 	}
 
 	public String getToolTip() {
-		if (toolTip != null) {
-			return toolTip.get();
-		} else {
-			return null;
-		}
+		if (toolTip != null) return toolTip.get();
+		else return null;
 	}
 
 	public Dimension getDimension(Object orientation) {
-		if (icon == null) {
-			return new Dimension(16, 16);
-		} else {
+		if (icon == null) return new Dimension(16, 16);
+		else {
 			int w = icon.getIconWidth();
 			int h = icon.getIconHeight();
 			return new Dimension(w, h + 2);

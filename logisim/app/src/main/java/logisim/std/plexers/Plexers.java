@@ -56,7 +56,7 @@ public class Plexers extends Library {
 			new FactoryDescription("BitSelector", Strings.getter("bitSelectorComponent"), "bitSelector.gif",
 					"BitSelector"), };
 
-	private List<Tool> tools = null;
+	private List<Tool> tools;
 
 	public Plexers() {
 	}
@@ -73,9 +73,7 @@ public class Plexers extends Library {
 
 	@Override
 	public List<Tool> getTools() {
-		if (tools == null) {
-			tools = FactoryDescription.getTools(Plexers.class, DESCRIPTIONS);
-		}
+		if (tools == null) tools = FactoryDescription.getTools(Plexers.class, DESCRIPTIONS);
 		return tools;
 	}
 
@@ -107,35 +105,19 @@ public class Plexers extends Library {
 
 	static boolean contains(Location loc, Bounds bds, Direction facing) {
 		if (bds.contains(loc, 1)) {
-			int x = loc.getX();
-			int y = loc.getY();
+			int x = loc.x();
+			int y = loc.y();
 			int x0 = bds.getX();
 			int x1 = x0 + bds.getWidth();
 			int y0 = bds.getY();
 			int y1 = y0 + bds.getHeight();
-			if (facing == Direction.North || facing == Direction.South) {
-				if (x < x0 + 5 || x > x1 - 5) {
-					if (facing == Direction.South) {
-						return y < y0 + 5;
-					} else {
-						return y > y1 - 5;
-					}
-				} else {
-					return true;
-				}
-			} else {
-				if (y < y0 + 5 || y > y1 - 5) {
-					if (facing == Direction.East) {
-						return x < x0 + 5;
-					} else {
-						return x > x1 - 5;
-					}
-				} else {
-					return true;
-				}
-			}
-		} else {
-			return false;
-		}
+			if (facing == Direction.North || facing == Direction.South)
+				if (x < x0 + 5 || x > x1 - 5) if (facing == Direction.South) return y < y0 + 5;
+				else return y > y1 - 5;
+				else return true;
+			else if (y < y0 + 5 || y > y1 - 5) if (facing == Direction.East) return x < x0 + 5;
+			else return x > x1 - 5;
+			else return true;
+		} else return false;
 	}
 }

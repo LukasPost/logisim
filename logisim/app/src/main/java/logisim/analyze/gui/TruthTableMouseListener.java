@@ -12,7 +12,6 @@ import logisim.analyze.model.TruthTable;
 class TruthTableMouseListener implements MouseListener {
 	private int cellX;
 	private int cellY;
-	private Entry oldValue;
 	private Entry newValue;
 
 	public void mousePressed(MouseEvent event) {
@@ -24,7 +23,7 @@ class TruthTableMouseListener implements MouseListener {
 		cellY = source.getRow(event);
 		if (cellX < 0 || cellY < 0 || cellX >= cols || cellY >= rows)
 			return;
-		oldValue = source.getTruthTable().getOutputEntry(cellY, cellX);
+		Entry oldValue = source.getTruthTable().getOutputEntry(cellY, cellX);
 		if (oldValue == Entry.ZERO)
 			newValue = Entry.ONE;
 		else if (oldValue == Entry.ONE)
@@ -45,9 +44,7 @@ class TruthTableMouseListener implements MouseListener {
 		int x = source.getOutputColumn(event);
 		int y = source.getRow(event);
 		TruthTable table = source.getTruthTable();
-		if (x == cellX && y == cellY) {
-			table.setOutputEntry(y, x, newValue);
-		}
+		if (x == cellX && y == cellY) table.setOutputEntry(y, x, newValue);
 		source.setEntryProvisional(cellY, cellX, null);
 		cellX = -1;
 		cellY = -1;

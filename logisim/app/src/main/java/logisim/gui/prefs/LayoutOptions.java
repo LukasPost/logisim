@@ -11,7 +11,6 @@ import logisim.util.TableLayout;
 
 class LayoutOptions extends OptionsPanel {
 	private PrefBoolean[] checks;
-	private PrefOptionList afterAdd;
 	private PrefOptionList radix1;
 	private PrefOptionList radix2;
 
@@ -27,19 +26,16 @@ class LayoutOptions extends OptionsPanel {
 		for (int i = 0; i < 2; i++) {
 			RadixOption[] opts = RadixOption.OPTIONS;
 			PrefOption[] items = new PrefOption[opts.length];
-			for (int j = 0; j < RadixOption.OPTIONS.length; j++) {
+			for (int j = 0; j < RadixOption.OPTIONS.length; j++)
 				items[j] = new PrefOption(opts[j].getSaveString(), opts[j].toDisplayString());
-			}
-			if (i == 0) {
+			if (i == 0)
 				radix1 = new PrefOptionList(AppPreferences.POKE_WIRE_RADIX1, Strings.getter("layoutRadix1"), items);
-			} else {
-				radix2 = new PrefOptionList(AppPreferences.POKE_WIRE_RADIX2, Strings.getter("layoutRadix2"), items);
-			}
+			else radix2 = new PrefOptionList(AppPreferences.POKE_WIRE_RADIX2, Strings.getter("layoutRadix2"), items);
 		}
-		afterAdd = new PrefOptionList(AppPreferences.ADD_AFTER, Strings.getter("layoutAddAfter"),
-				new PrefOption[] {
+		PrefOptionList afterAdd = new PrefOptionList(AppPreferences.ADD_AFTER, Strings.getter("layoutAddAfter"),
+				new PrefOption[]{
 						new PrefOption(AppPreferences.ADD_AFTER_UNCHANGED, Strings.get("layoutAddAfterUnchanged")),
-						new PrefOption(AppPreferences.ADD_AFTER_EDIT, Strings.get("layoutAddAfterEdit")) });
+						new PrefOption(AppPreferences.ADD_AFTER_EDIT, Strings.get("layoutAddAfterEdit"))});
 
 		JPanel panel = new JPanel(new TableLayout(2));
 		panel.add(afterAdd.getJLabel());
@@ -50,9 +46,7 @@ class LayoutOptions extends OptionsPanel {
 		panel.add(radix2.getJComboBox());
 
 		setLayout(new TableLayout(1));
-		for (int i = 0; i < checks.length; i++) {
-			add(checks[i]);
-		}
+		for (PrefBoolean check : checks) add(check);
 		add(panel);
 	}
 
@@ -68,9 +62,7 @@ class LayoutOptions extends OptionsPanel {
 
 	@Override
 	public void localeChanged() {
-		for (int i = 0; i < checks.length; i++) {
-			checks[i].localeChanged();
-		}
+		for (PrefBoolean check : checks) check.localeChanged();
 		radix1.localeChanged();
 		radix2.localeChanged();
 	}

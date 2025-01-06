@@ -34,7 +34,7 @@ import logisim.util.StringGetter;
 class ExpressionTab extends AnalyzerTab implements TabInterface {
 	private class MyListener extends AbstractAction
 			implements DocumentListener, OutputExpressionsListener, ItemListener {
-		boolean edited = false;
+		boolean edited;
 
 		public void actionPerformed(ActionEvent event) {
 			Object src = event.getSource();
@@ -68,7 +68,7 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
 			edited = curText.length() != curExprStringLength || !curText.equals(getCurrentString());
 
 			boolean enable = (edited && getCurrentVariable() != null);
-			clear.setEnabled(curText.length() > 0);
+			clear.setEnabled(!curText.isEmpty());
 			revert.setEnabled(enable);
 			enter.setEnabled(enable);
 		}
@@ -107,9 +107,7 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
 			if (!edited) {
 				setError(null);
 				field.setText(getCurrentString());
-			} else {
-				insertUpdate(null);
-			}
+			} else insertUpdate(null);
 		}
 	}
 
@@ -123,7 +121,7 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
 
 	private MyListener myListener = new MyListener();
 	private AnalyzerModel model;
-	private int curExprStringLength = 0;
+	private int curExprStringLength;
 	private StringGetter errorMessage;
 
 	public ExpressionTab(AnalyzerModel model) {
@@ -178,16 +176,13 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
 		setError(null);
 	}
 
-	@Override
 	void localeChanged() {
 		selector.localeChanged();
 		prettyView.localeChanged();
 		clear.setText(Strings.get("exprClearButton"));
 		revert.setText(Strings.get("exprRevertButton"));
 		enter.setText(Strings.get("exprEnterButton"));
-		if (errorMessage != null) {
-			error.setText(errorMessage.get());
-		}
+		if (errorMessage != null) error.setText(errorMessage.get());
 	}
 
 	@Override

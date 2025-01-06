@@ -80,8 +80,8 @@ public class Adder extends InstanceFactory {
 		painter.drawPort(C_OUT, "c out", Direction.South);
 
 		Location loc = painter.getLocation();
-		int x = loc.getX();
-		int y = loc.getY();
+		int x = loc.x();
+		int y = loc.y();
 		GraphicsUtil.switchToWidth(g, 2);
 		g.setColor(Color.BLACK);
 		g.drawLine(x - 15, y, x - 5, y);
@@ -91,46 +91,44 @@ public class Adder extends InstanceFactory {
 
 	static Value[] computeSum(BitWidth width, Value a, Value b, Value c_in) {
 		int w = width.getWidth();
-		if (c_in == Value.UNKNOWN || c_in == Value.NIL)
-			c_in = Value.FALSE;
-		if (a.isFullyDefined() && b.isFullyDefined() && c_in.isFullyDefined()) {
-			if (w >= 32) {
-				long mask = (1L << w) - 1;
-				long ax = (long) a.toIntValue() & mask;
-				long bx = (long) b.toIntValue() & mask;
-				long cx = (long) c_in.toIntValue() & mask;
-				long sum = ax + bx + cx;
-				return new Value[] { Value.createKnown(width, (int) sum),
-						((sum >> w) & 1) == 0 ? Value.FALSE : Value.TRUE };
-			} else {
-				int sum = a.toIntValue() + b.toIntValue() + c_in.toIntValue();
-				return new Value[] { Value.createKnown(width, sum), ((sum >> w) & 1) == 0 ? Value.FALSE : Value.TRUE };
-			}
-		} else {
+		if (c_in == Value.UNKNOWN || c_in == Value.NIL) c_in = Value.FALSE;
+		if (a.isFullyDefined() && b.isFullyDefined() && c_in.isFullyDefined()) if (w >= 32) {
+			long mask = (1L << w) - 1;
+			long ax = (long) a.toIntValue() & mask;
+			long bx = (long) b.toIntValue() & mask;
+			long cx = (long) c_in.toIntValue() & mask;
+			long sum = ax + bx + cx;
+			return new Value[]{Value.createKnown(width, (int) sum),
+					((sum >> w) & 1) == 0 ? Value.FALSE : Value.TRUE};
+		}
+		else {
+			int sum = a.toIntValue() + b.toIntValue() + c_in.toIntValue();
+			return new Value[]{Value.createKnown(width, sum), ((sum >> w) & 1) == 0 ? Value.FALSE : Value.TRUE};
+		}
+		else {
 			Value[] bits = new Value[w];
 			Value carry = c_in;
-			for (int i = 0; i < w; i++) {
-				if (carry == Value.ERROR) {
-					bits[i] = Value.ERROR;
-				} else if (carry == Value.UNKNOWN) {
-					bits[i] = Value.UNKNOWN;
-				} else {
+			for (int i = 0; i < w; i++)
+				if (carry == Value.ERROR) bits[i] = Value.ERROR;
+				else if (carry == Value.UNKNOWN) bits[i] = Value.UNKNOWN;
+				else {
 					Value ab = a.get(i);
 					Value bb = b.get(i);
 					if (ab == Value.ERROR || bb == Value.ERROR) {
 						bits[i] = Value.ERROR;
 						carry = Value.ERROR;
-					} else if (ab == Value.UNKNOWN || bb == Value.UNKNOWN) {
+					}
+					else if (ab == Value.UNKNOWN || bb == Value.UNKNOWN) {
 						bits[i] = Value.UNKNOWN;
 						carry = Value.UNKNOWN;
-					} else {
+					}
+					else {
 						int sum = (ab == Value.TRUE ? 1 : 0) + (bb == Value.TRUE ? 1 : 0)
 								+ (carry == Value.TRUE ? 1 : 0);
 						bits[i] = (sum & 1) == 1 ? Value.TRUE : Value.FALSE;
 						carry = (sum >= 2) ? Value.TRUE : Value.FALSE;
 					}
 				}
-			}
 			return new Value[] { Value.create(bits), carry };
 		}
 	}

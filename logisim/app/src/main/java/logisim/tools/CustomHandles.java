@@ -6,5 +6,5 @@ package logisim.tools;
 import logisim.comp.ComponentDrawContext;
 
 public interface CustomHandles {
-	public void drawHandles(ComponentDrawContext context);
+	void drawHandles(ComponentDrawContext context);
 }

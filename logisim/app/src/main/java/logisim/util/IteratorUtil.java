@@ -7,10 +7,9 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class IteratorUtil {
-	public static Iterator<?> EMPTY_ITERATOR = new EmptyIterator<Object>();
 
 	public static <E> Iterator<E> emptyIterator() {
-		return new EmptyIterator<E>();
+		return new EmptyIterator<>();
 	}
 
 	private static class EmptyIterator<E> implements Iterator<E> {
@@ -32,7 +31,7 @@ public class IteratorUtil {
 
 	private static class UnitIterator<E> implements Iterator<E> {
 		private E data;
-		private boolean taken = false;
+		private boolean taken;
 
 		private UnitIterator(E data) {
 			this.data = data;
@@ -108,11 +107,11 @@ public class IteratorUtil {
 	}
 
 	public static <E> Iterator<E> createUnitIterator(E data) {
-		return new UnitIterator<E>(data);
+		return new UnitIterator<>(data);
 	}
 
 	public static <E> Iterator<E> createArrayIterator(E[] data) {
-		return new ArrayIterator<E>(data);
+		return new ArrayIterator<>(data);
 	}
 
 	public static <E> Iterator<E> createJoinedIterator(Iterator<? extends E> i0, Iterator<? extends E> i1) {
@@ -124,9 +123,7 @@ public class IteratorUtil {
 			@SuppressWarnings("unchecked")
 			Iterator<E> ret = (Iterator<E>) i0;
 			return ret;
-		} else {
-			return new IteratorUnion<E>(i0, i1);
-		}
+		} else return new IteratorUnion<>(i0, i1);
 	}
 
 }

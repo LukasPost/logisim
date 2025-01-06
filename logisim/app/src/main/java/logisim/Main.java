@@ -30,10 +30,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		Startup startup = Startup.parseArgs(args);
-		if (startup == null) {
-			System.exit(0);
-		} else {
-			startup.run();
-		}
+		if (startup == null) System.exit(0);
+		else startup.run();
 	}
 }

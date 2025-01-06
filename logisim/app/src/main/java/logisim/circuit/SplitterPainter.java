@@ -25,8 +25,8 @@ class SplitterPainter {
 			showState = false;
 
 		SplitterParameters parms = attrs.getParameters();
-		int x0 = origin.getX();
-		int y0 = origin.getY();
+		int x0 = origin.x();
+		int y0 = origin.y();
 		int x = x0 + parms.getEnd0X();
 		int y = y0 + parms.getEnd0Y();
 		int dx = parms.getEndToEndDeltaX();
@@ -81,9 +81,7 @@ class SplitterPainter {
 			if (fanout <= 1) { // spine is empty
 				int diam = SPINE_DOT;
 				g.fillOval(spine0x - diam / 2, spine0y - diam / 2, diam, diam);
-			} else {
-				g.drawLine(spine0x, spine0y, spine1x, spine1y);
-			}
+			} else g.drawLine(spine0x, spine0y, spine1x, spine1y);
 		} else {
 			int[] xSpine = { spine0x, spine1x, x0 + parms.getSpine1X() / 4 };
 			int[] ySpine = { spine0y, spine1y, y0 + parms.getSpine1Y() / 4 };
@@ -101,20 +99,13 @@ class SplitterPainter {
 			if (bit != curEnd) {
 				int cur1 = i - 1;
 				String toAdd;
-				if (curEnd <= 0) {
-					toAdd = null;
-				} else if (cur0 == cur1) {
-					toAdd = "" + cur0;
-				} else {
-					toAdd = cur0 + "-" + cur1;
-				}
+				if (curEnd <= 0) toAdd = null;
+				else if (cur0 == cur1) toAdd = "" + cur0;
+				else toAdd = cur0 + "-" + cur1;
 				if (toAdd != null) {
 					String old = ends[curEnd];
-					if (old == null) {
-						ends[curEnd] = toAdd;
-					} else {
-						ends[curEnd] = old + "," + toAdd;
-					}
+					if (old == null) ends[curEnd] = toAdd;
+					else ends[curEnd] = old + "," + toAdd;
 				}
 				curEnd = bit;
 				cur0 = i;
@@ -126,14 +117,13 @@ class SplitterPainter {
 		g.setFont(font.deriveFont(7.0f));
 
 		SplitterParameters parms = attrs.getParameters();
-		int x = origin.getX() + parms.getEnd0X() + parms.getEndToSpineDeltaX();
-		int y = origin.getY() + parms.getEnd0Y() + parms.getEndToSpineDeltaY();
+		int x = origin.x() + parms.getEnd0X() + parms.getEndToSpineDeltaX();
+		int y = origin.y() + parms.getEnd0Y() + parms.getEndToSpineDeltaY();
 		int dx = parms.getEndToEndDeltaX();
 		int dy = parms.getEndToEndDeltaY();
 		if (parms.getTextAngle() != 0) {
 			((Graphics2D) g).rotate(Math.PI / 2.0);
-			int t;
-			t = -x;
+			int t = -x;
 			x = y;
 			y = t;
 			t = -dx;
@@ -146,9 +136,7 @@ class SplitterPainter {
 		y += valign == GraphicsUtil.V_TOP ? 0 : -3;
 		for (int i = 0, n = attrs.fanout; i < n; i++) {
 			String text = ends[i + 1];
-			if (text != null) {
-				GraphicsUtil.drawText(g, text, x, y, halign, valign);
-			}
+			if (text != null) GraphicsUtil.drawText(g, text, x, y, halign, valign);
 			x += dx;
 			y += dy;
 		}
@@ -164,8 +152,8 @@ class SplitterPainter {
 		SplitterParameters parms = attrs.getParameters();
 
 		g.setColor(Color.BLACK);
-		int x0 = origin.getX();
-		int y0 = origin.getY();
+		int x0 = origin.x();
+		int y0 = origin.y();
 		int x1 = x0 + parms.getEnd0X();
 		int y1 = y0 + parms.getEnd0Y();
 		int dx = parms.getEndToEndDeltaX();
@@ -177,9 +165,7 @@ class SplitterPainter {
 			int xi = x1;
 			int yi = y1;
 			for (int i = 1; i <= fanout; i++) {
-				if (context.getShowState()) {
-					g.setColor(state.getValue(new Location(xi, yi)).getColor());
-				}
+				if (context.getShowState()) g.setColor(state.getValue(new Location(xi, yi)).getColor());
 				int xSpine = xi + (xi == x0 ? 0 : (xi < x0 ? 10 : -10));
 				g.drawLine(xi, yi, xSpine, ySpine);
 				xi += dx;
@@ -200,9 +186,7 @@ class SplitterPainter {
 			int xi = x1;
 			int yi = y1;
 			for (int i = 1; i <= fanout; i++) {
-				if (context.getShowState()) {
-					g.setColor(state.getValue(new Location(xi, yi)).getColor());
-				}
+				if (context.getShowState()) g.setColor(state.getValue(new Location(xi, yi)).getColor());
 				int ySpine = yi + (yi == y0 ? 0 : (yi < y0 ? 10 : -10));
 				g.drawLine(xi, yi, xSpine, ySpine);
 				xi += dx;

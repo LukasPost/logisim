@@ -6,9 +6,9 @@ package logisim.gui.log;
 import logisim.data.Value;
 
 interface ModelListener {
-	public void selectionChanged(ModelEvent event);
+	void selectionChanged(ModelEvent event);
 
-	public void entryAdded(ModelEvent event, Value[] values);
+	void entryAdded(ModelEvent event, Value[] values);
 
-	public void filePropertyChanged(ModelEvent event);
+	void filePropertyChanged(ModelEvent event);
 }

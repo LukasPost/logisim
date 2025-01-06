@@ -3,14 +3,8 @@
 
 package logisim.gui.main;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.Map.Entry;
 
 import logisim.circuit.Circuit;
 import logisim.circuit.Wire;
@@ -20,6 +14,7 @@ import logisim.data.Attribute;
 import logisim.data.AttributeEvent;
 import logisim.data.AttributeListener;
 import logisim.data.AttributeSet;
+import logisim.gui.main.Selection.Event;
 import logisim.proj.Project;
 import logisim.util.UnmodifiableList;
 
@@ -28,20 +23,16 @@ class SelectionAttributes extends AbstractAttributeSet {
 	private static final Object[] EMPTY_VALUES = new Object[0];
 
 	private class Listener implements Selection.Listener, AttributeListener {
-		public void selectionChanged(Selection.Event e) {
+		public void selectionChanged(Event e) {
 			updateList(true);
 		}
 
 		public void attributeListChanged(AttributeEvent e) {
-			if (listening) {
-				updateList(false);
-			}
+			if (listening) updateList(false);
 		}
 
 		public void attributeValueChanged(AttributeEvent e) {
-			if (listening) {
-				updateList(false);
-			}
+			if (listening) updateList(false);
 		}
 	}
 
@@ -58,12 +49,12 @@ class SelectionAttributes extends AbstractAttributeSet {
 	public SelectionAttributes(Canvas canvas, Selection selection) {
 		this.canvas = canvas;
 		this.selection = selection;
-		this.listener = new Listener();
-		this.listening = true;
-		this.selected = Collections.emptySet();
-		this.attrs = EMPTY_ATTRIBUTES;
-		this.values = EMPTY_VALUES;
-		this.attrsView = Collections.emptyList();
+		listener = new Listener();
+		listening = true;
+		selected = Collections.emptySet();
+		attrs = EMPTY_ATTRIBUTES;
+		values = EMPTY_VALUES;
+		attrsView = Collections.emptyList();
 
 		selection.addListener(listener);
 		updateList(true);
@@ -77,9 +68,7 @@ class SelectionAttributes extends AbstractAttributeSet {
 	void setListening(boolean value) {
 		if (listening != value) {
 			listening = value;
-			if (value) {
-				updateList(false);
-			}
+			if (value) updateList(false);
 		}
 	}
 
@@ -97,111 +86,89 @@ class SelectionAttributes extends AbstractAttributeSet {
 				return;
 			newSel = oldSel;
 		} else {
-			for (Component o : oldSel) {
-				if (!newSel.contains(o)) {
-					o.getAttributeSet().removeAttributeListener(listener);
-				}
-			}
-			for (Component o : newSel) {
-				if (!oldSel.contains(o)) {
-					o.getAttributeSet().addAttributeListener(listener);
-				}
-			}
+			for (Component o : oldSel) if (!newSel.contains(o)) o.getAttributeSet().removeAttributeListener(listener);
+			for (Component o : newSel) if (!oldSel.contains(o)) o.getAttributeSet().addAttributeListener(listener);
 		}
 
 		LinkedHashMap<Attribute<Object>, Object> attrMap = computeAttributes(newSel);
-		boolean same = isSame(attrMap, this.attrs, this.values);
+		boolean same = isSame(attrMap, attrs, values);
 
 		if (same) {
 			if (newSel != oldSel)
-				this.selected = newSel;
+				selected = newSel;
 		} else {
-			Attribute<?>[] oldAttrs = this.attrs;
-			Object[] oldValues = this.values;
+			Attribute<?>[] oldAttrs = attrs;
+			Object[] oldValues = values;
 			Attribute<?>[] newAttrs = new Attribute[attrMap.size()];
 			Object[] newValues = new Object[newAttrs.length];
 			boolean[] newReadOnly = new boolean[newAttrs.length];
 			int i = -1;
-			for (Map.Entry<Attribute<Object>, Object> entry : attrMap.entrySet()) {
+			for (Entry<Attribute<Object>, Object> entry : attrMap.entrySet()) {
 				i++;
 				newAttrs[i] = entry.getKey();
 				newValues[i] = entry.getValue();
 				newReadOnly[i] = computeReadOnly(newSel, newAttrs[i]);
 			}
 			if (newSel != oldSel)
-				this.selected = newSel;
-			this.attrs = newAttrs;
-			this.attrsView = new UnmodifiableList<Attribute<?>>(newAttrs);
-			this.values = newValues;
-			this.readOnly = newReadOnly;
+				selected = newSel;
+			attrs = newAttrs;
+			attrsView = new UnmodifiableList<>(newAttrs);
+			values = newValues;
+			readOnly = newReadOnly;
 
 			boolean listSame = oldAttrs != null && oldAttrs.length == newAttrs.length;
-			if (listSame) {
-				for (i = 0; i < oldAttrs.length; i++) {
-					if (!oldAttrs[i].equals(newAttrs[i])) {
-						listSame = false;
-						break;
-					}
+			if (listSame) for (i = 0; i < oldAttrs.length; i++)
+				if (!oldAttrs[i].equals(newAttrs[i])) {
+					listSame = false;
+					break;
 				}
-			}
 
-			if (listSame) {
-				for (i = 0; i < oldValues.length; i++) {
-					Object oldVal = oldValues[i];
-					Object newVal = newValues[i];
-					boolean sameVals = oldVal == null ? newVal == null : oldVal.equals(newVal);
-					if (!sameVals) {
-						@SuppressWarnings("unchecked")
-						Attribute<Object> attr = (Attribute<Object>) oldAttrs[i];
-						fireAttributeValueChanged(attr, newVal);
-					}
+			if (listSame) for (i = 0; i < oldValues.length; i++) {
+				Object oldVal = oldValues[i];
+				Object newVal = newValues[i];
+				boolean sameVals = Objects.equals(oldVal, newVal);
+				if (!sameVals) {
+					@SuppressWarnings("unchecked")
+					Attribute<Object> attr = (Attribute<Object>) oldAttrs[i];
+					fireAttributeValueChanged(attr, newVal);
 				}
-			} else {
-				fireAttributeListChanged();
 			}
+			else fireAttributeListChanged();
 		}
 	}
 
 	private static Set<Component> createSet(Collection<Component> comps) {
 		boolean includeWires = true;
-		for (Component comp : comps) {
+		for (Component comp : comps)
 			if (!(comp instanceof Wire)) {
 				includeWires = false;
 				break;
 			}
-		}
 
-		if (includeWires) {
-			return new HashSet<Component>(comps);
-		} else {
-			HashSet<Component> ret = new HashSet<Component>();
-			for (Component comp : comps) {
+		if (includeWires) return new HashSet<>(comps);
+		else {
+			HashSet<Component> ret = new HashSet<>();
+			for (Component comp : comps)
 				if (!(comp instanceof Wire))
 					ret.add(comp);
-			}
 			return ret;
 		}
 	}
 
 	private static boolean haveSameElements(Collection<Component> a, Collection<Component> b) {
-		if (a == null) {
-			return b == null ? true : b.size() == 0;
-		} else if (b == null) {
-			return a.size() == 0;
-		} else if (a.size() != b.size()) {
-			return false;
-		} else {
-			for (Component item : a) {
+		if (a == null) return b == null || b.isEmpty();
+		else if (b == null) return a.isEmpty();
+		else if (a.size() != b.size()) return false;
+		else {
+			for (Component item : a)
 				if (!b.contains(item))
 					return false;
-			}
 			return true;
 		}
 	}
 
 	private static LinkedHashMap<Attribute<Object>, Object> computeAttributes(Collection<Component> newSel) {
-		LinkedHashMap<Attribute<Object>, Object> attrMap;
-		attrMap = new LinkedHashMap<Attribute<Object>, Object>();
+		LinkedHashMap<Attribute<Object>, Object> attrMap = new LinkedHashMap<>();
 		Iterator<Component> sit = newSel.iterator();
 		if (sit.hasNext()) {
 			AttributeSet first = sit.next().getAttributeSet();
@@ -217,12 +184,8 @@ class SelectionAttributes extends AbstractAttributeSet {
 					Attribute<Object> attr = ait.next();
 					if (next.containsAttribute(attr)) {
 						Object v = attrMap.get(attr);
-						if (v != null && !v.equals(next.getValue(attr))) {
-							attrMap.put(attr, null);
-						}
-					} else {
-						ait.remove();
-					}
+						if (v != null && !v.equals(next.getValue(attr))) attrMap.put(attr, null);
+					} else ait.remove();
 				}
 			}
 		}
@@ -231,11 +194,10 @@ class SelectionAttributes extends AbstractAttributeSet {
 
 	private static boolean isSame(LinkedHashMap<Attribute<Object>, Object> attrMap, Attribute<?>[] oldAttrs,
 			Object[] oldValues) {
-		if (oldAttrs.length != attrMap.size()) {
-			return false;
-		} else {
+		if (oldAttrs.length != attrMap.size()) return false;
+		else {
 			int j = -1;
-			for (Map.Entry<Attribute<Object>, Object> entry : attrMap.entrySet()) {
+			for (Entry<Attribute<Object>, Object> entry : attrMap.entrySet()) {
 				j++;
 
 				Attribute<Object> a = entry.getKey();
@@ -243,7 +205,7 @@ class SelectionAttributes extends AbstractAttributeSet {
 					return false;
 				Object ov = oldValues[j];
 				Object nv = entry.getValue();
-				if (ov == null ? nv != null : !ov.equals(nv))
+				if (!Objects.equals(ov, nv))
 					return false;
 			}
 			return true;
@@ -267,25 +229,20 @@ class SelectionAttributes extends AbstractAttributeSet {
 	@Override
 	public List<Attribute<?>> getAttributes() {
 		Circuit circ = canvas.getCircuit();
-		if (selected.isEmpty() && circ != null) {
-			return circ.getStaticAttributes().getAttributes();
-		} else {
-			return attrsView;
-		}
+		if (selected.isEmpty() && circ != null) return circ.getStaticAttributes().getAttributes();
+		else return attrsView;
 	}
 
 	@Override
 	public boolean isReadOnly(Attribute<?> attr) {
 		Project proj = canvas.getProject();
 		Circuit circ = canvas.getCircuit();
-		if (!proj.getLogisimFile().contains(circ)) {
-			return true;
-		} else if (selected.isEmpty() && circ != null) {
-			return circ.getStaticAttributes().isReadOnly(attr);
-		} else {
+		if (!proj.getLogisimFile().contains(circ)) return true;
+		else if (selected.isEmpty() && circ != null) return circ.getStaticAttributes().isReadOnly(attr);
+		else {
 			int i = findIndex(attr);
 			boolean[] ro = readOnly;
-			return i >= 0 && i < ro.length ? ro[i] : true;
+			return i < 0 || i >= ro.length || ro[i];
 		}
 	}
 
@@ -297,9 +254,8 @@ class SelectionAttributes extends AbstractAttributeSet {
 	@Override
 	public <V> V getValue(Attribute<V> attr) {
 		Circuit circ = canvas.getCircuit();
-		if (selected.isEmpty() && circ != null) {
-			return circ.getStaticAttributes().getValue(attr);
-		} else {
+		if (selected.isEmpty() && circ != null) return circ.getStaticAttributes().getValue(attr);
+		else {
 			int i = findIndex(attr);
 			Object[] vs = values;
 			@SuppressWarnings("unchecked")
@@ -311,16 +267,13 @@ class SelectionAttributes extends AbstractAttributeSet {
 	@Override
 	public <V> void setValue(Attribute<V> attr, V value) {
 		Circuit circ = canvas.getCircuit();
-		if (selected.isEmpty() && circ != null) {
-			circ.getStaticAttributes().setValue(attr, value);
-		} else {
+		if (selected.isEmpty() && circ != null) circ.getStaticAttributes().setValue(attr, value);
+		else {
 			int i = findIndex(attr);
 			Object[] vs = values;
 			if (i >= 0 && i < vs.length) {
 				vs[i] = value;
-				for (Component comp : selected) {
-					comp.getAttributeSet().setValue(attr, value);
-				}
+				for (Component comp : selected) comp.getAttributeSet().setValue(attr, value);
 			}
 		}
 	}
@@ -329,10 +282,9 @@ class SelectionAttributes extends AbstractAttributeSet {
 		if (attr == null)
 			return -1;
 		Attribute<?>[] as = attrs;
-		for (int i = 0; i < as.length; i++) {
+		for (int i = 0; i < as.length; i++)
 			if (attr.equals(as[i]))
 				return i;
-		}
 		return -1;
 	}
 }

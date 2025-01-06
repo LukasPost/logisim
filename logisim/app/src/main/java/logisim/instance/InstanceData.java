@@ -6,5 +6,5 @@ package logisim.instance;
 import logisim.comp.ComponentState;
 
 public interface InstanceData extends ComponentState {
-	public Object clone();
+	Object clone();
 }

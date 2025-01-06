@@ -38,7 +38,7 @@ public class ProjectActions {
 		public CreateFrame(Loader loader, Project proj, boolean isStartup) {
 			this.loader = loader;
 			this.proj = proj;
-			this.isStartupScreen = isStartup;
+			isStartupScreen = isStartup;
 		}
 
 		public void run() {
@@ -65,12 +65,10 @@ public class ProjectActions {
 		try {
 			file = loader.openLogisimFile(templReader);
 		}
-		catch (IOException ex) {
+		catch (IOException | LoadFailedException ex) {
 			displayException(monitor, ex);
 		}
-		catch (LoadFailedException ex) {
-			displayException(monitor, ex);
-		} finally {
+		finally {
 			try {
 				templReader.close();
 			}
@@ -92,7 +90,7 @@ public class ProjectActions {
 		InputStream templReader = AppPreferences.getEmptyTemplate().createStream();
 		LogisimFile file;
 		try {
-			file = loader.openLogisimFile(templReader);
+			return loader.openLogisimFile(templReader);
 		}
 		catch (Throwable t) {
 			file = LogisimFile.createNew(loader);
@@ -120,36 +118,23 @@ public class ProjectActions {
 
 	public static LogisimFile createNewFile(Project baseProject) {
 		Loader loader = new Loader(baseProject == null ? null : baseProject.getFrame());
-		InputStream templReader = AppPreferences.getTemplate().createStream();
-		LogisimFile file;
-		try {
-			file = loader.openLogisimFile(templReader);
-		}
-		catch (IOException ex) {
-			if(baseProject != null)
+		try (InputStream templReader = AppPreferences.getTemplate().createStream()) {
+			return loader.openLogisimFile(templReader);
+		} catch (IOException ex) {
+			if (baseProject != null)
 				displayException(baseProject.getFrame(), ex);
-			file = createEmptyFile(loader);
-		}
-		catch (LoadFailedException ex) {
+			return createEmptyFile(loader);
+		} catch (LoadFailedException ex) {
 			if (!ex.isShown() && baseProject != null)
 				displayException(baseProject.getFrame(), ex);
-			file = createEmptyFile(loader);
-		} finally {
-			try {
-				templReader.close();
-			}
-			catch (IOException e) {
-			}
+			return createEmptyFile(loader);
 		}
-		return file;
 	}
 
 	private static Frame createFrame(Project sourceProject, Project newProject) {
 		if (sourceProject != null) {
 			Frame frame = sourceProject.getFrame();
-			if (frame != null) {
-				frame.savePreferences();
-			}
+			if (frame != null) frame.savePreferences();
 		}
 		Frame newFrame = new Frame(newProject);
 		newProject.setFrame(newFrame);
@@ -182,42 +167,30 @@ public class ProjectActions {
 		if (baseProject != null) {
 			Loader oldLoader = baseProject.getLogisimFile().getLoader();
 			chooser = oldLoader.createChooser();
-			if (oldLoader.getMainFile() != null) {
-				chooser.setSelectedFile(oldLoader.getMainFile());
-			}
-		} else {
-			chooser = JFileChoosers.create();
-		}
+			if (oldLoader.getMainFile() != null) chooser.setSelectedFile(oldLoader.getMainFile());
+		} else chooser = JFileChoosers.create();
 		chooser.setFileFilter(Loader.LOGISIM_FILTER);
 
 		int returnVal = chooser.showOpenDialog(parent);
 		if (returnVal != JFileChooser.APPROVE_OPTION)
 			return;
 		File selected = chooser.getSelectedFile();
-		if (selected != null) {
-			doOpen(parent, baseProject, selected);
-		}
+		if (selected != null) doOpen(parent, baseProject, selected);
 	}
 
 	public static Project doOpen(Component parent, Project baseProject, File f) {
 		Project proj = Projects.findProjectFor(f);
-		Loader loader = null;
+		Loader loader;
 		if (proj != null) {
 			proj.getFrame().toFront();
-			loader = proj.getLogisimFile().getLoader();
 			if (proj.isFileDirty()) {
 				String message = StringUtil.format(Strings.get("openAlreadyMessage"), proj.getLogisimFile().getName());
 				String[] options = { Strings.get("openAlreadyLoseChangesOption"),
 						Strings.get("openAlreadyNewWindowOption"), Strings.get("openAlreadyCancelOption"), };
-				int result = JOptionPane.showOptionDialog(proj.getFrame(), message, Strings.get("openAlreadyTitle"), 0,
+				int result = JOptionPane.showOptionDialog(proj.getFrame(), message, Strings.get("openAlreadyTitle"), JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
-				if (result == 0) {
-					; // keep proj as is, so that load happens into the window
-				} else if (result == 1) {
-					proj = null; // we'll create a new project
-				} else {
-					return proj;
-				}
+				if (result == 1) proj = null; // we'll create a new project
+				else return proj;
 			}
 		}
 
@@ -225,33 +198,25 @@ public class ProjectActions {
 			proj = baseProject;
 			proj.setStartupScreen(false);
 			loader = baseProject.getLogisimFile().getLoader();
-		} else {
-			loader = new Loader(baseProject == null ? parent : baseProject.getFrame());
-		}
+		} else loader = new Loader(baseProject == null ? parent : baseProject.getFrame());
 
 		try {
 			LogisimFile lib = loader.openLogisimFile(f);
 			AppPreferences.updateRecentFile(f);
 			if (lib == null)
 				return null;
-			if (proj == null) {
-				proj = new Project(lib);
-			} else {
-				proj.setLogisimFile(lib);
-			}
+			if (proj == null) proj = new Project(lib);
+			else proj.setLogisimFile(lib);
 		}
 		catch (LoadFailedException ex) {
-			if (!ex.isShown()) {
+			if (!ex.isShown())
 				JOptionPane.showMessageDialog(parent, StringUtil.format(Strings.get("fileOpenError"), ex.toString()),
 						Strings.get("fileOpenErrorTitle"), JOptionPane.ERROR_MESSAGE);
-			}
 			return null;
 		}
 
 		Frame frame = proj.getFrame();
-		if (frame == null) {
-			frame = createFrame(baseProject, proj);
-		}
+		if (frame == null) frame = createFrame(baseProject, proj);
 		frame.setVisible(true);
 		frame.toFront();
 		frame.getCanvas().requestFocus();
@@ -264,9 +229,7 @@ public class ProjectActions {
 		Loader loader = proj.getLogisimFile().getLoader();
 		JFileChooser chooser = loader.createChooser();
 		chooser.setFileFilter(Loader.LOGISIM_FILTER);
-		if (loader.getMainFile() != null) {
-			chooser.setSelectedFile(loader.getMainFile());
-		}
+		if (loader.getMainFile() != null) chooser.setSelectedFile(loader.getMainFile());
 		int returnVal = chooser.showSaveDialog(proj.getFrame());
 		if (returnVal != JFileChooser.APPROVE_OPTION)
 			return false;
@@ -276,9 +239,9 @@ public class ProjectActions {
 		if (!f.getName().endsWith(circExt)) {
 			String old = f.getName();
 			int ext0 = old.lastIndexOf('.');
-			if (ext0 < 0 || !Pattern.matches("\\.\\p{L}{2,}[0-9]?", old.substring(ext0))) {
+			if (ext0 < 0 || !Pattern.matches("\\.\\p{L}{2,}[0-9]?", old.substring(ext0)))
 				f = new File(f.getParentFile(), old + circExt);
-			} else {
+			else {
 				String ext = old.substring(ext0);
 				String ttl = Strings.get("replaceExtensionTitle");
 				String msg = Strings.get("replaceExtensionMessage", ext);
@@ -293,9 +256,7 @@ public class ProjectActions {
 				if (result == options[0]) {
 					String name = old.substring(0, ext0) + circExt;
 					f = new File(f.getParentFile(), name);
-				} else if (result == options[1]) {
-					f = new File(f.getParentFile(), old + circExt);
-				}
+				} else if (result == options[1]) f = new File(f.getParentFile(), old + circExt);
 			}
 		}
 
@@ -334,10 +295,9 @@ public class ProjectActions {
 		Frame top = Projects.getTopFrame();
 		top.savePreferences();
 
-		for (Project proj : new ArrayList<Project>(Projects.getOpenProjects())) {
+		for (Project proj : new ArrayList<>(Projects.getOpenProjects()))
 			if (!proj.confirmClose(Strings.get("confirmQuitTitle")))
 				return;
-		}
 		System.exit(0);
 	}
 }

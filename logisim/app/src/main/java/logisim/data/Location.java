@@ -8,25 +8,11 @@ package logisim.data;
  * java.awt's <code>Point</code> class, except
  * that objects of this type are immutable.
  */
-public final class Location implements Comparable<Location> {
-	private final int x;
-	private final int y;
+public record Location(int x, int y) implements Comparable<Location> {
 
-	public Location(int x, int y) {
-		this.x = x;
-		this.y = y;
-	}
-
-	public int getX() {
-		return x;
-	}
-
-	public int getY() {
-		return y;
-	}
 
 	public int manhattanDistanceTo(Location o) {
-		return Math.abs(o.x - this.x) + Math.abs(o.y - this.y);
+		return Math.abs(o.x - x) + Math.abs(o.y - y);
 	}
 
 	public int manhattanDistanceTo(int x, int y) {
@@ -68,32 +54,22 @@ public final class Location implements Comparable<Location> {
 
 		int dx = x - xc;
 		int dy = y - yc;
-		if (degrees == 90) {
-			return new Location(xc + dy, yc - dx);
-		} else if (degrees == 180) {
-			return new Location(xc - dx, yc - dy);
-		} else if (degrees == 270) {
-			return new Location(xc - dy, yc + dx);
-		} else {
-			return this;
-		}
+		if (degrees == 90) return new Location(xc + dy, yc - dx);
+		else if (degrees == 180) return new Location(xc - dx, yc - dy);
+		else if (degrees == 270) return new Location(xc - dy, yc + dx);
+		else return this;
 	}
 
 	@Override
 	public boolean equals(Object other_obj) {
-		return other_obj instanceof Location other && this.x == other.x && this.y == other.y;
-	}
-
-	@Override
-	public int hashCode() {
-		return x * 31 + y;
+		return other_obj instanceof Location(int x1, int y1) && x == x1 && y == y1;
 	}
 
 	public int compareTo(Location other) {
-		if (this.x != other.x)
-			return this.x - other.x;
+		if (x != other.x)
+			return x - other.x;
 		else
-			return this.y - other.y;
+			return y - other.y;
 	}
 
 	@Override
@@ -107,18 +83,14 @@ public final class Location implements Comparable<Location> {
 		value = value.trim();
 		if (value.charAt(0) == '(') {
 			int len = value.length();
-			if (value.charAt(len - 1) != ')') {
-				throw new NumberFormatException("invalid point '" + base + "'");
-			}
+			if (value.charAt(len - 1) != ')') throw new NumberFormatException("invalid point '" + base + "'");
 			value = value.substring(1, len - 1);
 		}
 		value = value.trim();
 		int comma = value.indexOf(',');
 		if (comma < 0) {
 			comma = value.indexOf(' ');
-			if (comma < 0) {
-				throw new NumberFormatException("invalid point '" + base + "'");
-			}
+			if (comma < 0) throw new NumberFormatException("invalid point '" + base + "'");
 		}
 		int x = Integer.parseInt(value.substring(0, comma).trim());
 		int y = Integer.parseInt(value.substring(comma + 1).trim());

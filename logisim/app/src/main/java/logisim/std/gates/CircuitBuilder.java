@@ -22,6 +22,8 @@ import logisim.data.Direction;
 import logisim.data.Location;
 import logisim.data.Value;
 import logisim.instance.StdAttr;
+import logisim.std.gates.CircuitDetermination.Gate;
+import logisim.std.gates.CircuitDetermination.Input;
 import logisim.std.wiring.Constant;
 import logisim.std.wiring.Pin;
 
@@ -47,9 +49,7 @@ public class CircuitBuilder {
 				det.repair();
 				layouts[i] = layoutGates(det);
 				maxWidth = Math.max(maxWidth, layouts[i].width);
-			} else {
-				layouts[i] = null;
-			}
+			} else layouts[i] = null;
 		}
 
 		InputData inputData = computeInputData(model);
@@ -110,7 +110,7 @@ public class CircuitBuilder {
 			this.attrs = attrs;
 			this.subLayouts = subLayouts;
 			this.subX = subX;
-			this.inputName = null;
+			inputName = null;
 		}
 
 		Layout(String inputName) {
@@ -120,34 +120,31 @@ public class CircuitBuilder {
 	}
 
 	private static Layout layoutGatesSub(CircuitDetermination det) {
-		if (det instanceof CircuitDetermination.Input) {
-			CircuitDetermination.Input input = (CircuitDetermination.Input) det;
-			return new Layout(input.getName());
-		} else if (det instanceof CircuitDetermination.Value) {
-			CircuitDetermination.Value value = (CircuitDetermination.Value) det;
+		if (det instanceof Input input) return new Layout(input.getName());
+		else if (det instanceof CircuitDetermination.Value value) {
 			ComponentFactory factory = Constant.FACTORY;
 			AttributeSet attrs = factory.createAttributeSet();
-			attrs.setValue(Constant.ATTR_VALUE, Integer.valueOf(value.getValue()));
+			attrs.setValue(Constant.ATTR_VALUE, value.getValue());
 			Bounds bds = factory.getOffsetBounds(attrs);
 			return new Layout(bds.getWidth(), bds.getHeight(), -bds.getY(), factory, attrs, new Layout[0], 0);
 		}
 
 		// We know det is a Gate. Determine sublayouts.
-		CircuitDetermination.Gate gate = (CircuitDetermination.Gate) det;
+		Gate gate = (Gate) det;
 		ComponentFactory factory = gate.getFactory();
 		ArrayList<CircuitDetermination> inputs = gate.getInputs();
 
 		// Handle a NOT implemented with a NAND as a special case
 		if (gate.isNandNot()) {
-			CircuitDetermination subDet = inputs.get(0);
-			if (!(subDet instanceof CircuitDetermination.Input)) {
+			CircuitDetermination subDet = inputs.getFirst();
+			if (!(subDet instanceof Input)) {
 				Layout[] sub = new Layout[1];
 				sub[0] = layoutGatesSub(subDet);
 				sub[0].y = 0;
 
 				AttributeSet attrs = factory.createAttributeSet();
 				attrs.setValue(GateAttributes.ATTR_SIZE, GateAttributes.SIZE_NARROW);
-				attrs.setValue(GateAttributes.ATTR_INPUTS, Integer.valueOf(2));
+				attrs.setValue(GateAttributes.ATTR_INPUTS, 2);
 
 				// determine layout's width
 				Bounds bds = factory.getOffsetBounds(attrs);
@@ -182,12 +179,11 @@ public class CircuitBuilder {
 		int subHeight = 0; // total height of sublayouts
 		for (int i = 0; i < sub.length; i++) {
 			sub[i] = layoutGatesSub(inputs.get(i));
-			if (sub.length % 2 == 0 && i == (sub.length + 1) / 2 && sub[i - 1].height + sub[i].height == 0) {
-				// if there are an even number of inputs, then there is a
-				// 20-tall gap between the middle two inputs. Ensure the two
-				// middle inputs are at least 20 pixels apart.
+			// if there are an even number of inputs, then there is a
+			// 20-tall gap between the middle two inputs. Ensure the two
+			// middle inputs are at least 20 pixels apart.
+			if (sub.length % 2 == 0 && i == (sub.length + 1) / 2 && sub[i - 1].height + sub[i].height == 0)
 				subHeight += 10;
-			}
 			sub[i].y = subHeight;
 			subWidth = Math.max(subWidth, sub[i].width);
 			subHeight += sub[i].height + 10;
@@ -195,13 +191,12 @@ public class CircuitBuilder {
 		subHeight -= 10;
 
 		AttributeSet attrs = factory.createAttributeSet();
-		if (factory == NotGate.FACTORY) {
-			attrs.setValue(NotGate.ATTR_SIZE, NotGate.SIZE_NARROW);
-		} else {
+		if (factory == NotGate.FACTORY) attrs.setValue(NotGate.ATTR_SIZE, NotGate.SIZE_NARROW);
+		else {
 			attrs.setValue(GateAttributes.ATTR_SIZE, GateAttributes.SIZE_NARROW);
 
 			int ins = sub.length;
-			attrs.setValue(GateAttributes.ATTR_INPUTS, Integer.valueOf(ins));
+			attrs.setValue(GateAttributes.ATTR_INPUTS, ins);
 		}
 
 		// determine layout's width
@@ -231,8 +226,7 @@ public class CircuitBuilder {
 			// we have to shift everything down because otherwise
 			// the component will peek over the rectangle's top.
 			int dy = minOutputY - outputY;
-			for (int i = 0; i < sub.length; i++)
-				sub[i].y += dy;
+			for (Layout layout : sub) layout.y += dy;
 			height += dy;
 			outputY += dy;
 		}
@@ -273,7 +267,7 @@ public class CircuitBuilder {
 	private static class InputData {
 		int startX;
 		String[] names;
-		HashMap<String, SingleInput> inputs = new HashMap<String, SingleInput>();
+		HashMap<String, SingleInput> inputs = new HashMap<>();
 
 		InputData() {
 		}
@@ -295,7 +289,7 @@ public class CircuitBuilder {
 
 	private static class SingleInput {
 		int spineX;
-		ArrayList<Location> ys = new ArrayList<Location>();
+		ArrayList<Location> ys = new ArrayList<>();
 
 		SingleInput(int spineX) {
 			this.spineX = spineX;
@@ -306,7 +300,6 @@ public class CircuitBuilder {
 	// placeComponents
 	//
 	/**
-	 * @param circuit   the circuit where to place the components.
 	 * @param layout    the layout specifying the gates to place there.
 	 * @param x         the left edge of where the layout should be placed.
 	 * @param y         the top edge of where the layout should be placed.
@@ -317,18 +310,16 @@ public class CircuitBuilder {
 			Location output) {
 		if (layout.inputName != null) {
 			int inputX = inputData.getSpineX(layout.inputName);
-			Location input = new Location(inputX, output.getY());
+			Location input = new Location(inputX, output.y());
 			inputData.registerConnection(layout.inputName, input);
 			result.add(Wire.create(input, output));
 			return;
 		}
 
-		Location compOutput = new Location(x + layout.width, output.getY());
+		Location compOutput = new Location(x + layout.width, output.y());
 		Component parent = layout.factory.createComponent(compOutput, layout.attrs);
 		result.add(parent);
-		if (!compOutput.equals(output)) {
-			result.add(Wire.create(compOutput, output));
-		}
+		if (!compOutput.equals(output)) result.add(Wire.create(compOutput, output));
 
 		// handle a NOT gate pattern implemented with NAND as a special case
 		if (layout.factory == NandGate.FACTORY && layout.subLayouts.length == 1
@@ -338,10 +329,10 @@ public class CircuitBuilder {
 			Location input0 = parent.getEnd(1).getLocation();
 			Location input1 = parent.getEnd(2).getLocation();
 
-			int midX = input0.getX() - 20;
-			Location subOutput = new Location(midX, output.getY());
-			Location midInput0 = new Location(midX, input0.getY());
-			Location midInput1 = new Location(midX, input1.getY());
+			int midX = input0.x() - 20;
+			Location subOutput = new Location(midX, output.y());
+			Location midInput0 = new Location(midX, input0.y());
+			Location midInput1 = new Location(midX, input1.y());
 			result.add(Wire.create(subOutput, midInput0));
 			result.add(Wire.create(midInput0, input0));
 			result.add(Wire.create(subOutput, midInput1));
@@ -357,7 +348,7 @@ public class CircuitBuilder {
 			Object factory = parent.getFactory();
 			if (factory instanceof AbstractGate) {
 				Value val = ((AbstractGate) factory).getIdentity();
-				Integer valInt = Integer.valueOf(val.toIntValue());
+				Integer valInt = val.toIntValue();
 				Location loc = parent.getEnd(index).getLocation();
 				AttributeSet attrs = Constant.FACTORY.createAttributeSet();
 				attrs.setValue(Constant.ATTR_VALUE, valInt);
@@ -373,34 +364,25 @@ public class CircuitBuilder {
 
 			int subOutputY = y + sub.y + sub.outputY;
 			if (sub.inputName != null) {
-				int destY = subDest.getY();
-				if (i == 0 && destY < subOutputY || i == layout.subLayouts.length - 1 && destY > subOutputY) {
+				int destY = subDest.y();
+				if (i == 0 && destY < subOutputY || i == layout.subLayouts.length - 1 && destY > subOutputY)
 					subOutputY = destY;
-				}
 			}
 
 			Location subOutput;
 			int numSubs = layout.subLayouts.length;
-			if (subOutputY == subDest.getY()) {
-				subOutput = subDest;
-			} else {
+			if (subOutputY == subDest.y()) subOutput = subDest;
+			else {
 				int back;
-				if (i < numSubs / 2) {
-					if (subOutputY < subDest.getY()) { // bending upward
-						back = i;
-					} else {
-						back = ((numSubs - 1) / 2) - i;
-					}
-				} else {
-					if (subOutputY > subDest.getY()) { // bending downward
-						back = numSubs - 1 - i;
-					} else {
-						back = i - (numSubs / 2);
-					}
-				}
-				int subOutputX = subDest.getX() - 20 - 10 * back;
+				// bending downward
+				// bending upward
+				if (i < numSubs / 2) if (subOutputY < subDest.y()) back = i;
+				else back = ((numSubs - 1) / 2) - i;
+				else if (subOutputY > subDest.y()) back = numSubs - 1 - i;
+				else back = i - (numSubs / 2);
+				int subOutputX = subDest.x() - 20 - 10 * back;
 				subOutput = new Location(subOutputX, subOutputY);
-				Location mid = new Location(subOutputX, subDest.getY());
+				Location mid = new Location(subOutputX, subDest.y());
 				result.add(Wire.create(subOutput, mid));
 				result.add(Wire.create(mid, subDest));
 			}
@@ -428,7 +410,7 @@ public class CircuitBuilder {
 	// placeInputs
 	//
 	private static void placeInputs(CircuitMutation result, InputData inputData) {
-		ArrayList<Location> forbiddenYs = new ArrayList<Location>();
+		ArrayList<Location> forbiddenYs = new ArrayList<>();
 		Comparator<Location> compareYs = new CompareYs();
 		int curX = 40;
 		int curY = 30;
@@ -443,7 +425,7 @@ public class CircuitBuilder {
 				// search for a Y that won't intersect with others
 				// (we needn't bother if the pin doesn't connect
 				// with anything anyway.)
-				Collections.sort(forbiddenYs, compareYs);
+				forbiddenYs.sort(compareYs);
 				while (Collections.binarySearch(forbiddenYs, spineLoc, compareYs) >= 0) {
 					curY += 10;
 					spineLoc = new Location(spineX, curY);
@@ -476,8 +458,8 @@ public class CircuitBuilder {
 				// }
 
 				// create spine
-				Collections.sort(spine, compareYs);
-				Location prev = spine.get(0);
+				spine.sort(compareYs);
+				Location prev = spine.getFirst();
 				for (int k = 1, n = spine.size(); k < n; k++) {
 					Location cur = spine.get(k);
 					if (!cur.equals(prev)) {
@@ -495,7 +477,7 @@ public class CircuitBuilder {
 
 	private static class CompareYs implements Comparator<Location> {
 		public int compare(Location a, Location b) {
-			return a.getY() - b.getY();
+			return a.y() - b.y();
 		}
 	}
 }

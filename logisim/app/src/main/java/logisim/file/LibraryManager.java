@@ -19,7 +19,7 @@ class LibraryManager {
 
 	private static char desc_sep = '#';
 
-	private static abstract class LibraryDescriptor {
+	private abstract static class LibraryDescriptor {
 		abstract boolean concernsFile(File query);
 
 		abstract String toDescriptor(Loader loader);
@@ -51,10 +51,7 @@ class LibraryManager {
 
 		@Override
 		public boolean equals(Object other) {
-			if (!(other instanceof LogisimProjectDescriptor))
-				return false;
-			LogisimProjectDescriptor o = (LogisimProjectDescriptor) other;
-			return this.file.equals(o.file);
+			return other instanceof LogisimProjectDescriptor o && file.equals(o.file);
 		}
 
 		@Override
@@ -89,10 +86,7 @@ class LibraryManager {
 
 		@Override
 		public boolean equals(Object other) {
-			if (!(other instanceof JarDescriptor))
-				return false;
-			JarDescriptor o = (JarDescriptor) other;
-			return this.file.equals(o.file) && this.className.equals(o.className);
+			return other instanceof JarDescriptor o && file.equals(o.file) && className.equals(o.className);
 		}
 
 		@Override
@@ -105,25 +99,20 @@ class LibraryManager {
 	private WeakHashMap<LoadedLibrary, LibraryDescriptor> invMap;
 
 	private LibraryManager() {
-		fileMap = new HashMap<LibraryDescriptor, WeakReference<LoadedLibrary>>();
-		invMap = new WeakHashMap<LoadedLibrary, LibraryDescriptor>();
+		fileMap = new HashMap<>();
+		invMap = new WeakHashMap<>();
 		ProjectsDirty.initialize();
 	}
 
 	void setDirty(File file, boolean dirty) {
 		LoadedLibrary lib = findKnown(file);
-		if (lib != null) {
-			lib.setDirty(dirty);
-		}
+		if (lib != null) lib.setDirty(dirty);
 	}
 
 	Collection<LogisimFile> getLogisimLibraries() {
-		ArrayList<LogisimFile> ret = new ArrayList<LogisimFile>();
-		for (LoadedLibrary lib : invMap.keySet()) {
-			if (lib.getBase() instanceof LogisimFile) {
-				ret.add((LogisimFile) lib.getBase());
-			}
-		}
+		ArrayList<LogisimFile> ret = new ArrayList<>();
+		for (LoadedLibrary lib : invMap.keySet())
+			if (lib.getBase() instanceof LogisimFile) ret.add((LogisimFile) lib.getBase());
 		return ret;
 	}
 
@@ -138,17 +127,17 @@ class LibraryManager {
 		String type = desc.substring(0, sep);
 		String name = desc.substring(sep + 1);
 
-		if (type.equals("")) {
+		if (type.isEmpty()) {
 			Library ret = loader.getBuiltin().getLibrary(name);
 			if (ret == null) {
 				loader.showError(StringUtil.format(Strings.get("fileBuiltinMissingError"), name));
 				return null;
 			}
 			return ret;
-		} else if (type.equals("file")) {
+		} else if ("file".equals(type)) {
 			File toRead = loader.getFileFor(name, Loader.LOGISIM_FILTER);
 			return loadLogisimLibrary(loader, toRead);
-		} else if (type.equals("jar")) {
+		} else if ("jar".equals(type)) {
 			int sepLoc = name.lastIndexOf(desc_sep);
 			String fileName = name.substring(0, sepLoc);
 			String className = name.substring(sepLoc + 1);
@@ -174,7 +163,7 @@ class LibraryManager {
 		}
 
 		LogisimProjectDescriptor desc = new LogisimProjectDescriptor(toRead);
-		fileMap.put(desc, new WeakReference<LoadedLibrary>(ret));
+		fileMap.put(desc, new WeakReference<>(ret));
 		invMap.put(ret, desc);
 		return ret;
 	}
@@ -193,39 +182,32 @@ class LibraryManager {
 			return null;
 		}
 
-		fileMap.put(jarDescriptor, new WeakReference<LoadedLibrary>(ret));
+		fileMap.put(jarDescriptor, new WeakReference<>(ret));
 		invMap.put(ret, jarDescriptor);
 		return ret;
 	}
 
 	public void reload(Loader loader, LoadedLibrary lib) {
 		LibraryDescriptor descriptor = invMap.get(lib);
-		if (descriptor == null) {
+		if (descriptor == null)
 			loader.showError(StringUtil.format(Strings.get("unknownLibraryFileError"), lib.getDisplayName()));
-		} else {
-			try {
-				descriptor.setBase(loader, lib);
-			}
-			catch (LoadFailedException e) {
-				loader.showError(e.getMessage());
-			}
+		else try {
+			descriptor.setBase(loader, lib);
+		} catch (LoadFailedException e) {
+			loader.showError(e.getMessage());
 		}
 	}
 
 	public Library findReference(LogisimFile file, File query) {
 		for (Library lib : file.getLibraries()) {
-			LibraryDescriptor desc = invMap.get(lib);
-			if (desc != null && desc.concernsFile(query)) {
-				return lib;
-			}
-			if (lib instanceof LoadedLibrary) {
-				LoadedLibrary loadedLib = (LoadedLibrary) lib;
-				if (loadedLib.getBase() instanceof LogisimFile) {
-					LogisimFile loadedProj = (LogisimFile) loadedLib.getBase();
-					Library ret = findReference(loadedProj, query);
-					if (ret != null)
-						return lib;
-				}
+			if (!(lib instanceof LoadedLibrary loadedLib))
+				continue;
+			LibraryDescriptor desc = invMap.get(loadedLib);
+			if (desc != null && desc.concernsFile(query)) return lib;
+			if (loadedLib.getBase() instanceof LogisimFile loadedProj) {
+				Library ret = findReference(loadedProj, query);
+				if (ret != null)
+					return lib;
 			}
 		}
 		return null;
@@ -233,9 +215,7 @@ class LibraryManager {
 
 	public void fileSaved(Loader loader, File dest, File oldFile, LogisimFile file) {
 		LoadedLibrary old = findKnown(oldFile);
-		if (old != null) {
-			old.setDirty(false);
-		}
+		if (old != null) old.setDirty(false);
 
 		LoadedLibrary lib = findKnown(dest);
 		if (lib != null) {
@@ -247,56 +227,48 @@ class LibraryManager {
 	}
 
 	public String getDescriptor(Loader loader, Library lib) {
-		if (loader.getBuiltin().getLibraries().contains(lib)) {
+		if (loader.getBuiltin().getLibraries().contains(lib))
 			return desc_sep + lib.getName();
-		} else {
-			LibraryDescriptor desc = invMap.get(lib);
-			if (desc != null) {
-				return desc.toDescriptor(loader);
-			} else {
-				throw new LoaderException(
-						StringUtil.format(Strings.get("fileDescriptorUnknownError"), lib.getDisplayName()));
-			}
-		}
+
+		if (!(lib instanceof LoadedLibrary loaded))
+			throw new LoaderException(StringUtil.format(Strings.get("fileDescriptorUnknownError"), lib.getDisplayName()));
+
+		LibraryDescriptor desc = invMap.get(loaded);
+		if (desc == null)
+			throw new LoaderException(StringUtil.format(Strings.get("fileDescriptorUnknownError"), lib.getDisplayName()));
+
+		return desc.toDescriptor(loader);
 	}
 
 	private LoadedLibrary findKnown(Object key) {
-		WeakReference<LoadedLibrary> retLibRef;
-		retLibRef = fileMap.get(key);
-		if (retLibRef == null) {
+		if (!(key instanceof LibraryDescriptor))
 			return null;
-		} else {
-			LoadedLibrary retLib = retLibRef.get();
-			if (retLib == null) {
-				fileMap.remove(key);
-				return null;
-			} else {
-				return retLib;
-			}
+
+		WeakReference<LoadedLibrary> retLibRef = fileMap.get(key);
+		if (retLibRef == null)
+			return null;
+
+		LoadedLibrary retLib = retLibRef.get();
+		if (retLib == null) {
+			fileMap.remove(key);
+			return null;
 		}
+		return retLib;
 	}
 
 	private static String toRelative(Loader loader, File file) {
 		File currentDirectory = loader.getCurrentDirectory();
-		if (currentDirectory == null) {
-			try {
-				return file.getCanonicalPath();
-			}
-			catch (IOException e) {
-				return file.toString();
-			}
+		if (currentDirectory == null) try {
+			return file.getCanonicalPath();
+		} catch (IOException e) {
+			return file.toString();
 		}
 
 		File fileDir = file.getParentFile();
-		if (fileDir != null) {
-			if (currentDirectory.equals(fileDir)) {
-				return file.getName();
-			} else if (currentDirectory.equals(fileDir.getParentFile())) {
-				return fileDir.getName() + "/" + file.getName();
-			} else if (fileDir.equals(currentDirectory.getParentFile())) {
-				return "../" + file.getName();
-			}
-		}
+		if (fileDir != null) if (currentDirectory.equals(fileDir)) return file.getName();
+		else if (currentDirectory.equals(fileDir.getParentFile()))
+			return fileDir.getName() + "/" + file.getName();
+		else if (fileDir.equals(currentDirectory.getParentFile())) return "../" + file.getName();
 		try {
 			return file.getCanonicalPath();
 		}

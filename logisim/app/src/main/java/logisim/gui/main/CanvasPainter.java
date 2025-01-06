@@ -35,13 +35,13 @@ class CanvasPainter implements PropertyChangeListener {
 
 	private Canvas canvas;
 	private GridPainter grid;
-	private Component haloedComponent = null;
-	private Circuit haloedCircuit = null;
+	private Component haloedComponent;
+	private Circuit haloedCircuit;
 	private WireSet highlightedWires = WireSet.EMPTY;
 
 	CanvasPainter(Canvas canvas) {
 		this.canvas = canvas;
-		this.grid = new GridPainter(canvas);
+		grid = new GridPainter(canvas);
 
 		AppPreferences.PRINTER_VIEW.addPropertyChangeListener(this);
 		AppPreferences.ATTRIBUTE_HALO.addPropertyChangeListener(this);
@@ -89,9 +89,8 @@ class CanvasPainter implements PropertyChangeListener {
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
-		if (AppPreferences.PRINTER_VIEW.isSource(event) || AppPreferences.ATTRIBUTE_HALO.isSource(event)) {
+		if (AppPreferences.PRINTER_VIEW.isSource(event) || AppPreferences.ATTRIBUTE_HALO.isSource(event))
 			canvas.repaint();
-		}
 	}
 
 	//
@@ -101,9 +100,7 @@ class CanvasPainter implements PropertyChangeListener {
 		Rectangle clip = g.getClipBounds();
 		Dimension size = canvas.getSize();
 		double zoomFactor = canvas.getZoomFactor();
-		if (canvas.ifPaintDirtyReset() || clip == null) {
-			clip = new Rectangle(0, 0, size.width, size.height);
-		}
+		if (canvas.ifPaintDirtyReset() || clip == null) clip = new Rectangle(0, 0, size.width, size.height);
 		g.setColor(Color.white);
 		g.fillRect(clip.x, clip.y, clip.width, clip.height);
 
@@ -111,9 +108,7 @@ class CanvasPainter implements PropertyChangeListener {
 		g.setColor(Color.black);
 
 		Graphics gScaled = g.create();
-		if (zoomFactor != 1.0 && gScaled instanceof Graphics2D) {
-			((Graphics2D) gScaled).scale(zoomFactor, zoomFactor);
-		}
+		if (zoomFactor != 1.0 && gScaled instanceof Graphics2D) ((Graphics2D) gScaled).scale(zoomFactor, zoomFactor);
 		drawWithUserState(g, gScaled, proj);
 		drawWidthIncompatibilityData(g, gScaled, proj);
 		Circuit circ = proj.getCurrentCircuit();
@@ -133,9 +128,8 @@ class CanvasPainter implements PropertyChangeListener {
 		Selection sel = proj.getSelection();
 		Set<Component> hidden;
 		Tool dragTool = canvas.getDragTool();
-		if (dragTool == null) {
-			hidden = NO_COMPONENTS;
-		} else {
+		if (dragTool == null) hidden = NO_COMPONENTS;
+		else {
 			hidden = dragTool.getHiddenComponents(canvas);
 			if (hidden == null)
 				hidden = NO_COMPONENTS;
@@ -176,42 +170,38 @@ class CanvasPainter implements PropertyChangeListener {
 	}
 
 	private void drawWidthIncompatibilityData(Graphics base, Graphics g, Project proj) {
-		Set<WidthIncompatibilityData> exceptions;
-		exceptions = proj.getCurrentCircuit().getWidthIncompatibilityData();
-		if (exceptions == null || exceptions.size() == 0)
+		Set<WidthIncompatibilityData> exceptions = proj.getCurrentCircuit().getWidthIncompatibilityData();
+		if (exceptions == null || exceptions.isEmpty())
 			return;
 
 		g.setColor(Value.WIDTH_ERROR_COLOR);
 		GraphicsUtil.switchToWidth(g, 2);
 		FontMetrics fm = base.getFontMetrics(g.getFont());
-		for (WidthIncompatibilityData ex : exceptions) {
+		for (WidthIncompatibilityData ex : exceptions)
 			for (int i = 0; i < ex.size(); i++) {
 				Location p = ex.getPoint(i);
 				BitWidth w = ex.getBitWidth(i);
 
 				// ensure it hasn't already been drawn
 				boolean drawn = false;
-				for (int j = 0; j < i; j++) {
+				for (int j = 0; j < i; j++)
 					if (ex.getPoint(j).equals(p)) {
 						drawn = true;
 						break;
 					}
-				}
 				if (drawn)
 					continue;
 
 				// compute the caption combining all similar points
 				String caption = "" + w.getWidth();
-				for (int j = i + 1; j < ex.size(); j++) {
+				for (int j = i + 1; j < ex.size(); j++)
 					if (ex.getPoint(j).equals(p)) {
 						caption += "/" + ex.getBitWidth(j);
 						break;
 					}
-				}
-				g.drawOval(p.getX() - 4, p.getY() - 4, 8, 8);
-				g.drawString(caption, p.getX() + 5, p.getY() + 2 + fm.getAscent());
+				g.drawOval(p.x() - 4, p.y() - 4, 8, 8);
+				g.drawString(caption, p.x() + 5, p.y() + 2 + fm.getAscent());
 			}
-		}
 		g.setColor(Color.BLACK);
 		GraphicsUtil.switchToWidth(g, 1);
 	}

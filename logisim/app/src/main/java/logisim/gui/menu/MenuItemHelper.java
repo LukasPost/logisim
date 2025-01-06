@@ -21,9 +21,9 @@ class MenuItemHelper implements ActionListener {
 		this.source = source;
 		this.menu = menu;
 		this.menuItem = menuItem;
-		this.enabled = true;
-		this.inActionListener = false;
-		this.listeners = new ArrayList<ActionListener>();
+		enabled = true;
+		inActionListener = false;
+		listeners = new ArrayList<>();
 	}
 
 	public boolean hasListeners() {
@@ -41,9 +41,7 @@ class MenuItemHelper implements ActionListener {
 	}
 
 	public void setEnabled(boolean value) {
-		if (!inActionListener) {
-			enabled = value;
-		}
+		if (!inActionListener) enabled = value;
 	}
 
 	private void computeEnabled() {
@@ -60,9 +58,7 @@ class MenuItemHelper implements ActionListener {
 		if (!listeners.isEmpty()) {
 			ActionEvent e = new ActionEvent(menuItem, event.getID(), event.getActionCommand(), event.getWhen(),
 					event.getModifiers());
-			for (ActionListener l : listeners) {
-				l.actionPerformed(e);
-			}
+			for (ActionListener l : listeners) l.actionPerformed(e);
 		}
 	}
 }

@@ -29,18 +29,15 @@ class SelectionPanel extends LogPanel {
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() == 2) {
 				TreePath path = selector.getPathForLocation(e.getX(), e.getY());
-				if (path != null && listener != null) {
-					doAdd(selector.getSelectedItems());
-				}
+				if (path != null && listener != null) doAdd(selector.getSelectedItems());
 			}
 		}
 
 		public void actionPerformed(ActionEvent event) {
 			Object src = event.getSource();
-			if (src == addTool) {
-				doAdd(selector.getSelectedItems());
-			} else if (src == changeBase) {
-				SelectionItem sel = (SelectionItem) list.getSelectedValue();
+			if (src == addTool) doAdd(selector.getSelectedItems());
+			else if (src == changeBase) {
+				SelectionItem sel = list.getSelectedValue();
 				if (sel != null) {
 					int radix = sel.getRadix();
 					switch (radix) {
@@ -54,24 +51,20 @@ class SelectionPanel extends LogPanel {
 						sel.setRadix(2);
 					}
 				}
-			} else if (src == moveUp) {
-				doMove(-1);
-			} else if (src == moveDown) {
-				doMove(1);
-			} else if (src == remove) {
+			} else if (src == moveUp) doMove(-1);
+			else if (src == moveDown) doMove(1);
+			else if (src == remove) {
 				Selection sel = getSelection();
 				List<SelectionItem> toRemove = list.getSelectedValuesList();
 				boolean changed = false;
-				for (int i = 0; i < toRemove.size(); i++) {
-					int index = sel.indexOf(toRemove.get(i));
+				for (SelectionItem selectionItem : toRemove) {
+					int index = sel.indexOf(selectionItem);
 					if (index >= 0) {
 						sel.remove(index);
 						changed = true;
 					}
 				}
-				if (changed) {
-					list.clearSelection();
-				}
+				if (changed) list.clearSelection();
 			}
 		}
 

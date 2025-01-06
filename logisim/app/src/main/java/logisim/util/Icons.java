@@ -6,6 +6,7 @@ package logisim.util;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.net.URL;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -19,7 +20,7 @@ public class Icons {
 	}
 
 	public static Icon getIcon(String name) {
-		java.net.URL url = Icons.class.getClassLoader().getResource(path + "/" + name);
+		URL url = Icons.class.getClassLoader().getResource(path + "/" + name);
 		if (url == null)
 			return null;
 		return new ImageIcon(url);
@@ -34,15 +35,10 @@ public class Icons {
 		Graphics2D g2 = (Graphics2D) g.create();
 		double cx = x + icon.getIconWidth() / 2.0;
 		double cy = y + icon.getIconHeight() / 2.0;
-		if (dir == Direction.West) {
-			g2.rotate(Math.PI, cx, cy);
-		} else if (dir == Direction.North) {
-			g2.rotate(-Math.PI / 2.0, cx, cy);
-		} else if (dir == Direction.South) {
-			g2.rotate(Math.PI / 2.0, cx, cy);
-		} else {
-			g2.translate(-x, -y);
-		}
+		if (dir == Direction.West) g2.rotate(Math.PI, cx, cy);
+		else if (dir == Direction.North) g2.rotate(-Math.PI / 2.0, cx, cy);
+		else if (dir == Direction.South) g2.rotate(Math.PI / 2.0, cx, cy);
+		else g2.translate(-x, -y);
 		icon.paintIcon(dest, g2, x, y);
 		g2.dispose();
 	}

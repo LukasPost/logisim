@@ -12,8 +12,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import logisim.prefs.AppPreferences;
+import logisim.util.LocaleSelector.LocaleOption;
 
-class LocaleSelector extends JList<LocaleSelector.LocaleOption> implements LocaleListener, ListSelectionListener {
+class LocaleSelector extends JList<LocaleOption> implements LocaleListener, ListSelectionListener {
 	public static class LocaleOption implements Runnable {
 		private Locale locale;
 		private String text;
@@ -29,11 +30,8 @@ class LocaleSelector extends JList<LocaleSelector.LocaleOption> implements Local
 		}
 
 		void update(Locale current) {
-			if (current != null && current.equals(locale)) {
-				text = locale.getDisplayName(locale);
-			} else {
-				text = locale.getDisplayName(locale) + " / " + locale.getDisplayName(current);
-			}
+			if (current != null && current.equals(locale)) text = locale.getDisplayName(locale);
+			else text = locale.getDisplayName(locale) + " / " + locale.getDisplayName(current);
 		}
 
 		public void run() {
@@ -64,20 +62,16 @@ class LocaleSelector extends JList<LocaleSelector.LocaleOption> implements Local
 	public void localeChanged() {
 		Locale current = LocaleManager.getLocale();
 		LocaleOption sel = null;
-		for (int i = 0; i < items.length; i++) {
-			items[i].update(current);
-			if (current.equals(items[i].locale))
-				sel = items[i];
+		for (LocaleOption item : items) {
+			item.update(current);
+			if (current.equals(item.locale))
+				sel = item;
 		}
-		if (sel != null) {
-			setSelectedValue(sel, true);
-		}
+		if (sel != null) setSelectedValue(sel, true);
 	}
 
 	public void valueChanged(ListSelectionEvent e) {
-		LocaleOption opt = (LocaleOption) getSelectedValue();
-		if (opt != null) {
-			SwingUtilities.invokeLater(opt);
-		}
+		LocaleOption opt = getSelectedValue();
+		if (opt != null) SwingUtilities.invokeLater(opt);
 	}
 }

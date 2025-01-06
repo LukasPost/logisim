@@ -3,6 +3,7 @@
 
 package logisim.circuit;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +15,8 @@ import logisim.data.Attributes;
 import logisim.data.BitWidth;
 import logisim.data.Direction;
 import logisim.instance.StdAttr;
+
+import javax.swing.JComboBox;
 
 class SplitterAttributes extends AbstractAttributeSet {
 	public static final AttributeOption APPEAR_LEGACY = new AttributeOption("legacy",
@@ -34,8 +37,7 @@ class SplitterAttributes extends AbstractAttributeSet {
 	public static final Attribute<Integer> ATTR_FANOUT = Attributes.forIntegerRange("fanout",
 			Strings.getter("splitterFanOutAttr"), 1, 32);
 
-	private static final List<Attribute<?>> INIT_ATTRIBUTES = Arrays
-			.asList(new Attribute<?>[] { StdAttr.FACING, ATTR_FANOUT, ATTR_WIDTH, ATTR_APPEARANCE, });
+	private static final List<Attribute<?>> INIT_ATTRIBUTES = Arrays .asList(StdAttr.FACING, ATTR_FANOUT, ATTR_WIDTH, ATTR_APPEARANCE);
 
 	private static final String unchosen_val = "none";
 
@@ -52,21 +54,14 @@ class SplitterAttributes extends AbstractAttributeSet {
 
 		@Override
 		public String toString() {
-			if (value < 0) {
-				return Strings.get("splitterBitNone");
-			} else {
+			if (value < 0) return Strings.get("splitterBitNone");
+			else {
 				String ret = "" + value;
 				Direction noteDir;
-				if (value == 0) {
-					noteDir = isVertical ? Direction.North : Direction.East;
-				} else if (isLast) {
-					noteDir = isVertical ? Direction.South : Direction.West;
-				} else {
-					noteDir = null;
-				}
-				if (noteDir != null) {
-					ret += " (" + noteDir.toVerticalDisplayString() + ")";
-				}
+				if (value == 0) noteDir = isVertical ? Direction.North : Direction.East;
+				else if (isLast) noteDir = isVertical ? Direction.South : Direction.West;
+				else noteDir = null;
+				if (noteDir != null) ret += " (" + noteDir.toVerticalDisplayString() + ")";
 				return ret;
 			}
 		}
@@ -87,51 +82,45 @@ class SplitterAttributes extends AbstractAttributeSet {
 		}
 
 		public Object getDefault() {
-			return Integer.valueOf(which + 1);
+			return which + 1;
 		}
 
 		@Override
 		public Integer parse(String value) {
-			if (value.equals(unchosen_val)) {
-				return Integer.valueOf(0);
-			} else {
-				return Integer.valueOf(1 + Integer.parseInt(value));
-			}
+			if (value.equals(unchosen_val)) return 0;
+			else return 1 + Integer.parseInt(value);
 		}
 
 		@Override
 		public String toDisplayString(Integer value) {
-			int index = value.intValue();
+			int index = value;
 			return options[index].toString();
 		}
 
 		@Override
 		public String toStandardString(Integer value) {
-			int index = value.intValue();
-			if (index == 0) {
-				return unchosen_val;
-			} else {
-				return "" + (index - 1);
-			}
+			int index = value;
+			if (index == 0) return unchosen_val;
+			else return "" + (index - 1);
 		}
 
 		@Override
-		public java.awt.Component getCellEditor(Integer value) {
-			int index = value.intValue();
-			javax.swing.JComboBox<BitOutOption> combo = new javax.swing.JComboBox<>(options);
+		public Component getCellEditor(Integer value) {
+			int index = value;
+			JComboBox<BitOutOption> combo = new JComboBox<>(options);
 			combo.setSelectedIndex(index);
 			return combo;
 		}
 	}
 
-	private ArrayList<Attribute<?>> attrs = new ArrayList<Attribute<?>>(INIT_ATTRIBUTES);
+	private ArrayList<Attribute<?>> attrs = new ArrayList<>(INIT_ATTRIBUTES);
 	private SplitterParameters parameters;
 	AttributeOption appear = APPEAR_LEFT;
 	Direction facing = Direction.East;
 	byte fanout = 2; // number of ends this splits into
 	byte[] bit_end = new byte[2]; // how each bit maps to an end (0 if nowhere);
 									// other values will be between 1 and fanout
-	BitOutOption[] options = null;
+	BitOutOption[] options;
 
 	SplitterAttributes() {
 		configureOptions();
@@ -146,19 +135,19 @@ class SplitterAttributes extends AbstractAttributeSet {
 	@Override
 	protected void copyInto(AbstractAttributeSet destObj) {
 		SplitterAttributes dest = (SplitterAttributes) destObj;
-		dest.parameters = this.parameters;
-		dest.attrs = new ArrayList<Attribute<?>>(this.attrs.size());
+		dest.parameters = parameters;
+		dest.attrs = new ArrayList<>(attrs.size());
 		dest.attrs.addAll(INIT_ATTRIBUTES);
-		for (int i = INIT_ATTRIBUTES.size(), n = this.attrs.size(); i < n; i++) {
-			BitOutAttribute attr = (BitOutAttribute) this.attrs.get(i);
+		for (int i = INIT_ATTRIBUTES.size(), n = attrs.size(); i < n; i++) {
+			BitOutAttribute attr = (BitOutAttribute) attrs.get(i);
 			dest.attrs.add(attr.createCopy());
 		}
 
-		dest.facing = this.facing;
-		dest.fanout = this.fanout;
-		dest.appear = this.appear;
-		dest.bit_end = this.bit_end.clone();
-		dest.options = this.options;
+		dest.facing = facing;
+		dest.fanout = fanout;
+		dest.appear = appear;
+		dest.bit_end = bit_end.clone();
+		dest.options = options;
 	}
 
 	public SplitterParameters getParameters() {
@@ -178,20 +167,12 @@ class SplitterAttributes extends AbstractAttributeSet {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <V> V getValue(Attribute<V> attr) {
-		if (attr == StdAttr.FACING) {
-			return (V) facing;
-		} else if (attr == ATTR_FANOUT) {
-			return (V) Integer.valueOf(fanout);
-		} else if (attr == ATTR_WIDTH) {
-			return (V) BitWidth.create(bit_end.length);
-		} else if (attr == ATTR_APPEARANCE) {
-			return (V) appear;
-		} else if (attr instanceof BitOutAttribute) {
-			BitOutAttribute bitOut = (BitOutAttribute) attr;
-			return (V) Integer.valueOf(bit_end[bitOut.which]);
-		} else {
-			return null;
-		}
+		if (attr == StdAttr.FACING) return (V) facing;
+		else if (attr == ATTR_FANOUT) return (V) Integer.valueOf(fanout);
+		else if (attr == ATTR_WIDTH) return (V) BitWidth.create(bit_end.length);
+		else if (attr == ATTR_APPEARANCE) return (V) appear;
+		else if (attr instanceof BitOutAttribute bitOut) return (V) Integer.valueOf(bit_end[bitOut.which]);
+		else return null;
 	}
 
 	@Override
@@ -201,12 +182,11 @@ class SplitterAttributes extends AbstractAttributeSet {
 			configureOptions();
 			parameters = null;
 		} else if (attr == ATTR_FANOUT) {
-			int newValue = ((Integer) value).intValue();
+			int newValue = (Integer) value;
 			byte[] bits = bit_end;
-			for (int i = 0; i < bits.length; i++) {
+			for (int i = 0; i < bits.length; i++)
 				if (bits[i] >= newValue)
 					bits[i] = (byte) (newValue - 1);
-			}
 			fanout = (byte) newValue;
 			configureOptions();
 			configureDefaults();
@@ -219,20 +199,12 @@ class SplitterAttributes extends AbstractAttributeSet {
 		} else if (attr == ATTR_APPEARANCE) {
 			appear = (AttributeOption) value;
 			parameters = null;
-		} else if (attr instanceof BitOutAttribute) {
-			BitOutAttribute bitOutAttr = (BitOutAttribute) attr;
+		} else if (attr instanceof BitOutAttribute bitOutAttr) {
 			int val;
-			if (value instanceof Integer) {
-				val = ((Integer) value).intValue();
-			} else {
-				val = ((BitOutOption) value).value + 1;
-			}
-			if (val >= 0 && val <= fanout) {
-				bit_end[bitOutAttr.which] = (byte) val;
-			}
-		} else {
-			throw new IllegalArgumentException("unknown attribute " + attr);
-		}
+			if (value instanceof Integer) val = (Integer) value;
+			else val = ((BitOutOption) value).value + 1;
+			if (val >= 0 && val <= fanout) bit_end[bitOutAttr.which] = (byte) val;
+		} else throw new IllegalArgumentException("unknown attribute " + attr);
 		fireAttributeValueChanged(attr, value);
 	}
 
@@ -240,9 +212,7 @@ class SplitterAttributes extends AbstractAttributeSet {
 		// compute the set of options for BitOutAttributes
 		options = new BitOutOption[fanout + 1];
 		boolean isVertical = facing == Direction.East || facing == Direction.West;
-		for (int i = -1; i < fanout; i++) {
-			options[i + 1] = new BitOutOption(i, isVertical, i == fanout - 1);
-		}
+		for (int i = -1; i < fanout; i++) options[i + 1] = new BitOutOption(i, isVertical, i == fanout - 1);
 
 		// go ahead and set the options for the existing attributes
 		int offs = INIT_ATTRIBUTES.size();
@@ -258,7 +228,7 @@ class SplitterAttributes extends AbstractAttributeSet {
 		int curNum = attrs.size() - offs;
 
 		// compute default values
-		byte[] dflt = computeDistribution(fanout, bit_end.length, 1);
+		byte[] defaultDistributions = computeDistribution(fanout, bit_end.length, 1);
 
 		boolean changed = curNum != bit_end.length;
 
@@ -269,18 +239,17 @@ class SplitterAttributes extends AbstractAttributeSet {
 		}
 
 		// set existing attributes
-		for (int i = 0; i < curNum; i++) {
-			if (bit_end[i] != dflt[i]) {
+		for (int i = 0; i < curNum; i++)
+			if (bit_end[i] != defaultDistributions[i]) {
 				BitOutAttribute attr = (BitOutAttribute) attrs.get(offs + i);
-				bit_end[i] = dflt[i];
-				fireAttributeValueChanged(attr, Integer.valueOf(bit_end[i]));
+				bit_end[i] = defaultDistributions[i];
+				fireAttributeValueChanged(attr, (int) bit_end[i]);
 			}
-		}
 
 		// add new attributes
 		for (int i = curNum; i < bit_end.length; i++) {
 			BitOutAttribute attr = new BitOutAttribute(i, options);
-			bit_end[i] = dflt[i];
+			bit_end[i] = defaultDistributions[i];
 			attrs.add(attr);
 		}
 
@@ -290,49 +259,44 @@ class SplitterAttributes extends AbstractAttributeSet {
 
 	static byte[] computeDistribution(int fanout, int bits, int order) {
 		byte[] ret = new byte[bits];
-		if (order >= 0) {
-			if (fanout >= bits) {
-				for (int i = 0; i < bits; i++)
-					ret[i] = (byte) (i + 1);
-			} else {
-				int threads_per_end = bits / fanout;
-				int ends_with_extra = bits % fanout;
-				int cur_end = -1; // immediately increments
-				int left_in_end = 0;
-				for (int i = 0; i < bits; i++) {
-					if (left_in_end == 0) {
-						++cur_end;
-						left_in_end = threads_per_end;
-						if (ends_with_extra > 0) {
-							++left_in_end;
-							--ends_with_extra;
-						}
+		if (order >= 0) if (fanout >= bits) for (int i = 0; i < bits; i++)
+			ret[i] = (byte) (i + 1);
+		else {
+			int threads_per_end = bits / fanout;
+			int ends_with_extra = bits % fanout;
+			int cur_end = -1; // immediately increments
+			int left_in_end = 0;
+			for (int i = 0; i < bits; i++) {
+				if (left_in_end == 0) {
+					++cur_end;
+					left_in_end = threads_per_end;
+					if (ends_with_extra > 0) {
+						++left_in_end;
+						--ends_with_extra;
 					}
-					ret[i] = (byte) (1 + cur_end);
-					--left_in_end;
 				}
+				ret[i] = (byte) (1 + cur_end);
+				--left_in_end;
 			}
-		} else {
-			if (fanout >= bits) {
-				for (int i = 0; i < bits; i++)
-					ret[i] = (byte) (fanout - i);
-			} else {
-				int threads_per_end = bits / fanout;
-				int ends_with_extra = bits % fanout;
-				int cur_end = -1;
-				int left_in_end = 0;
-				for (int i = bits - 1; i >= 0; i--) {
-					if (left_in_end == 0) {
-						++cur_end;
-						left_in_end = threads_per_end;
-						if (ends_with_extra > 0) {
-							++left_in_end;
-							--ends_with_extra;
-						}
+		}
+		else if (fanout >= bits) for (int i = 0; i < bits; i++)
+			ret[i] = (byte) (fanout - i);
+		else {
+			int threads_per_end = bits / fanout;
+			int ends_with_extra = bits % fanout;
+			int cur_end = -1;
+			int left_in_end = 0;
+			for (int i = bits - 1; i >= 0; i--) {
+				if (left_in_end == 0) {
+					++cur_end;
+					left_in_end = threads_per_end;
+					if (ends_with_extra > 0) {
+						++left_in_end;
+						--ends_with_extra;
 					}
-					ret[i] = (byte) (1 + cur_end);
-					--left_in_end;
 				}
+				ret[i] = (byte) (1 + cur_end);
+				--left_in_end;
 			}
 		}
 		return ret;

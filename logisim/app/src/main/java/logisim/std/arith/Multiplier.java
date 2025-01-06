@@ -80,8 +80,8 @@ public class Multiplier extends InstanceFactory {
 		painter.drawPort(C_OUT, "c out", Direction.South);
 
 		Location loc = painter.getLocation();
-		int x = loc.getX();
-		int y = loc.getY();
+		int x = loc.x();
+		int y = loc.y();
 		GraphicsUtil.switchToWidth(g, 2);
 		g.setColor(Color.BLACK);
 		g.drawLine(x - 15, y - 5, x - 5, y + 5);
@@ -115,33 +115,26 @@ public class Multiplier extends InstanceFactory {
 			int ret = ax * bx + cx;
 
 			Value[] bits = new Value[w];
-			for (int i = 0; i < w; i++) {
-				if (i < known) {
-					bits[i] = ((ret & (1 << i)) != 0 ? Value.TRUE : Value.FALSE);
-				} else if (i < error) {
-					bits[i] = Value.UNKNOWN;
-				} else {
-					bits[i] = Value.ERROR;
-				}
-			}
+			for (int i = 0; i < w; i++)
+				if (i < known) bits[i] = ((ret & (1 << i)) != 0 ? Value.TRUE : Value.FALSE);
+				else if (i < error) bits[i] = Value.UNKNOWN;
+				else bits[i] = Value.ERROR;
 			return new Value[] { Value.create(bits),
 					error < w ? Value.createError(width) : Value.createUnknown(width) };
 		}
 	}
 
 	private static int findUnknown(Value[] vals) {
-		for (int i = 0; i < vals.length; i++) {
+		for (int i = 0; i < vals.length; i++)
 			if (!vals[i].isFullyDefined())
 				return i;
-		}
 		return vals.length;
 	}
 
 	private static int findError(Value[] vals) {
-		for (int i = 0; i < vals.length; i++) {
+		for (int i = 0; i < vals.length; i++)
 			if (vals[i].isErrorValue())
 				return i;
-		}
 		return vals.length;
 	}
 

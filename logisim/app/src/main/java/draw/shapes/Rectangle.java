@@ -22,11 +22,7 @@ public class Rectangle extends Rectangular {
 
 	@Override
 	public boolean matches(CanvasObject other) {
-		if (other instanceof Rectangle) {
-			return super.matches(other);
-		} else {
-			return false;
-		}
+		return other instanceof Rectangle && super.matches(other);
 	}
 
 	@Override
@@ -56,7 +52,7 @@ public class Rectangle extends Rectangular {
 
 	@Override
 	protected boolean contains(int x, int y, int w, int h, Location q) {
-		return isInRect(q.getX(), q.getY(), x, y, w, h);
+		return isInRect(q.x(), q.y(), x, y, w, h);
 	}
 
 	@Override
@@ -67,14 +63,12 @@ public class Rectangle extends Rectangular {
 			int u = rand.nextInt(2 * w + 2 * h);
 			int x = getX();
 			int y = getY();
-			if (u < w) {
-				x += u;
-			} else if (u < 2 * w) {
+			if (u < w) x += u;
+			else if (u < 2 * w) {
 				x += (u - w);
 				y += h;
-			} else if (u < 2 * w + h) {
-				y += (u - 2 * w);
-			} else {
+			} else if (u < 2 * w + h) y += (u - 2 * w);
+			else {
 				x += w;
 				y += (u - 2 * w - h);
 			}
@@ -84,9 +78,7 @@ public class Rectangle extends Rectangular {
 				y += rand.nextInt(d) - d / 2;
 			}
 			return new Location(x, y);
-		} else {
-			return super.getRandomPoint(bds, rand);
-		}
+		} else return super.getRandomPoint(bds, rand);
 	}
 
 	@Override

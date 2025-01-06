@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -62,28 +63,25 @@ public class LogisimFile extends Library implements LibraryEventSource {
 		}
 	}
 
-	private EventSourceWeakSupport<LibraryListener> listeners = new EventSourceWeakSupport<LibraryListener>();
+	private EventSourceWeakSupport<LibraryListener> listeners = new EventSourceWeakSupport<>();
 	private Loader loader;
-	private LinkedList<String> messages = new LinkedList<String>();
+	private LinkedList<String> messages = new LinkedList<>();
 	private Options options = new Options();
-	private LinkedList<AddTool> tools = new LinkedList<AddTool>();
-	private LinkedList<Library> libraries = new LinkedList<Library>();
-	private Circuit main = null;
+	private LinkedList<AddTool> tools = new LinkedList<>();
+	private LinkedList<Library> libraries = new LinkedList<>();
+	private Circuit main;
 	private String name;
-	private boolean dirty = false;
+	private boolean dirty;
 
 	LogisimFile(Loader loader) {
 		this.loader = loader;
 
 		name = Strings.get("defaultProjectName");
-		if (Projects.windowNamed(name)) {
-			for (int i = 2; true; i++) {
-				if (!Projects.windowNamed(name + " " + i)) {
-					name += " " + i;
-					break;
-				}
+		if (Projects.windowNamed(name)) for (int i = 2; true; i++)
+			if (!Projects.windowNamed(name + " " + i)) {
+				name += " " + i;
+				break;
 			}
-		}
 
 	}
 
@@ -150,7 +148,7 @@ public class LogisimFile extends Library implements LibraryEventSource {
 	}
 
 	public List<Circuit> getCircuits() {
-		List<Circuit> ret = new ArrayList<Circuit>(tools.size());
+		List<Circuit> ret = new ArrayList<>(tools.size());
 		for (AddTool tool : tools) {
 			SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
 			ret.add(factory.getSubcircuit());
@@ -161,9 +159,7 @@ public class LogisimFile extends Library implements LibraryEventSource {
 	public AddTool getAddTool(Circuit circ) {
 		for (AddTool tool : tools) {
 			SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
-			if (factory.getSubcircuit() == circ) {
-				return tool;
-			}
+			if (factory.getSubcircuit() == circ) return tool;
 		}
 		return null;
 	}
@@ -189,9 +185,7 @@ public class LogisimFile extends Library implements LibraryEventSource {
 
 	private void fireEvent(int action, Object data) {
 		LibraryEvent e = new LibraryEvent(this, action, data);
-		for (LibraryListener l : listeners) {
-			l.libraryChanged(e);
-		}
+		for (LibraryListener l : listeners) l.libraryChanged(e);
 	}
 
 	//
@@ -226,16 +220,14 @@ public class LogisimFile extends Library implements LibraryEventSource {
 	}
 
 	public void removeCircuit(Circuit circuit) {
-		if (tools.size() <= 1) {
-			throw new RuntimeException("Cannot remove last circuit");
-		}
+		if (tools.size() <= 1) throw new RuntimeException("Cannot remove last circuit");
 
 		int index = getCircuits().indexOf(circuit);
 		if (index >= 0) {
 			Tool circuitTool = tools.remove(index);
 
 			if (main == circuit) {
-				AddTool dflt_tool = tools.get(0);
+				AddTool dflt_tool = tools.getFirst();
 				SubcircuitFactory factory = (SubcircuitFactory) dflt_tool.getFactory();
 				setMainCircuit(factory.getSubcircuit());
 			}
@@ -266,30 +258,19 @@ public class LogisimFile extends Library implements LibraryEventSource {
 	}
 
 	public String getUnloadLibraryMessage(Library lib) {
-		HashSet<ComponentFactory> factories = new HashSet<ComponentFactory>();
-		for (Tool tool : lib.getTools()) {
-			if (tool instanceof AddTool) {
-				factories.add(((AddTool) tool).getFactory());
-			}
-		}
+		HashSet<ComponentFactory> factories = new HashSet<>();
+		for (Tool tool : lib.getTools()) if (tool instanceof AddTool) factories.add(((AddTool) tool).getFactory());
 
-		for (Circuit circuit : getCircuits()) {
-			for (Component comp : circuit.getNonWires()) {
-				if (factories.contains(comp.getFactory())) {
+		for (Circuit circuit : getCircuits())
+			for (Component comp : circuit.getNonWires())
+				if (factories.contains(comp.getFactory()))
 					return StringUtil.format(Strings.get("unloadUsedError"), circuit.getName());
-				}
-			}
-		}
 
 		ToolbarData tb = options.getToolbarData();
 		MouseMappings mm = options.getMouseMappings();
 		for (Tool t : lib.getTools()) {
-			if (tb.usesToolFromSource(t)) {
-				return Strings.get("unloadToolbarError");
-			}
-			if (mm.usesToolFromSource(t)) {
-				return Strings.get("unloadMappingError");
-			}
+			if (tb.usesToolFromSource(t)) return Strings.get("unloadToolbarError");
+			if (mm.usesToolFromSource(t)) return Strings.get("unloadMappingError");
 		}
 
 		return null;
@@ -298,7 +279,7 @@ public class LogisimFile extends Library implements LibraryEventSource {
 	public void setMainCircuit(Circuit circuit) {
 		if (circuit == null)
 			return;
-		this.main = circuit;
+		main = circuit;
 		fireEvent(LibraryEvent.SET_MAIN, circuit);
 	}
 
@@ -319,7 +300,7 @@ public class LogisimFile extends Library implements LibraryEventSource {
 			String msg = e.getMessage();
 			String err = Strings.get("xmlConversionError");
 			if (msg == null)
-				err += ": " + msg;
+				err += ": " + null;
 			loader.showError(err);
 		}
 	}
@@ -354,10 +335,9 @@ public class LogisimFile extends Library implements LibraryEventSource {
 	}
 
 	private Tool findTool(Library lib, Tool query) {
-		for (Tool tool : lib.getTools()) {
+		for (Tool tool : lib.getTools())
 			if (tool.equals(query))
 				return tool;
-		}
 		return null;
 	}
 
@@ -374,7 +354,7 @@ public class LogisimFile extends Library implements LibraryEventSource {
 
 	public static LogisimFile load(File file, Loader loader) throws IOException {
 		InputStream in = new FileInputStream(file);
-		SAXException firstExcept = null;
+		SAXException firstExcept;
 		try {
 			return loadSub(in, loader);
 		}
@@ -384,22 +364,20 @@ public class LogisimFile extends Library implements LibraryEventSource {
 			in.close();
 		}
 
-		if (firstExcept != null) {
-			// We'll now try to do it using a reader. This is to work around
-			// Logisim versions prior to 2.5.1, when files were not saved using
-			// UTF-8 as the encoding (though the XML file reported otherwise).
+		// We'll now try to do it using a reader. This is to work around
+		// Logisim versions prior to 2.5.1, when files were not saved using
+		// UTF-8 as the encoding (though the XML file reported otherwise).
+		try {
+			in = new ReaderInputStream(new FileReader(file), "UTF8");
+			return loadSub(in, loader);
+		}
+		catch (Throwable t) {
+			loader.showError(StringUtil.format(Strings.get("xmlFormatError"), firstExcept.toString()));
+		} finally {
 			try {
-				in = new ReaderInputStream(new FileReader(file), "UTF8");
-				return loadSub(in, loader);
+				in.close();
 			}
 			catch (Throwable t) {
-				loader.showError(StringUtil.format(Strings.get("xmlFormatError"), firstExcept.toString()));
-			} finally {
-				try {
-					in.close();
-				}
-				catch (Throwable t) {
-				}
 			}
 		}
 
@@ -421,13 +399,9 @@ public class LogisimFile extends Library implements LibraryEventSource {
 		BufferedInputStream inBuffered = new BufferedInputStream(in);
 		String firstLine = getFirstLine(inBuffered);
 
-		if (firstLine == null) {
-			throw new IOException("File is empty");
-		} else if (firstLine.equals("Logisim v1.0")) {
-			// if this is a 1.0 file, then set up a pipe to translate to
-			// 2.0 and then interpret as a 2.0 file
-			throw new IOException("Version 1.0 files no longer supported");
-		}
+		// if this is a 1.0 file, then set up a pipe to translate to
+		// 2.0 and then interpret as a 2.0 file
+		if ("Logisim v1.0".equals(firstLine)) throw new IOException("Version 1.0 files no longer supported");
 
 		XmlReader xmlReader = new XmlReader(loader);
 		LogisimFile ret = xmlReader.readLibrary(inBuffered);
@@ -442,11 +416,7 @@ public class LogisimFile extends Library implements LibraryEventSource {
 		in.reset();
 
 		int lineBreak = first.length;
-		for (int i = 0; i < lineBreak; i++) {
-			if (first[i] == '\n') {
-				lineBreak = i;
-			}
-		}
-		return new String(first, 0, lineBreak, "UTF-8");
+		for (int i = 0; i < lineBreak; i++) if (first[i] == '\n') lineBreak = i;
+		return new String(first, 0, lineBreak, StandardCharsets.UTF_8);
 	}
 }

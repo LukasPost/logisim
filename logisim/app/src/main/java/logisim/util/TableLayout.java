@@ -21,18 +21,14 @@ public class TableLayout implements LayoutManager2 {
 
 	public TableLayout(int colCount) {
 		this.colCount = colCount;
-		this.contents = new ArrayList<Component[]>();
-		this.curRow = 0;
-		this.curCol = 0;
+		contents = new ArrayList<>();
+		curRow = 0;
+		curCol = 0;
 	}
 
 	public void setRowWeight(int rowIndex, double weight) {
-		if (weight < 0) {
-			throw new IllegalArgumentException("weight must be nonnegative");
-		}
-		if (rowIndex < 0) {
-			throw new IllegalArgumentException("row index must be nonnegative");
-		}
+		if (weight < 0) throw new IllegalArgumentException("weight must be nonnegative");
+		if (rowIndex < 0) throw new IllegalArgumentException("row index must be nonnegative");
 		if ((rowWeight == null || rowIndex >= rowWeight.length) && weight != 0.0) {
 			double[] a = new double[rowIndex + 10];
 			if (rowWeight != null)
@@ -43,9 +39,7 @@ public class TableLayout implements LayoutManager2 {
 	}
 
 	public void addLayoutComponent(String name, Component comp) {
-		while (curRow >= contents.size()) {
-			contents.add(new Component[colCount]);
-		}
+		while (curRow >= contents.size()) contents.add(new Component[colCount]);
 		Component[] rowContents = contents.get(curRow);
 		rowContents[curCol] = comp;
 		++curCol;
@@ -57,8 +51,7 @@ public class TableLayout implements LayoutManager2 {
 	}
 
 	public void addLayoutComponent(Component comp, Object constraints) {
-		if (constraints instanceof TableConstraints) {
-			TableConstraints con = (TableConstraints) constraints;
+		if (constraints instanceof TableConstraints con) {
 			if (con.getRow() >= 0)
 				curRow = con.getRow();
 			if (con.getCol() >= 0)
@@ -68,15 +61,12 @@ public class TableLayout implements LayoutManager2 {
 	}
 
 	public void removeLayoutComponent(Component comp) {
-		for (int i = 0, n = contents.size(); i < n; i++) {
-			Component[] row = contents.get(i);
-			for (int j = 0; j < row.length; j++) {
+		for (Component[] row : contents)
+			for (int j = 0; j < row.length; j++)
 				if (row[j] == comp) {
 					row[j] = null;
 					return;
 				}
-			}
-		}
 		prefs = null;
 	}
 
@@ -88,7 +78,7 @@ public class TableLayout implements LayoutManager2 {
 			for (int i = 0; i < prefRow.length; i++) {
 				Component[] row = contents.get(i);
 				int rowHeight = 0;
-				for (int j = 0; j < row.length; j++) {
+				for (int j = 0; j < row.length; j++)
 					if (row[j] != null) {
 						Dimension dim = row[j].getPreferredSize();
 						if (dim.height > rowHeight)
@@ -96,15 +86,12 @@ public class TableLayout implements LayoutManager2 {
 						if (dim.width > prefCol[j])
 							prefCol[j] = dim.width;
 					}
-				}
 				prefRow[i] = rowHeight;
 				height += rowHeight;
 			}
 			int width = 0;
-			for (int i = 0; i < prefCol.length; i++) {
-				width += prefCol[i];
-			}
-			this.prefs = new Dimension(width, height);
+			for (int j : prefCol) width += j;
+			prefs = new Dimension(width, height);
 			this.prefRow = prefRow;
 			this.prefCol = prefCol;
 		}
@@ -136,16 +123,9 @@ public class TableLayout implements LayoutManager2 {
 		double y0;
 		int yRemaining = size.height - pref.height;
 		double rowWeightTotal = 0.0;
-		if (yRemaining != 0 && rowWeight != null) {
-			for (double weight : rowWeight) {
-				rowWeightTotal += weight;
-			}
-		}
-		if (rowWeightTotal == 0.0 && yRemaining > 0) {
-			y0 = yRemaining / 2.0;
-		} else {
-			y0 = 0;
-		}
+		if (yRemaining != 0 && rowWeight != null) for (double weight : rowWeight) rowWeightTotal += weight;
+		if (rowWeightTotal == 0.0 && yRemaining > 0) y0 = yRemaining / 2.0;
+		else y0 = 0;
 
 		int x0 = (size.width - pref.width) / 2;
 		if (x0 < 0)
@@ -158,15 +138,11 @@ public class TableLayout implements LayoutManager2 {
 			int x = x0;
 			for (int j = 0; j < row.length; j++) {
 				Component comp = row[j];
-				if (comp != null) {
-					row[j].setBounds(x, yRound, prefCol[j], prefRow[i]);
-				}
+				if (comp != null) row[j].setBounds(x, yRound, prefCol[j], prefRow[i]);
 				x += prefCol[j];
 			}
 			y += prefRow[i];
-			if (rowWeightTotal > 0 && i < rowWeight.length) {
-				y += yRemaining * rowWeight[i] / rowWeightTotal;
-			}
+			if (rowWeightTotal > 0 && i < rowWeight.length) y += yRemaining * rowWeight[i] / rowWeightTotal;
 		}
 
 	}

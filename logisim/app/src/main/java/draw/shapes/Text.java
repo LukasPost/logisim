@@ -39,18 +39,13 @@ public class Text extends AbstractCanvasObject {
 	@Override
 	public Text clone() {
 		Text ret = (Text) super.clone();
-		ret.label = this.label.clone();
+		ret.label = label.clone();
 		return ret;
 	}
 
 	@Override
 	public boolean matches(CanvasObject other) {
-		if (other instanceof Text) {
-			Text that = (Text) other;
-			return this.label.equals(that.label);
-		} else {
-			return false;
-		}
+		return other instanceof Text that && label.equals(that.label);
 	}
 
 	@Override
@@ -92,35 +87,25 @@ public class Text extends AbstractCanvasObject {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <V> V getValue(Attribute<V> attr) {
-		if (attr == DrawAttr.FONT) {
-			return (V) label.getFont();
-		} else if (attr == DrawAttr.FILL_COLOR) {
-			return (V) label.getColor();
-		} else if (attr == DrawAttr.ALIGNMENT) {
+		if (attr == DrawAttr.FONT) return (V) label.getFont();
+		else if (attr == DrawAttr.FILL_COLOR) return (V) label.getColor();
+		else if (attr == DrawAttr.ALIGNMENT) {
 			int halign = label.getHorizontalAlignment();
 			AttributeOption h;
-			if (halign == EditableLabel.LEFT) {
-				h = DrawAttr.ALIGN_LEFT;
-			} else if (halign == EditableLabel.RIGHT) {
-				h = DrawAttr.ALIGN_RIGHT;
-			} else {
-				h = DrawAttr.ALIGN_CENTER;
-			}
+			if (halign == EditableLabel.LEFT) h = DrawAttr.ALIGN_LEFT;
+			else if (halign == EditableLabel.RIGHT) h = DrawAttr.ALIGN_RIGHT;
+			else h = DrawAttr.ALIGN_CENTER;
 			return (V) h;
-		} else {
-			return null;
-		}
+		} else return null;
 	}
 
 	@Override
 	public void updateValue(Attribute<?> attr, Object value) {
-		if (attr == DrawAttr.FONT) {
-			label.setFont((Font) value);
-		} else if (attr == DrawAttr.FILL_COLOR) {
-			label.setColor((Color) value);
-		} else if (attr == DrawAttr.ALIGNMENT) {
+		if (attr == DrawAttr.FONT) label.setFont((Font) value);
+		else if (attr == DrawAttr.FILL_COLOR) label.setColor((Color) value);
+		else if (attr == DrawAttr.ALIGNMENT) {
 			Integer intVal = (Integer) ((AttributeOption) value).getValue();
-			label.setHorizontalAlignment(intVal.intValue());
+			label.setHorizontalAlignment(intVal);
 		}
 	}
 
@@ -131,7 +116,7 @@ public class Text extends AbstractCanvasObject {
 
 	@Override
 	public boolean contains(Location loc, boolean assumeFilled) {
-		return label.contains(loc.getX(), loc.getY());
+		return label.contains(loc.x(), loc.y());
 	}
 
 	@Override

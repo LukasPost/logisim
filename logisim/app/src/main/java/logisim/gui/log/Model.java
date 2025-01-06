@@ -5,9 +5,7 @@ package logisim.gui.log;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Iterator;
-
-import javax.swing.JFrame;
+import java.util.Objects;
 
 import logisim.circuit.CircuitState;
 import logisim.data.Value;
@@ -17,16 +15,16 @@ class Model {
 	private EventSourceWeakSupport<ModelListener> listeners;
 	private Selection selection;
 	private HashMap<SelectionItem, ValueLog> log;
-	private boolean fileEnabled = false;
-	private File file = null;
+	private boolean fileEnabled;
+	private File file;
 	private boolean fileHeader = true;
-	private boolean selected = false;
-	private LogThread logger = null;
+	private boolean selected;
+	private LogThread logger;
 
 	public Model(CircuitState circuitState) {
-		listeners = new EventSourceWeakSupport<ModelListener>();
+		listeners = new EventSourceWeakSupport<>();
 		selection = new Selection(circuitState, this);
-		log = new HashMap<SelectionItem, ValueLog>();
+		log = new HashMap<>();
 	}
 
 	public boolean isSelected() {
@@ -78,7 +76,7 @@ class Model {
 	}
 
 	public void setFile(File value) {
-		if (file == null ? value == null : file.equals(value))
+		if (Objects.equals(file, value))
 			return;
 		file = value;
 		fileEnabled = file != null;
@@ -101,7 +99,7 @@ class Model {
 			vals[i] = item.fetchValue(circuitState);
 			if (!changed) {
 				Value v = getValueLog(item).getLast();
-				changed = v == null ? vals[i] != null : !v.equals(vals[i]);
+				changed = !Objects.equals(v, vals[i]);
 			}
 		}
 		if (changed) {
@@ -113,7 +111,7 @@ class Model {
 		}
 	}
 
-	public void setSelected(JFrame frame, boolean value) {
+	public void setSelected(boolean value) {
 		if (selected == value)
 			return;
 		selected = value;
@@ -130,27 +128,16 @@ class Model {
 	}
 
 	void fireSelectionChanged(ModelEvent e) {
-		for (Iterator<SelectionItem> it = log.keySet().iterator(); it.hasNext();) {
-			SelectionItem i = it.next();
-			if (selection.indexOf(i) < 0) {
-				it.remove();
-			}
-		}
+		log.keySet().removeIf(i -> selection.indexOf(i) < 0);
 
-		for (ModelListener l : listeners) {
-			l.selectionChanged(e);
-		}
+		for (ModelListener l : listeners) l.selectionChanged(e);
 	}
 
 	private void fireEntryAdded(ModelEvent e, Value[] values) {
-		for (ModelListener l : listeners) {
-			l.entryAdded(e, values);
-		}
+		for (ModelListener l : listeners) l.entryAdded(e, values);
 	}
 
 	private void fireFilePropertyChanged(ModelEvent e) {
-		for (ModelListener l : listeners) {
-			l.filePropertyChanged(e);
-		}
+		for (ModelListener l : listeners) l.filePropertyChanged(e);
 	}
 }

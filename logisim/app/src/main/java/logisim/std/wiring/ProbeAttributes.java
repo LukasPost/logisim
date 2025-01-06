@@ -17,8 +17,8 @@ import logisim.instance.StdAttr;
 class ProbeAttributes extends AbstractAttributeSet {
 	public static ProbeAttributes instance = new ProbeAttributes();
 
-	private static final List<Attribute<?>> ATTRIBUTES = Arrays.asList(new Attribute<?>[] { StdAttr.FACING,
-			RadixOption.ATTRIBUTE, StdAttr.LABEL, Pin.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, });
+	private static final List<Attribute<?>> ATTRIBUTES = Arrays.asList(StdAttr.FACING,
+			RadixOption.ATTRIBUTE, StdAttr.LABEL, Pin.ATTR_LABEL_LOC, StdAttr.LABEL_FONT);
 
 	Direction facing = Direction.East;
 	String label = "";
@@ -32,7 +32,7 @@ class ProbeAttributes extends AbstractAttributeSet {
 
 	@Override
 	protected void copyInto(AbstractAttributeSet destObj) {
-		; // nothing to do
+		// nothing to do
 	}
 
 	@Override
@@ -58,19 +58,12 @@ class ProbeAttributes extends AbstractAttributeSet {
 
 	@Override
 	public <V> void setValue(Attribute<V> attr, V value) {
-		if (attr == StdAttr.FACING) {
-			facing = (Direction) value;
-		} else if (attr == StdAttr.LABEL) {
-			label = (String) value;
-		} else if (attr == Pin.ATTR_LABEL_LOC) {
-			labelloc = (Direction) value;
-		} else if (attr == StdAttr.LABEL_FONT) {
-			labelfont = (Font) value;
-		} else if (attr == RadixOption.ATTRIBUTE) {
-			radix = (RadixOption) value;
-		} else {
-			throw new IllegalArgumentException("unknown attribute");
-		}
+		if (attr == StdAttr.FACING) facing = (Direction) value;
+		else if (attr == StdAttr.LABEL) label = (String) value;
+		else if (attr == Pin.ATTR_LABEL_LOC) labelloc = (Direction) value;
+		else if (attr == StdAttr.LABEL_FONT) labelfont = (Font) value;
+		else if (attr == RadixOption.ATTRIBUTE) radix = (RadixOption) value;
+		else throw new IllegalArgumentException("unknown attribute");
 		fireAttributeValueChanged(attr, value);
 	}
 }

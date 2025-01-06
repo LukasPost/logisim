@@ -18,7 +18,7 @@ class MemContentsSub {
 			return new IntContents(size);
 	}
 
-	static abstract class ContentsInterface implements Cloneable {
+	abstract static class ContentsInterface implements Cloneable {
 		@Override
 		public ContentsInterface clone() {
 			try {
@@ -40,10 +40,9 @@ class MemContentsSub {
 		abstract void load(int start, int[] values, int mask);
 
 		boolean matches(int[] values, int start, int mask) {
-			for (int i = 0; i < values.length; i++) {
+			for (int i = 0; i < values.length; i++)
 				if (get(start + i) != (values[i] & mask))
 					return false;
-			}
 			return true;
 		}
 
@@ -55,10 +54,9 @@ class MemContentsSub {
 		}
 
 		boolean isClear() {
-			for (int i = 0, n = getLength(); i < n; i++) {
+			for (int i = 0, n = getLength(); i < n; i++)
 				if (get(i) != 0)
 					return false;
-			}
 			return true;
 		}
 	}
@@ -73,8 +71,8 @@ class MemContentsSub {
 		@Override
 		public ByteContents clone() {
 			ByteContents ret = (ByteContents) super.clone();
-			ret.data = new byte[this.data.length];
-			System.arraycopy(this.data, 0, ret.data, 0, this.data.length);
+			ret.data = new byte[data.length];
+			System.arraycopy(data, 0, ret.data, 0, data.length);
 			return ret;
 		}
 
@@ -95,9 +93,7 @@ class MemContentsSub {
 		void set(int addr, int value) {
 			if (addr >= 0 && addr < data.length) {
 				byte oldValue = data[addr];
-				if (value != oldValue) {
-					data[addr] = (byte) value;
-				}
+				if (value != oldValue) data[addr] = (byte) value;
 			}
 		}
 
@@ -109,9 +105,7 @@ class MemContentsSub {
 		@Override
 		void load(int start, int[] values, int mask) {
 			int n = Math.min(values.length, data.length - start);
-			for (int i = 0; i < n; i++) {
-				data[start + i] = (byte) (values[i] & mask);
-			}
+			for (int i = 0; i < n; i++) data[start + i] = (byte) (values[i] & mask);
 		}
 	}
 
@@ -125,8 +119,8 @@ class MemContentsSub {
 		@Override
 		public ShortContents clone() {
 			ShortContents ret = (ShortContents) super.clone();
-			ret.data = new short[this.data.length];
-			System.arraycopy(this.data, 0, ret.data, 0, this.data.length);
+			ret.data = new short[data.length];
+			System.arraycopy(data, 0, ret.data, 0, data.length);
 			return ret;
 		}
 
@@ -147,9 +141,7 @@ class MemContentsSub {
 		void set(int addr, int value) {
 			if (addr >= 0 && addr < data.length) {
 				short oldValue = data[addr];
-				if (value != oldValue) {
-					data[addr] = (short) value;
-				}
+				if (value != oldValue) data[addr] = (short) value;
 			}
 		}
 
@@ -161,9 +153,7 @@ class MemContentsSub {
 		@Override
 		void load(int start, int[] values, int mask) {
 			int n = Math.min(values.length, data.length - start);
-			for (int i = 0; i < n; i++) {
-				data[start + i] = (short) (values[i] & mask);
-			}
+			for (int i = 0; i < n; i++) data[start + i] = (short) (values[i] & mask);
 		}
 	}
 
@@ -177,8 +167,8 @@ class MemContentsSub {
 		@Override
 		public IntContents clone() {
 			IntContents ret = (IntContents) super.clone();
-			ret.data = new int[this.data.length];
-			System.arraycopy(this.data, 0, ret.data, 0, this.data.length);
+			ret.data = new int[data.length];
+			System.arraycopy(data, 0, ret.data, 0, data.length);
 			return ret;
 		}
 
@@ -199,9 +189,7 @@ class MemContentsSub {
 		void set(int addr, int value) {
 			if (addr >= 0 && addr < data.length) {
 				int oldValue = data[addr];
-				if (value != oldValue) {
-					data[addr] = value;
-				}
+				if (value != oldValue) data[addr] = value;
 			}
 		}
 
@@ -213,9 +201,7 @@ class MemContentsSub {
 		@Override
 		void load(int start, int[] values, int mask) {
 			int n = Math.min(values.length, data.length - start);
-			for (int i = 0; i < n; i++) {
-				data[i] = values[i] & mask;
-			}
+			for (int i = 0; i < n; i++) data[i] = values[i] & mask;
 		}
 	}
 }

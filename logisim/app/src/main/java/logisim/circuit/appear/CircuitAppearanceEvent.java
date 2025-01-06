@@ -6,7 +6,6 @@ package logisim.circuit.appear;
 import logisim.circuit.Circuit;
 
 public class CircuitAppearanceEvent {
-	public static final int APPEARANCE = 1;
 	public static final int BOUNDS = 2;
 	public static final int PORTS = 4;
 	public static final int ALL_TYPES = 7;

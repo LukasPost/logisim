@@ -20,17 +20,12 @@ public class RoundRectangle extends Rectangular {
 
 	public RoundRectangle(int x, int y, int w, int h) {
 		super(x, y, w, h);
-		this.radius = 10;
+		radius = 10;
 	}
 
 	@Override
 	public boolean matches(CanvasObject other) {
-		if (other instanceof RoundRectangle) {
-			RoundRectangle that = (RoundRectangle) other;
-			return super.matches(other) && this.radius == that.radius;
-		} else {
-			return false;
-		}
+		return other instanceof RoundRectangle that && super.matches(other) && radius == that.radius;
 	}
 
 	@Override
@@ -56,51 +51,40 @@ public class RoundRectangle extends Rectangular {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <V> V getValue(Attribute<V> attr) {
-		if (attr == DrawAttr.CORNER_RADIUS) {
-			return (V) Integer.valueOf(radius);
-		} else {
-			return super.getValue(attr);
-		}
+		if (attr == DrawAttr.CORNER_RADIUS) return (V) Integer.valueOf(radius);
+		else return super.getValue(attr);
 	}
 
 	@Override
 	public void updateValue(Attribute<?> attr, Object value) {
-		if (attr == DrawAttr.CORNER_RADIUS) {
-			radius = ((Integer) value).intValue();
-		} else {
-			super.updateValue(attr, value);
-		}
+		if (attr == DrawAttr.CORNER_RADIUS) radius = (Integer) value;
+		else super.updateValue(attr, value);
 	}
 
 	@Override
 	protected boolean contains(int x, int y, int w, int h, Location q) {
-		int qx = q.getX();
-		int qy = q.getY();
+		int qx = q.x();
+		int qy = q.y();
 		int rx = radius;
 		int ry = radius;
 		if (2 * rx > w)
 			rx = w / 2;
 		if (2 * ry > h)
 			ry = h / 2;
-		if (!isInRect(qx, qy, x, y, w, h)) {
-			return false;
-		} else if (qx < x + rx) {
-			if (qy < y + ry)
-				return inCircle(qx, qy, x + rx, y + ry, rx, ry);
-			else if (qy < y + h - ry)
-				return true;
-			else
-				return inCircle(qx, qy, x + rx, y + h - ry, rx, ry);
-		} else if (qx < x + w - rx) {
+		if (!isInRect(qx, qy, x, y, w, h)) return false;
+		else if (qx < x + rx) if (qy < y + ry)
+			return inCircle(qx, qy, x + rx, y + ry, rx, ry);
+		else if (qy < y + h - ry)
 			return true;
-		} else {
-			if (qy < y + ry)
-				return inCircle(qx, qy, x + w - rx, y + ry, rx, ry);
-			else if (qy < y + h - ry)
-				return true;
-			else
-				return inCircle(qx, qy, x + w - rx, y + h - ry, rx, ry);
-		}
+		else
+			return inCircle(qx, qy, x + rx, y + h - ry, rx, ry);
+		else if (qx < x + w - rx) return true;
+		else if (qy < y + ry)
+			return inCircle(qx, qy, x + w - rx, y + ry, rx, ry);
+		else if (qy < y + h - ry)
+			return true;
+		else
+			return inCircle(qx, qy, x + w - rx, y + h - ry, rx, ry);
 	}
 
 	@Override
@@ -115,16 +99,14 @@ public class RoundRectangle extends Rectangular {
 			double u = len * rand.nextDouble();
 			int x = getX();
 			int y = getY();
-			if (u < horz) {
-				x += r + (int) u;
-			} else if (u < 2 * horz) {
+			if (u < horz) x += r + (int) u;
+			else if (u < 2 * horz) {
 				x += r + (int) (u - horz);
 				y += h;
-			} else if (u < 2 * horz + vert) {
-				y += r + (int) (u - 2 * horz);
-			} else if (u < 2 * horz + 2 * vert) {
+			} else if (u < 2 * horz + vert) y += r + (int) (u - 2 * horz);
+			else if (u < 2 * horz + 2 * vert) {
 				x += w;
-				y += (u - 2 * w - h);
+				y += (int) (u - 2 * w - h);
 			} else {
 				int rx = radius;
 				int ry = radius;
@@ -135,16 +117,10 @@ public class RoundRectangle extends Rectangular {
 				u = 2 * Math.PI * rand.nextDouble();
 				int dx = (int) Math.round(rx * Math.cos(u));
 				int dy = (int) Math.round(ry * Math.sin(u));
-				if (dx < 0) {
-					x += r + dx;
-				} else {
-					x += r + horz + dx;
-				}
-				if (dy < 0) {
-					y += r + dy;
-				} else {
-					y += r + vert + dy;
-				}
+				if (dx < 0) x += r + dx;
+				else x += r + horz + dx;
+				if (dy < 0) y += r + dy;
+				else y += r + vert + dy;
 			}
 
 			int d = getStrokeWidth();
@@ -153,9 +129,7 @@ public class RoundRectangle extends Rectangular {
 				y += rand.nextInt(d) - d / 2;
 			}
 			return new Location(x, y);
-		} else {
-			return super.getRandomPoint(bds, rand);
-		}
+		} else return super.getRandomPoint(bds, rand);
 	}
 
 	private static boolean inCircle(int qx, int qy, int cx, int cy, int rx, int ry) {

@@ -15,7 +15,6 @@ import javax.swing.JComponent;
 import logisim.circuit.Circuit;
 import logisim.circuit.CircuitState;
 import logisim.circuit.appear.AppearancePort;
-import logisim.comp.Component;
 import logisim.comp.ComponentDrawContext;
 import logisim.data.Bounds;
 import logisim.instance.Instance;
@@ -55,15 +54,13 @@ public class LayoutThumbnail extends JComponent {
 			int borderX = (int) ((size.width - bds.getWidth() * scale) / 2);
 			int borderY = (int) ((size.height - bds.getHeight() * scale) / 2);
 			gCopy.translate(borderX, borderY);
-			if (scale != 1.0 && g instanceof Graphics2D) {
-				((Graphics2D) gCopy).scale(scale, scale);
-			}
+			if (scale != 1.0 && g instanceof Graphics2D) ((Graphics2D) gCopy).scale(scale, scale);
 			gCopy.translate(-bds.getX(), -bds.getY());
 
 			ComponentDrawContext context = new ComponentDrawContext(this, circuit, circuitState, g, gCopy);
 			context.setShowState(false);
 			context.setShowColor(false);
-			circuit.draw(context, Collections.<Component>emptySet());
+			circuit.draw(context, Collections.emptySet());
 			if (ports != null) {
 				gCopy.setColor(AppearancePort.COLOR);
 				int width = Math.max(4, (int) ((2 / scale) + 0.5));
@@ -74,15 +71,9 @@ public class LayoutThumbnail extends JComponent {
 					int y = b.getY();
 					int w = b.getWidth();
 					int h = b.getHeight();
-					if (Pin.FACTORY.isInputPin(port)) {
-						gCopy.drawRect(x, y, w, h);
-					} else {
-						if (b.getWidth() > 25) {
-							gCopy.drawRoundRect(x, y, w, h, 4, 4);
-						} else {
-							gCopy.drawOval(x, y, w, h);
-						}
-					}
+					if (Pin.FACTORY.isInputPin(port)) gCopy.drawRect(x, y, w, h);
+					else if (b.getWidth() > 25) gCopy.drawRoundRect(x, y, w, h, 4, 4);
+					else gCopy.drawOval(x, y, w, h);
 				}
 			}
 			gCopy.dispose();

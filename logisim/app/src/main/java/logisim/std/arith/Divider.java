@@ -80,8 +80,8 @@ public class Divider extends InstanceFactory {
 		painter.drawPort(REM, Strings.get("dividerRemainderOutput"), Direction.South);
 
 		Location loc = painter.getLocation();
-		int x = loc.getX();
-		int y = loc.getY();
+		int x = loc.x();
+		int y = loc.y();
 		GraphicsUtil.switchToWidth(g, 2);
 		g.setColor(Color.BLACK);
 		g.fillOval(x - 12, y - 7, 4, 4);
@@ -102,19 +102,12 @@ public class Divider extends InstanceFactory {
 			long result = num / den;
 			long rem = num % den;
 			if (rem < 0) {
-				if (den >= 0) {
-					rem += den;
-					result--;
-				} else {
-					rem -= den;
-					result++;
-				}
+				rem += den;
+				result--;
 			}
 			return new Value[] { Value.createKnown(width, (int) result), Value.createKnown(width, (int) rem) };
-		} else if (a.isErrorValue() || b.isErrorValue() || upper.isErrorValue()) {
-			return new Value[] { Value.createError(width), Value.createError(width) };
-		} else {
-			return new Value[] { Value.createUnknown(width), Value.createUnknown(width) };
-		}
+		} else if (a.isErrorValue() || b.isErrorValue() || upper.isErrorValue())
+			return new Value[]{Value.createError(width), Value.createError(width)};
+		else return new Value[]{Value.createUnknown(width), Value.createUnknown(width)};
 	}
 }

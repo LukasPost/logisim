@@ -73,8 +73,8 @@ public class Joystick extends InstanceFactory {
 	@Override
 	public void paintInstance(InstancePainter painter) {
 		Location loc = painter.getLocation();
-		int x = loc.getX();
-		int y = loc.getY();
+		int x = loc.x();
+		int y = loc.y();
 
 		Graphics g = painter.getGraphics();
 		g.drawRoundRect(x - 30, y - 10, 30, 30, 8, 8);
@@ -84,9 +84,8 @@ public class Joystick extends InstanceFactory {
 	}
 
 	private static void drawBall(Graphics g, int x, int y, Color c, boolean inColor) {
-		if (inColor) {
-			g.setColor(c == null ? Color.RED : c);
-		} else {
+		if (inColor) g.setColor(c == null ? Color.RED : c);
+		else {
 			int hue = c == null ? 128 : (c.getRed() + c.getGreen() + c.getBlue()) / 3;
 			g.setColor(new Color(hue, hue, hue));
 		}
@@ -130,8 +129,8 @@ public class Joystick extends InstanceFactory {
 		@Override
 		public void mouseDragged(InstanceState state, MouseEvent e) {
 			Location loc = state.getInstance().getLocation();
-			int cx = loc.getX() - 15;
-			int cy = loc.getY() + 5;
+			int cx = loc.x() - 15;
+			int cy = loc.y() + 5;
 			updateState(state, e.getX() - cx, e.getY() - cy);
 		}
 
@@ -163,8 +162,8 @@ public class Joystick extends InstanceFactory {
 				painter.setData(state);
 			}
 			Location loc = painter.getLocation();
-			int x = loc.getX();
-			int y = loc.getY();
+			int x = loc.x();
+			int y = loc.y();
 			Graphics g = painter.getGraphics();
 			g.setColor(Color.WHITE);
 			g.fillRect(x - 20, y, 10, 10);

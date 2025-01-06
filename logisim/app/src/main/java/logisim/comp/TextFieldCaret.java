@@ -18,8 +18,8 @@ import logisim.tools.Caret;
 import logisim.tools.CaretEvent;
 import logisim.tools.CaretListener;
 
-class TextFieldCaret implements Caret, TextFieldListener {
-	private LinkedList<CaretListener> listeners = new LinkedList<CaretListener>();
+public class TextFieldCaret implements Caret, TextFieldListener {
+	private LinkedList<CaretListener> listeners = new LinkedList<>();
 	private TextField field;
 	private Graphics g;
 	private String oldText;
@@ -29,8 +29,8 @@ class TextFieldCaret implements Caret, TextFieldListener {
 	public TextFieldCaret(TextField field, Graphics g, int pos) {
 		this.field = field;
 		this.g = g;
-		this.oldText = field.getText();
-		this.curText = field.getText();
+		oldText = field.getText();
+		curText = field.getText();
 		this.pos = pos;
 
 		field.addTextFieldListener(this);
@@ -151,18 +151,14 @@ class TextFieldCaret implements Caret, TextFieldListener {
 		CaretEvent e = new CaretEvent(this, oldText, oldText);
 		curText = oldText;
 		pos = curText.length();
-		for (CaretListener l : new ArrayList<CaretListener>(listeners)) {
-			l.editingCanceled(e);
-		}
+		for (CaretListener l : new ArrayList<>(listeners)) l.editingCanceled(e);
 		field.removeTextFieldListener(this);
 	}
 
 	public void stopEditing() {
 		CaretEvent e = new CaretEvent(this, oldText, curText);
 		field.setText(curText);
-		for (CaretListener l : new ArrayList<CaretListener>(listeners)) {
-			l.editingStopped(e);
-		}
+		for (CaretListener l : new ArrayList<>(listeners)) l.editingStopped(e);
 		field.removeTextFieldListener(this);
 	}
 
@@ -219,9 +215,7 @@ class TextFieldCaret implements Caret, TextFieldListener {
 			}
 			break;
 		case KeyEvent.VK_DELETE:
-			if (pos < curText.length()) {
-				curText = curText.substring(0, pos) + curText.substring(pos + 1);
-			}
+			if (pos < curText.length()) curText = curText.substring(0, pos) + curText.substring(pos + 1);
 			break;
 		case KeyEvent.VK_INSERT:
 		case KeyEvent.VK_COPY:
@@ -230,7 +224,6 @@ class TextFieldCaret implements Caret, TextFieldListener {
 			// TODO: enhance label editing
 			break;
 		default:
-			; // ignore
 		}
 	}
 
@@ -243,14 +236,10 @@ class TextFieldCaret implements Caret, TextFieldListener {
 			return;
 
 		char c = e.getKeyChar();
-		if (c == '\n') {
-			stopEditing();
-		} else if (c != KeyEvent.CHAR_UNDEFINED && !Character.isISOControl(c)) {
-			if (pos < curText.length()) {
-				curText = curText.substring(0, pos) + c + curText.substring(pos);
-			} else {
-				curText += c;
-			}
+		if (c == '\n') stopEditing();
+		else if (c != KeyEvent.CHAR_UNDEFINED && !Character.isISOControl(c)) {
+			if (pos < curText.length()) curText = curText.substring(0, pos) + c + curText.substring(pos);
+			else curText += c;
 			++pos;
 		}
 	}

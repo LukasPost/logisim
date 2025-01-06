@@ -6,5 +6,5 @@ package logisim.tools;
 import logisim.comp.ComponentUserEvent;
 
 public interface Pokable {
-	public Caret getPokeCaret(ComponentUserEvent event);
+	Caret getPokeCaret(ComponentUserEvent event);
 }

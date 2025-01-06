@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
-	private ArrayList<AttributeListener> listeners = null;
+	private ArrayList<AttributeListener> listeners;
 
 	public AbstractAttributeSet() {
 	}
@@ -21,40 +21,34 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
 		catch (CloneNotSupportedException ex) {
 			throw new UnsupportedOperationException();
 		}
-		ret.listeners = new ArrayList<AttributeListener>();
-		this.copyInto(ret);
+		ret.listeners = new ArrayList<>();
+		copyInto(ret);
 		return ret;
 	}
 
 	public void addAttributeListener(AttributeListener l) {
-		if (listeners == null)
-			listeners = new ArrayList<AttributeListener>();
+		if (listeners == null) listeners = new ArrayList<>();
 		listeners.add(l);
 	}
 
 	public void removeAttributeListener(AttributeListener l) {
 		listeners.remove(l);
-		if (listeners.isEmpty())
-			listeners = null;
+		if (listeners.isEmpty()) listeners = null;
 	}
 
 	protected <V> void fireAttributeValueChanged(Attribute<? super V> attr, V value) {
 		if (listeners != null) {
 			AttributeEvent event = new AttributeEvent(this, attr, value);
-			List<AttributeListener> ls = new ArrayList<AttributeListener>(listeners);
-			for (AttributeListener l : ls) {
-				l.attributeValueChanged(event);
-			}
+			List<AttributeListener> ls = new ArrayList<>(listeners);
+			for (AttributeListener l : ls) l.attributeValueChanged(event);
 		}
 	}
 
 	protected void fireAttributeListChanged() {
 		if (listeners != null) {
 			AttributeEvent event = new AttributeEvent(this);
-			List<AttributeListener> ls = new ArrayList<AttributeListener>(listeners);
-			for (AttributeListener l : ls) {
-				l.attributeListChanged(event);
-			}
+			List<AttributeListener> ls = new ArrayList<>(listeners);
+			for (AttributeListener l : ls) l.attributeListChanged(event);
 		}
 	}
 
@@ -63,11 +57,7 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
 	}
 
 	public Attribute<?> getAttribute(String name) {
-		for (Attribute<?> attr : getAttributes()) {
-			if (attr.getName().equals(name)) {
-				return attr;
-			}
-		}
+		for (Attribute<?> attr : getAttributes()) if (attr.getName().equals(name)) return attr;
 		return null;
 	}
 

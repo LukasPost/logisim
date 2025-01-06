@@ -4,9 +4,6 @@
 package draw.tools;
 
 import java.awt.Cursor;
-import java.awt.Graphics;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.Icon;
@@ -36,56 +33,4 @@ public abstract class AbstractTool extends CanvasTool {
 	@Override
 	public abstract Cursor getCursor(Canvas canvas);
 
-	@Override
-	public void toolSelected(Canvas canvas) {
-	}
-
-	@Override
-	public void toolDeselected(Canvas canvas) {
-	}
-
-	@Override
-	public void mouseMoved(Canvas canvas, MouseEvent e) {
-	}
-
-	@Override
-	public void mousePressed(Canvas canvas, MouseEvent e) {
-	}
-
-	@Override
-	public void mouseDragged(Canvas canvas, MouseEvent e) {
-	}
-
-	@Override
-	public void mouseReleased(Canvas canvas, MouseEvent e) {
-	}
-
-	@Override
-	public void mouseEntered(Canvas canvas, MouseEvent e) {
-	}
-
-	@Override
-	public void mouseExited(Canvas canvas, MouseEvent e) {
-	}
-
-	/** This is because a popup menu may result from the subsequent mouse release */
-	@Override
-	public void cancelMousePress(Canvas canvas) {
-	}
-
-	@Override
-	public void keyPressed(Canvas canvas, KeyEvent e) {
-	}
-
-	@Override
-	public void keyReleased(Canvas canvas, KeyEvent e) {
-	}
-
-	@Override
-	public void keyTyped(Canvas canvas, KeyEvent e) {
-	}
-
-	@Override
-	public void draw(Canvas canvas, Graphics g) {
-	}
 }

@@ -4,9 +4,9 @@
 package logisim.data;
 
 public interface AttributeOptionInterface {
-	public Object getValue();
+	Object getValue();
 
-	public String toString();
+	String toString();
 
-	public String toDisplayString();
+	String toDisplayString();
 }

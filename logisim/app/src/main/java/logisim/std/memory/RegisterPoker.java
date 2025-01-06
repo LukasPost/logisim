@@ -16,7 +16,6 @@ import logisim.instance.InstanceState;
 import logisim.instance.StdAttr;
 
 public class RegisterPoker extends InstancePoker {
-	private int initValue;
 	private int curValue;
 
 	@Override
@@ -26,8 +25,7 @@ public class RegisterPoker extends InstancePoker {
 			data = new RegisterData();
 			state.setData(data);
 		}
-		initValue = data.value;
-		curValue = initValue;
+		curValue = data.value;
 		return true;
 	}
 
@@ -40,9 +38,8 @@ public class RegisterPoker extends InstancePoker {
 
 		Graphics g = painter.getGraphics();
 		g.setColor(Color.RED);
-		if (len > 4) {
-			g.drawRect(bds.getX(), bds.getY() + 3, bds.getWidth(), 25);
-		} else {
+		if (len > 4) g.drawRect(bds.getX(), bds.getY() + 3, bds.getWidth(), 25);
+		else {
 			int wid = 7 * len + 2;
 			g.drawRect(bds.getX() + (bds.getWidth() - wid) / 2, bds.getY() + 4, wid, 15);
 		}

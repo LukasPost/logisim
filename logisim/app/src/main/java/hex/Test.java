@@ -11,7 +11,7 @@ import javax.swing.JScrollPane;
 
 public class Test {
 	private static class Model implements HexModel {
-		private ArrayList<HexModelListener> listeners = new ArrayList<HexModelListener>();
+		private ArrayList<HexModelListener> listeners = new ArrayList<>();
 		private int[] data = new int[924];
 
 		public void addHexModelListener(HexModelListener l) {
@@ -39,29 +39,23 @@ public class Test {
 		}
 
 		public void set(long address, int value) {
-			int[] oldValues = new int[] { data[(int) (address - 11111)] };
+			int[] oldValues = { data[(int) (address - 11111)] };
 			data[(int) (address - 11111)] = value & 0x1FF;
-			for (HexModelListener l : listeners) {
-				l.bytesChanged(this, address, 1, oldValues);
-			}
+			for (HexModelListener l : listeners) l.bytesChanged(this, address, 1, oldValues);
 		}
 
 		public void set(long start, int[] values) {
 			int[] oldValues = new int[values.length];
 			System.arraycopy(data, (int) (start - 11111), oldValues, 0, values.length);
 			System.arraycopy(values, 0, data, (int) (start - 11111), values.length);
-			for (HexModelListener l : listeners) {
-				l.bytesChanged(this, start, values.length, oldValues);
-			}
+			for (HexModelListener l : listeners) l.bytesChanged(this, start, values.length, oldValues);
 		}
 
 		public void fill(long start, long len, int value) {
 			int[] oldValues = new int[(int) len];
 			System.arraycopy(data, (int) (start - 11111), oldValues, 0, (int) len);
 			Arrays.fill(data, (int) (start - 11111), (int) len, value);
-			for (HexModelListener l : listeners) {
-				l.bytesChanged(this, start, len, oldValues);
-			}
+			for (HexModelListener l : listeners) l.bytesChanged(this, start, len, oldValues);
 		}
 	}
 

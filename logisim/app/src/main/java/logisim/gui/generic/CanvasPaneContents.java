@@ -9,18 +9,18 @@ import java.awt.Rectangle;
 import javax.swing.Scrollable;
 
 public interface CanvasPaneContents extends Scrollable {
-	public void setCanvasPane(CanvasPane pane);
+	void setCanvasPane(CanvasPane pane);
 
-	public void recomputeSize();
+	void recomputeSize();
 
 	// from Scrollable
-	public Dimension getPreferredScrollableViewportSize();
+	Dimension getPreferredScrollableViewportSize();
 
-	public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction);
+	int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction);
 
-	public boolean getScrollableTracksViewportHeight();
+	boolean getScrollableTracksViewportHeight();
 
-	public boolean getScrollableTracksViewportWidth();
+	boolean getScrollableTracksViewportWidth();
 
-	public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction);
+	int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction);
 }

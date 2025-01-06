@@ -4,6 +4,7 @@
 package logisim.std.memory;
 
 import java.util.List;
+import java.util.Objects;
 
 import logisim.data.AbstractAttributeSet;
 import logisim.data.Attribute;
@@ -19,13 +20,13 @@ class CounterAttributes extends AbstractAttributeSet {
 		base = AttributeSets.fixedSet(
 				new Attribute<?>[] { StdAttr.WIDTH, Counter.ATTR_MAX, Counter.ATTR_ON_GOAL, StdAttr.EDGE_TRIGGER,
 						StdAttr.LABEL, StdAttr.LABEL_FONT },
-				new Object[] { BitWidth.create(8), Integer.valueOf(0xFF), Counter.ON_GOAL_WRAP, StdAttr.TRIG_RISING, "",
+				new Object[] { BitWidth.create(8), 0xFF, Counter.ON_GOAL_WRAP, StdAttr.TRIG_RISING, "",
 						StdAttr.DEFAULT_LABEL_FONT });
 	}
 
 	@Override
 	public void copyInto(AbstractAttributeSet dest) {
-		((CounterAttributes) dest).base = (AttributeSet) this.base.clone();
+		((CounterAttributes) dest).base = (AttributeSet) base.clone();
 	}
 
 	@Override
@@ -41,7 +42,7 @@ class CounterAttributes extends AbstractAttributeSet {
 	@Override
 	public <V> void setValue(Attribute<V> attr, V value) {
 		Object oldValue = base.getValue(attr);
-		if (oldValue == null ? value == null : oldValue.equals(value))
+		if (Objects.equals(oldValue, value))
 			return;
 
 		Integer newMax = null;
@@ -50,22 +51,20 @@ class CounterAttributes extends AbstractAttributeSet {
 			BitWidth newWidth = (BitWidth) value;
 			int oldW = oldWidth.getWidth();
 			int newW = newWidth.getWidth();
-			Integer oldValObj = base.getValue(Counter.ATTR_MAX);
-			int oldVal = oldValObj.intValue();
+			int oldVal = base.getValue(Counter.ATTR_MAX);
 			base.setValue(StdAttr.WIDTH, newWidth);
-			if (newW > oldW) {
-				newMax = Integer.valueOf(newWidth.getMask());
-			} else {
+			if (newW > oldW) newMax = newWidth.getMask();
+			else {
 				int v = oldVal & newWidth.getMask();
 				if (v != oldVal) {
-					Integer newValObj = Integer.valueOf(v);
+					Integer newValObj = v;
 					base.setValue(Counter.ATTR_MAX, newValObj);
 					fireAttributeValueChanged(Counter.ATTR_MAX, newValObj);
 				}
 			}
 			fireAttributeValueChanged(StdAttr.WIDTH, newWidth);
 		} else if (attr == Counter.ATTR_MAX) {
-			int oldVal = ((Integer) value).intValue();
+			int oldVal = (Integer) value;
 			BitWidth width = base.getValue(StdAttr.WIDTH);
 			int newVal = oldVal & width.getMask();
 			if (newVal != oldVal) {

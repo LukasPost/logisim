@@ -18,9 +18,7 @@ import logisim.util.UnmodifiableList;
 class SimulationToolbarModel extends AbstractToolbarModel implements ChangeListener {
 	private Project project;
 	private LogisimToolbarItem simEnable;
-	private LogisimToolbarItem simStep;
 	private LogisimToolbarItem tickEnable;
-	private LogisimToolbarItem tickStep;
 	private List<ToolbarItem> items;
 
 	public SimulationToolbarModel(Project project, MenuListener menu) {
@@ -28,11 +26,11 @@ class SimulationToolbarModel extends AbstractToolbarModel implements ChangeListe
 
 		simEnable = new LogisimToolbarItem(menu, "simplay.png", LogisimMenuBar.SIMULATE_ENABLE,
 				Strings.getter("simulateEnableStepsTip"));
-		simStep = new LogisimToolbarItem(menu, "simstep.png", LogisimMenuBar.SIMULATE_STEP,
+		LogisimToolbarItem simStep = new LogisimToolbarItem(menu, "simstep.png", LogisimMenuBar.SIMULATE_STEP,
 				Strings.getter("simulateStepTip"));
 		tickEnable = new LogisimToolbarItem(menu, "simtplay.png", LogisimMenuBar.TICK_ENABLE,
 				Strings.getter("simulateEnableTicksTip"));
-		tickStep = new LogisimToolbarItem(menu, "simtstep.png", LogisimMenuBar.TICK_STEP,
+		LogisimToolbarItem tickStep = new LogisimToolbarItem(menu, "simtstep.png", LogisimMenuBar.TICK_STEP,
 				Strings.getter("simulateTickTip"));
 
 		items = UnmodifiableList.create(new ToolbarItem[] { simEnable, simStep, tickEnable, tickStep, });
@@ -53,9 +51,7 @@ class SimulationToolbarModel extends AbstractToolbarModel implements ChangeListe
 
 	@Override
 	public void itemSelected(ToolbarItem item) {
-		if (item instanceof LogisimToolbarItem) {
-			((LogisimToolbarItem) item).doAction();
-		}
+		if (item instanceof LogisimToolbarItem) ((LogisimToolbarItem) item).doAction();
 	}
 
 	//

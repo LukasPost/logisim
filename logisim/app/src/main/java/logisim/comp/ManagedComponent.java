@@ -15,18 +15,18 @@ import logisim.data.Location;
 import logisim.util.EventSourceWeakSupport;
 
 public abstract class ManagedComponent extends AbstractComponent {
-	private EventSourceWeakSupport<ComponentListener> listeners = new EventSourceWeakSupport<ComponentListener>();
+	private EventSourceWeakSupport<ComponentListener> listeners = new EventSourceWeakSupport<>();
 	private Location loc;
 	private AttributeSet attrs;
 	private ArrayList<EndData> ends;
 	private List<EndData> endsView;
-	private Bounds bounds = null;
+	private Bounds bounds;
 
 	public ManagedComponent(Location loc, AttributeSet attrs, int num_ends) {
 		this.loc = loc;
 		this.attrs = attrs;
-		this.ends = new ArrayList<EndData>(num_ends);
-		this.endsView = Collections.unmodifiableList(ends);
+		ends = new ArrayList<>(num_ends);
+		endsView = Collections.unmodifiableList(ends);
 	}
 
 	//
@@ -46,10 +46,8 @@ public abstract class ManagedComponent extends AbstractComponent {
 	protected void fireEndChanged(ComponentEvent e) {
 		ComponentEvent copy = null;
 		for (ComponentListener l : listeners) {
-			if (copy == null) {
-				copy = new ComponentEvent(e.getSource(), Collections.singletonList(e.getOldData()),
-						Collections.singletonList(e.getData()));
-			}
+			if (copy == null) copy = new ComponentEvent(e.getSource(), Collections.singletonList(e.getOldData()),
+					Collections.singletonList(e.getData()));
 			l.endChanged(copy);
 		}
 	}
@@ -64,9 +62,7 @@ public abstract class ManagedComponent extends AbstractComponent {
 	}
 
 	protected void fireComponentInvalidated(ComponentEvent e) {
-		for (ComponentListener l : listeners) {
-			l.componentInvalidated(e);
-		}
+		for (ComponentListener l : listeners) l.componentInvalidated(e);
 	}
 
 	@Override
@@ -83,7 +79,7 @@ public abstract class ManagedComponent extends AbstractComponent {
 		if (bounds == null) {
 			Location loc = getLocation();
 			Bounds offBounds = getFactory().getOffsetBounds(getAttributeSet());
-			bounds = offBounds.translate(loc.getX(), loc.getY());
+			bounds = offBounds.translate(loc.x(), loc.y());
 		}
 		return bounds;
 	}
@@ -108,9 +104,7 @@ public abstract class ManagedComponent extends AbstractComponent {
 	// methods for altering data
 	//
 	public void clearManager() {
-		for (EndData end : ends) {
-			fireEndChanged(new ComponentEvent(this, end, null));
-		}
+		for (EndData end : ends) fireEndChanged(new ComponentEvent(this, end, null));
 		ends.clear();
 		bounds = null;
 	}
@@ -151,8 +145,8 @@ public abstract class ManagedComponent extends AbstractComponent {
 	public void setEnds(EndData[] newEnds) {
 		List<EndData> oldEnds = ends;
 		int minLen = Math.min(oldEnds.size(), newEnds.length);
-		ArrayList<EndData> changesOld = new ArrayList<EndData>();
-		ArrayList<EndData> changesNew = new ArrayList<EndData>();
+		ArrayList<EndData> changesOld = new ArrayList<>();
+		ArrayList<EndData> changesNew = new ArrayList<>();
 		for (int i = 0; i < minLen; i++) {
 			EndData old = oldEnds.get(i);
 			if (newEnds[i] != null && !newEnds[i].equals(old)) {
@@ -183,9 +177,8 @@ public abstract class ManagedComponent extends AbstractComponent {
 	public void expose(ComponentDrawContext context) {
 		Bounds bounds = getBounds();
 		java.awt.Component dest = context.getDestination();
-		if (bounds != null) {
+		if (bounds != null)
 			dest.repaint(bounds.getX() - 5, bounds.getY() - 5, bounds.getWidth() + 10, bounds.getHeight() + 10);
-		}
 	}
 
 	public Object getFeature(Object key) {

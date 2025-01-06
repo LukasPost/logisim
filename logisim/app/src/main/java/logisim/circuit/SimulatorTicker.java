@@ -3,8 +3,10 @@
 
 package logisim.circuit;
 
+import logisim.circuit.Simulator.PropagationManager;
+
 class SimulatorTicker extends Thread {
-	private Simulator.PropagationManager manager;
+	private PropagationManager manager;
 	private int ticksPerTickPhase;
 	private int millisPerTickPhase;
 
@@ -12,7 +14,7 @@ class SimulatorTicker extends Thread {
 	private int ticksPending;
 	private boolean complete;
 
-	public SimulatorTicker(Simulator.PropagationManager manager) {
+	public SimulatorTicker(PropagationManager manager) {
 		this.manager = manager;
 		ticksPerTickPhase = 1;
 		millisPerTickPhase = 1000;
@@ -70,17 +72,12 @@ class SimulatorTicker extends Thread {
 
 			int toTick;
 			long now = System.currentTimeMillis();
-			if (curShouldTick && now - lastTick >= millis) {
-				toTick = ticks;
-			} else {
-				toTick = ticksPending;
-			}
+			if (curShouldTick && now - lastTick >= millis) toTick = ticks;
+			else toTick = ticksPending;
 
 			if (toTick > 0) {
 				lastTick = now;
-				for (int i = 0; i < toTick; i++) {
-					manager.requestTick();
-				}
+				for (int i = 0; i < toTick; i++) manager.requestTick();
 				synchronized (this) {
 					if (ticksPending > toTick)
 						ticksPending -= toTick;

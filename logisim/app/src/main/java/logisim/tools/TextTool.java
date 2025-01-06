@@ -47,30 +47,27 @@ public class TextTool extends Tool {
 			caretCircuit.removeCircuitListener(this);
 
 			String val = caret.getText();
-			boolean isEmpty = (val == null || val.equals(""));
+			boolean isEmpty = (val == null || val.isEmpty());
 			Action a;
 			Project proj = caretCanvas.getProject();
-			if (caretCreatingText) {
-				if (!isEmpty) {
-					CircuitMutation xn = new CircuitMutation(caretCircuit);
-					xn.add(caretComponent);
-					a = xn.toAction(Strings.getter("addComponentAction", Text.FACTORY.getDisplayGetter()));
-				} else {
-					a = null; // don't add the blank text field
-				}
-			} else {
-				if (isEmpty && caretComponent.getFactory() instanceof Text) {
-					CircuitMutation xn = new CircuitMutation(caretCircuit);
-					xn.add(caretComponent);
-					a = xn.toAction(Strings.getter("removeComponentAction", Text.FACTORY.getDisplayGetter()));
-				} else {
-					Object obj = caretComponent.getFeature(TextEditable.class);
-					if (obj == null) { // should never happen
-						a = null;
-					} else {
-						TextEditable editable = (TextEditable) obj;
-						a = editable.getCommitAction(caretCircuit, e.getOldText(), e.getText());
-					}
+			if (caretCreatingText) if (!isEmpty) {
+				CircuitMutation xn = new CircuitMutation(caretCircuit);
+				xn.add(caretComponent);
+				a = xn.toAction(Strings.getter("addComponentAction", Text.FACTORY.getDisplayGetter()));
+			}
+			else a = null; // don't add the blank text field
+			else if (isEmpty && caretComponent.getFactory() instanceof Text) {
+				CircuitMutation xn = new CircuitMutation(caretCircuit);
+				xn.add(caretComponent);
+				a = xn.toAction(Strings.getter("removeComponentAction", Text.FACTORY.getDisplayGetter()));
+			}
+			else {
+				Object obj = caretComponent.getFeature(TextEditable.class);
+				// should never happen
+				if (obj == null) a = null;
+				else {
+					TextEditable editable = (TextEditable) obj;
+					a = editable.getCommitAction(caretCircuit, e.getOldText(), e.getText());
 				}
 			}
 
@@ -90,14 +87,8 @@ public class TextTool extends Tool {
 			}
 			int action = event.getAction();
 			if (action == CircuitEvent.ACTION_REMOVE) {
-				if (event.getData() == caretComponent) {
-					caret.cancelEditing();
-				}
-			} else if (action == CircuitEvent.ACTION_CLEAR) {
-				if (caretComponent != null) {
-					caret.cancelEditing();
-				}
-			}
+				if (event.getData() == caretComponent) caret.cancelEditing();
+			} else if (action == CircuitEvent.ACTION_CLEAR) if (caretComponent != null) caret.cancelEditing();
 		}
 	}
 
@@ -105,11 +96,11 @@ public class TextTool extends Tool {
 
 	private MyListener listener = new MyListener();
 	private AttributeSet attrs;
-	private Caret caret = null;
-	private boolean caretCreatingText = false;
-	private Canvas caretCanvas = null;
-	private Circuit caretCircuit = null;
-	private Component caretComponent = null;
+	private Caret caret;
+	private boolean caretCreatingText;
+	private Canvas caretCanvas;
+	private Circuit caretCircuit;
+	private Component caretComponent;
 
 	public TextTool() {
 		attrs = Text.FACTORY.createAttributeSet();
@@ -177,15 +168,13 @@ public class TextTool extends Tool {
 		}
 
 		// Maybe user is clicking within the current caret.
-		if (caret != null) {
-			if (caret.getBounds(g).contains(e.getX(), e.getY())) { // Yes
-				caret.mousePressed(e);
-				proj.repaintCanvas();
-				return;
-			} else { // No. End the current caret.
-				caret.stopEditing();
-			}
+		// No. End the current caret.
+		if (caret != null) if (caret.getBounds(g).contains(e.getX(), e.getY())) { // Yes
+			caret.mousePressed(e);
+			proj.repaintCanvas();
+			return;
 		}
+		else caret.stopEditing();
 		// caret will be null at this point
 
 		// Otherwise search for a new caret.
@@ -209,24 +198,22 @@ public class TextTool extends Tool {
 		}
 
 		// Then search in circuit
-		if (caret == null) {
-			for (Component comp : circ.getAllContaining(loc, g)) {
-				TextEditable editable = (TextEditable) comp.getFeature(TextEditable.class);
-				if (editable != null) {
-					caret = editable.getTextCaret(event);
-					if (caret != null) {
-						proj.getFrame().viewComponentAttributes(circ, comp);
-						caretComponent = comp;
-						caretCreatingText = false;
-						break;
-					}
+		if (caret == null) for (Component comp : circ.getAllContaining(loc, g)) {
+			TextEditable editable = (TextEditable) comp.getFeature(TextEditable.class);
+			if (editable != null) {
+				caret = editable.getTextCaret(event);
+				if (caret != null) {
+					proj.getFrame().viewComponentAttributes(circ, comp);
+					caretComponent = comp;
+					caretCreatingText = false;
+					break;
 				}
 			}
 		}
 
 		// if nothing found, create a new label
 		if (caret == null) {
-			if (loc.getX() < 0 || loc.getY() < 0)
+			if (loc.x() < 0 || loc.y() < 0)
 				return;
 			AttributeSet copy = (AttributeSet) attrs.clone();
 			caretComponent = Text.FACTORY.createComponent(loc, copy);

@@ -40,10 +40,8 @@ public class Decoder extends InstanceFactory {
 	public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
 		if (attr == Plexers.ATTR_ENABLE) {
 			int newer = ver.compareTo(LogisimVersion.get(2, 6, 3, 220));
-			return Boolean.valueOf(newer >= 0);
-		} else {
-			return super.getDefaultAttributeValue(attr, ver);
-		}
+			return newer >= 0;
+		} else return super.getDefaultAttributeValue(attr, ver);
 	}
 
 	@Override
@@ -84,18 +82,15 @@ public class Decoder extends InstanceFactory {
 		if (attr == StdAttr.FACING || attr == Plexers.ATTR_SELECT_LOC || attr == Plexers.ATTR_SELECT) {
 			instance.recomputeBounds();
 			updatePorts(instance);
-		} else if (attr == Plexers.ATTR_SELECT || attr == Plexers.ATTR_ENABLE) {
-			updatePorts(instance);
-		} else if (attr == Plexers.ATTR_TRISTATE || attr == Plexers.ATTR_DISABLED) {
-			instance.fireInvalidated();
-		}
+		} else if (attr == Plexers.ATTR_ENABLE) updatePorts(instance);
+		else if (attr == Plexers.ATTR_TRISTATE || attr == Plexers.ATTR_DISABLED) instance.fireInvalidated();
 	}
 
 	private void updatePorts(Instance instance) {
 		Direction facing = instance.getAttributeValue(StdAttr.FACING);
 		Object selectLoc = instance.getAttributeValue(Plexers.ATTR_SELECT_LOC);
 		BitWidth select = instance.getAttributeValue(Plexers.ATTR_SELECT);
-		boolean enable = instance.getAttributeValue(Plexers.ATTR_ENABLE).booleanValue();
+		boolean enable = instance.getAttributeValue(Plexers.ATTR_ENABLE);
 		int outputs = 1 << select.getWidth();
 		Port[] ps = new Port[outputs + (enable ? 2 : 1)];
 		if (outputs == 2) {
@@ -120,8 +115,8 @@ public class Decoder extends InstanceFactory {
 					end1 = new Location(x, -10);
 				}
 			}
-			ps[0] = new Port(end0.getX(), end0.getY(), Port.OUTPUT, 1);
-			ps[1] = new Port(end1.getX(), end1.getY(), Port.OUTPUT, 1);
+			ps[0] = new Port(end0.x(), end0.y(), Port.OUTPUT, 1);
+			ps[1] = new Port(end1.x(), end1.y(), Port.OUTPUT, 1);
 		} else {
 			int dx;
 			int ddx;
@@ -146,16 +141,10 @@ public class Decoder extends InstanceFactory {
 		}
 		Location en = new Location(0, 0).translate(facing, -10);
 		ps[outputs] = new Port(0, 0, Port.INPUT, select.getWidth());
-		if (enable) {
-			ps[outputs + 1] = new Port(en.getX(), en.getY(), Port.INPUT, BitWidth.ONE);
-		}
-		for (int i = 0; i < outputs; i++) {
-			ps[i].setToolTip(Strings.getter("decoderOutTip", "" + i));
-		}
+		if (enable) ps[outputs + 1] = new Port(en.x(), en.y(), Port.INPUT, BitWidth.ONE);
+		for (int i = 0; i < outputs; i++) ps[i].setToolTip(Strings.getter("decoderOutTip", "" + i));
 		ps[outputs].setToolTip(Strings.getter("decoderSelectTip"));
-		if (enable) {
-			ps[outputs + 1].setToolTip(Strings.getter("decoderEnableTip"));
-		}
+		if (enable) ps[outputs + 1].setToolTip(Strings.getter("decoderEnableTip"));
 		instance.setPorts(ps);
 	}
 
@@ -165,16 +154,13 @@ public class Decoder extends InstanceFactory {
 		BitWidth data = BitWidth.ONE;
 		BitWidth select = state.getAttributeValue(Plexers.ATTR_SELECT);
 		Boolean threeState = state.getAttributeValue(Plexers.ATTR_TRISTATE);
-		boolean enable = state.getAttributeValue(Plexers.ATTR_ENABLE).booleanValue();
+		boolean enable = state.getAttributeValue(Plexers.ATTR_ENABLE);
 		int outputs = 1 << select.getWidth();
 
 		// determine default output values
 		Value others; // the default output
-		if (threeState.booleanValue()) {
-			others = Value.UNKNOWN;
-		} else {
-			others = Value.FALSE;
-		}
+		if (threeState) others = Value.UNKNOWN;
+		else others = Value.FALSE;
 
 		// determine selected output value
 		int outIndex = -1; // the special output
@@ -184,24 +170,18 @@ public class Decoder extends InstanceFactory {
 			Object opt = state.getAttributeValue(Plexers.ATTR_DISABLED);
 			Value base = opt == Plexers.DISABLED_ZERO ? Value.FALSE : Value.UNKNOWN;
 			others = Value.repeat(base, data.getWidth());
-		} else if (en == Value.ERROR && state.isPortConnected(outputs + 1)) {
-			others = Value.createError(data);
-		} else {
+		} else if (en == Value.ERROR && state.isPortConnected(outputs + 1)) others = Value.createError(data);
+		else {
 			Value sel = state.getPort(outputs);
 			if (sel.isFullyDefined()) {
 				outIndex = sel.toIntValue();
 				out = Value.TRUE;
-			} else if (sel.isErrorValue()) {
-				others = Value.createError(data);
-			} else {
-				others = Value.createUnknown(data);
-			}
+			} else if (sel.isErrorValue()) others = Value.createError(data);
+			else others = Value.createUnknown(data);
 		}
 
 		// now propagate them
-		for (int i = 0; i < outputs; i++) {
-			state.setPort(i, i == outIndex ? out : others, Plexers.DELAY);
-		}
+		for (int i = 0; i < outputs; i++) state.setPort(i, i == outIndex ? out : others, Plexers.DELAY);
 	}
 
 	@Override
@@ -219,7 +199,7 @@ public class Decoder extends InstanceFactory {
 		Direction facing = painter.getAttributeValue(StdAttr.FACING);
 		Object selectLoc = painter.getAttributeValue(Plexers.ATTR_SELECT_LOC);
 		BitWidth select = painter.getAttributeValue(Plexers.ATTR_SELECT);
-		boolean enable = painter.getAttributeValue(Plexers.ATTR_ENABLE).booleanValue();
+		boolean enable = painter.getAttributeValue(Plexers.ATTR_ENABLE);
 		int selMult = selectLoc == Plexers.SELECT_TOP_RIGHT ? -1 : 1;
 		int outputs = 1 << select.getWidth();
 
@@ -229,19 +209,15 @@ public class Decoder extends InstanceFactory {
 		int dx = vertical ? selMult : 0;
 		int dy = vertical ? 0 : -selMult;
 		if (outputs == 2) { // draw select wire
-			if (painter.getShowState()) {
-				g.setColor(painter.getPort(outputs).getColor());
-			}
+			if (painter.getShowState()) g.setColor(painter.getPort(outputs).getColor());
 			Location pt = painter.getInstance().getPortLocation(outputs);
-			g.drawLine(pt.getX(), pt.getY(), pt.getX() + 2 * dx, pt.getY() + 2 * dy);
+			g.drawLine(pt.x(), pt.y(), pt.x() + 2 * dx, pt.y() + 2 * dy);
 		}
 		if (enable) {
 			Location en = painter.getInstance().getPortLocation(outputs + 1);
 			int len = outputs == 2 ? 6 : 4;
-			if (painter.getShowState()) {
-				g.setColor(painter.getPort(outputs + 1).getColor());
-			}
-			g.drawLine(en.getX(), en.getY(), en.getX() + len * dx, en.getY() + len * dy);
+			if (painter.getShowState()) g.setColor(painter.getPort(outputs + 1).getColor());
+			g.drawLine(en.x(), en.y(), en.x() + len * dx, en.y() + len * dy);
 		}
 		GraphicsUtil.switchToWidth(g, 1);
 

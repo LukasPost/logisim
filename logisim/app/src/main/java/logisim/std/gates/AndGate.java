@@ -24,8 +24,8 @@ class AndGate extends AbstractGate {
 	@Override
 	protected void paintIconShaped(InstancePainter painter) {
 		Graphics g = painter.getGraphics();
-		int[] xp = new int[] { 10, 2, 2, 10 };
-		int[] yp = new int[] { 2, 2, 18, 18 };
+		int[] xp = { 10, 2, 2, 10 };
+		int[] yp = { 2, 2, 18, 18 };
 		g.drawPolyline(xp, yp, 4);
 		GraphicsUtil.drawCenteredArc(g, 10, 10, 8, -90, 180);
 	}
@@ -36,7 +36,7 @@ class AndGate extends AbstractGate {
 	}
 
 	@Override
-	protected void paintDinShape(InstancePainter painter, int width, int height, int inputs) {
+	protected void paintDinShape(InstancePainter painter, int width, int height) {
 		PainterDin.paintAnd(painter, width, height, false);
 	}
 
@@ -48,9 +48,7 @@ class AndGate extends AbstractGate {
 	@Override
 	protected Expression computeExpression(Expression[] inputs, int numInputs) {
 		Expression ret = inputs[0];
-		for (int i = 1; i < numInputs; i++) {
-			ret = Expressions.and(ret, inputs[i]);
-		}
+		for (int i = 1; i < numInputs; i++) ret = Expressions.and(ret, inputs[i]);
 		return ret;
 	}
 

@@ -18,11 +18,11 @@ import logisim.tools.Library;
 import logisim.tools.Tool;
 
 public class Builtin extends Library {
-	private List<Library> libraries = null;
+	private List<Library> libraries;
 
 	public Builtin() {
-		libraries = Arrays.asList(new Library[] { new Base(), new Gates(), new Wiring(), new Plexers(),
-				new Arithmetic(), new Memory(), new Io(), });
+		libraries = Arrays.asList(new Base(), new Gates(), new Wiring(), new Plexers(),
+				new Arithmetic(), new Memory(), new Io());
 	}
 
 	@Override

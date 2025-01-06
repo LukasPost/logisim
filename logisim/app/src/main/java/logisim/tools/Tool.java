@@ -45,7 +45,7 @@ public abstract class Tool implements AttributeDefaultProvider {
 		return getAttributeSet();
 	}
 
-	public boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver) {
+	public boolean isAllDefaultValues(AttributeSet attrs) {
 		return false;
 	}
 

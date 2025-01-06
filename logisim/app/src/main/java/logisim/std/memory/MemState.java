@@ -30,7 +30,7 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
 
 	private MemContents contents;
 	private int columns;
-	private long curScroll = 0;
+	private long curScroll;
 	private long cursorLoc = -1;
 	private long curAddr = -1;
 
@@ -57,27 +57,18 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
 	// methods for accessing the address bits
 	//
 	private void setBits(int addrBits, int dataBits) {
-		if (contents == null) {
-			contents = MemContents.create(addrBits, dataBits);
-		} else {
-			contents.setDimensions(addrBits, dataBits);
-		}
-		if (addrBits <= 12) {
-			if (dataBits <= 8) {
-				columns = dataBits <= 4 ? 8 : 4;
-			} else {
-				columns = dataBits <= 16 ? 2 : 1;
-			}
-		} else {
-			columns = dataBits <= 8 ? 2 : 1;
-		}
+		if (contents == null) contents = MemContents.create(addrBits, dataBits);
+		else contents.setDimensions(addrBits, dataBits);
+		if (addrBits <= 12) if (dataBits <= 8) columns = dataBits <= 4 ? 8 : 4;
+		else columns = dataBits <= 16 ? 2 : 1;
+		else columns = dataBits <= 8 ? 2 : 1;
 		long newLast = contents.getLastOffset();
 		// I do subtraction in the next two conditions to account for possibility of overflow
 		if (cursorLoc > newLast)
 			cursorLoc = newLast;
 		if (curAddr - newLast > 0)
 			curAddr = -1;
-		long maxScroll = Math.max(0, newLast + 1 - (ROWS - 1) * columns);
+		long maxScroll = Math.max(0, newLast + 1 - (long) (ROWS - 1) * columns);
 		if (curScroll > maxScroll)
 			curScroll = maxScroll;
 	}
@@ -141,10 +132,9 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
 		if (isValidAddr(addr)) {
 			addr = addr / columns * columns;
 			long curTop = curScroll / columns * columns;
-			if (addr < curTop) {
-				curScroll = addr;
-			} else if (addr >= curTop + ROWS * columns) {
-				curScroll = addr - (ROWS - 1) * columns;
+			if (addr < curTop) curScroll = addr;
+			else if (addr >= curTop + (long) ROWS * columns) {
+				curScroll = addr - (long) (ROWS - 1) * columns;
 				if (curScroll < 0)
 					curScroll = 0;
 			}
@@ -152,7 +142,7 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
 	}
 
 	void setScroll(long addr) {
-		long maxAddr = getLastAddress() - ROWS * columns;
+		long maxAddr = getLastAddress() - (long) ROWS * columns;
 		if (addr > maxAddr)
 			addr = maxAddr; // note: maxAddr could be negative
 		if (addr < 0)
@@ -169,13 +159,11 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
 		int boxW = addrBits <= 12 ? TABLE_WIDTH12 : TABLE_WIDTH32;
 
 		// See if outside box
-		if (x < boxX || x >= boxX + boxW || y <= ENTRY_YOFFS || y >= ENTRY_YOFFS + ROWS * ENTRY_HEIGHT) {
-			return -1;
-		}
+		if (x < boxX || x >= boxX + boxW || y <= ENTRY_YOFFS || y >= ENTRY_YOFFS + ROWS * ENTRY_HEIGHT) return -1;
 
 		int col = (x - boxX) / (boxW / columns);
 		int row = (y - ENTRY_YOFFS) / ENTRY_HEIGHT;
-		long ret = (curScroll / columns * columns) + columns * row + col;
+		long ret = (curScroll / columns * columns) + (long) columns * row + col;
 		return isValidAddr(ret) ? ret : getLastAddress();
 	}
 
@@ -206,7 +194,7 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
 		g.drawRect(boxX, boxY, boxW, boxH);
 		int entryWidth = boxW / columns;
 		for (int row = 0; row < ROWS; row++) {
-			long addr = (curScroll / columns * columns) + columns * row;
+			long addr = (curScroll / columns * columns) + (long) columns * row;
 			int x = boxX;
 			int y = boxY + ENTRY_HEIGHT * row;
 			int yoffs = ENTRY_HEIGHT - 3;
@@ -224,10 +212,8 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
 					GraphicsUtil.drawText(g, StringUtil.toHexString(dataBits, val), x + entryWidth / 2, y + yoffs,
 							GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
 					g.setColor(Color.BLACK);
-				} else {
-					GraphicsUtil.drawText(g, StringUtil.toHexString(dataBits, val), x + entryWidth / 2, y + yoffs,
-							GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
-				}
+				} else GraphicsUtil.drawText(g, StringUtil.toHexString(dataBits, val), x + entryWidth / 2, y + yoffs,
+						GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
 				addr++;
 				x += entryWidth;
 			}

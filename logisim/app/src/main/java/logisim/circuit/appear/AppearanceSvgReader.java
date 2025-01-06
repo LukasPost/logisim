@@ -16,7 +16,7 @@ import logisim.instance.Instance;
 public class AppearanceSvgReader {
 	public static AbstractCanvasObject createShape(Element elt, Map<Location, Instance> pins) {
 		String name = elt.getTagName();
-		if (name.equals("circ-anchor") || name.equals("circ-origin")) {
+		if ("circ-anchor".equals(name) || "circ-origin".equals(name)) {
 			Location loc = getLocation(elt);
 			AbstractCanvasObject ret = new AppearanceAnchor(loc);
 			if (elt.hasAttribute("facing")) {
@@ -24,19 +24,14 @@ public class AppearanceSvgReader {
 				ret.setValue(AppearanceAnchor.FACING, facing);
 			}
 			return ret;
-		} else if (name.equals("circ-port")) {
+		} else if ("circ-port".equals(name)) {
 			Location loc = getLocation(elt);
 			String[] pinStr = elt.getAttribute("pin").split(",");
 			Location pinLoc = new Location(Integer.parseInt(pinStr[0].trim()), Integer.parseInt(pinStr[1].trim()));
 			Instance pin = pins.get(pinLoc);
-			if (pin == null) {
-				return null;
-			} else {
-				return new AppearancePort(loc, pin);
-			}
-		} else {
-			return SvgReader.createShape(elt);
-		}
+			if (pin == null) return null;
+			else return new AppearancePort(loc, pin);
+		} else return SvgReader.createShape(elt);
 	}
 
 	private static Location getLocation(Element elt) {

@@ -57,9 +57,9 @@ abstract class Mem extends InstanceFactory {
 
 	private WeakHashMap<Instance, File> currentInstanceFiles;
 
-	Mem(String name, StringGetter desc, int extraPorts) {
+	Mem(String name, StringGetter desc) {
 		super(name, desc);
-		currentInstanceFiles = new WeakHashMap<Instance, File>();
+		currentInstanceFiles = new WeakHashMap<>();
 		setInstancePoker(MemPoker.class);
 		setKeyConfigurator(JoinedConfigurator.create(new BitWidthConfigurator(ADDR_ATTR, 2, 24, 0),
 				new BitWidthConfigurator(DATA_ATTR)));
@@ -86,7 +86,7 @@ abstract class Mem extends InstanceFactory {
 		configurePorts(instance);
 	}
 
-	void configureStandardPorts(Instance instance, Port[] ps) {
+	void configureStandardPorts(Port[] ps) {
 		ps[DATA] = new Port(0, 0, Port.INOUT, DATA_ATTR);
 		ps[ADDR] = new Port(-140, 0, Port.INPUT, ADDR_ATTR);
 		ps[CS] = new Port(-90, 40, Port.INPUT, 1);
@@ -112,27 +112,19 @@ abstract class Mem extends InstanceFactory {
 			int addrBits = addr.getWidth();
 			int bytes = 1 << addrBits;
 			String label;
-			if (this instanceof Rom) {
-				if (addrBits >= 30) {
-					label = StringUtil.format(Strings.get("romGigabyteLabel"), "" + (bytes >>> 30));
-				} else if (addrBits >= 20) {
+			if (this instanceof Rom)
+				if (addrBits >= 30) label = StringUtil.format(Strings.get("romGigabyteLabel"), "" + (bytes >>> 30));
+				else if (addrBits >= 20)
 					label = StringUtil.format(Strings.get("romMegabyteLabel"), "" + (bytes >> 20));
-				} else if (addrBits >= 10) {
+				else if (addrBits >= 10)
 					label = StringUtil.format(Strings.get("romKilobyteLabel"), "" + (bytes >> 10));
-				} else {
-					label = StringUtil.format(Strings.get("romByteLabel"), "" + bytes);
-				}
-			} else {
-				if (addrBits >= 30) {
-					label = StringUtil.format(Strings.get("ramGigabyteLabel"), "" + (bytes >>> 30));
-				} else if (addrBits >= 20) {
-					label = StringUtil.format(Strings.get("ramMegabyteLabel"), "" + (bytes >> 20));
-				} else if (addrBits >= 10) {
-					label = StringUtil.format(Strings.get("ramKilobyteLabel"), "" + (bytes >> 10));
-				} else {
-					label = StringUtil.format(Strings.get("ramByteLabel"), "" + bytes);
-				}
-			}
+				else label = StringUtil.format(Strings.get("romByteLabel"), "" + bytes);
+			else if (addrBits >= 30) label = StringUtil.format(Strings.get("ramGigabyteLabel"), "" + (bytes >>> 30));
+			else if (addrBits >= 20)
+				label = StringUtil.format(Strings.get("ramMegabyteLabel"), "" + (bytes >> 20));
+			else if (addrBits >= 10)
+				label = StringUtil.format(Strings.get("ramKilobyteLabel"), "" + (bytes >> 10));
+			else label = StringUtil.format(Strings.get("ramByteLabel"), "" + bytes);
 			GraphicsUtil.drawCenteredText(g, label, bds.getX() + bds.getWidth() / 2, bds.getY() + bds.getHeight() / 2);
 		}
 
@@ -152,9 +144,9 @@ abstract class Mem extends InstanceFactory {
 	}
 
 	public void loadImage(InstanceState instanceState, File imageFile) throws IOException {
-		MemState s = this.getState(instanceState);
+		MemState s = getState(instanceState);
 		HexFile.open(s.getContents(), imageFile);
-		this.setCurrentImage(instanceState.getInstance(), imageFile);
+		setCurrentImage(instanceState.getInstance(), imageFile);
 	}
 
 	@Override

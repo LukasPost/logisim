@@ -30,7 +30,7 @@ class SearchNode implements Comparable<SearchNode> {
 		this.conn = conn;
 		this.dest = dest;
 		this.dist = dist;
-		this.heur = dist + this.getHeuristic();
+		heur = dist + getHeuristic();
 		this.extendsWire = extendsWire;
 		this.prev = prev;
 	}
@@ -39,11 +39,10 @@ class SearchNode implements Comparable<SearchNode> {
 		Location cur = loc;
 		Location dst = dest;
 		Direction curDir = dir;
-		int dx = dst.getX() - cur.getX();
-		int dy = dst.getY() - cur.getY();
+		int dx = dst.x() - cur.x();
+		int dy = dst.y() - cur.y();
 		int ret = -1;
 		if (extendsWire) {
-			ret = -1;
 			if (curDir == Direction.East) {
 				if (dx > 0)
 					ret = dx / 10 * 9 + Math.abs(dy);
@@ -53,32 +52,19 @@ class SearchNode implements Comparable<SearchNode> {
 			} else if (curDir == Direction.South) {
 				if (dy > 0)
 					ret = Math.abs(dx) + dy / 10 * 9;
-			} else if (curDir == Direction.North) {
-				if (dy < 0)
-					ret = Math.abs(dx) - dy / 10 * 9;
-			}
+			} else if (curDir == Direction.North) if (dy < 0)
+				ret = Math.abs(dx) - dy / 10 * 9;
 		}
-		if (ret < 0) {
-			ret = Math.abs(dx) + Math.abs(dy);
-		}
+		if (ret < 0) ret = Math.abs(dx) + Math.abs(dy);
 		boolean penalizeDoubleTurn = false;
-		if (curDir == Direction.East) {
-			penalizeDoubleTurn = dx < 0;
-		} else if (curDir == Direction.West) {
-			penalizeDoubleTurn = dx > 0;
-		} else if (curDir == Direction.North) {
-			penalizeDoubleTurn = dy > 0;
-		} else if (curDir == Direction.South) {
-			penalizeDoubleTurn = dy < 0;
-		} else if (curDir == null) {
-			if (dx != 0 || dy != 0)
-				ret += TURN_PENALTY;
-		}
-		if (penalizeDoubleTurn) {
-			ret += 2 * TURN_PENALTY;
-		} else if (dx != 0 && dy != 0) {
+		if (curDir == Direction.East) penalizeDoubleTurn = dx < 0;
+		else if (curDir == Direction.West) penalizeDoubleTurn = dx > 0;
+		else if (curDir == Direction.North) penalizeDoubleTurn = dy > 0;
+		else if (curDir == Direction.South) penalizeDoubleTurn = dy < 0;
+		else if (curDir == null) if (dx != 0 || dy != 0)
 			ret += TURN_PENALTY;
-		}
+		if (penalizeDoubleTurn) ret += 2 * TURN_PENALTY;
+		else if (dx != 0 && dy != 0) ret += TURN_PENALTY;
 		return ret;
 	}
 
@@ -87,20 +73,14 @@ class SearchNode implements Comparable<SearchNode> {
 		Direction connDir = conn.getDirection();
 		Location nextLoc = loc.translate(moveDir, 10);
 		boolean exWire = extendsWire && moveDir == connDir;
-		if (exWire) {
-			newDist += 9;
-		} else {
-			newDist += 10;
-		}
+		if (exWire) newDist += 9;
+		else newDist += 10;
 		if (crossing)
 			newDist += CROSSING_PENALTY;
 		if (moveDir != dir)
 			newDist += TURN_PENALTY;
-		if (nextLoc.getX() < 0 || nextLoc.getY() < 0) {
-			return null;
-		} else {
-			return new SearchNode(nextLoc, moveDir, conn, dest, newDist, exWire, this);
-		}
+		if (nextLoc.x() < 0 || nextLoc.y() < 0) return null;
+		else return new SearchNode(nextLoc, moveDir, conn, dest, newDist, exWire, this);
 	}
 
 	public boolean isStart() {
@@ -145,13 +125,8 @@ class SearchNode implements Comparable<SearchNode> {
 
 	@Override
 	public boolean equals(Object other) {
-		if (other instanceof SearchNode) {
-			SearchNode o = (SearchNode) other;
-			return this.loc.equals(o.loc) && (this.dir == null ? o.dir == null : this.dir.equals(o.dir))
-					&& this.dest.equals(o.dest);
-		} else {
-			return false;
-		}
+		return other instanceof SearchNode o && loc.equals(o.loc) && (dir == o.dir)
+				&& dest.equals(o.dest);
 	}
 
 	@Override
@@ -161,13 +136,10 @@ class SearchNode implements Comparable<SearchNode> {
 	}
 
 	public int compareTo(SearchNode o) {
-		int ret = this.heur - o.heur;
+		int ret = heur - o.heur;
 
-		if (ret == 0) {
-			return this.hashCode() - o.hashCode();
-		} else {
-			return ret;
-		}
+		if (ret == 0) return hashCode() - o.hashCode();
+		else return ret;
 	}
 
 	@Override

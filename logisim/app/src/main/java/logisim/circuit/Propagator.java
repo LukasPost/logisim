@@ -26,7 +26,7 @@ public class Propagator {
 		Component cause; // component emitting the value
 		Location loc; // the location at which value is emitted
 		Value val; // value being emitted
-		SetData next = null;
+		SetData next;
 
 		private SetData(int time, int serialNumber, CircuitState state, Location loc, Component cause, Value val) {
 			this.time = time;
@@ -40,10 +40,10 @@ public class Propagator {
 		public int compareTo(SetData o) {
 			// Yes, these subtractions may overflow. This is intentional, as it
 			// avoids potential wraparound problems as the counters increment.
-			int ret = this.time - o.time;
+			int ret = time - o.time;
 			if (ret != 0)
 				return ret;
-			return this.serialNumber - o.serialNumber;
+			return serialNumber - o.serialNumber;
 		}
 
 		public SetData cloneFor(CircuitState newState) {
@@ -51,8 +51,8 @@ public class Propagator {
 			int dtime = newProp.clock - state.getPropagator().clock;
 			SetData ret = new SetData(time + dtime, newProp.setDataSerialNumber, newState, loc, cause, val);
 			newProp.setDataSerialNumber++;
-			if (this.next != null)
-				ret.next = this.next.cloneFor(newState);
+			if (next != null)
+				ret.next = next.cloneFor(newState);
 			return ret;
 		}
 
@@ -78,10 +78,7 @@ public class Propagator {
 
 		@Override
 		public boolean equals(Object other) {
-			if (!(other instanceof ComponentPoint))
-				return false;
-			ComponentPoint o = (ComponentPoint) other;
-			return this.cause.equals(o.cause) && this.loc.equals(o.loc);
+			return other instanceof ComponentPoint o && cause.equals(o.cause) && loc.equals(o.loc);
 		}
 	}
 
@@ -89,7 +86,7 @@ public class Propagator {
 		WeakReference<Propagator> prop;
 
 		public Listener(Propagator propagator) {
-			prop = new WeakReference<Propagator>(propagator);
+			prop = new WeakReference<>(propagator);
 		}
 
 		public void attributeListChanged(AttributeEvent e) {
@@ -97,20 +94,12 @@ public class Propagator {
 
 		public void attributeValueChanged(AttributeEvent e) {
 			Propagator p = prop.get();
-			if (p == null) {
-				e.getSource().removeAttributeListener(this);
-			} else if (e.getAttribute().equals(Options.sim_rand_attr)) {
-				p.updateRandomness();
-			}
+			if (p == null) e.getSource().removeAttributeListener(this);
+			else if (e.getAttribute().equals(Options.sim_rand_attr)) p.updateRandomness();
 		}
 	}
 
 	private CircuitState root; // root of state tree
-
-	/**
-	 * The number of clock cycles to let pass before deciding that the circuit is oscillating.
-	 */
-	private int simLimit = 1000;
 
 	/**
 	 * On average, one out of every 2**simRandomShift propagations through a component is delayed one step more than the
@@ -119,17 +108,17 @@ public class Propagator {
 	 */
 	private volatile int simRandomShift;
 
-	private PriorityQueue<SetData> toProcess = new PriorityQueue<SetData>();
-	private int clock = 0;
-	private boolean isOscillating = false;
-	private boolean oscAdding = false;
+	private PriorityQueue<SetData> toProcess = new PriorityQueue<>();
+	private int clock;
+	private boolean isOscillating;
+	private boolean oscAdding;
 	private PropagationPoints oscPoints = new PropagationPoints();
-	private int ticks = 0;
+	private int ticks;
 	private Random noiseSource = new Random();
-	private int noiseCount = 0;
-	private int setDataSerialNumber = 0;
+	private int noiseCount;
+	private int setDataSerialNumber;
 
-	static int lastId = 0;
+	static int lastId;
 	int id = lastId++;
 
 	public Propagator(CircuitState root) {
@@ -141,8 +130,7 @@ public class Propagator {
 
 	private void updateRandomness() {
 		Options opts = root.getProject().getOptions();
-		Object rand = opts.getAttributeSet().getValue(Options.sim_rand_attr);
-		int val = ((Integer) rand).intValue();
+		int val = opts.getAttributeSet().getValue(Options.sim_rand_attr);
 		int logVal = 0;
 		while ((1 << logVal) < val)
 			logVal++;
@@ -181,15 +169,14 @@ public class Propagator {
 		clearDirtyPoints();
 		clearDirtyComponents();
 
-		int oscThreshold = simLimit;
+		int oscThreshold = 1000;
 		int logThreshold = 3 * oscThreshold / 4;
 		int iters = 0;
 		while (!toProcess.isEmpty()) {
 			iters++;
 
-			if (iters < logThreshold) {
-				stepInternal(null);
-			} else if (iters < oscThreshold) {
+			if (iters < logThreshold) stepInternal(null);
+			else if (iters < oscThreshold) {
 				oscAdding = true;
 				stepInternal(oscPoints);
 			} else {
@@ -224,7 +211,7 @@ public class Propagator {
 		clock = toProcess.peek().time;
 
 		// propagate all values for this clock tick
-		HashMap<CircuitState, HashSet<ComponentPoint>> visited = new HashMap<CircuitState, HashSet<ComponentPoint>>();
+		HashMap<CircuitState, HashSet<ComponentPoint>> visited = new HashMap<>();
 		while (true) {
 			SetData data = toProcess.peek();
 			if (data == null || data.time != clock)
@@ -238,7 +225,7 @@ public class Propagator {
 				if (!handled.add(new ComponentPoint(data.cause, data.loc)))
 					continue;
 			} else {
-				handled = new HashSet<ComponentPoint>();
+				handled = new HashSet<>();
 				visited.put(state, handled);
 				handled.add(new ComponentPoint(data.cause, data.loc));
 			}
@@ -258,9 +245,7 @@ public class Propagator {
 			Value newVal = computeValue(newHead);
 
 			// if the value at point has changed, propagate it
-			if (!newVal.equals(oldVal)) {
-				state.markPointAsDirty(data.loc);
-			}
+			if (!newVal.equals(oldVal)) state.markPointAsDirty(data.loc);
 		}
 
 		clearDirtyPoints();
@@ -304,21 +289,16 @@ public class Propagator {
 	void setValue(CircuitState state, Location pt, Value val, Component cause, int delay) {
 		if (cause instanceof Wire || cause instanceof Splitter)
 			return;
-		if (delay <= 0) {
-			delay = 1;
-		}
+		if (delay <= 0) delay = 1;
 		int randomShift = simRandomShift;
 		if (randomShift > 0) { // random noise is turned on
 			// multiply the delay by 32 so that the random noise
 			// only changes the delay by 3%.
 			delay <<= randomShift;
-			if (!(cause.getFactory() instanceof SubcircuitFactory)) {
-				if (noiseCount > 0) {
-					noiseCount--;
-				} else {
-					delay++;
-					noiseCount = noiseSource.nextInt(1 << randomShift);
-				}
+			if (!(cause.getFactory() instanceof SubcircuitFactory)) if (noiseCount > 0) noiseCount--;
+			else {
+				delay++;
+				noiseCount = noiseSource.nextInt(1 << randomShift);
 			}
 		}
 		toProcess.add(new SetData(clock + delay, setDataSerialNumber, state, pt, cause, val));
@@ -351,9 +331,7 @@ public class Propagator {
 			Value newVal = computeValue(newHead);
 			Value wireVal = state.getValueByWire(loc);
 
-			if (!newVal.equals(oldVal) || wireVal != null) {
-				state.markPointAsDirty(loc);
-			}
+			if (!newVal.equals(oldVal) || wireVal != null) state.markPointAsDirty(loc);
 			if (wireVal != null)
 				state.setValueByWire(loc, Value.NIL);
 		}
@@ -368,31 +346,28 @@ public class Propagator {
 	}
 
 	private SetData addCause(CircuitState state, SetData head, SetData data) {
-		if (data.val == null) { // actually, it should be removed
-			return removeCause(state, head, data.loc, data.cause);
-		}
+		// actually, it should be removed
+		if (data.val == null) return removeCause(state, head, data.loc, data.cause);
 
 		HashMap<Location, SetData> causes = state.causes;
 
 		// first check whether this is change of previous info.
 		boolean replaced = false;
-		for (SetData n = head; n != null; n = n.next) {
+		for (SetData n = head; n != null; n = n.next)
 			if (n.cause == data.cause) {
 				n.val = data.val;
 				replaced = true;
 				break;
 			}
-		}
 
 		// otherwise, insert to list of causes
-		if (!replaced) {
-			if (head == null) {
-				causes.put(data.loc, data);
-				head = data;
-			} else {
-				data.next = head.next;
-				head.next = data;
-			}
+		if (!replaced) if (head == null) {
+			causes.put(data.loc, data);
+			return data;
+		}
+		else {
+			data.next = head.next;
+			head.next = data;
 		}
 
 		return head;
@@ -400,9 +375,9 @@ public class Propagator {
 
 	private SetData removeCause(CircuitState state, SetData head, Location loc, Component cause) {
 		HashMap<Location, SetData> causes = state.causes;
-		if (head == null) {
-			;
-		} else if (head.cause == cause) {
+		if (head == null)
+			return null;
+		if (head.cause == cause) {
 			head = head.next;
 			if (head == null)
 				causes.remove(loc);
@@ -414,7 +389,7 @@ public class Propagator {
 			while (cur != null) {
 				if (cur.cause == cause) {
 					prev.next = cur.next;
-					break;
+					return head;
 				}
 				prev = cur;
 				cur = cur.next;
@@ -430,9 +405,7 @@ public class Propagator {
 		if (causes == null)
 			return Value.NIL;
 		Value ret = causes.val;
-		for (SetData n = causes.next; n != null; n = n.next) {
-			ret = ret.combine(n.val);
-		}
+		for (SetData n = causes.next; n != null; n = n.next) ret = ret.combine(n.val);
 		return ret;
 	}
 

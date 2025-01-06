@@ -3,6 +3,7 @@
 
 package logisim.prefs;
 
+import java.util.Objects;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.Preferences;
 
@@ -14,7 +15,7 @@ class PrefMonitorStringOpts extends AbstractPrefMonitor<String> {
 	PrefMonitorStringOpts(String name, String[] opts, String dflt) {
 		super(name);
 		this.opts = opts;
-		this.value = opts[0];
+		value = opts[0];
 		this.dflt = dflt;
 		Preferences prefs = AppPreferences.getPrefs();
 		set(prefs.get(name, dflt));
@@ -27,9 +28,7 @@ class PrefMonitorStringOpts extends AbstractPrefMonitor<String> {
 
 	public void set(String newValue) {
 		String oldValue = value;
-		if (!isSame(oldValue, newValue)) {
-			AppPreferences.getPrefs().put(getIdentifier(), newValue);
-		}
+		if (!isSame(oldValue, newValue)) AppPreferences.getPrefs().put(getIdentifier(), newValue);
 	}
 
 	public void preferenceChange(PreferenceChangeEvent event) {
@@ -42,12 +41,11 @@ class PrefMonitorStringOpts extends AbstractPrefMonitor<String> {
 			if (!isSame(oldValue, newValue)) {
 				String[] o = opts;
 				String chosen = null;
-				for (int i = 0; i < o.length; i++) {
-					if (isSame(o[i], newValue)) {
-						chosen = o[i];
+				for (String s : o)
+					if (isSame(s, newValue)) {
+						chosen = s;
 						break;
 					}
-				}
 				if (chosen == null)
 					chosen = dflt;
 				value = chosen;
@@ -57,6 +55,6 @@ class PrefMonitorStringOpts extends AbstractPrefMonitor<String> {
 	}
 
 	private static boolean isSame(String a, String b) {
-		return a == null ? b == null : a.equals(b);
+		return Objects.equals(a, b);
 	}
 }

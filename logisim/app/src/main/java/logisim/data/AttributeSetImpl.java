@@ -3,6 +3,8 @@
 
 package logisim.data;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.AbstractList;
 import java.util.Iterator;
 import java.util.List;
@@ -22,14 +24,14 @@ public class AttributeSetImpl extends AbstractAttributeSet {
 		}
 
 		Node(Node other) {
-			this.attr = other.attr;
-			this.value = other.value;
-			this.is_read_only = other.is_read_only;
-			this.next = other.next;
+			attr = other.attr;
+			value = other.value;
+			is_read_only = other.is_read_only;
+			next = other.next;
 		}
 	}
 
-	private class AttrIterator implements Iterator<Attribute<?>> {
+	private static class AttrIterator implements Iterator<Attribute<?>> {
 		Node n;
 
 		AttrIterator(Node n) {
@@ -53,7 +55,7 @@ public class AttributeSetImpl extends AbstractAttributeSet {
 
 	private class AttrList extends AbstractList<Attribute<?>> {
 		@Override
-		public Iterator<Attribute<?>> iterator() {
+		public @NotNull Iterator<Attribute<?>> iterator() {
 			return new AttrIterator(head);
 		}
 
@@ -65,9 +67,8 @@ public class AttributeSetImpl extends AbstractAttributeSet {
 				n = n.next;
 				--remaining;
 			}
-			if (remaining != 0 || n == null) {
+			if (remaining != 0 || n == null)
 				throw new IndexOutOfBoundsException(i + " not in list " + " [" + count + " elements]");
-			}
 			return n.attr;
 		}
 
@@ -96,30 +97,26 @@ public class AttributeSetImpl extends AbstractAttributeSet {
 	}
 
 	private AttrList list = new AttrList();
-	private Node head = null;
-	private Node tail = null;
-	private int count = 0;
+	private Node head;
+	private Node tail;
+	private int count;
 
 	public AttributeSetImpl() {
 	}
 
 	public AttributeSetImpl(Attribute<Object>[] attrs, Object[] values) {
-		if (attrs.length != values.length) {
-			throw new IllegalArgumentException("arrays must have same length");
-		}
+		if (attrs.length != values.length) throw new IllegalArgumentException("arrays must have same length");
 
-		for (int i = 0; i < attrs.length; i++) {
-			addAttribute(attrs[i], values[i]);
-		}
+		for (int i = 0; i < attrs.length; i++) addAttribute(attrs[i], values[i]);
 	}
 
 	@Override
 	protected void copyInto(AbstractAttributeSet destObj) {
 		AttributeSetImpl dest = (AttributeSetImpl) destObj;
-		if (this.head != null) {
+		if (head != null) {
 			dest.head = new Node(head);
 			Node copy_prev = dest.head;
-			Node cur = this.head.next;
+			Node cur = head.next;
 			while (cur != null) {
 				Node copy_cur = new Node(cur);
 				copy_prev.next = copy_cur;
@@ -127,7 +124,7 @@ public class AttributeSetImpl extends AbstractAttributeSet {
 				cur = cur.next;
 			}
 			dest.tail = copy_prev;
-			dest.count = this.count;
+			dest.count = count;
 		}
 	}
 
@@ -140,12 +137,8 @@ public class AttributeSetImpl extends AbstractAttributeSet {
 	}
 
 	public <V> void addAttribute(Attribute<? super V> attr, V value) {
-		if (attr == null) {
-			throw new IllegalArgumentException("Adding null attribute");
-		}
-		if (findNode(attr) != null) {
-			throw new IllegalArgumentException("Attribute " + attr + " already created");
-		}
+		if (attr == null) throw new IllegalArgumentException("Adding null attribute");
+		if (findNode(attr) != null) throw new IllegalArgumentException("Attribute " + attr + " already created");
 
 		Node n = new Node(attr, value, false, null);
 		if (head == null)
@@ -184,18 +177,14 @@ public class AttributeSetImpl extends AbstractAttributeSet {
 	@Override
 	public boolean isReadOnly(Attribute<?> attr) {
 		Node n = findNode(attr);
-		if (n == null) {
-			throw new IllegalArgumentException("Unknown attribute " + attr);
-		}
+		if (n == null) throw new IllegalArgumentException("Unknown attribute " + attr);
 		return n.is_read_only;
 	}
 
 	@Override
 	public void setReadOnly(Attribute<?> attr, boolean value) {
 		Node n = findNode(attr);
-		if (n == null) {
-			throw new IllegalArgumentException("Unknown attribute " + attr);
-		}
+		if (n == null) throw new IllegalArgumentException("Unknown attribute " + attr);
 		n.is_read_only = value;
 	}
 
@@ -205,9 +194,7 @@ public class AttributeSetImpl extends AbstractAttributeSet {
 	@Override
 	public <V> V getValue(Attribute<V> attr) {
 		Node n = findNode(attr);
-		if (n == null) {
-			throw new IllegalArgumentException("Unknown attribute " + attr);
-		}
+		if (n == null) throw new IllegalArgumentException("Unknown attribute " + attr);
 		@SuppressWarnings("unchecked")
 		V ret = (V) n.value;
 		return ret;
@@ -215,20 +202,12 @@ public class AttributeSetImpl extends AbstractAttributeSet {
 
 	@Override
 	public <V> void setValue(Attribute<V> attr, V value) {
-		if (value instanceof String) {
-			value = attr.parse((String) value);
-		}
+		if (value instanceof String) value = attr.parse((String) value);
 
 		Node n = findNode(attr);
-		if (n == null) {
-			throw new IllegalArgumentException("Unknown attribute " + attr);
-		}
-		if (n.is_read_only) {
-			throw new IllegalArgumentException("Attribute " + attr + " is read-only");
-		}
-		if (value.equals(n.value)) {
-			; // do nothing - why change what's already there?
-		} else {
+		if (n == null) throw new IllegalArgumentException("Unknown attribute " + attr);
+		if (n.is_read_only) throw new IllegalArgumentException("Attribute " + attr + " is read-only");
+		if (!value.equals(n.value)) {
 			n.value = value;
 			fireAttributeValueChanged(attr, value);
 		}
@@ -238,10 +217,9 @@ public class AttributeSetImpl extends AbstractAttributeSet {
 	// private helper methods
 	//
 	private Node findNode(Attribute<?> attr) {
-		for (Node n = head; n != null; n = n.next) {
+		for (Node n = head; n != null; n = n.next)
 			if (n.attr.equals(attr))
 				return n;
-		}
 		return null;
 	}
 }

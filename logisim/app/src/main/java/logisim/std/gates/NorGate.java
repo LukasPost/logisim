@@ -40,7 +40,7 @@ class NorGate extends AbstractGate {
 	}
 
 	@Override
-	protected void paintDinShape(InstancePainter painter, int width, int height, int inputs) {
+	protected void paintDinShape(InstancePainter painter, int width, int height) {
 		PainterDin.paintOr(painter, width, height, true);
 	}
 
@@ -57,9 +57,7 @@ class NorGate extends AbstractGate {
 	@Override
 	protected Expression computeExpression(Expression[] inputs, int numInputs) {
 		Expression ret = inputs[0];
-		for (int i = 1; i < numInputs; i++) {
-			ret = Expressions.or(ret, inputs[i]);
-		}
+		for (int i = 1; i < numInputs; i++) ret = Expressions.or(ret, inputs[i]);
 		return Expressions.not(ret);
 	}
 

@@ -19,7 +19,7 @@ import logisim.file.LibraryEvent;
 import logisim.file.LibraryListener;
 import logisim.file.LogisimFile;
 import logisim.gui.appear.RevertAppearanceAction;
-import logisim.gui.generic.CardPanel;
+import logisim.gui.main.EditHandler.Listener;
 import logisim.gui.menu.LogisimMenuItem;
 import logisim.gui.menu.ProjectCircuitActions;
 import logisim.gui.menu.LogisimMenuBar;
@@ -30,7 +30,7 @@ import logisim.proj.ProjectListener;
 
 class MenuListener {
 	interface EnabledListener {
-		public void menuEnableChanged(MenuListener source);
+		void menuEnableChanged(MenuListener source);
 	}
 
 	private class FileListener implements ActionListener {
@@ -42,16 +42,13 @@ class MenuListener {
 		public void actionPerformed(ActionEvent event) {
 			Object src = event.getSource();
 			Project proj = frame.getProject();
-			if (src == LogisimMenuBar.EXPORT_IMAGE) {
-				ExportImage.doExport(proj);
-			} else if (src == LogisimMenuBar.PRINT) {
-				Print.doPrint(proj);
-			}
+			if (src == LogisimMenuBar.EXPORT_IMAGE) ExportImage.doExport(proj);
+			else if (src == LogisimMenuBar.PRINT) Print.doPrint(proj);
 		}
 	}
 
-	private class EditListener implements ActionListener, EditHandler.Listener {
-		private EditHandler handler = null;
+	private class EditListener implements ActionListener, Listener {
+		private EditHandler handler;
 
 		private void setHandler(EditHandler value) {
 			handler = value;
@@ -112,10 +109,8 @@ class MenuListener {
 			} else if (src == LogisimMenuBar.ADD_CONTROL) {
 				if (h != null)
 					h.addControlPoint();
-			} else if (src == LogisimMenuBar.REMOVE_CONTROL) {
-				if (h != null)
-					h.removeControlPoint();
-			}
+			} else if (src == LogisimMenuBar.REMOVE_CONTROL) if (h != null)
+				h.removeControlPoint();
 		}
 
 		public void enableChanged(EditHandler handler, LogisimMenuItem action, boolean value) {
@@ -130,18 +125,14 @@ class MenuListener {
 			implements ProjectListener, LibraryListener, ActionListener, PropertyChangeListener, CanvasModelListener {
 		void register() {
 			Project proj = frame.getProject();
-			if (proj == null) {
-				return;
-			}
+			if (proj == null) return;
 
 			proj.addProjectListener(this);
 			proj.addLibraryListener(this);
 			frame.addPropertyChangeListener(Frame.EDITOR_VIEW, this);
 			frame.addPropertyChangeListener(Frame.EXPLORER_VIEW, this);
 			Circuit circ = proj.getCurrentCircuit();
-			if (circ != null) {
-				circ.getAppearance().addCanvasModelListener(this);
-			}
+			if (circ != null) circ.getAppearance().addCanvasModelListener(this);
 
 			menubar.addActionListener(LogisimMenuBar.ADD_CIRCUIT, this);
 			menubar.addActionListener(LogisimMenuBar.MOVE_CIRCUIT_UP, this);
@@ -167,17 +158,11 @@ class MenuListener {
 			int action = event.getAction();
 			if (action == ProjectEvent.ACTION_SET_CURRENT) {
 				Circuit old = (Circuit) event.getOldData();
-				if (old != null) {
-					old.getAppearance().removeCanvasModelListener(this);
-				}
+				if (old != null) old.getAppearance().removeCanvasModelListener(this);
 				Circuit circ = (Circuit) event.getData();
-				if (circ != null) {
-					circ.getAppearance().addCanvasModelListener(this);
-				}
+				if (circ != null) circ.getAppearance().addCanvasModelListener(this);
 				computeEnabled();
-			} else if (action == ProjectEvent.ACTION_SET_FILE) {
-				computeEnabled();
-			}
+			} else if (action == ProjectEvent.ACTION_SET_FILE) computeEnabled();
 		}
 
 		public void libraryChanged(LibraryEvent event) {
@@ -189,31 +174,18 @@ class MenuListener {
 			Object src = event.getSource();
 			Project proj = frame.getProject();
 			Circuit cur = proj == null ? null : proj.getCurrentCircuit();
-			if (src == LogisimMenuBar.ADD_CIRCUIT) {
-				ProjectCircuitActions.doAddCircuit(proj);
-			} else if (src == LogisimMenuBar.MOVE_CIRCUIT_UP) {
-				ProjectCircuitActions.doMoveCircuit(proj, cur, -1);
-			} else if (src == LogisimMenuBar.MOVE_CIRCUIT_DOWN) {
-				ProjectCircuitActions.doMoveCircuit(proj, cur, 1);
-			} else if (src == LogisimMenuBar.SET_MAIN_CIRCUIT) {
-				ProjectCircuitActions.doSetAsMainCircuit(proj, cur);
-			} else if (src == LogisimMenuBar.REMOVE_CIRCUIT) {
-				ProjectCircuitActions.doRemoveCircuit(proj, cur);
-			} else if (src == LogisimMenuBar.EDIT_LAYOUT) {
-				frame.setEditorView(Frame.EDIT_LAYOUT);
-			} else if (src == LogisimMenuBar.EDIT_APPEARANCE) {
-				frame.setEditorView(Frame.EDIT_APPEARANCE);
-			} else if (src == LogisimMenuBar.VIEW_TOOLBOX) {
-				frame.setExplorerView(Frame.VIEW_TOOLBOX);
-			} else if (src == LogisimMenuBar.VIEW_SIMULATION) {
-				frame.setExplorerView(Frame.VIEW_SIMULATION);
-			} else if (src == LogisimMenuBar.REVERT_APPEARANCE) {
-				proj.doAction(new RevertAppearanceAction(cur));
-			} else if (src == LogisimMenuBar.ANALYZE_CIRCUIT) {
-				ProjectCircuitActions.doAnalyze(proj, cur);
-			} else if (src == LogisimMenuBar.CIRCUIT_STATS) {
-				StatisticsDialog.show(frame, proj.getLogisimFile(), cur);
-			}
+			if (src == LogisimMenuBar.ADD_CIRCUIT) ProjectCircuitActions.doAddCircuit(proj);
+			else if (src == LogisimMenuBar.MOVE_CIRCUIT_UP) ProjectCircuitActions.doMoveCircuit(proj, cur, -1);
+			else if (src == LogisimMenuBar.MOVE_CIRCUIT_DOWN) ProjectCircuitActions.doMoveCircuit(proj, cur, 1);
+			else if (src == LogisimMenuBar.SET_MAIN_CIRCUIT) ProjectCircuitActions.doSetAsMainCircuit(proj, cur);
+			else if (src == LogisimMenuBar.REMOVE_CIRCUIT) ProjectCircuitActions.doRemoveCircuit(proj, cur);
+			else if (src == LogisimMenuBar.EDIT_LAYOUT) frame.setEditorView(Frame.EDIT_LAYOUT);
+			else if (src == LogisimMenuBar.EDIT_APPEARANCE) frame.setEditorView(Frame.EDIT_APPEARANCE);
+			else if (src == LogisimMenuBar.VIEW_TOOLBOX) frame.setExplorerView(Frame.VIEW_TOOLBOX);
+			else if (src == LogisimMenuBar.VIEW_SIMULATION) frame.setExplorerView(Frame.VIEW_SIMULATION);
+			else if (src == LogisimMenuBar.REVERT_APPEARANCE) proj.doAction(new RevertAppearanceAction(cur));
+			else if (src == LogisimMenuBar.ANALYZE_CIRCUIT) ProjectCircuitActions.doAnalyze(proj, cur);
+			else if (src == LogisimMenuBar.CIRCUIT_STATS) StatisticsDialog.show(frame, proj.getLogisimFile(), cur);
 		}
 
 		private void computeEnabled() {
@@ -287,9 +259,8 @@ class MenuListener {
 		}
 
 		public void projectChanged(ProjectEvent event) {
-			if (event.getAction() == ProjectEvent.ACTION_SET_STATE) {
+			if (event.getAction() == ProjectEvent.ACTION_SET_STATE)
 				menubar.setCircuitState(frame.getProject().getSimulator(), frame.getProject().getCircuitState());
-			}
 		}
 
 		public void stateChangeRequested(Simulator sim, CircuitState state) {
@@ -309,14 +280,14 @@ class MenuListener {
 	public MenuListener(Frame frame, LogisimMenuBar menubar) {
 		this.frame = frame;
 		this.menubar = menubar;
-		this.listeners = new ArrayList<EnabledListener>();
+		listeners = new ArrayList<>();
 	}
 
 	LogisimMenuBar getMenuBar() {
 		return menubar;
 	}
 
-	public void register(CardPanel mainPanel) {
+	public void register() {
 		fileListener.register();
 		editListener.register();
 		projectListener.register();
@@ -344,8 +315,6 @@ class MenuListener {
 	}
 
 	private void fireEnableChanged() {
-		for (EnabledListener listener : listeners) {
-			listener.menuEnableChanged(this);
-		}
+		for (EnabledListener listener : listeners) listener.menuEnableChanged(this);
 	}
 }

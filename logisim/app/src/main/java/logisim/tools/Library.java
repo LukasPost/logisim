@@ -38,20 +38,12 @@ public abstract class Library {
 	}
 
 	public Tool getTool(String name) {
-		for (Tool tool : getTools()) {
-			if (tool.getName().equals(name)) {
-				return tool;
-			}
-		}
+		for (Tool tool : getTools()) if (tool.getName().equals(name)) return tool;
 		return null;
 	}
 
 	public boolean containsFromSource(Tool query) {
-		for (Tool tool : getTools()) {
-			if (tool.sharesSource(query)) {
-				return true;
-			}
-		}
+		for (Tool tool : getTools()) if (tool.sharesSource(query)) return true;
 		return false;
 	}
 
@@ -59,11 +51,8 @@ public abstract class Library {
 		int index = -1;
 		for (Tool obj : getTools()) {
 			index++;
-			if (obj instanceof AddTool) {
-				AddTool tool = (AddTool) obj;
-				if (tool.getFactory() == query)
-					return index;
-			}
+			if (obj instanceof AddTool tool) if (tool.getFactory() == query)
+				return index;
 		}
 		return -1;
 	}
@@ -73,11 +62,7 @@ public abstract class Library {
 	}
 
 	public Library getLibrary(String name) {
-		for (Library lib : getLibraries()) {
-			if (lib.getName().equals(name)) {
-				return lib;
-			}
-		}
+		for (Library lib : getLibraries()) if (lib.getName().equals(name)) return lib;
 		return null;
 	}
 

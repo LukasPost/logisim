@@ -4,5 +4,5 @@
 package logisim.util;
 
 public interface LocaleListener {
-	public void localeChanged();
+	void localeChanged();
 }

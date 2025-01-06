@@ -8,11 +8,11 @@ import logisim.file.LogisimFile;
 import logisim.tools.Tool;
 
 public class ProjectEvent {
-	public final static int ACTION_SET_FILE = 0; // change file
-	public final static int ACTION_SET_CURRENT = 1; // change current
-	public final static int ACTION_SET_TOOL = 2; // change tool
-	public final static int ACTION_SELECTION = 3; // selection alterd
-	public final static int ACTION_SET_STATE = 4; // circuit state changed
+	public static final int ACTION_SET_FILE = 0; // change file
+	public static final int ACTION_SET_CURRENT = 1; // change current
+	public static final int ACTION_SET_TOOL = 2; // change tool
+	public static final int ACTION_SELECTION = 3; // selection alterd
+	public static final int ACTION_SET_STATE = 4; // circuit state changed
 	public static final int ACTION_START = 5; // action about to start
 	public static final int ACTION_COMPLETE = 6; // action has completed
 	public static final int ACTION_MERGE = 7; // one action has been appended to another
@@ -28,7 +28,7 @@ public class ProjectEvent {
 	ProjectEvent(int action, Project proj, Object old, Object data) {
 		this.action = action;
 		this.proj = proj;
-		this.old_data = old;
+		old_data = old;
 		this.data = data;
 	}
 
@@ -36,12 +36,6 @@ public class ProjectEvent {
 		this.action = action;
 		this.proj = proj;
 		this.data = data;
-	}
-
-	ProjectEvent(int action, Project proj) {
-		this.action = action;
-		this.proj = proj;
-		this.data = null;
 	}
 
 	// access methods

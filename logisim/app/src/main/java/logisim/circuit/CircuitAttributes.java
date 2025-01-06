@@ -53,9 +53,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 		}
 
 		public void attributeValueChanged(AttributeEvent e) {
-			if (e.getAttribute() == NAME_ATTR) {
-				source.fireEvent(CircuitEvent.ACTION_SET_NAME, e.getValue());
-			}
+			if (e.getAttribute() == NAME_ATTR) source.fireEvent(CircuitEvent.ACTION_SET_NAME, e.getValue());
 		}
 	}
 
@@ -70,14 +68,9 @@ public class CircuitAttributes extends AbstractAttributeSet {
 		}
 
 		public void circuitAppearanceChanged(CircuitAppearanceEvent e) {
-			SubcircuitFactory factory;
-			factory = (SubcircuitFactory) subcircInstance.getFactory();
-			if (e.isConcerning(CircuitAppearanceEvent.PORTS)) {
-				factory.computePorts(subcircInstance);
-			}
-			if (e.isConcerning(CircuitAppearanceEvent.BOUNDS)) {
-				subcircInstance.recomputeBounds();
-			}
+			SubcircuitFactory factory = (SubcircuitFactory) subcircInstance.getFactory();
+			if (e.isConcerning(CircuitAppearanceEvent.PORTS)) factory.computePorts(subcircInstance);
+			if (e.isConcerning(CircuitAppearanceEvent.BOUNDS)) subcircInstance.recomputeBounds();
 			subcircInstance.fireInvalidated();
 		}
 	}
@@ -138,11 +131,9 @@ public class CircuitAttributes extends AbstractAttributeSet {
 
 	@Override
 	public boolean isToSave(Attribute<?> attr) {
-		Attribute<?>[] statics = STATIC_ATTRS;
-		for (int i = 0; i < statics.length; i++) {
-			if (statics[i] == attr)
+		for (Attribute<?> aStatic : STATIC_ATTRS)
+			if (aStatic == attr)
 				return false;
-		}
 		return true;
 	}
 
@@ -188,9 +179,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 			fireAttributeValueChanged(LABEL_LOCATION_ATTR, val);
 		} else {
 			source.getStaticAttributes().setValue(attr, value);
-			if (attr == NAME_ATTR) {
-				source.fireEvent(CircuitEvent.ACTION_SET_NAME, value);
-			}
+			if (attr == NAME_ATTR) source.fireEvent(CircuitEvent.ACTION_SET_NAME, value);
 		}
 	}
 }

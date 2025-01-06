@@ -24,7 +24,7 @@ import logisim.proj.Project;
 import java.util.Collection;
 
 public class MenuTool extends Tool {
-	private class MenuComponent extends JPopupMenu implements ActionListener {
+	private static class MenuComponent extends JPopupMenu implements ActionListener {
 		Project proj;
 		Circuit circ;
 		Component comp;
@@ -52,13 +52,11 @@ public class MenuTool extends Tool {
 				xn.remove(comp);
 				proj.doAction(
 						xn.toAction(Strings.getter("removeComponentAction", comp.getFactory().getDisplayGetter())));
-			} else if (src == attrs) {
-				proj.getFrame().viewComponentAttributes(circ, comp);
-			}
+			} else if (src == attrs) proj.getFrame().viewComponentAttributes(circ, comp);
 		}
 	}
 
-	private class MenuSelection extends JPopupMenu implements ActionListener {
+	private static class MenuSelection extends JPopupMenu implements ActionListener {
 		Project proj;
 		JMenuItem del = new JMenuItem(Strings.get("selDeleteItem"));
 		JMenuItem cut = new JMenuItem(Strings.get("selCutItem"));
@@ -80,13 +78,9 @@ public class MenuTool extends Tool {
 		public void actionPerformed(ActionEvent e) {
 			Object src = e.getSource();
 			Selection sel = proj.getSelection();
-			if (src == del) {
-				proj.doAction(SelectionActions.clear(sel));
-			} else if (src == cut) {
-				proj.doAction(SelectionActions.cut(sel));
-			} else if (src == copy) {
-				proj.doAction(SelectionActions.copy(sel));
-			}
+			if (src == del) proj.doAction(SelectionActions.clear(sel));
+			else if (src == cut) proj.doAction(SelectionActions.cut(sel));
+			else if (src == copy) proj.doAction(SelectionActions.copy(sel));
 		}
 	}
 
@@ -130,9 +124,8 @@ public class MenuTool extends Tool {
 		Collection<Component> in_sel = sel.getComponentsContaining(pt, g);
 		if (!in_sel.isEmpty()) {
 			Component comp = in_sel.iterator().next();
-			if (sel.getComponents().size() > 1) {
-				menu = new MenuSelection(proj);
-			} else {
+			if (sel.getComponents().size() > 1) menu = new MenuSelection(proj);
+			else {
 				menu = new MenuComponent(proj, canvas.getCircuit(), comp);
 				MenuExtender extender = (MenuExtender) comp.getFeature(MenuExtender.class);
 				if (extender != null)
@@ -146,14 +139,10 @@ public class MenuTool extends Tool {
 				MenuExtender extender = (MenuExtender) comp.getFeature(MenuExtender.class);
 				if (extender != null)
 					extender.configureMenu(menu, proj);
-			} else {
-				menu = null;
-			}
+			} else menu = null;
 		}
 
-		if (menu != null) {
-			canvas.showPopupMenu(menu, x, y);
-		}
+		if (menu != null) canvas.showPopupMenu(menu, x, y);
 	}
 
 	@Override
@@ -163,8 +152,6 @@ public class MenuTool extends Tool {
 		g.drawRect(x + 2, y + 3, 15, 12);
 		g.setColor(Color.lightGray);
 		g.drawLine(x + 4, y + 2, x + 8, y + 2);
-		for (int y_offs = y + 6; y_offs < y + 15; y_offs += 3) {
-			g.drawLine(x + 4, y_offs, x + 14, y_offs);
-		}
+		for (int y_offs = y + 6; y_offs < y + 15; y_offs += 3) g.drawLine(x + 4, y_offs, x + 14, y_offs);
 	}
 }

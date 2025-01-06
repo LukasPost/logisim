@@ -13,14 +13,14 @@ class PrefMonitorBoolean extends AbstractPrefMonitor<Boolean> {
 	PrefMonitorBoolean(String name, boolean dflt) {
 		super(name);
 		this.dflt = dflt;
-		this.value = dflt;
+		value = dflt;
 		Preferences prefs = AppPreferences.getPrefs();
-		set(Boolean.valueOf(prefs.getBoolean(name, dflt)));
+		set(prefs.getBoolean(name, dflt));
 		prefs.addPreferenceChangeListener(this);
 	}
 
 	public Boolean get() {
-		return Boolean.valueOf(value);
+		return value;
 	}
 
 	@Override
@@ -29,10 +29,8 @@ class PrefMonitorBoolean extends AbstractPrefMonitor<Boolean> {
 	}
 
 	public void set(Boolean newValue) {
-		boolean newVal = newValue.booleanValue();
-		if (value != newVal) {
-			AppPreferences.getPrefs().putBoolean(getIdentifier(), newVal);
-		}
+		boolean newVal = newValue;
+		if (value != newVal) AppPreferences.getPrefs().putBoolean(getIdentifier(), newVal);
 	}
 
 	public void preferenceChange(PreferenceChangeEvent event) {

@@ -48,11 +48,10 @@ public class OptionsFrame extends LFrame {
 	private class MyListener implements ActionListener, LibraryListener, LocaleListener {
 		public void actionPerformed(ActionEvent event) {
 			Object src = event.getSource();
-			if (src == revert) {
-				getProject().doAction(LogisimFileActions.revertDefaults());
-			} else if (src == close) {
+			if (src == revert) getProject().doAction(LogisimFileActions.revertDefaults());
+			else if (src == close) {
 				WindowEvent e = new WindowEvent(OptionsFrame.this, WindowEvent.WINDOW_CLOSING);
-				OptionsFrame.this.processWindowEvent(e);
+				processWindowEvent(e);
 			}
 		}
 
@@ -78,7 +77,6 @@ public class OptionsFrame extends LFrame {
 
 	private Project project;
 	private LogisimFile file;
-	private MyListener myListener = new MyListener();
 	private WindowMenuManager windowManager = new WindowMenuManager();
 
 	private OptionsPanel[] panels;
@@ -88,17 +86,15 @@ public class OptionsFrame extends LFrame {
 
 	public OptionsFrame(Project project) {
 		this.project = project;
-		this.file = project.getLogisimFile();
+		file = project.getLogisimFile();
+		MyListener myListener = new MyListener();
 		file.addLibraryListener(myListener);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setJMenuBar(new LogisimMenuBar(this, project));
 
 		panels = new OptionsPanel[] { new SimulateOptions(this), new ToolbarOptions(this), new MouseOptions(this), };
 		tabbedPane = new JTabbedPane();
-		for (int index = 0; index < panels.length; index++) {
-			OptionsPanel panel = panels[index];
-			tabbedPane.addTab(panel.getTitle(), null, panel, panel.getToolTipText());
-		}
+		for (OptionsPanel panel : panels) tabbedPane.addTab(panel.getTitle(), null, panel, panel.getToolTipText());
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(revert);
@@ -130,9 +126,7 @@ public class OptionsFrame extends LFrame {
 
 	@Override
 	public void setVisible(boolean value) {
-		if (value) {
-			windowManager.frameOpened(this);
-		}
+		if (value) windowManager.frameOpened(this);
 		super.setVisible(value);
 	}
 

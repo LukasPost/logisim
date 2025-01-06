@@ -14,7 +14,7 @@ class ComboOption {
 
 	ComboOption(AttributeOption value) {
 		this.value = value;
-		this.getter = null;
+		getter = null;
 	}
 
 	@Override

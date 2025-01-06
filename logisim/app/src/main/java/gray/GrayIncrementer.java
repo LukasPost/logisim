@@ -105,9 +105,9 @@ class GrayIncrementer extends InstanceFactory {
 		ct = (ct >> 4) ^ ct;
 		ct = (ct >> 2) ^ ct;
 		ct = (ct >> 1) ^ ct;
-		if ((ct & 1) == 0) { // if parity is even, flip 1's bit
-			x = x ^ 1;
-		} else { // else flip bit just above last 1
+		// if parity is even, flip 1's bit
+		if ((ct & 1) == 0) x = x ^ 1;
+		else { // else flip bit just above last 1
 			int y = x ^ (x & (x - 1)); // first compute the last 1
 			y = (y << 1) & bits.getMask();
 			x = (y == 0 ? 0 : x ^ y);

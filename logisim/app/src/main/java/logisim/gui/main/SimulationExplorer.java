@@ -26,7 +26,7 @@ class SimulationExplorer extends JPanel implements ProjectListener, MouseListene
 
 	SimulationExplorer(Project proj, MenuListener menu) {
 		super(new BorderLayout());
-		this.project = proj;
+		project = proj;
 
 		SimulationToolbarModel toolbarModel = new SimulationToolbarModel(proj, menu);
 		Toolbar toolbar = new Toolbar(toolbarModel);
@@ -56,9 +56,7 @@ class SimulationExplorer extends JPanel implements ProjectListener, MouseListene
 			}
 			model.setCurrentView(project.getCircuitState());
 			TreePath path = model.mapToPath(project.getCircuitState());
-			if (path != null) {
-				tree.scrollPathToVisible(path);
-			}
+			if (path != null) tree.scrollPathToVisible(path);
 		}
 	}
 
@@ -76,17 +74,14 @@ class SimulationExplorer extends JPanel implements ProjectListener, MouseListene
 
 	public void mousePressed(MouseEvent e) {
 		requestFocus();
-		checkForPopup(e);
+		checkForPopup();
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		checkForPopup(e);
+		checkForPopup();
 	}
 
-	private void checkForPopup(MouseEvent e) {
-		if (e.isPopupTrigger()) {
-			; // do nothing
-		}
+	private void checkForPopup() {
 	}
 
 	public void mouseClicked(MouseEvent e) {
@@ -94,11 +89,7 @@ class SimulationExplorer extends JPanel implements ProjectListener, MouseListene
 			TreePath path = tree.getPathForLocation(e.getX(), e.getY());
 			if (path != null) {
 				Object last = path.getLastPathComponent();
-				if (last instanceof SimulationTreeCircuitNode) {
-					SimulationTreeCircuitNode node;
-					node = (SimulationTreeCircuitNode) last;
-					project.setCircuitState(node.getCircuitState());
-				}
+				if (last instanceof SimulationTreeCircuitNode node) project.setCircuitState(node.getCircuitState());
 			}
 		}
 	}

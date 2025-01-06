@@ -19,10 +19,7 @@ public class TFlipFlop extends AbstractFlipFlop {
 	protected Value computeValue(Value[] inputs, Value curValue) {
 		if (curValue == Value.UNKNOWN)
 			curValue = Value.FALSE;
-		if (inputs[0] == Value.TRUE) {
-			return curValue.not();
-		} else {
-			return curValue;
-		}
+		if (inputs[0] == Value.TRUE) return curValue.not();
+		else return curValue;
 	}
 }

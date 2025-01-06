@@ -16,6 +16,7 @@ import logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import org.w3c.dom.Document;
@@ -28,7 +29,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
 	private EventSourceWeakSupport<AttributeListener> listeners;
 
 	public AbstractCanvasObject() {
-		listeners = new EventSourceWeakSupport<AttributeListener>();
+		listeners = new EventSourceWeakSupport<>();
 	}
 
 	public AttributeSet getAttributeSet() {
@@ -84,31 +85,26 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
 	}
 
 	public boolean overlaps(CanvasObject other) {
-		Bounds a = this.getBounds();
+		Bounds a = getBounds();
 		Bounds b = other.getBounds();
 		Bounds c = a.intersect(b);
 		Random rand = new Random();
-		if (c.getWidth() == 0 || c.getHeight() == 0) {
-			return false;
-		} else if (other instanceof AbstractCanvasObject) {
-			AbstractCanvasObject that = (AbstractCanvasObject) other;
-			for (int i = 0; i < OVERLAP_TRIES; i++) {
+		if (c.getWidth() == 0 || c.getHeight() == 0) return false;
+		else if (other instanceof AbstractCanvasObject that) {
+			for (int i = 0; i < OVERLAP_TRIES; i++)
 				if (i % 2 == 0) {
-					Location loc = this.getRandomPoint(c, rand);
-					if (loc != null && that.contains(loc, false))
-						return true;
-				} else {
-					Location loc = that.getRandomPoint(c, rand);
-					if (loc != null && this.contains(loc, false))
-						return true;
+					Location loc = getRandomPoint(c, rand);
+					if (loc != null && that.contains(loc, false)) return true;
 				}
-			}
+				else {
+					Location loc = that.getRandomPoint(c, rand);
+					if (loc != null && contains(loc, false)) return true;
+				}
 			return false;
 		} else {
 			for (int i = 0; i < OVERLAP_TRIES; i++) {
-				Location loc = this.getRandomPoint(c, rand);
-				if (loc != null && other.contains(loc, false))
-					return true;
+				Location loc = getRandomPoint(c, rand);
+				if (loc != null && other.contains(loc, false)) return true;
 			}
 			return false;
 		}
@@ -121,8 +117,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
 		int h = bds.getHeight();
 		for (int i = 0; i < GENERATE_RANDOM_TRIES; i++) {
 			Location loc = new Location(x + rand.nextInt(w), y + rand.nextInt(h));
-			if (contains(loc, false))
-				return loc;
+			if (contains(loc, false)) return loc;
 		}
 		return null;
 	}
@@ -144,7 +139,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
 	public CanvasObject clone() {
 		try {
 			AbstractCanvasObject ret = (AbstractCanvasObject) super.clone();
-			ret.listeners = new EventSourceWeakSupport<AttributeListener>();
+			ret.listeners = new EventSourceWeakSupport<>();
 			return ret;
 		}
 		catch (CloneNotSupportedException e) {
@@ -157,10 +152,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
 	}
 
 	public Attribute<?> getAttribute(String name) {
-		for (Attribute<?> attr : getAttributes()) {
-			if (attr.getName().equals(name))
-				return attr;
-		}
+		for (Attribute<?> attr : getAttributes()) if (attr.getName().equals(name)) return attr;
 		return null;
 	}
 
@@ -178,61 +170,49 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
 
 	public final <V> void setValue(Attribute<V> attr, V value) {
 		Object old = getValue(attr);
-		boolean same = old == null ? value == null : old.equals(value);
+		boolean same = Objects.equals(old, value);
 		if (!same) {
 			updateValue(attr, value);
 			AttributeEvent e = new AttributeEvent(this, attr, value);
-			for (AttributeListener listener : listeners) {
-				listener.attributeValueChanged(e);
-			}
+			for (AttributeListener listener : listeners) listener.attributeValueChanged(e);
 		}
 	}
 
 	protected void fireAttributeListChanged() {
 		AttributeEvent e = new AttributeEvent(this);
-		for (AttributeListener listener : listeners) {
-			listener.attributeListChanged(e);
-		}
+		for (AttributeListener listener : listeners) listener.attributeListChanged(e);
 	}
 
 	protected boolean setForStroke(Graphics g) {
 		List<Attribute<?>> attrs = getAttributes();
 		if (attrs.contains(DrawAttr.PAINT_TYPE)) {
 			Object value = getValue(DrawAttr.PAINT_TYPE);
-			if (value == DrawAttr.PAINT_FILL)
-				return false;
+			if (value == DrawAttr.PAINT_FILL) return false;
 		}
 
 		Integer width = getValue(DrawAttr.STROKE_WIDTH);
-		if (width != null && width.intValue() > 0) {
+		if (width != null && width > 0) {
 			Color color = getValue(DrawAttr.STROKE_COLOR);
-			if (color != null && color.getAlpha() == 0) {
-				return false;
-			} else {
-				GraphicsUtil.switchToWidth(g, width.intValue());
-				if (color != null)
-					g.setColor(color);
+			if (color != null && color.getAlpha() == 0) return false;
+			else {
+				GraphicsUtil.switchToWidth(g, width);
+				if (color != null) g.setColor(color);
 				return true;
 			}
-		} else {
-			return false;
-		}
+		} else return false;
 	}
 
 	protected boolean setForFill(Graphics g) {
 		List<Attribute<?>> attrs = getAttributes();
 		if (attrs.contains(DrawAttr.PAINT_TYPE)) {
 			Object value = getValue(DrawAttr.PAINT_TYPE);
-			if (value == DrawAttr.PAINT_STROKE)
-				return false;
+			if (value == DrawAttr.PAINT_STROKE) return false;
 		}
 
 		Color color = getValue(DrawAttr.FILL_COLOR);
-		if (color != null && color.getAlpha() == 0) {
-			return false;
-		} else {
-			if (color != null)
-				g.setColor(color);
+		if (color != null && color.getAlpha() == 0) return false;
+		else {
+			if (color != null) g.setColor(color);
 			return true;
 		}
 	}

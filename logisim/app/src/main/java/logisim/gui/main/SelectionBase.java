@@ -6,11 +6,11 @@ package logisim.gui.main;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import logisim.circuit.Circuit;
@@ -22,22 +22,23 @@ import logisim.comp.EndData;
 import logisim.data.AttributeSet;
 import logisim.data.Bounds;
 import logisim.data.Location;
+import logisim.gui.main.Selection.Event;
+import logisim.gui.main.Selection.Listener;
 import logisim.proj.Project;
 import logisim.util.CollectionUtil;
 
 class SelectionBase {
-	static final Set<Component> NO_COMPONENTS = Collections.emptySet();
 
 	Project proj;
-	private ArrayList<Selection.Listener> listeners = new ArrayList<Selection.Listener>();
+	private ArrayList<Listener> listeners = new ArrayList<>();
 
-	final HashSet<Component> selected = new HashSet<Component>(); // of selected Components in circuit
-	final HashSet<Component> lifted = new HashSet<Component>(); // of selected Components removed
-	final HashSet<Component> suppressHandles = new HashSet<Component>(); // of Components
+	final HashSet<Component> selected = new HashSet<>(); // of selected Components in circuit
+	final HashSet<Component> lifted = new HashSet<>(); // of selected Components removed
+	final HashSet<Component> suppressHandles = new HashSet<>(); // of Components
 	final Set<Component> unionSet = CollectionUtil.createUnmodifiableSetUnion(selected, lifted);
 
 	private Bounds bounds = Bounds.EMPTY_BOUNDS;
-	private boolean shouldSnap = false;
+	private boolean shouldSnap;
 
 	public SelectionBase(Project proj) {
 		this.proj = proj;
@@ -46,30 +47,26 @@ class SelectionBase {
 	//
 	// listener methods
 	//
-	public void addListener(Selection.Listener l) {
+	public void addListener(Listener l) {
 		listeners.add(l);
 	}
 
-	public void removeListener(Selection.Listener l) {
+	public void removeListener(Listener l) {
 		listeners.remove(l);
 	}
 
 	public void fireSelectionChanged() {
 		bounds = null;
 		computeShouldSnap();
-		Selection.Event e = new Selection.Event(this);
-		for (Selection.Listener l : listeners) {
-			l.selectionChanged(e);
-		}
+		Event e = new Event(this);
+		for (Listener l : listeners) l.selectionChanged(e);
 	}
 
 	//
 	// query methods
 	//
 	public Bounds getBounds() {
-		if (bounds == null) {
-			bounds = computeBounds(unionSet);
-		}
+		if (bounds == null) bounds = computeBounds(unionSet);
 		return bounds;
 	}
 
@@ -82,9 +79,7 @@ class SelectionBase {
 				Bounds bds = comp.getBounds(g);
 				bounds = bounds.add(bds);
 			}
-		} else {
-			bounds = Bounds.EMPTY_BOUNDS;
-		}
+		} else bounds = Bounds.EMPTY_BOUNDS;
 		return bounds;
 	}
 
@@ -100,28 +95,21 @@ class SelectionBase {
 	// action methods
 	//
 	public void add(Component comp) {
-		if (selected.add(comp)) {
-			fireSelectionChanged();
-		}
+		if (selected.add(comp)) fireSelectionChanged();
 	}
 
 	public void addAll(Collection<? extends Component> comps) {
-		if (selected.addAll(comps)) {
-			fireSelectionChanged();
-		}
+		if (selected.addAll(comps)) fireSelectionChanged();
 	}
 
 	// removes from selection - NOT from circuit
 	void remove(CircuitMutation xn, Component comp) {
 		boolean removed = selected.remove(comp);
-		if (lifted.contains(comp)) {
-			if (xn == null) {
-				throw new IllegalStateException("cannot remove");
-			} else {
-				lifted.remove(comp);
-				removed = true;
-				xn.add(comp);
-			}
+		if (lifted.contains(comp)) if (xn == null) throw new IllegalStateException("cannot remove");
+		else {
+			lifted.remove(comp);
+			removed = true;
+			xn.add(comp);
 		}
 
 		if (removed) {
@@ -139,18 +127,12 @@ class SelectionBase {
 		}
 	}
 
-	void clear(CircuitMutation xn) {
-		clear(xn, true);
-	}
-
 	// removes all from selection - NOT from circuit
-	void clear(CircuitMutation xn, boolean dropLifted) {
+	void clear(CircuitMutation xn) {
 		if (selected.isEmpty() && lifted.isEmpty())
 			return;
 
-		if (dropLifted && !lifted.isEmpty()) {
-			xn.addAll(lifted);
-		}
+		if (!lifted.isEmpty()) xn.addAll(lifted);
 
 		selected.clear();
 		lifted.clear();
@@ -167,7 +149,7 @@ class SelectionBase {
 	}
 
 	void duplicateHelper(CircuitMutation xn) {
-		HashSet<Component> oldSelected = new HashSet<Component>(selected);
+		HashSet<Component> oldSelected = new HashSet<>(selected);
 		oldSelected.addAll(lifted);
 		pasteHelper(xn, oldSelected);
 	}
@@ -181,9 +163,7 @@ class SelectionBase {
 	}
 
 	void deleteAllHelper(CircuitMutation xn) {
-		for (Component comp : selected) {
-			xn.remove(comp);
-		}
+		for (Component comp : selected) xn.remove(comp);
 		selected.clear();
 		lifted.clear();
 		fireSelectionChanged();
@@ -191,13 +171,11 @@ class SelectionBase {
 
 	void translateHelper(CircuitMutation xn, int dx, int dy) {
 		Map<Component, Component> selectedAfter = copyComponents(selected, dx, dy);
-		for (Map.Entry<Component, Component> entry : selectedAfter.entrySet()) {
-			xn.replace(entry.getKey(), entry.getValue());
-		}
+		for (Entry<Component, Component> entry : selectedAfter.entrySet()) xn.replace(entry.getKey(), entry.getValue());
 
 		Map<Component, Component> liftedAfter = copyComponents(lifted, dx, dy);
 		lifted.clear();
-		for (Map.Entry<Component, Component> entry : liftedAfter.entrySet()) {
+		for (Entry<Component, Component> entry : liftedAfter.entrySet()) {
 			xn.add(entry.getValue());
 			selected.add(entry.getValue());
 		}
@@ -209,54 +187,46 @@ class SelectionBase {
 	//
 	private void computeShouldSnap() {
 		shouldSnap = false;
-		for (Component comp : unionSet) {
+		for (Component comp : unionSet)
 			if (shouldSnapComponent(comp)) {
 				shouldSnap = true;
 				return;
 			}
-		}
 	}
 
 	private static boolean shouldSnapComponent(Component comp) {
 		Boolean shouldSnapValue = (Boolean) comp.getFactory().getFeature(ComponentFactory.SHOULD_SNAP,
 				comp.getAttributeSet());
-		return shouldSnapValue == null ? true : shouldSnapValue.booleanValue();
+		return shouldSnapValue == null || shouldSnapValue;
 	}
 
 	private boolean hasConflictTranslated(Collection<Component> components, int dx, int dy, boolean selfConflicts) {
 		Circuit circuit = proj.getCurrentCircuit();
 		if (circuit == null)
 			return false;
-		for (Component comp : components) {
+		for (Component comp : components)
 			if (!(comp instanceof Wire)) {
-				for (EndData endData : comp.getEnds()) {
+				for (EndData endData : comp.getEnds())
 					if (endData != null && endData.isExclusive()) {
 						Location endLoc = endData.getLocation().translate(dx, dy);
 						Component conflict = circuit.getExclusive(endLoc);
-						if (conflict != null) {
-							if (selfConflicts || !components.contains(conflict))
-								return true;
-						}
+						if (conflict != null) if (selfConflicts || !components.contains(conflict))
+							return true;
 					}
-				}
 				Location newLoc = comp.getLocation().translate(dx, dy);
 				Bounds newBounds = comp.getBounds().translate(dx, dy);
 				for (Component comp2 : circuit.getAllContaining(newLoc)) {
 					Bounds bds = comp2.getBounds();
-					if (bds.equals(newBounds)) {
-						if (selfConflicts || !components.contains(comp2))
-							return true;
-					}
+					if (bds.equals(newBounds)) if (selfConflicts || !components.contains(comp2))
+						return true;
 				}
 			}
-		}
 		return false;
 	}
 
 	private static Bounds computeBounds(Collection<Component> components) {
-		if (components.isEmpty()) {
-			return Bounds.EMPTY_BOUNDS;
-		} else {
+		if (components.isEmpty()) return Bounds.EMPTY_BOUNDS;
+		else {
 			Iterator<Component> it = components.iterator();
 			Bounds ret = it.next().getBounds();
 			while (it.hasNext()) {
@@ -286,9 +256,9 @@ class SelectionBase {
 				int offs = index - (side - 2) * (side - 2);
 				dx = side / 2;
 				dy = side / 2;
-				if (offs < side - 1) { // top edge of square
-					dx -= offs;
-				} else if (offs < 2 * (side - 1)) { // left edge
+				// top edge of square
+				if (offs < side - 1) dx -= offs;
+				else if (offs < 2 * (side - 1)) { // left edge
 					offs -= side - 1;
 					dx = -dx;
 					dy -= offs;
@@ -304,21 +274,20 @@ class SelectionBase {
 				dy *= 10;
 			}
 
-			if (bds.getX() + dx >= 0 && bds.getY() + dy >= 0 && !hasConflictTranslated(components, dx, dy, true)) {
+			if (bds.getX() + dx >= 0 && bds.getY() + dy >= 0 && !hasConflictTranslated(components, dx, dy, true))
 				return copyComponents(components, dx, dy);
-			}
 		}
 	}
 
 	private HashMap<Component, Component> copyComponents(Collection<Component> components, int dx, int dy) {
-		HashMap<Component, Component> ret = new HashMap<Component, Component>();
+		HashMap<Component, Component> ret = new HashMap<>();
 		for (Component comp : components) {
 			Location oldLoc = comp.getLocation();
 			AttributeSet attrs = (AttributeSet) comp.getAttributeSet().clone();
-			int newX = oldLoc.getX() + dx;
-			int newY = oldLoc.getY() + dy;
+			int newX = oldLoc.x() + dx;
+			int newY = oldLoc.y() + dy;
 			Object snap = comp.getFactory().getFeature(ComponentFactory.SHOULD_SNAP, attrs);
-			if (snap == null || ((Boolean) snap).booleanValue()) {
+			if (snap == null || (Boolean) snap) {
 				newX = Canvas.snapXToGrid(newX);
 				newY = Canvas.snapYToGrid(newY);
 			}

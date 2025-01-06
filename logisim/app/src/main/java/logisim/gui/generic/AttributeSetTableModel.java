@@ -30,15 +30,11 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 
 		public String getValue() {
 			Object value = attrs.getValue(attr);
-			if (value == null) {
-				return "";
-			} else {
-				try {
-					return attr.toDisplayString(value);
-				}
-				catch (Exception e) {
-					return "???";
-				}
+			if (value == null) return "";
+			else try {
+				return attr.toDisplayString(value);
+			} catch (Exception e) {
+				return "???";
 			}
 		}
 
@@ -57,9 +53,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 				return;
 
 			try {
-				if (value instanceof String) {
-					value = attr.parse((String) value);
-				}
+				if (value instanceof String) value = attr.parse((String) value);
 				setValueRequested(attr, value);
 			}
 			catch (ClassCastException e) {
@@ -69,7 +63,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 			catch (NumberFormatException e) {
 				String msg = Strings.get("attributeChangeInvalidError");
 				String emsg = e.getMessage();
-				if (emsg != null && emsg.length() > 0)
+				if (emsg != null && !emsg.isEmpty())
 					msg += ": " + emsg;
 				msg += ".";
 				throw new AttrTableSetException(msg);
@@ -84,15 +78,13 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 
 	public AttributeSetTableModel(AttributeSet attrs) {
 		this.attrs = attrs;
-		this.listeners = new ArrayList<AttrTableModelListener>();
-		this.rowMap = new HashMap<Attribute<?>, AttrRow>();
-		this.rows = new ArrayList<AttrRow>();
-		if (attrs != null) {
-			for (Attribute<?> attr : attrs.getAttributes()) {
-				AttrRow row = new AttrRow(attr);
-				rowMap.put(attr, row);
-				rows.add(row);
-			}
+		listeners = new ArrayList<>();
+		rowMap = new HashMap<>();
+		rows = new ArrayList<>();
+		if (attrs != null) for (Attribute<?> attr : attrs.getAttributes()) {
+			AttrRow row = new AttrRow(attr);
+			rowMap.put(attr, row);
+			rows.add(row);
 		}
 	}
 
@@ -104,50 +96,36 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 
 	public void setAttributeSet(AttributeSet value) {
 		if (attrs != value) {
-			if (!listeners.isEmpty()) {
-				attrs.removeAttributeListener(this);
-			}
+			if (!listeners.isEmpty()) attrs.removeAttributeListener(this);
 			attrs = value;
-			if (!listeners.isEmpty()) {
-				attrs.addAttributeListener(this);
-			}
+			if (!listeners.isEmpty()) attrs.addAttributeListener(this);
 			attributeListChanged(null);
 		}
 	}
 
 	public void addAttrTableModelListener(AttrTableModelListener listener) {
-		if (listeners.isEmpty() && attrs != null) {
-			attrs.addAttributeListener(this);
-		}
+		if (listeners.isEmpty() && attrs != null) attrs.addAttributeListener(this);
 		listeners.add(listener);
 	}
 
 	public void removeAttrTableModelListener(AttrTableModelListener listener) {
 		listeners.remove(listener);
-		if (listeners.isEmpty() && attrs != null) {
-			attrs.removeAttributeListener(this);
-		}
+		if (listeners.isEmpty() && attrs != null) attrs.removeAttributeListener(this);
 	}
 
 	protected void fireTitleChanged() {
 		AttrTableModelEvent event = new AttrTableModelEvent(this);
-		for (AttrTableModelListener l : listeners) {
-			l.attrTitleChanged(event);
-		}
+		for (AttrTableModelListener l : listeners) l.attrTitleChanged(event);
 	}
 
 	protected void fireStructureChanged() {
 		AttrTableModelEvent event = new AttrTableModelEvent(this);
-		for (AttrTableModelListener l : listeners) {
-			l.attrStructureChanged(event);
-		}
+		for (AttrTableModelListener l : listeners) l.attrStructureChanged(event);
 	}
 
 	protected void fireValueChanged(int index) {
 		AttrTableModelEvent event = new AttrTableModelEvent(this, index);
-		for (AttrTableModelListener l : listeners) {
-			l.attrValueChanged(event);
-		}
+		for (AttrTableModelListener l : listeners) l.attrValueChanged(event);
 	}
 
 	public int getRowCount() {
@@ -179,22 +157,18 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 			return;
 
 		// compute the new list of rows, possible adding into hash map
-		ArrayList<AttrRow> newRows = new ArrayList<AttrRow>();
-		HashSet<Attribute<?>> missing = new HashSet<Attribute<?>>(rowMap.keySet());
+		ArrayList<AttrRow> newRows = new ArrayList<>();
+		HashSet<Attribute<?>> missing = new HashSet<>(rowMap.keySet());
 		for (Attribute<?> attr : attrs.getAttributes()) {
 			AttrRow row = rowMap.get(attr);
 			if (row == null) {
 				row = new AttrRow(attr);
 				rowMap.put(attr, row);
-			} else {
-				missing.remove(attr);
-			}
+			} else missing.remove(attr);
 			newRows.add(row);
 		}
 		rows = newRows;
-		for (Attribute<?> attr : missing) {
-			rowMap.remove(attr);
-		}
+		for (Attribute<?> attr : missing) rowMap.remove(attr);
 
 		fireStructureChanged();
 	}
@@ -204,9 +178,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 		AttrTableModelRow row = rowMap.get(attr);
 		if (row != null) {
 			int index = rows.indexOf(row);
-			if (index >= 0) {
-				fireValueChanged(index);
-			}
+			if (index >= 0) fireValueChanged(index);
 		}
 	}
 

@@ -51,8 +51,7 @@ class ToolbarList extends JList {
 		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 			Component ret;
 			Icon icon;
-			if (value instanceof Tool) {
-				Tool t = (Tool) value;
+			if (value instanceof Tool t) {
 				ret = super.getListCellRendererComponent(list, t.getDisplayName(), index, isSelected, cellHasFocus);
 				icon = new ToolIcon(t);
 			} else if (value == null) {
@@ -62,9 +61,7 @@ class ToolbarList extends JList {
 				ret = super.getListCellRendererComponent(list, value.toString(), index, isSelected, cellHasFocus);
 				icon = null;
 			}
-			if (ret instanceof JLabel) {
-				((JLabel) ret).setIcon(icon);
-			}
+			if (ret instanceof JLabel) ((JLabel) ret).setIcon(icon);
 			return ret;
 		}
 	}
@@ -91,9 +88,7 @@ class ToolbarList extends JList {
 		}
 
 		public void propertyChange(PropertyChangeEvent event) {
-			if (AppPreferences.GATE_SHAPE.isSource(event)) {
-				repaint();
-			}
+			if (AppPreferences.GATE_SHAPE.isSource(event)) repaint();
 		}
 	}
 
@@ -102,7 +97,7 @@ class ToolbarList extends JList {
 
 	public ToolbarList(ToolbarData base) {
 		this.base = base;
-		this.model = new Model();
+		model = new Model();
 
 		setModel(model);
 		setCellRenderer(new ListRenderer());

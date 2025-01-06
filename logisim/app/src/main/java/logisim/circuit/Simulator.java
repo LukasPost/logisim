@@ -21,17 +21,13 @@ public class Simulator {
 	 */
 
 	class PropagationManager extends Thread {
-		private Propagator propagator = null;
+		private Propagator propagator;
 		private PropagationPoints stepPoints = new PropagationPoints();
-		private volatile int ticksRequested = 0;
-		private volatile int stepsRequested = 0;
-		private volatile boolean resetRequested = false;
-		private volatile boolean propagateRequested = false;
-		private volatile boolean complete = false;
-
-		// These variables apply only if PRINT_TICK_RATE is set
-		int tickRateTicks = 0;
-		long tickRateStart = System.currentTimeMillis();
+		private volatile int ticksRequested;
+		private volatile int stepsRequested;
+		private volatile boolean resetRequested;
+		private volatile boolean propagateRequested;
+		private volatile boolean complete;
 
 		public Propagator getPropagator() {
 			return propagator;
@@ -56,9 +52,7 @@ public class Simulator {
 		}
 
 		public synchronized void requestTick() {
-			if (ticksRequested < 16) {
-				ticksRequested++;
-			}
+			if (ticksRequested < 16) ticksRequested++;
 			notifyAll();
 		}
 
@@ -72,12 +66,9 @@ public class Simulator {
 			while (!complete) {
 				synchronized (this) {
 					while (!complete && !propagateRequested && !resetRequested && ticksRequested == 0
-							&& stepsRequested == 0) {
-						try {
-							wait();
-						}
-						catch (InterruptedException e) {
-						}
+							&& stepsRequested == 0) try {
+						wait();
+					} catch (InterruptedException e) {
 					}
 				}
 
@@ -86,7 +77,9 @@ public class Simulator {
 					if (propagator != null)
 						propagator.reset();
 					firePropagationCompleted();
-					propagateRequested |= isRunning;
+					synchronized (this) {
+						propagateRequested |= isRunning;
+					}
 				}
 
 				if (propagateRequested || ticksRequested > 0 || stepsRequested > 0) {
@@ -95,9 +88,8 @@ public class Simulator {
 					if (isRunning) {
 						stepPoints.clear();
 						stepsRequested = 0;
-						if (propagator == null) {
-							ticksRequested = 0;
-						} else {
+						if (propagator == null) ticksRequested = 0;
+						else {
 							ticked = ticksRequested > 0;
 							if (ticked)
 								doTick();
@@ -119,25 +111,22 @@ public class Simulator {
 								propagateRequested = false;
 							}
 						}
-					} else {
-						if (stepsRequested > 0) {
-							if (ticksRequested > 0) {
-								ticksRequested = 1;
-								doTick();
-							}
+					} else if (stepsRequested > 0) {
+						if (ticksRequested > 0) {
+							ticksRequested = 1;
+							doTick();
+						}
 
-							synchronized (this) {
-								stepsRequested--;
-							}
-							exceptionEncountered = false;
-							try {
-								stepPoints.clear();
-								propagator.step(stepPoints);
-							}
-							catch (Throwable thr) {
-								thr.printStackTrace();
-								exceptionEncountered = true;
-							}
+						synchronized (this) {
+							stepsRequested--;
+						}
+						exceptionEncountered = false;
+						try {
+							stepPoints.clear();
+							propagator.step(stepPoints);
+						} catch (Throwable thr) {
+							thr.printStackTrace();
+							exceptionEncountered = true;
 						}
 					}
 					if (ticked)
@@ -156,13 +145,13 @@ public class Simulator {
 	}
 
 	private boolean isRunning = true;
-	private boolean isTicking = false;
-	private boolean exceptionEncountered = false;
-	private double tickFrequency = 1.0;
+	private boolean isTicking;
+	private boolean exceptionEncountered;
+	private double tickFrequency;
 
-	private PropagationManager manager;
+	private final PropagationManager manager;
 	private SimulatorTicker ticker;
-	private ArrayList<SimulatorListener> listeners = new ArrayList<SimulatorListener>();
+	private ArrayList<SimulatorListener> listeners = new ArrayList<>();
 
 	public Simulator() {
 		manager = new PropagationManager();
@@ -171,15 +160,13 @@ public class Simulator {
 			manager.setPriority(manager.getPriority() - 1);
 			ticker.setPriority(ticker.getPriority() - 1);
 		}
-		catch (SecurityException e) {
-		}
-		catch (IllegalArgumentException e) {
+		catch (SecurityException | IllegalArgumentException e) {
 		}
 		manager.start();
 		ticker.start();
 
 		tickFrequency = 0.0;
-		setTickFrequency(AppPreferences.TICK_FREQUENCY.get().doubleValue());
+		setTickFrequency(AppPreferences.TICK_FREQUENCY.get());
 	}
 
 	public void shutDown() {
@@ -259,9 +246,8 @@ public class Simulator {
 		if (tickFrequency != freq) {
 			int millis = (int) Math.round(1000 / freq);
 			int ticks;
-			if (millis > 0) {
-				ticks = 1;
-			} else {
+			if (millis > 0) ticks = 1;
+			else {
 				millis = 1;
 				ticks = (int) Math.round(freq / 1000);
 			}
@@ -292,22 +278,16 @@ public class Simulator {
 
 	void firePropagationCompleted() {
 		SimulatorEvent e = new SimulatorEvent(this);
-		for (SimulatorListener l : new ArrayList<SimulatorListener>(listeners)) {
-			l.propagationCompleted(e);
-		}
+		for (SimulatorListener l : new ArrayList<>(listeners)) l.propagationCompleted(e);
 	}
 
 	void fireTickCompleted() {
 		SimulatorEvent e = new SimulatorEvent(this);
-		for (SimulatorListener l : new ArrayList<SimulatorListener>(listeners)) {
-			l.tickCompleted(e);
-		}
+		for (SimulatorListener l : new ArrayList<>(listeners)) l.tickCompleted(e);
 	}
 
 	void fireSimulatorStateChanged() {
 		SimulatorEvent e = new SimulatorEvent(this);
-		for (SimulatorListener l : new ArrayList<SimulatorListener>(listeners)) {
-			l.simulatorStateChanged(e);
-		}
+		for (SimulatorListener l : new ArrayList<>(listeners)) l.simulatorStateChanged(e);
 	}
 }

@@ -18,13 +18,13 @@ public class ModelEditTextAction extends ModelAction {
 	public ModelEditTextAction(CanvasModel model, Text text, String newValue) {
 		super(model);
 		this.text = text;
-		this.oldValue = text.getText();
+		oldValue = text.getText();
 		this.newValue = newValue;
 	}
 
 	@Override
 	public Collection<CanvasObject> getObjects() {
-		return Collections.singleton((CanvasObject) text);
+		return Collections.singleton(text);
 	}
 
 	@Override

@@ -16,12 +16,12 @@ abstract class OptionsPanel extends JPanel {
 
 	public OptionsPanel(OptionsFrame frame) {
 		super();
-		this.optionsFrame = frame;
+		optionsFrame = frame;
 	}
 
 	public OptionsPanel(OptionsFrame frame, LayoutManager manager) {
 		super(manager);
-		this.optionsFrame = frame;
+		optionsFrame = frame;
 	}
 
 	public abstract String getTitle();

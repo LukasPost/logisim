@@ -13,11 +13,12 @@
 
 package com.bric.swing;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.Image;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
 
 class ImageTransferable implements Transferable {
 	Image img;
@@ -26,8 +27,8 @@ class ImageTransferable implements Transferable {
 		img = i;
 	}
 
-	public Object getTransferData(DataFlavor f) throws UnsupportedFlavorException, IOException {
-		if (f.equals(DataFlavor.imageFlavor) == false)
+	public @NotNull Object getTransferData(DataFlavor f) throws UnsupportedFlavorException {
+		if (!f.equals(DataFlavor.imageFlavor))
 			throw new UnsupportedFlavorException(f);
 		return img;
 	}

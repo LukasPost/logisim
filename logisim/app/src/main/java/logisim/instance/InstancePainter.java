@@ -3,6 +3,7 @@
 
 package logisim.instance;
 
+import java.awt.Component;
 import java.awt.Graphics;
 
 import logisim.circuit.Circuit;
@@ -25,15 +26,15 @@ public class InstancePainter implements InstanceState {
 
 	public InstancePainter(ComponentDrawContext context, InstanceComponent instance) {
 		this.context = context;
-		this.comp = instance;
+		comp = instance;
 	}
 
 	void setInstance(InstanceComponent value) {
-		this.comp = value;
+		comp = value;
 	}
 
 	void setFactory(InstanceFactory factory, AttributeSet attrs) {
-		this.comp = null;
+		comp = null;
 		this.factory = factory;
 		this.attrs = attrs;
 	}
@@ -61,7 +62,7 @@ public class InstancePainter implements InstanceState {
 		return context.shouldDrawColor();
 	}
 
-	public java.awt.Component getDestination() {
+	public Component getDestination() {
 		return context.getDestination();
 	}
 
@@ -95,11 +96,8 @@ public class InstancePainter implements InstanceState {
 	public Value getPort(int portIndex) {
 		InstanceComponent c = comp;
 		CircuitState s = context.getCircuitState();
-		if (c != null && s != null) {
-			return s.getValue(c.getEnd(portIndex).getLocation());
-		} else {
-			return Value.UNKNOWN;
-		}
+		if (c != null && s != null) return s.getValue(c.getEnd(portIndex).getLocation());
+		else return Value.UNKNOWN;
 	}
 
 	public void setPort(int portIndex, Value value, int delay) {
@@ -108,20 +106,14 @@ public class InstancePainter implements InstanceState {
 
 	public InstanceData getData() {
 		CircuitState circState = context.getCircuitState();
-		if (circState == null || comp == null) {
-			throw new UnsupportedOperationException("setData on InstancePainter");
-		} else {
-			return (InstanceData) circState.getData(comp);
-		}
+		if (circState == null || comp == null) throw new UnsupportedOperationException("setData on InstancePainter");
+		else return (InstanceData) circState.getData(comp);
 	}
 
 	public void setData(InstanceData value) {
 		CircuitState circState = context.getCircuitState();
-		if (circState == null || comp == null) {
-			throw new UnsupportedOperationException("setData on InstancePainter");
-		} else {
-			circState.setData(comp, value);
-		}
+		if (circState == null || comp == null) throw new UnsupportedOperationException("setData on InstancePainter");
+		else circState.setData(comp, value);
 	}
 
 	//
@@ -145,11 +137,10 @@ public class InstancePainter implements InstanceState {
 
 	public Bounds getOffsetBounds() {
 		InstanceComponent c = comp;
-		if (c == null) {
-			return factory.getOffsetBounds(attrs);
-		} else {
+		if (c == null) return factory.getOffsetBounds(attrs);
+		else {
 			Location loc = c.getLocation();
-			return c.getBounds().translate(-loc.getX(), -loc.getY());
+			return c.getBounds().translate(-loc.x(), -loc.y());
 		}
 	}
 
@@ -221,8 +212,6 @@ public class InstancePainter implements InstanceState {
 	}
 
 	public void drawLabel() {
-		if (comp != null) {
-			comp.drawLabel(context);
-		}
+		if (comp != null) comp.drawLabel(context);
 	}
 }

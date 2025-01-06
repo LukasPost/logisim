@@ -35,9 +35,8 @@ public class CircuitPins {
 
 		public void attributeValueChanged(AttributeEvent e) {
 			Attribute<?> attr = e.getAttribute();
-			if (attr == StdAttr.FACING || attr == StdAttr.LABEL || attr == Pin.ATTR_TYPE) {
+			if (attr == StdAttr.FACING || attr == StdAttr.LABEL || attr == Pin.ATTR_TYPE)
 				appearanceManager.updatePorts();
-			}
 		}
 	}
 
@@ -48,15 +47,15 @@ public class CircuitPins {
 	CircuitPins(PortManager appearanceManager) {
 		this.appearanceManager = appearanceManager;
 		myComponentListener = new MyComponentListener();
-		pins = new HashSet<Instance>();
+		pins = new HashSet<>();
 	}
 
 	public void transactionCompleted(ReplacementMap repl) {
 		// determine the changes
-		Set<Instance> adds = new HashSet<Instance>();
-		Set<Instance> removes = new HashSet<Instance>();
-		Map<Instance, Instance> replaces = new HashMap<Instance, Instance>();
-		for (Component comp : repl.getAdditions()) {
+		Set<Instance> adds = new HashSet<>();
+		Set<Instance> removes = new HashSet<>();
+		Map<Instance, Instance> replaces = new HashMap<>();
+		for (Component comp : repl.getAdditions())
 			if (comp.getFactory() instanceof Pin) {
 				Instance in = Instance.getInstanceFor(comp);
 				boolean added = pins.add(in);
@@ -66,8 +65,7 @@ public class CircuitPins {
 					adds.add(in);
 				}
 			}
-		}
-		for (Component comp : repl.getRemovals()) {
+		for (Component comp : repl.getRemovals())
 			if (comp.getFactory() instanceof Pin) {
 				Instance in = Instance.getInstanceFor(comp);
 				boolean removed = pins.remove(in);
@@ -75,9 +73,8 @@ public class CircuitPins {
 					comp.removeComponentListener(myComponentListener);
 					in.getAttributeSet().removeAttributeListener(myComponentListener);
 					Collection<Component> rs = repl.getComponentsReplacing(comp);
-					if (rs.isEmpty()) {
-						removes.add(in);
-					} else {
+					if (rs.isEmpty()) removes.add(in);
+					else {
 						Component r = rs.iterator().next();
 						Instance rin = Instance.getInstanceFor(r);
 						adds.remove(rin);
@@ -85,12 +82,11 @@ public class CircuitPins {
 					}
 				}
 			}
-		}
 
 		appearanceManager.updatePorts(adds, removes, replaces, getPins());
 	}
 
 	public Collection<Instance> getPins() {
-		return new ArrayList<Instance>(pins);
+		return new ArrayList<>(pins);
 	}
 }

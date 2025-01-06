@@ -8,7 +8,7 @@ import logisim.comp.ComponentUserEvent;
 import logisim.proj.Action;
 
 public interface TextEditable {
-	public Caret getTextCaret(ComponentUserEvent event);
+	Caret getTextCaret(ComponentUserEvent event);
 
-	public Action getCommitAction(Circuit circuit, String oldText, String newText);
+	Action getCommitAction(Circuit circuit, String oldText, String newText);
 }

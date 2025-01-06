@@ -45,7 +45,7 @@ class OpenRecent extends JMenu implements PropertyChangeListener {
 
 	OpenRecent(LogisimMenuBar menubar) {
 		this.menubar = menubar;
-		this.recentItems = new ArrayList<RecentItem>();
+		recentItems = new ArrayList<>();
 		AppPreferences.addPropertyChangeListener(AppPreferences.RECENT_PROJECTS, this);
 		renewItems();
 	}
@@ -58,23 +58,15 @@ class OpenRecent extends JMenu implements PropertyChangeListener {
 		recentItems.clear();
 
 		List<File> files = AppPreferences.getRecentFiles();
-		if (files.isEmpty()) {
-			recentItems.add(new RecentItem(null));
-		} else {
-			for (File file : files) {
-				recentItems.add(new RecentItem(file));
-			}
-		}
+		if (files.isEmpty()) recentItems.add(new RecentItem(null));
+		else for (File file : files) recentItems.add(new RecentItem(file));
 
-		for (RecentItem item : recentItems) {
-			add(item);
-		}
+		for (RecentItem item : recentItems) add(item);
 	}
 
 	private static String getFileText(File file) {
-		if (file == null) {
-			return Strings.get("fileOpenRecentNoChoices");
-		} else {
+		if (file == null) return Strings.get("fileOpenRecentNoChoices");
+		else {
 			String ret;
 			try {
 				ret = file.getCanonicalPath();
@@ -82,14 +74,11 @@ class OpenRecent extends JMenu implements PropertyChangeListener {
 			catch (IOException e) {
 				ret = file.toString();
 			}
-			if (ret.length() <= MAX_ITEM_LENGTH) {
-				return ret;
-			} else {
+			if (ret.length() <= MAX_ITEM_LENGTH) return ret;
+			else {
 				ret = ret.substring(ret.length() - MAX_ITEM_LENGTH + 3);
 				int splitLoc = ret.indexOf(File.separatorChar);
-				if (splitLoc >= 0) {
-					ret = ret.substring(splitLoc);
-				}
+				if (splitLoc >= 0) ret = ret.substring(splitLoc);
 				return "..." + ret;
 			}
 		}
@@ -97,16 +86,10 @@ class OpenRecent extends JMenu implements PropertyChangeListener {
 
 	void localeChanged() {
 		setText(Strings.get("fileOpenRecentItem"));
-		for (RecentItem item : recentItems) {
-			if (item.file == null) {
-				item.setText(Strings.get("fileOpenRecentNoChoices"));
-			}
-		}
+		for (RecentItem item : recentItems) if (item.file == null) item.setText(Strings.get("fileOpenRecentNoChoices"));
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getPropertyName().equals(AppPreferences.RECENT_PROJECTS)) {
-			renewItems();
-		}
+		if (event.getPropertyName().equals(AppPreferences.RECENT_PROJECTS)) renewItems();
 	}
 }

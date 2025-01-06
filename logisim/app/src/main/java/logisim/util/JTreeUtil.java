@@ -3,6 +3,8 @@
 
 package logisim.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.Insets;
@@ -46,7 +48,7 @@ import javax.swing.tree.TreePath;
  *
  * In the implementation I used DnD version of Java 1.3 because in 1.4 the DnD is too restrictive :
  * you can't do what you want (displaying the image of the node while dragging, changing the cursor
- * according to where you are dragging, etc...). In 1.4, the DnD is based on the 1.3 version but
+ * according to where you are dragging, etc...). In 1.4, the DnD is based on the 1.3 version, but
  * it is too encapsulated.
  */
 
@@ -55,7 +57,7 @@ public class JTreeUtil {
 	private static final DataFlavor NODE_FLAVOR = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType, "Node");
 
 	private static Object draggedNode;
-	private static BufferedImage image = null; // buff image
+	private static BufferedImage image; // buff image
 
 	private static class TransferableNode implements Transferable {
 		private Object node;
@@ -65,12 +67,9 @@ public class JTreeUtil {
 			node = nd;
 		}
 
-		public synchronized Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
-			if (flavor == NODE_FLAVOR) {
-				return node;
-			} else {
-				throw new UnsupportedFlavorException(flavor);
-			}
+		public synchronized @NotNull Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
+			if (flavor == NODE_FLAVOR) return node;
+			else throw new UnsupportedFlavorException(flavor);
 		}
 
 		public DataFlavor[] getTransferDataFlavors() {
@@ -113,41 +112,26 @@ public class JTreeUtil {
 
 		public final void dragEnter(DragSourceDragEvent dsde) {
 			int action = dsde.getDropAction();
-			if (action == DnDConstants.ACTION_COPY) {
-				dsde.getDragSourceContext().setCursor(DragSource.DefaultCopyDrop);
-			} else {
-				if (action == DnDConstants.ACTION_MOVE) {
-					dsde.getDragSourceContext().setCursor(DragSource.DefaultMoveDrop);
-				} else {
-					dsde.getDragSourceContext().setCursor(DragSource.DefaultMoveNoDrop);
-				}
-			}
+			if (action == DnDConstants.ACTION_COPY) dsde.getDragSourceContext().setCursor(DragSource.DefaultCopyDrop);
+			else if (action == DnDConstants.ACTION_MOVE)
+				dsde.getDragSourceContext().setCursor(DragSource.DefaultMoveDrop);
+			else dsde.getDragSourceContext().setCursor(DragSource.DefaultMoveNoDrop);
 		}
 
 		public final void dragOver(DragSourceDragEvent dsde) {
 			int action = dsde.getDropAction();
-			if (action == DnDConstants.ACTION_COPY) {
-				dsde.getDragSourceContext().setCursor(DragSource.DefaultCopyDrop);
-			} else {
-				if (action == DnDConstants.ACTION_MOVE) {
-					dsde.getDragSourceContext().setCursor(DragSource.DefaultMoveDrop);
-				} else {
-					dsde.getDragSourceContext().setCursor(DragSource.DefaultMoveNoDrop);
-				}
-			}
+			if (action == DnDConstants.ACTION_COPY) dsde.getDragSourceContext().setCursor(DragSource.DefaultCopyDrop);
+			else if (action == DnDConstants.ACTION_MOVE)
+				dsde.getDragSourceContext().setCursor(DragSource.DefaultMoveDrop);
+			else dsde.getDragSourceContext().setCursor(DragSource.DefaultMoveNoDrop);
 		}
 
 		public final void dropActionChanged(DragSourceDragEvent dsde) {
 			int action = dsde.getDropAction();
-			if (action == DnDConstants.ACTION_COPY) {
-				dsde.getDragSourceContext().setCursor(DragSource.DefaultCopyDrop);
-			} else {
-				if (action == DnDConstants.ACTION_MOVE) {
-					dsde.getDragSourceContext().setCursor(DragSource.DefaultMoveDrop);
-				} else {
-					dsde.getDragSourceContext().setCursor(DragSource.DefaultMoveNoDrop);
-				}
-			}
+			if (action == DnDConstants.ACTION_COPY) dsde.getDragSourceContext().setCursor(DragSource.DefaultCopyDrop);
+			else if (action == DnDConstants.ACTION_MOVE)
+				dsde.getDragSourceContext().setCursor(DragSource.DefaultMoveDrop);
+			else dsde.getDragSourceContext().setCursor(DragSource.DefaultMoveNoDrop);
 		}
 
 		public final void dragExit(DragSourceEvent dse) {
@@ -168,7 +152,7 @@ public class JTreeUtil {
 							false);// returning the label
 					lbl.setBounds(pathBounds);// setting bounds to lbl
 					image = new BufferedImage(lbl.getWidth(), lbl.getHeight(),
-							java.awt.image.BufferedImage.TYPE_INT_ARGB_PRE);// buffered
+							BufferedImage.TYPE_INT_ARGB_PRE);// buffered
 																			// image
 																			// reference
 																			// passing
@@ -202,54 +186,35 @@ public class JTreeUtil {
 		public final void dragEnter(DropTargetDragEvent dtde) {
 			Point pt = dtde.getLocation();
 			int action = dtde.getDropAction();
-			if (drawImage) {
-				paintImage(pt);
-			}
-			if (controller.canPerformAction(tree, draggedNode, action, pt)) {
-				dtde.acceptDrag(action);
-			} else {
-				dtde.rejectDrag();
-			}
+			if (drawImage) paintImage(pt);
+			if (controller.canPerformAction(tree, draggedNode, action, pt)) dtde.acceptDrag(action);
+			else dtde.rejectDrag();
 		}
 
 		public final void dragExit(DropTargetEvent dte) {
-			if (drawImage) {
-				clearImage();
-			}
+			if (drawImage) clearImage();
 		}
 
 		public final void dragOver(DropTargetDragEvent dtde) {
 			Point pt = dtde.getLocation();
 			int action = dtde.getDropAction();
 			autoscroll(tree, pt);
-			if (drawImage) {
-				paintImage(pt);
-			}
-			if (controller.canPerformAction(tree, draggedNode, action, pt)) {
-				dtde.acceptDrag(action);
-			} else {
-				dtde.rejectDrag();
-			}
+			if (drawImage) paintImage(pt);
+			if (controller.canPerformAction(tree, draggedNode, action, pt)) dtde.acceptDrag(action);
+			else dtde.rejectDrag();
 		}
 
 		public final void dropActionChanged(DropTargetDragEvent dtde) {
 			Point pt = dtde.getLocation();
 			int action = dtde.getDropAction();
-			if (drawImage) {
-				paintImage(pt);
-			}
-			if (controller.canPerformAction(tree, draggedNode, action, pt)) {
-				dtde.acceptDrag(action);
-			} else {
-				dtde.rejectDrag();
-			}
+			if (drawImage) paintImage(pt);
+			if (controller.canPerformAction(tree, draggedNode, action, pt)) dtde.acceptDrag(action);
+			else dtde.rejectDrag();
 		}
 
 		public final void drop(DropTargetDropEvent dtde) {
 			try {
-				if (drawImage) {
-					clearImage();
-				}
+				if (drawImage) clearImage();
 				int action = dtde.getDropAction();
 				Transferable transferable = dtde.getTransferable();
 				Point pt = dtde.getLocation();
@@ -273,13 +238,13 @@ public class JTreeUtil {
 			}
 		}
 
-		private final void paintImage(Point pt) {
+		private void paintImage(Point pt) {
 			tree.paintImmediately(rect2D.getBounds());
 			rect2D.setRect((int) pt.getX(), (int) pt.getY(), image.getWidth(), image.getHeight());
 			tree.getGraphics().drawImage(image, (int) pt.getX(), (int) pt.getY(), tree);
 		}
 
-		private final void clearImage() {
+		private void clearImage() {
 			tree.paintImmediately(rect2D.getBounds());
 		}
 	}

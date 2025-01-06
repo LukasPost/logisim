@@ -47,15 +47,11 @@ class ToolbarOptions extends OptionsPanel {
 
 		public void actionPerformed(ActionEvent event) {
 			Object src = event.getSource();
-			if (src == addTool) {
-				doAddTool(explorer.getSelectedTool().cloneTool());
-			} else if (src == addSeparator) {
-				getOptions().getToolbarData().addSeparator();
-			} else if (src == moveUp) {
-				doMove(-1);
-			} else if (src == moveDown) {
-				doMove(1);
-			} else if (src == remove) {
+			if (src == addTool) doAddTool(explorer.getSelectedTool().cloneTool());
+			else if (src == addSeparator) getOptions().getToolbarData().addSeparator();
+			else if (src == moveUp) doMove(-1);
+			else if (src == moveDown) doMove(1);
+			else if (src == remove) {
 				int index = list.getSelectedIndex();
 				if (index >= 0) {
 					getProject().doAction(ToolbarActions.removeTool(getOptions().getToolbarData(), index));
@@ -77,9 +73,7 @@ class ToolbarOptions extends OptionsPanel {
 		}
 
 		private void doAddTool(Tool tool) {
-			if (tool != null) {
-				getProject().doAction(ToolbarActions.addTool(getOptions().getToolbarData(), tool));
-			}
+			if (tool != null) getProject().doAction(ToolbarActions.addTool(getOptions().getToolbarData(), tool));
 		}
 
 		private void doMove(int delta) {
@@ -92,8 +86,6 @@ class ToolbarOptions extends OptionsPanel {
 			}
 		}
 	}
-
-	private Listener listener = new Listener();
 
 	private ProjectExplorer explorer;
 	private JButton addTool;
@@ -123,6 +115,7 @@ class ToolbarOptions extends OptionsPanel {
 		middle.add(remove);
 		middleLayout.setRowWeight(4, 1.0);
 
+		Listener listener = new Listener();
 		explorer.setListener(listener);
 		addTool.addActionListener(listener);
 		addSeparator.addActionListener(listener);

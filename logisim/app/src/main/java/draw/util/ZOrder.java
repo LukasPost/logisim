@@ -32,14 +32,11 @@ public class ZOrder {
 			return Collections.emptyMap();
 
 		Set<? extends CanvasObject> querySet = toSet(query);
-		Map<CanvasObject, Integer> ret;
-		ret = new LinkedHashMap<CanvasObject, Integer>(query.size());
+		Map<CanvasObject, Integer> ret = new LinkedHashMap<>(query.size());
 		int z = -1;
 		for (CanvasObject o : model.getObjectsFromBottom()) {
 			z++;
-			if (querySet.contains(o)) {
-				ret.put(o, Integer.valueOf(z));
-			}
+			if (querySet.contains(o)) ret.put(o, z);
 		}
 		return ret;
 	}
@@ -55,23 +52,19 @@ public class ZOrder {
 	private static <E extends CanvasObject> List<E> sortXFirst(Collection<E> objects, CanvasModel model,
 			Collection<CanvasObject> objs) {
 		Set<E> set = toSet(objects);
-		ArrayList<E> ret = new ArrayList<E>(objects.size());
-		for (CanvasObject o : objs) {
+		ArrayList<E> ret = new ArrayList<>(objects.size());
+		for (CanvasObject o : objs)
 			if (set.contains(o)) {
 				@SuppressWarnings("unchecked")
 				E toAdd = (E) o;
 				ret.add(toAdd);
 			}
-		}
 		return ret;
 	}
 
 	private static <E> Set<E> toSet(Collection<E> objects) {
-		if (objects instanceof Set) {
-			return (Set<E>) objects;
-		} else {
-			return new HashSet<E>(objects);
-		}
+		if (objects instanceof Set) return (Set<E>) objects;
+		else return new HashSet<>(objects);
 	}
 
 	// returns first object above query in the z-order that overlaps query
@@ -89,9 +82,8 @@ public class ZOrder {
 	private static CanvasObject getPrevious(CanvasObject query, List<CanvasObject> objs, CanvasModel model,
 			Collection<? extends CanvasObject> ignore) {
 		int index = getIndex(query, objs);
-		if (index <= 0) {
-			return null;
-		} else {
+		if (index <= 0) return null;
+		else {
 			Set<CanvasObject> set = toSet(model.getObjectsOverlapping(query));
 			ListIterator<CanvasObject> it = objs.listIterator(index);
 			while (it.hasPrevious()) {

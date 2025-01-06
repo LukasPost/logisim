@@ -3,6 +3,7 @@
 
 package logisim.std.memory;
 
+import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -11,7 +12,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
-import java.util.WeakHashMap;
 
 import javax.swing.JLabel;
 
@@ -33,18 +33,16 @@ public class Rom extends Mem {
 
 	// The following is so that instance's MemListeners aren't freed by the
 	// garbage collector until the instance itself is ready to be freed.
-	private WeakHashMap<Instance, MemListener> memListeners;
 
 	public Rom() {
-		super("ROM", Strings.getter("romComponent"), 0);
+		super("ROM", Strings.getter("romComponent"));
 		setIconName("rom.gif");
-		memListeners = new WeakHashMap<Instance, MemListener>();
 	}
 
 	@Override
 	void configurePorts(Instance instance) {
 		Port[] ps = new Port[MEM_INPUTS];
-		configureStandardPorts(instance, ps);
+		configureStandardPorts(ps);
 		instance.setPorts(ps);
 	}
 
@@ -116,7 +114,6 @@ public class Rom extends Mem {
 		super.configureNewInstance(instance);
 		MemContents contents = getMemContents(instance);
 		MemListener listener = new MemListener(instance);
-		memListeners.put(instance, listener);
 		contents.addHexModelListener(listener);
 	}
 
@@ -126,7 +123,7 @@ public class Rom extends Mem {
 		}
 
 		@Override
-		public java.awt.Component getCellEditor(Window source, MemContents value) {
+		public Component getCellEditor(Window source, MemContents value) {
 			if (source instanceof Frame) {
 				Project proj = ((Frame) source).getProject();
 				RomAttributes.register(value, proj);
@@ -163,7 +160,7 @@ public class Rom extends Mem {
 			StringTokenizer toks = new StringTokenizer(first);
 			try {
 				String header = toks.nextToken();
-				if (!header.equals("addr/data:"))
+				if (!"addr/data:".equals(header))
 					return null;
 				int addr = Integer.parseInt(toks.nextToken());
 				int data = Integer.parseInt(toks.nextToken());
@@ -171,13 +168,7 @@ public class Rom extends Mem {
 				HexFile.open(ret, new StringReader(rest));
 				return ret;
 			}
-			catch (IOException e) {
-				return null;
-			}
-			catch (NumberFormatException e) {
-				return null;
-			}
-			catch (NoSuchElementException e) {
+			catch (IOException | NumberFormatException | NoSuchElementException e) {
 				return null;
 			}
 		}

@@ -37,14 +37,13 @@ class ColorPickerSliderUI extends BasicSliderUI {
 
 	int[] intArray = new int[Toolkit.getDefaultToolkit().getScreenSize().height];
 	BufferedImage bi = new BufferedImage(1, intArray.length, BufferedImage.TYPE_INT_RGB);
-	int lastMode = -1;
 
 	ColorPickerSliderUI(JSlider b, ColorPicker cp) {
 		super(b);
 		colorPicker = cp;
 		cp.getColorPanel().addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent e) {
-				ColorPickerSliderUI.this.calculateGeometry();
+				calculateGeometry();
 				slider.repaint();
 			}
 		});
@@ -76,9 +75,7 @@ class ColorPickerSliderUI extends BasicSliderUI {
 		ColorPickerPanel cp = colorPicker.getColorPanel();
 		int size = Math.min(ColorPickerPanel.MAX_SIZE, Math.min(cp.getWidth(), cp.getHeight()));
 		int max = slider.getHeight() - ARROW_HALF * 2 - 2;
-		if (size > max) {
-			size = max;
-		}
+		if (size > max) size = max;
 		trackRect.y = slider.getHeight() / 2 - size / 2;
 		trackRect.height = size;
 	}
@@ -87,46 +84,36 @@ class ColorPickerSliderUI extends BasicSliderUI {
 		int mode = colorPicker.getMode();
 		if (mode == ColorPicker.HUE || mode == ColorPicker.BRI || mode == ColorPicker.SAT) {
 			float[] hsb = colorPicker.getHSB();
-			if (mode == ColorPicker.HUE) {
-				for (int y = 0; y < trackRect.height; y++) {
-					float hue = ((float) y) / ((float) trackRect.height);
-					intArray[y] = Color.HSBtoRGB(hue, 1, 1);
-				}
-			} else if (mode == ColorPicker.SAT) {
-				for (int y = 0; y < trackRect.height; y++) {
-					float sat = 1 - ((float) y) / ((float) trackRect.height);
-					intArray[y] = Color.HSBtoRGB(hsb[0], sat, hsb[2]);
-				}
-			} else {
-				for (int y = 0; y < trackRect.height; y++) {
-					float bri = 1 - ((float) y) / ((float) trackRect.height);
-					intArray[y] = Color.HSBtoRGB(hsb[0], hsb[1], bri);
-				}
+			if (mode == ColorPicker.HUE) for (int y = 0; y < trackRect.height; y++) {
+				float hue = ((float) y) / ((float) trackRect.height);
+				intArray[y] = Color.HSBtoRGB(hue, 1, 1);
+			}
+			else if (mode == ColorPicker.SAT) for (int y = 0; y < trackRect.height; y++) {
+				float sat = 1 - ((float) y) / ((float) trackRect.height);
+				intArray[y] = Color.HSBtoRGB(hsb[0], sat, hsb[2]);
+			}
+			else for (int y = 0; y < trackRect.height; y++) {
+				float bri = 1 - ((float) y) / ((float) trackRect.height);
+				intArray[y] = Color.HSBtoRGB(hsb[0], hsb[1], bri);
 			}
 		} else {
 			int[] rgb = colorPicker.getRGB();
-			if (mode == ColorPicker.RED) {
-				for (int y = 0; y < trackRect.height; y++) {
-					int red = 255 - (int) (y * 255 / trackRect.height + .49);
-					intArray[y] = (red << 16) + (rgb[1] << 8) + (rgb[2]);
-				}
-			} else if (mode == ColorPicker.GREEN) {
-				for (int y = 0; y < trackRect.height; y++) {
-					int green = 255 - (int) (y * 255 / trackRect.height + .49);
-					intArray[y] = (rgb[0] << 16) + (green << 8) + (rgb[2]);
-				}
-			} else if (mode == ColorPicker.BLUE) {
-				for (int y = 0; y < trackRect.height; y++) {
-					int blue = 255 - (int) (y * 255 / trackRect.height + .49);
-					intArray[y] = (rgb[0] << 16) + (rgb[1] << 8) + (blue);
-				}
+			if (mode == ColorPicker.RED) for (int y = 0; y < trackRect.height; y++) {
+				int red = 255 - (int) ((double) (y * 255) / trackRect.height + .49);
+				intArray[y] = (red << 16) + (rgb[1] << 8) + (rgb[2]);
+			}
+			else if (mode == ColorPicker.GREEN) for (int y = 0; y < trackRect.height; y++) {
+				int green = 255 - (int) ((double) (y * 255) / trackRect.height + .49);
+				intArray[y] = (rgb[0] << 16) + (green << 8) + (rgb[2]);
+			}
+			else if (mode == ColorPicker.BLUE) for (int y = 0; y < trackRect.height; y++) {
+				int blue = 255 - (int) ((double) (y * 255) / trackRect.height + .49);
+				intArray[y] = (rgb[0] << 16) + (rgb[1] << 8) + (blue);
 			}
 		}
 		Graphics2D g2 = (Graphics2D) g;
 		Rectangle r = new Rectangle(6, trackRect.y, 14, trackRect.height);
-		if (slider.hasFocus()) {
-			PaintUtils.paintFocus(g2, r, 3);
-		}
+		if (slider.hasFocus()) PaintUtils.paintFocus(g2, r, 3);
 
 		bi.getRaster().setDataElements(0, 0, 1, trackRect.height, intArray);
 		TexturePaint p = new TexturePaint(bi, new Rectangle(0, trackRect.y, 1, bi.getHeight()));

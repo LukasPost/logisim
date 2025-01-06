@@ -44,7 +44,7 @@ public class InputEventUtil {
 	}
 
 	public static String toString(int mods) {
-		ArrayList<String> arr = new ArrayList<String>();
+		ArrayList<String> arr = new ArrayList<>();
 		if ((mods & InputEvent.CTRL_DOWN_MASK) != 0)
 			arr.add(CTRL);
 		if ((mods & InputEvent.ALT_DOWN_MASK) != 0)
@@ -67,9 +67,7 @@ public class InputEventUtil {
 				ret.append(it.next());
 			}
 			return ret.toString();
-		} else {
-			return "";
-		}
+		} else return "";
 	}
 
 	public static int fromDisplayString(String str) {
@@ -96,7 +94,7 @@ public class InputEventUtil {
 	}
 
 	public static String toDisplayString(int mods) {
-		ArrayList<String> arr = new ArrayList<String>();
+		ArrayList<String> arr = new ArrayList<>();
 		if ((mods & InputEvent.CTRL_DOWN_MASK) != 0)
 			arr.add(Strings.get("ctrlMod"));
 		if ((mods & InputEvent.ALT_DOWN_MASK) != 0)
@@ -122,14 +120,12 @@ public class InputEventUtil {
 				ret.append(it.next());
 			}
 			return ret.toString();
-		} else {
-			return "";
-		}
+		} else return "";
 	}
 
 	@SuppressWarnings("deprecation")
 	public static String toKeyDisplayString(int mods) {
-		ArrayList<String> arr = new ArrayList<String>();
+		ArrayList<String> arr = new ArrayList<>();
 		if ((mods & Event.META_MASK) != 0)
 			arr.add(Strings.get("metaMod"));
 		if ((mods & Event.CTRL_MASK) != 0)
@@ -148,8 +144,6 @@ public class InputEventUtil {
 				ret.append(it.next());
 			}
 			return ret.toString();
-		} else {
-			return "";
-		}
+		} else return "";
 	}
 }

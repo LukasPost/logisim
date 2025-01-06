@@ -43,9 +43,8 @@ public abstract class ModelAction extends Action {
 	}
 
 	static String getShapesName(Collection<CanvasObject> coll) {
-		if (coll.size() != 1) {
-			return Strings.get("shapeMultiple");
-		} else {
+		if (coll.size() != 1) return Strings.get("shapeMultiple");
+		else {
 			CanvasObject shape = coll.iterator().next();
 			return shape.getDisplayName();
 		}

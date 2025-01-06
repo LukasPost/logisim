@@ -4,6 +4,7 @@
 package logisim.gui.main;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.dnd.DnDConstants;
@@ -80,20 +81,20 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 		}
 	}
 
-	public static interface Listener {
-		public void selectionChanged(Event event);
+	public interface Listener {
+		void selectionChanged(Event event);
 
-		public void doubleClicked(Event event);
+		void doubleClicked(Event event);
 
-		public void moveRequested(Event event, AddTool dragged, AddTool target);
+		void moveRequested(Event event, AddTool dragged, AddTool target);
 
-		public void deleteRequested(Event event);
+		void deleteRequested(Event event);
 
-		public JPopupMenu menuRequested(Event event);
+		JPopupMenu menuRequested(Event event);
 	}
 
 	private class MyModel implements TreeModel {
-		ArrayList<TreeModelListener> listeners = new ArrayList<TreeModelListener>();
+		ArrayList<TreeModelListener> listeners = new ArrayList<>();
 
 		public void addTreeModelListener(TreeModelListener l) {
 			listeners.add(l);
@@ -108,13 +109,9 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 		}
 
 		private List<?> getChildren(Object parent) {
-			if (parent == proj.getLogisimFile()) {
-				return ((Library) parent).getElements();
-			} else if (parent instanceof Library) {
-				return ((Library) parent).getTools();
-			} else {
-				return Collections.EMPTY_LIST;
-			}
+			if (parent == proj.getLogisimFile()) return ((Library) parent).getElements();
+			else if (parent instanceof Library) return ((Library) parent).getTools();
+			else return Collections.EMPTY_LIST;
 		}
 
 		public Object getChild(Object parent, int index) {
@@ -147,24 +144,18 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 		}
 
 		private void fireNodesChanged(List<TreeModelEvent> events) {
-			for (TreeModelEvent e : events) {
-				for (TreeModelListener l : listeners) {
-					l.treeNodesChanged(e);
-				}
-			}
+			for (TreeModelEvent e : events) for (TreeModelListener l : listeners) l.treeNodesChanged(e);
 		}
 
 		void fireStructureChanged() {
 			TreeModelEvent e = new TreeModelEvent(ProjectExplorer.this, new Object[] { model.getRoot() });
-			for (TreeModelListener l : listeners) {
-				l.treeStructureChanged(e);
-			}
-			ProjectExplorer.this.repaint();
+			for (TreeModelListener l : listeners) l.treeStructureChanged(e);
+			repaint();
 		}
 
 		private ArrayList<TreeModelEvent> findPaths(Object value) {
-			ArrayList<TreeModelEvent> ret = new ArrayList<TreeModelEvent>();
-			ArrayList<Object> stack = new ArrayList<Object>();
+			ArrayList<TreeModelEvent> ret = new ArrayList<>();
+			ArrayList<Object> stack = new ArrayList<>();
 			findPathsSub(value, getRoot(), stack, ret);
 			return ret;
 		}
@@ -175,15 +166,13 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 				TreePath path = new TreePath(stack.toArray());
 				paths.add(new TreeModelEvent(ProjectExplorer.this, path));
 			}
-			for (Object child : getChildren(node)) {
-				findPathsSub(value, child, stack, paths);
-			}
-			stack.remove(stack.size() - 1);
+			for (Object child : getChildren(node)) findPathsSub(value, child, stack, paths);
+			stack.removeLast();
 		}
 
 		private ArrayList<TreeModelEvent> findPathsForTools(Library value) {
-			ArrayList<TreeModelEvent> ret = new ArrayList<TreeModelEvent>();
-			ArrayList<Object> stack = new ArrayList<Object>();
+			ArrayList<TreeModelEvent> ret = new ArrayList<>();
+			ArrayList<Object> stack = new ArrayList<>();
 			findPathsForToolsSub(value, getRoot(), stack, ret);
 			return ret;
 		}
@@ -202,24 +191,20 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 				}
 				paths.add(new TreeModelEvent(ProjectExplorer.this, path, indices, tools));
 			}
-			for (Object child : getChildren(node)) {
-				findPathsForToolsSub(value, child, stack, paths);
-			}
-			stack.remove(stack.size() - 1);
+			for (Object child : getChildren(node)) findPathsForToolsSub(value, child, stack, paths);
+			stack.removeLast();
 		}
 	}
 
 	private class ToolIcon implements Icon {
 		Tool tool;
-		Circuit circ = null;
+		Circuit circ;
 
 		ToolIcon(Tool tool) {
 			this.tool = tool;
 			if (tool instanceof AddTool) {
 				ComponentFactory fact = ((AddTool) tool).getFactory(false);
-				if (fact instanceof SubcircuitFactory) {
-					circ = ((SubcircuitFactory) fact).getSubcircuit();
-				}
+				if (fact instanceof SubcircuitFactory) circ = ((SubcircuitFactory) fact).getSubcircuit();
 			}
 		}
 
@@ -231,7 +216,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 			return 20;
 		}
 
-		public void paintIcon(java.awt.Component c, Graphics g, int x, int y) {
+		public void paintIcon(Component c, Graphics g, int x, int y) {
 			// draw halo if appropriate
 			if (tool == haloedTool && AppPreferences.ATTRIBUTE_HALO.getBoolean()) {
 				g.setColor(Canvas.HALO_COLOR);
@@ -262,36 +247,29 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
 	private class MyCellRenderer extends DefaultTreeCellRenderer {
 		@Override
-		public java.awt.Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected,
+		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected,
 				boolean expanded, boolean leaf, int row, boolean hasFocus) {
-			java.awt.Component ret;
-			ret = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+			Component ret = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 
-			if (ret instanceof JComponent) {
-				JComponent comp = (JComponent) ret;
-				comp.setToolTipText(null);
-			}
-			if (value instanceof Tool) {
-				Tool tool = (Tool) value;
+			if (ret instanceof JComponent comp) comp.setToolTipText(null);
+			if (value instanceof Tool tool) {
 				if (ret instanceof JLabel) {
 					((JLabel) ret).setText(tool.getDisplayName());
 					((JLabel) ret).setIcon(new ToolIcon(tool));
 					((JLabel) ret).setToolTipText(tool.getDescription());
 				}
-			} else if (value instanceof Library) {
-				if (ret instanceof JLabel) {
-					Library lib = (Library) value;
-					String text = lib.getDisplayName();
-					if (lib.isDirty())
-						text += DIRTY_MARKER;
-					((JLabel) ret).setText(text);
-				}
+			} else if (value instanceof Library) if (ret instanceof JLabel) {
+				Library lib = (Library) value;
+				String text = lib.getDisplayName();
+				if (lib.isDirty())
+					text += DIRTY_MARKER;
+				((JLabel) ret).setText(text);
 			}
 			return ret;
 		}
 	}
 
-	private class MySelectionModel extends DefaultTreeSelectionModel {
+	private static class MySelectionModel extends DefaultTreeSelectionModel {
 		@Override
 		public void addSelectionPath(TreePath path) {
 			if (isPathValid(path))
@@ -320,21 +298,17 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
 		private TreePath[] getValidPaths(TreePath[] paths) {
 			int count = 0;
-			for (int i = 0; i < paths.length; i++) {
-				if (isPathValid(paths[i]))
+			for (TreePath treePath : paths)
+				if (isPathValid(treePath))
 					++count;
-			}
-			if (count == 0) {
-				return null;
-			} else if (count == paths.length) {
-				return paths;
-			} else {
+			if (count == 0) return null;
+			else if (count == paths.length) return paths;
+			else {
 				TreePath[] ret = new TreePath[count];
 				int j = 0;
-				for (int i = 0; i < paths.length; i++) {
-					if (isPathValid(paths[i]))
-						ret[j++] = paths[i];
-				}
+				for (TreePath path : paths)
+					if (isPathValid(path))
+						ret[j++] = path;
 				return ret;
 			}
 		}
@@ -355,56 +329,42 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 				return false;
 			}
 			targetTree.setSelectionPath(pathTarget);
-			if (action == DnDConstants.ACTION_COPY) {
-				return false;
-			} else if (action == DnDConstants.ACTION_MOVE) {
+			if (action == DnDConstants.ACTION_COPY) return false;
+			else if (action == DnDConstants.ACTION_MOVE) {
 				Object targetNode = pathTarget.getLastPathComponent();
 				return canMove(draggedNode, targetNode);
-			} else {
-				return false;
-			}
+			} else return false;
 		}
 
 		public boolean executeDrop(JTree targetTree, Object draggedNode, Object targetNode, int action) {
-			if (action == DnDConstants.ACTION_COPY) {
-				return false;
-			} else if (action == DnDConstants.ACTION_MOVE) {
-				if (canMove(draggedNode, targetNode)) {
-					if (draggedNode == targetNode)
-						return true;
-					listener.moveRequested(new Event(null), (AddTool) draggedNode, (AddTool) targetNode);
+			if (action == DnDConstants.ACTION_COPY) return false;
+			else if (action == DnDConstants.ACTION_MOVE) if (canMove(draggedNode, targetNode)) {
+				if (draggedNode == targetNode)
 					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
+				listener.moveRequested(new Event(null), (AddTool) draggedNode, (AddTool) targetNode);
+				return true;
 			}
+			else return false;
+			else return false;
 		}
 
 		private boolean canMove(Object draggedNode, Object targetNode) {
 			if (listener == null)
 				return false;
-			if (!(draggedNode instanceof AddTool) || !(targetNode instanceof AddTool))
+			if (!(draggedNode instanceof AddTool dragged) || !(targetNode instanceof AddTool target))
 				return false;
 			LogisimFile file = proj.getLogisimFile();
-			AddTool dragged = (AddTool) draggedNode;
-			AddTool target = (AddTool) targetNode;
 			int draggedIndex = file.getTools().indexOf(dragged);
 			int targetIndex = file.getTools().indexOf(target);
-			if (targetIndex < 0 || draggedIndex < 0)
-				return false;
-			return true;
+			return targetIndex >= 0 && draggedIndex >= 0;
 		}
 	}
 
 	private class DeleteAction extends AbstractAction {
 		public void actionPerformed(ActionEvent event) {
 			TreePath path = getSelectionPath();
-			if (listener != null && path != null && path.getPathCount() == 2) {
-				listener.deleteRequested(new Event(path));
-			}
-			ProjectExplorer.this.requestFocus();
+			if (listener != null && path != null && path.getPathCount() == 2) listener.deleteRequested(new Event(path));
+			requestFocus();
 		}
 	}
 
@@ -420,7 +380,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 		}
 
 		public void mousePressed(MouseEvent e) {
-			ProjectExplorer.this.requestFocus();
+			requestFocus();
 			checkForPopup(e);
 		}
 
@@ -433,9 +393,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 				TreePath path = getPathForLocation(e.getX(), e.getY());
 				if (path != null && listener != null) {
 					JPopupMenu menu = listener.menuRequested(new Event(path));
-					if (menu != null) {
-						menu.show(ProjectExplorer.this, e.getX(), e.getY());
-					}
+					if (menu != null) menu.show(ProjectExplorer.this, e.getX(), e.getY());
 				}
 			}
 		}
@@ -443,9 +401,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() == 2) {
 				TreePath path = getPathForLocation(e.getX(), e.getY());
-				if (path != null && listener != null) {
-					listener.doubleClicked(new Event(path));
-				}
+				if (path != null && listener != null) listener.doubleClicked(new Event(path));
 			}
 		}
 
@@ -454,9 +410,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 		//
 		public void valueChanged(TreeSelectionEvent e) {
 			TreePath path = e.getNewLeadSelectionPath();
-			if (listener != null) {
-				listener.selectionChanged(new Event(path));
-			}
+			if (listener != null) listener.selectionChanged(new Event(path));
 		}
 
 		//
@@ -466,43 +420,24 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 			int act = event.getAction();
 			if (act == ProjectEvent.ACTION_SET_TOOL) {
 				TreePath path = getSelectionPath();
-				if (path != null && path.getLastPathComponent() != event.getTool()) {
-					clearSelection();
-				}
-			} else if (act == ProjectEvent.ACTION_SET_FILE) {
-				setFile(event.getLogisimFile());
-			} else if (act == ProjectEvent.ACTION_SET_CURRENT) {
-				ProjectExplorer.this.repaint();
-			}
+				if (path != null && path.getLastPathComponent() != event.getTool()) clearSelection();
+			} else if (act == ProjectEvent.ACTION_SET_FILE) setFile(event.getLogisimFile());
+			else if (act == ProjectEvent.ACTION_SET_CURRENT) repaint();
 		}
 
 		public void libraryChanged(LibraryEvent event) {
 			int act = event.getAction();
 			if (act == LibraryEvent.ADD_TOOL) {
-				if (event.getData() instanceof AddTool) {
-					AddTool tool = (AddTool) event.getData();
-					if (tool.getFactory() instanceof SubcircuitFactory) {
-						SubcircuitFactory fact = (SubcircuitFactory) tool.getFactory();
-						fact.getSubcircuit().addCircuitListener(this);
-					}
-				}
+				if (event.getData() instanceof AddTool tool) if (tool.getFactory() instanceof SubcircuitFactory fact)
+					fact.getSubcircuit().addCircuitListener(this);
 			} else if (act == LibraryEvent.REMOVE_TOOL) {
-				if (event.getData() instanceof AddTool) {
-					AddTool tool = (AddTool) event.getData();
-					if (tool.getFactory() instanceof SubcircuitFactory) {
-						SubcircuitFactory fact = (SubcircuitFactory) tool.getFactory();
-						fact.getSubcircuit().removeCircuitListener(this);
-					}
-				}
+				if (event.getData() instanceof AddTool tool) if (tool.getFactory() instanceof SubcircuitFactory fact)
+					fact.getSubcircuit().removeCircuitListener(this);
 			} else if (act == LibraryEvent.ADD_LIBRARY) {
-				if (event.getData() instanceof LibraryEventSource) {
+				if (event.getData() instanceof LibraryEventSource)
 					((LibraryEventSource) event.getData()).addLibraryListener(subListener);
-				}
-			} else if (act == LibraryEvent.REMOVE_LIBRARY) {
-				if (event.getData() instanceof LibraryEventSource) {
-					((LibraryEventSource) event.getData()).removeLibraryListener(subListener);
-				}
-			}
+			} else if (act == LibraryEvent.REMOVE_LIBRARY) if (event.getData() instanceof LibraryEventSource)
+				((LibraryEventSource) event.getData()).removeLibraryListener(subListener);
 			Library lib = event.getSource();
 			switch (act) {
 			case LibraryEvent.DIRTY_STATE:
@@ -521,37 +456,28 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
 		public void circuitChanged(CircuitEvent event) {
 			int act = event.getAction();
-			if (act == CircuitEvent.ACTION_SET_NAME) {
-				model.fireStructureChanged();
-				// The following almost works - but the labels aren't made
-				// bigger, so you get "..." behavior with longer names.
-				// model.fireNodesChanged(model.findPaths(event.getCircuit()));
-			}
+			// The following almost works - but the labels aren't made
+			// bigger, so you get "..." behavior with longer names.
+			// model.fireNodesChanged(model.findPaths(event.getCircuit()));
+			if (act == CircuitEvent.ACTION_SET_NAME) model.fireStructureChanged();
 		}
 
 		private void setFile(LogisimFile lib) {
 			model.fireStructureChanged();
 			expandRow(0);
 
-			for (Circuit circ : lib.getCircuits()) {
-				circ.addCircuitListener(this);
-			}
+			for (Circuit circ : lib.getCircuits()) circ.addCircuitListener(this);
 
 			subListener = new SubListener(); // create new one so that old listeners die away
-			for (Library sublib : lib.getLibraries()) {
-				if (sublib instanceof LibraryEventSource) {
-					((LibraryEventSource) sublib).addLibraryListener(subListener);
-				}
-			}
+			for (Library sublib : lib.getLibraries())
+				if (sublib instanceof LibraryEventSource) ((LibraryEventSource) sublib).addLibraryListener(subListener);
 		}
 
 		//
 		// PropertyChangeListener methods
 		//
 		public void propertyChange(PropertyChangeEvent event) {
-			if (AppPreferences.GATE_SHAPE.isSource(event)) {
-				repaint();
-			}
+			if (AppPreferences.GATE_SHAPE.isSource(event)) repaint();
 		}
 	}
 
@@ -562,13 +488,10 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 	}
 
 	private Project proj;
-	private MyListener myListener = new MyListener();
 	private SubListener subListener = new SubListener();
 	private MyModel model = new MyModel();
-	private MyCellRenderer renderer = new MyCellRenderer();
-	private DeleteAction deleteAction = new DeleteAction();
-	private Listener listener = null;
-	private Tool haloedTool = null;
+	private Listener listener;
+	private Tool haloedTool;
 
 	public ProjectExplorer(Project proj) {
 		super();
@@ -576,17 +499,20 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
 		setModel(model);
 		setRootVisible(true);
+		MyListener myListener = new MyListener();
 		addMouseListener(myListener);
 		ToolTipManager.sharedInstance().registerComponent(this);
 
 		MySelectionModel selector = new MySelectionModel();
 		selector.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		setSelectionModel(selector);
+		MyCellRenderer renderer = new MyCellRenderer();
 		setCellRenderer(renderer);
 		JTreeUtil.configureDragAndDrop(this, new DragController());
 		addTreeSelectionListener(myListener);
 
 		InputMap imap = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+		DeleteAction deleteAction = new DeleteAction();
 		imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), deleteAction);
 		ActionMap amap = getActionMap();
 		amap.put(deleteAction, deleteAction);

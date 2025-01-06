@@ -19,7 +19,7 @@ class OrGate extends AbstractGate {
 
 	private OrGate() {
 		super("OR Gate", Strings.getter("orGateComponent"));
-		setRectangularLabel("\u2265" + "1");
+		setRectangularLabel("≥" + "1");
 		setIconNames("orGate.gif", "orGateRect.gif", "dinOrGate.gif");
 		setPaintInputLines(true);
 	}
@@ -38,7 +38,7 @@ class OrGate extends AbstractGate {
 	}
 
 	@Override
-	protected void paintDinShape(InstancePainter painter, int width, int height, int inputs) {
+	protected void paintDinShape(InstancePainter painter, int width, int height) {
 		PainterDin.paintOr(painter, width, height, false);
 	}
 
@@ -49,16 +49,13 @@ class OrGate extends AbstractGate {
 
 	@Override
 	protected boolean shouldRepairWire(Instance instance, WireRepairData data) {
-		boolean ret = !data.getPoint().equals(instance.getLocation());
-		return ret;
+		return !data.getPoint().equals(instance.getLocation());
 	}
 
 	@Override
 	protected Expression computeExpression(Expression[] inputs, int numInputs) {
 		Expression ret = inputs[0];
-		for (int i = 1; i < numInputs; i++) {
-			ret = Expressions.or(ret, inputs[i]);
-		}
+		for (int i = 1; i < numInputs; i++) ret = Expressions.or(ret, inputs[i]);
 		return ret;
 	}
 

@@ -41,13 +41,10 @@ public class KeyboardToolSelection extends AbstractAction {
 	public void actionPerformed(ActionEvent event) {
 		ToolbarModel model = toolbar.getToolbarModel();
 		int i = -1;
-		for (ToolbarItem item : model.getItems()) {
+		for (ToolbarItem item : model.getItems())
 			if (item.isSelectable()) {
 				i++;
-				if (i == index) {
-					model.itemSelected(item);
-				}
+				if (i == index) model.itemSelected(item);
 			}
-		}
 	}
 }

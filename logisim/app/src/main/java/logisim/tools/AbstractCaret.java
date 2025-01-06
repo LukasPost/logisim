@@ -6,19 +6,15 @@ package logisim.tools;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.KeyEvent;
-import java.util.Collections;
-import java.util.List;
 import java.util.ArrayList;
 
 import logisim.data.Bounds;
 
 public class AbstractCaret implements Caret {
-	private ArrayList<CaretListener> listeners = new ArrayList<CaretListener>();
-	private List<CaretListener> listenersView;
+	private ArrayList<CaretListener> listeners = new ArrayList<>();
 	private Bounds bds = Bounds.EMPTY_BOUNDS;
 
 	public AbstractCaret() {
-		listenersView = Collections.unmodifiableList(listeners);
 	}
 
 	// listener methods
@@ -28,15 +24,6 @@ public class AbstractCaret implements Caret {
 
 	public void removeCaretListener(CaretListener e) {
 		listeners.remove(e);
-	}
-
-	protected List<CaretListener> getCaretListeners() {
-		return listenersView;
-	}
-
-	// configuration methods
-	public void setBounds(Bounds value) {
-		bds = value;
 	}
 
 	// query/Graphics methods

@@ -41,13 +41,10 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
 		this.parent = parent;
 		this.circuitState = circuitState;
 		this.subcircComp = subcircComp;
-		this.children = new ArrayList<TreeNode>();
+		children = new ArrayList<>();
 		circuitState.getCircuit().addCircuitListener(this);
-		if (subcircComp != null) {
-			subcircComp.getAttributeSet().addAttributeListener(this);
-		} else {
-			circuitState.getCircuit().getStaticAttributes().addAttributeListener(this);
-		}
+		if (subcircComp != null) subcircComp.getAttributeSet().addAttributeListener(this);
+		else circuitState.getCircuit().getStaticAttributes().addAttributeListener(this);
 		computeChildren();
 	}
 
@@ -69,14 +66,10 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
 	public String toString() {
 		if (subcircComp != null) {
 			String label = subcircComp.getAttributeSet().getValue(StdAttr.LABEL);
-			if (label != null && !label.equals("")) {
-				return label;
-			}
+			if (label != null && !label.isEmpty()) return label;
 		}
 		String ret = circuitState.getCircuit().getName();
-		if (subcircComp != null) {
-			ret += subcircComp.getLocation();
-		}
+		if (subcircComp != null) ret += subcircComp.getLocation();
 		return ret;
 	}
 
@@ -117,56 +110,39 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
 
 	public void circuitChanged(CircuitEvent event) {
 		int action = event.getAction();
-		if (action == CircuitEvent.ACTION_SET_NAME) {
-			model.fireNodeChanged(this);
-		} else {
-			if (computeChildren()) {
-				model.fireStructureChanged(this);
-			}
-		}
+		if (action == CircuitEvent.ACTION_SET_NAME) model.fireNodeChanged(this);
+		else if (computeChildren()) model.fireStructureChanged(this);
 	}
 
 	// returns true if changed
 	private boolean computeChildren() {
-		ArrayList<TreeNode> newChildren = new ArrayList<TreeNode>();
-		ArrayList<Component> subcircs = new ArrayList<Component>();
-		for (Component comp : circuitState.getCircuit().getNonWires()) {
-			if (comp.getFactory() instanceof SubcircuitFactory) {
-				subcircs.add(comp);
-			} else {
-				TreeNode toAdd = model.mapComponentToNode(comp);
-				if (toAdd != null) {
-					newChildren.add(toAdd);
-				}
+		ArrayList<TreeNode> newChildren = new ArrayList<>();
+		ArrayList<Component> subcircs = new ArrayList<>();
+		for (Component comp : circuitState.getCircuit().getNonWires())
+			if (comp.getFactory() instanceof SubcircuitFactory) subcircs.add(comp);
+			else {
+				TreeNode toAdd = model.mapComponentToNode();
+				if (toAdd != null) newChildren.add(toAdd);
 			}
-		}
-		Collections.sort(newChildren, new CompareByName());
-		Collections.sort(subcircs, this);
+		newChildren.sort(new CompareByName());
+		subcircs.sort(this);
 		for (Component comp : subcircs) {
 			SubcircuitFactory factory = (SubcircuitFactory) comp.getFactory();
 			CircuitState state = factory.getSubstate(circuitState, comp);
 			SimulationTreeCircuitNode toAdd = null;
-			for (TreeNode o : children) {
-				if (o instanceof SimulationTreeCircuitNode) {
-					SimulationTreeCircuitNode n = (SimulationTreeCircuitNode) o;
-					if (n.circuitState == state) {
-						toAdd = n;
-						break;
-					}
+			for (TreeNode o : children)
+				if (o instanceof SimulationTreeCircuitNode n) if (n.circuitState == state) {
+					toAdd = n;
+					break;
 				}
-			}
-			if (toAdd == null) {
-				toAdd = new SimulationTreeCircuitNode(model, this, state, comp);
-			}
+			if (toAdd == null) toAdd = new SimulationTreeCircuitNode(model, this, state, comp);
 			newChildren.add(toAdd);
 		}
 
 		if (!children.equals(newChildren)) {
 			children = newChildren;
 			return true;
-		} else {
-			return false;
-		}
+		} else return false;
 	}
 
 	public int compare(Component a, Component b) {
@@ -187,8 +163,6 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
 
 	public void attributeValueChanged(AttributeEvent e) {
 		Object attr = e.getAttribute();
-		if (attr == CircuitAttributes.CIRCUIT_LABEL_ATTR || attr == StdAttr.LABEL) {
-			model.fireNodeChanged(this);
-		}
+		if (attr == CircuitAttributes.CIRCUIT_LABEL_ATTR || attr == StdAttr.LABEL) model.fireNodeChanged(this);
 	}
 }

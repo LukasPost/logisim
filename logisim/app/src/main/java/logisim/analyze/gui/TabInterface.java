@@ -4,11 +4,11 @@
 package logisim.analyze.gui;
 
 interface TabInterface {
-	public void copy();
+	void copy();
 
-	public void paste();
+	void paste();
 
-	public void delete();
+	void delete();
 
-	public void selectAll();
+	void selectAll();
 }

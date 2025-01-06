@@ -14,7 +14,7 @@ public class DirectionConfigurator implements KeyConfigurator, Cloneable {
 
 	public DirectionConfigurator(Attribute<Direction> attr, int modifiersEx) {
 		this.attr = attr;
-		this.modsEx = modifiersEx;
+		modsEx = modifiersEx;
 	}
 
 	@Override
@@ -32,21 +32,13 @@ public class DirectionConfigurator implements KeyConfigurator, Cloneable {
 		if (event.getType() == KeyConfigurationEvent.KEY_PRESSED) {
 			KeyEvent e = event.getKeyEvent();
 			if (e.getModifiersEx() == modsEx) {
-				Direction value = null;
-				switch (e.getKeyCode()) {
-				case KeyEvent.VK_UP:
-					value = Direction.North;
-					break;
-				case KeyEvent.VK_DOWN:
-					value = Direction.South;
-					break;
-				case KeyEvent.VK_LEFT:
-					value = Direction.West;
-					break;
-				case KeyEvent.VK_RIGHT:
-					value = Direction.East;
-					break;
-				}
+				Direction value = switch (e.getKeyCode()) {
+					case KeyEvent.VK_UP -> Direction.North;
+					case KeyEvent.VK_DOWN -> Direction.South;
+					case KeyEvent.VK_LEFT -> Direction.West;
+					case KeyEvent.VK_RIGHT -> Direction.East;
+					default -> null;
+				};
 				if (value != null) {
 					event.consume();
 					return new KeyConfigurationResult(event, attr, value);

@@ -43,7 +43,7 @@ public class Clock extends InstanceFactory {
 
 	private static class ClockState implements InstanceData, Cloneable {
 		Value sending = Value.FALSE;
-		int clicks = 0;
+		int clicks;
 
 		@Override
 		public ClockState clone() {
@@ -99,7 +99,7 @@ public class Clock extends InstanceFactory {
 		setAttributes(
 				new Attribute[] { StdAttr.FACING, ATTR_HIGH, ATTR_LOW, StdAttr.LABEL, Pin.ATTR_LABEL_LOC,
 						StdAttr.LABEL_FONT },
-				new Object[] { Direction.East, Integer.valueOf(1), Integer.valueOf(1), "", Direction.West,
+				new Object[] { Direction.East, 1, 1, "", Direction.West,
 						StdAttr.DEFAULT_LABEL_FONT });
 		setFacingAttribute(StdAttr.FACING);
 		setInstanceLogger(ClockLogger.class);
@@ -117,9 +117,8 @@ public class Clock extends InstanceFactory {
 	@Override
 	public void paintIcon(InstancePainter painter) {
 		Graphics g = painter.getGraphics();
-		if (toolIcon != null) {
-			toolIcon.paintIcon(painter.getDestination(), g, 2, 2);
-		} else {
+		if (toolIcon != null) toolIcon.paintIcon(painter.getDestination(), g, 2, 2);
+		else {
 			g.drawRect(4, 4, 13, 13);
 			g.setColor(Value.FALSE.getColor());
 			g.drawPolyline(new int[] { 6, 6, 10, 10, 14, 14 }, new int[] { 10, 6, 6, 14, 14, 10 }, 6);
@@ -129,9 +128,8 @@ public class Clock extends InstanceFactory {
 		int pinx = 15;
 		int piny = 8;
 		if (dir == Direction.East) { // keep defaults
-		} else if (dir == Direction.West) {
-			pinx = 3;
-		} else if (dir == Direction.North) {
+		} else if (dir == Direction.West) pinx = 3;
+		else if (dir == Direction.North) {
 			pinx = 8;
 			piny = 3;
 		} else if (dir == Direction.South) {
@@ -144,7 +142,7 @@ public class Clock extends InstanceFactory {
 
 	@Override
 	public void paintInstance(InstancePainter painter) {
-		java.awt.Graphics g = painter.getGraphics();
+		Graphics g = painter.getGraphics();
 		Bounds bds = painter.getInstance().getBounds(); // intentionally with no graphics object - we don't want label
 														// included
 		int x = bds.getX();
@@ -168,11 +166,8 @@ public class Clock extends InstanceFactory {
 		y += 10;
 		int[] xs = { x - 6, x - 6, x, x, x + 6, x + 6 };
 		int[] ys;
-		if (drawUp) {
-			ys = new int[] { y, y - 4, y - 4, y + 4, y + 4, y };
-		} else {
-			ys = new int[] { y, y + 4, y + 4, y - 4, y - 4, y };
-		}
+		if (drawUp) ys = new int[]{y, y - 4, y - 4, y + 4, y + 4, y};
+		else ys = new int[]{y, y + 4, y + 4, y - 4, y - 4, y};
 		g.drawPolyline(xs, ys, xs.length);
 
 		painter.drawPorts();
@@ -190,9 +185,8 @@ public class Clock extends InstanceFactory {
 
 	@Override
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-		if (attr == Pin.ATTR_LABEL_LOC) {
-			configureLabel(instance);
-		} else if (attr == StdAttr.FACING) {
+		if (attr == Pin.ATTR_LABEL_LOC) configureLabel(instance);
+		else if (attr == StdAttr.FACING) {
 			instance.recomputeBounds();
 			configureLabel(instance);
 		}
@@ -202,9 +196,8 @@ public class Clock extends InstanceFactory {
 	public void propagate(InstanceState state) {
 		Value val = state.getPort(0);
 		ClockState q = getState(state);
-		if (!val.equals(q.sending)) { // ignore if no change
-			state.setPort(0, q.sending, 1);
-		}
+		// ignore if no change
+		if (!val.equals(q.sending)) state.setPort(0, q.sending, 1);
 	}
 
 	//
@@ -212,8 +205,8 @@ public class Clock extends InstanceFactory {
 	//
 	public static boolean tick(CircuitState circState, int ticks, Component comp) {
 		AttributeSet attrs = comp.getAttributeSet();
-		int durationHigh = attrs.getValue(ATTR_HIGH).intValue();
-		int durationLow = attrs.getValue(ATTR_LOW).intValue();
+		int durationHigh = attrs.getValue(ATTR_HIGH);
+		int durationLow = attrs.getValue(ATTR_LOW);
 		ClockState state = (ClockState) circState.getData(comp);
 		if (state == null) {
 			state = new ClockState();
@@ -227,9 +220,7 @@ public class Clock extends InstanceFactory {
 			state.sending = desired;
 			Instance.getInstanceFor(comp).fireInvalidated();
 			return true;
-		} else {
-			return false;
-		}
+		} else return false;
 	}
 
 	//

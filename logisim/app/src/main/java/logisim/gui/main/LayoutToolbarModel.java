@@ -18,6 +18,7 @@ import logisim.data.AttributeEvent;
 import logisim.data.AttributeListener;
 import logisim.file.LogisimFile;
 import logisim.file.ToolbarData;
+import logisim.file.ToolbarData.ToolbarListener;
 import logisim.prefs.AppPreferences;
 import logisim.proj.Project;
 import logisim.proj.ProjectEvent;
@@ -80,15 +81,14 @@ class LayoutToolbarModel extends AbstractToolbarModel {
 	}
 
 	private class MyListener
-			implements ProjectListener, AttributeListener, ToolbarData.ToolbarListener, PropertyChangeListener {
+			implements ProjectListener, AttributeListener, ToolbarListener, PropertyChangeListener {
 		//
 		// ProjectListener methods
 		//
 		public void projectChanged(ProjectEvent e) {
 			int act = e.getAction();
-			if (act == ProjectEvent.ACTION_SET_TOOL) {
-				fireToolbarAppearanceChanged();
-			} else if (act == ProjectEvent.ACTION_SET_FILE) {
+			if (act == ProjectEvent.ACTION_SET_TOOL) fireToolbarAppearanceChanged();
+			else if (act == ProjectEvent.ACTION_SET_FILE) {
 				LogisimFile old = (LogisimFile) e.getOldData();
 				if (old != null) {
 					ToolbarData data = old.getOptions().getToolbarData();
@@ -126,22 +126,19 @@ class LayoutToolbarModel extends AbstractToolbarModel {
 		// PropertyChangeListener method
 		//
 		public void propertyChange(PropertyChangeEvent event) {
-			if (AppPreferences.GATE_SHAPE.isSource(event)) {
-				fireToolbarAppearanceChanged();
-			}
+			if (AppPreferences.GATE_SHAPE.isSource(event)) fireToolbarAppearanceChanged();
 		}
 	}
 
 	private Frame frame;
 	private Project proj;
-	private MyListener myListener;
 	private List<ToolbarItem> items;
 	private Tool haloedTool;
 
 	public LayoutToolbarModel(Frame frame, Project proj) {
 		this.frame = frame;
 		this.proj = proj;
-		myListener = new MyListener();
+		MyListener myListener = new MyListener();
 		items = Collections.emptyList();
 		haloedTool = null;
 		buildContents();
@@ -164,9 +161,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
 		if (item instanceof ToolItem) {
 			Tool tool = ((ToolItem) item).tool;
 			return tool == proj.getTool();
-		} else {
-			return false;
-		}
+		} else return false;
 	}
 
 	@Override
@@ -186,32 +181,21 @@ class LayoutToolbarModel extends AbstractToolbarModel {
 
 	private void buildContents() {
 		List<ToolbarItem> oldItems = items;
-		List<ToolbarItem> newItems = new ArrayList<ToolbarItem>();
+		List<ToolbarItem> newItems = new ArrayList<>();
 		ToolbarData data = proj.getLogisimFile().getOptions().getToolbarData();
-		for (Tool tool : data.getContents()) {
-			if (tool == null) {
-				newItems.add(new ToolbarSeparator(4));
-			} else {
+		for (Tool tool : data.getContents())
+			if (tool == null) newItems.add(new ToolbarSeparator(4));
+			else {
 				ToolbarItem i = findItem(oldItems, tool);
-				if (i == null) {
-					newItems.add(new ToolItem(tool));
-				} else {
-					newItems.add(i);
-				}
+				if (i == null) newItems.add(new ToolItem(tool));
+				else newItems.add(i);
 			}
-		}
 		items = Collections.unmodifiableList(newItems);
 		fireToolbarContentsChanged();
 	}
 
 	private static ToolbarItem findItem(List<ToolbarItem> items, Tool tool) {
-		for (ToolbarItem item : items) {
-			if (item instanceof ToolItem) {
-				if (tool == ((ToolItem) item).tool) {
-					return item;
-				}
-			}
-		}
+		for (ToolbarItem item : items) if (item instanceof ToolItem) if (tool == ((ToolItem) item).tool) return item;
 		return null;
 	}
 }

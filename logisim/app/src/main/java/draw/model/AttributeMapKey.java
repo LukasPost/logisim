@@ -5,6 +5,8 @@ package draw.model;
 
 import logisim.data.Attribute;
 
+import java.util.Objects;
+
 public class AttributeMapKey {
 	private Attribute<?> attr;
 	private CanvasObject object;
@@ -31,10 +33,7 @@ public class AttributeMapKey {
 
 	@Override
 	public boolean equals(Object other) {
-		if (!(other instanceof AttributeMapKey))
-			return false;
-		AttributeMapKey o = (AttributeMapKey) other;
-		return (attr == null ? o.attr == null : attr.equals(o.attr))
-				&& (object == null ? o.object == null : object.equals(o.object));
+		return other instanceof AttributeMapKey o && (Objects.equals(attr, o.attr))
+				&& (Objects.equals(object, o.object));
 	}
 }

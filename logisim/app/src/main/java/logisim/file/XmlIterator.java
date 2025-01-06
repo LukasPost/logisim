@@ -7,30 +7,29 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class XmlIterator<E extends Node> implements Iterable<E>, Iterator<E>, Cloneable {
 	public static XmlIterator<Node> forChildren(Element node) {
-		return new XmlIterator<Node>(node.getChildNodes());
+		return new XmlIterator<>(node.getChildNodes());
 	}
 
 	public static Iterable<Element> forChildElements(Element node) {
 		NodeList nodes = node.getChildNodes();
-		ArrayList<Element> ret = new ArrayList<Element>();
+		ArrayList<Element> ret = new ArrayList<>();
 		for (int i = 0, n = nodes.getLength(); i < n; i++) {
 			Node sub = nodes.item(i);
-			if (sub.getNodeType() == Node.ELEMENT_NODE) {
-				ret.add((Element) sub);
-			}
+			if (sub.getNodeType() == Node.ELEMENT_NODE) ret.add((Element) sub);
 		}
 		return ret;
 	}
 
 	public static Iterable<Element> forChildElements(Element node, String tagName) {
 		NodeList nodes = node.getChildNodes();
-		ArrayList<Element> ret = new ArrayList<Element>();
+		ArrayList<Element> ret = new ArrayList<>();
 		for (int i = 0, n = nodes.getLength(); i < n; i++) {
 			Node sub = nodes.item(i);
 			if (sub.getNodeType() == Node.ELEMENT_NODE) {
@@ -43,7 +42,7 @@ public class XmlIterator<E extends Node> implements Iterable<E>, Iterator<E>, Cl
 	}
 
 	public static Iterable<Element> forDescendantElements(Element node, String tagName) {
-		return new XmlIterator<Element>(node.getElementsByTagName(tagName));
+		return new XmlIterator<>(node.getElementsByTagName(tagName));
 	}
 
 	private NodeList list;
@@ -66,8 +65,8 @@ public class XmlIterator<E extends Node> implements Iterable<E>, Iterator<E>, Cl
 		}
 	}
 
-	public Iterator<E> iterator() {
-		XmlIterator<E> ret = this.clone();
+	public @NotNull Iterator<E> iterator() {
+		XmlIterator<E> ret = clone();
 		ret.index = 0;
 		return ret;
 	}
@@ -78,9 +77,8 @@ public class XmlIterator<E extends Node> implements Iterable<E>, Iterator<E>, Cl
 
 	public E next() {
 		Node ret = list.item(index);
-		if (ret == null) {
-			throw new NoSuchElementException();
-		} else {
+		if (ret == null) throw new NoSuchElementException();
+		else {
 			index++;
 			@SuppressWarnings("unchecked")
 			E ret2 = (E) ret;

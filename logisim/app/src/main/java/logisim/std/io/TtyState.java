@@ -30,7 +30,7 @@ class TtyState implements InstanceData, Cloneable {
 	public TtyState clone() {
 		try {
 			TtyState ret = (TtyState) super.clone();
-			ret.rowData = this.rowData.clone();
+			ret.rowData = rowData.clone();
 			return ret;
 		}
 		catch (CloneNotSupportedException e) {
@@ -72,9 +72,7 @@ class TtyState implements InstanceData, Cloneable {
 	}
 
 	public void add(char c) {
-		if (sendStdout) {
-			TtyInterface.sendFromTty(c);
-		}
+		if (sendStdout) TtyInterface.sendFromTty(c);
 
 		int lastLength = lastRow.length();
 		switch (c) {
@@ -135,9 +133,7 @@ class TtyState implements InstanceData, Cloneable {
 					if (s.length() > cols)
 						rowData[i] = s.substring(0, cols);
 				}
-				if (lastRow.length() > cols) {
-					lastRow.delete(cols, lastRow.length());
-				}
+				if (lastRow.length() > cols) lastRow.delete(cols, lastRow.length());
 			}
 		}
 	}

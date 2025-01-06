@@ -18,13 +18,13 @@ import logisim.data.Location;
 class CircuitPoints {
 	private static class LocationData {
 		BitWidth width = BitWidth.UNKNOWN;
-		ArrayList<Component> components = new ArrayList<Component>(4);
-		ArrayList<EndData> ends = new ArrayList<EndData>(4);
+		ArrayList<Component> components = new ArrayList<>(4);
+		ArrayList<EndData> ends = new ArrayList<>(4);
 		// these lists are parallel - ends corresponding to wires are null
 	}
 
-	private HashMap<Location, LocationData> map = new HashMap<Location, LocationData>();
-	private HashMap<Location, WidthIncompatibilityData> incompatibilityData = new HashMap<Location, WidthIncompatibilityData>();
+	private HashMap<Location, LocationData> map = new HashMap<>();
+	private HashMap<Location, WidthIncompatibilityData> incompatibilityData = new HashMap<>();
 
 	public CircuitPoints() {
 	}
@@ -53,9 +53,7 @@ class CircuitPoints {
 		int i = -1;
 		for (EndData endData : locData.ends) {
 			i++;
-			if (endData != null && endData.isExclusive()) {
-				return locData.components.get(i);
-			}
+			if (endData != null && endData.isExclusive()) return locData.components.get(i);
 		}
 		return null;
 	}
@@ -92,12 +90,11 @@ class CircuitPoints {
 		ArrayList<Component> list = locData.components;
 		int retSize = 0;
 		Component retValue = null;
-		for (Component o : list) {
+		for (Component o : list)
 			if ((o instanceof Wire) == isWire) {
 				retValue = o;
 				retSize++;
 			}
-		}
 		if (retSize == list.size())
 			return list;
 		if (retSize == 0)
@@ -108,12 +105,11 @@ class CircuitPoints {
 		// otherwise we have to create our own list
 		Component[] ret = new Component[retSize];
 		int retPos = 0;
-		for (Component o : list) {
+		for (Component o : list)
 			if ((o instanceof Wire) == isWire) {
 				ret[retPos] = o;
 				retPos++;
 			}
-		}
 		return Arrays.asList(ret);
 	}
 
@@ -122,33 +118,20 @@ class CircuitPoints {
 	}
 
 	boolean hasConflict(Component comp) {
-		if (comp instanceof Wire) {
-			return false;
-		} else {
-			for (EndData endData : comp.getEnds()) {
-				if (endData != null && endData.isExclusive() && getExclusive(endData.getLocation()) != null) {
-					return true;
-				}
-			}
-			return false;
-		}
+		if (!(comp instanceof Wire)) for (EndData endData : comp.getEnds())
+			if (endData != null && endData.isExclusive() && getExclusive(endData.getLocation()) != null)
+				return true;
+		return false;
 	}
 
 	//
 	// update methods
 	//
 	void add(Component comp) {
-		if (comp instanceof Wire) {
-			Wire w = (Wire) comp;
+		if (comp instanceof Wire w) {
 			addSub(w.getEnd0(), w, null);
 			addSub(w.getEnd1(), w, null);
-		} else {
-			for (EndData endData : comp.getEnds()) {
-				if (endData != null) {
-					addSub(endData.getLocation(), comp, endData);
-				}
-			}
-		}
+		} else for (EndData endData : comp.getEnds()) if (endData != null) addSub(endData.getLocation(), comp, endData);
 	}
 
 	void add(Component comp, EndData endData) {
@@ -157,17 +140,10 @@ class CircuitPoints {
 	}
 
 	void remove(Component comp) {
-		if (comp instanceof Wire) {
-			Wire w = (Wire) comp;
+		if (comp instanceof Wire w) {
 			removeSub(w.getEnd0(), w);
 			removeSub(w.getEnd1(), w);
-		} else {
-			for (EndData endData : comp.getEnds()) {
-				if (endData != null) {
-					removeSub(endData.getLocation(), comp);
-				}
-			}
-		}
+		} else for (EndData endData : comp.getEnds()) if (endData != null) removeSub(endData.getLocation(), comp);
 	}
 
 	void remove(Component comp, EndData endData) {
@@ -209,12 +185,11 @@ class CircuitPoints {
 		WidthIncompatibilityData error = null;
 		if (locData != null) {
 			BitWidth width = BitWidth.UNKNOWN;
-			for (EndData endData : locData.ends) {
+			for (EndData endData : locData.ends)
 				if (endData != null) {
 					BitWidth endWidth = endData.getWidth();
-					if (width == BitWidth.UNKNOWN) {
-						width = endWidth;
-					} else if (width != endWidth && endWidth != BitWidth.UNKNOWN) {
+					if (width == BitWidth.UNKNOWN) width = endWidth;
+					else if (width != endWidth && endWidth != BitWidth.UNKNOWN) {
 						if (error == null) {
 							error = new WidthIncompatibilityData();
 							error.add(loc, width);
@@ -222,15 +197,11 @@ class CircuitPoints {
 						error.add(loc, endWidth);
 					}
 				}
-			}
 			locData.width = width;
 		}
 
-		if (error == null) {
-			incompatibilityData.remove(loc);
-		} else {
-			incompatibilityData.put(loc, error);
-		}
+		if (error == null) incompatibilityData.remove(loc);
+		else incompatibilityData.put(loc, error);
 	}
 
 }

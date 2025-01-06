@@ -31,13 +31,13 @@ public class Toolbar extends JPanel {
 
 	public Toolbar(ToolbarModel model) {
 		super(new BorderLayout());
-		this.subpanel = new JPanel();
+		subpanel = new JPanel();
 		this.model = model;
-		this.orientation = HORIZONTAL;
-		this.myListener = new MyListener();
-		this.curPressed = null;
+		orientation = HORIZONTAL;
+		myListener = new MyListener();
+		curPressed = null;
 
-		this.add(new JPanel(), BorderLayout.CENTER);
+		add(new JPanel(), BorderLayout.CENTER);
 		setOrientation(HORIZONTAL);
 
 		computeContents();
@@ -70,22 +70,18 @@ public class Toolbar extends JPanel {
 		} else if (value == VERTICAL) {
 			axis = BoxLayout.Y_AXIS;
 			position = BorderLayout.NORTH;
-		} else {
-			throw new IllegalArgumentException();
-		}
-		this.remove(subpanel);
+		} else throw new IllegalArgumentException();
+		remove(subpanel);
 		subpanel.setLayout(new BoxLayout(subpanel, axis));
-		this.add(subpanel, position);
-		this.orientation = value;
+		add(subpanel, position);
+		orientation = value;
 	}
 
 	private void computeContents() {
 		subpanel.removeAll();
 		ToolbarModel m = model;
 		if (m != null) {
-			for (ToolbarItem item : m.getItems()) {
-				subpanel.add(new ToolbarButton(this, item));
-			}
+			for (ToolbarItem item : m.getItems()) subpanel.add(new ToolbarButton(this, item));
 			subpanel.add(Box.createGlue());
 		}
 		revalidate();

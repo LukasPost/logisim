@@ -95,16 +95,14 @@ class Toolbar extends JComponent {
 
 	public Toolbar(Canvas canvas, DrawingAttributeSet attrs) {
 		this.canvas = canvas;
-		this.tools = new AbstractTool[][] { AbstractTool.getTools(attrs) };
-		this.listener = new Listener();
+		tools = new AbstractTool[][] { AbstractTool.getTools(attrs) };
+		listener = new Listener();
 
 		AbstractTool[] toolBase = AbstractTool.getTools(attrs);
-		this.tools = new AbstractTool[2][];
-		this.tools[0] = new AbstractTool[(toolBase.length + 1) / 2];
-		this.tools[1] = new AbstractTool[toolBase.length / 2];
-		for (int i = 0; i < toolBase.length; i++) {
-			this.tools[i % 2][i / 2] = toolBase[i];
-		}
+		tools = new AbstractTool[2][];
+		tools[0] = new AbstractTool[(toolBase.length + 1) / 2];
+		tools[1] = new AbstractTool[toolBase.length / 2];
+		for (int i = 0; i < toolBase.length; i++) tools[i % 2][i / 2] = toolBase[i];
 
 		setPreferredSize(
 				new Dimension(3 * ICON_SEP + 2 * ICON_WIDTH, ICON_SEP + tools[0].length * (ICON_HEIGHT + ICON_SEP)));
@@ -124,8 +122,7 @@ class Toolbar extends JComponent {
 			AbstractTool[] column = tools[i];
 			int x = ICON_SEP + i * (ICON_SEP + ICON_WIDTH);
 			int y = ICON_SEP;
-			for (int j = 0; j < column.length; j++) {
-				AbstractTool tool = column[j];
+			for (AbstractTool tool : column) {
 				if (tool == listener.toolPressed && listener.inTool) {
 					g.setColor(Color.darkGray);
 					g.fillRect(x, y, ICON_WIDTH, ICON_HEIGHT);

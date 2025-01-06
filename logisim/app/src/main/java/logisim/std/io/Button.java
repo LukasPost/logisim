@@ -59,9 +59,7 @@ public class Button extends InstanceFactory {
 		if (attr == StdAttr.FACING) {
 			instance.recomputeBounds();
 			computeTextField(instance);
-		} else if (attr == Io.ATTR_LABEL_LOC) {
-			computeTextField(instance);
-		}
+		} else if (attr == Io.ATTR_LABEL_LOC) computeTextField(instance);
 	}
 
 	private void computeTextField(Instance instance) {
@@ -89,14 +87,13 @@ public class Button extends InstanceFactory {
 			x = bds.getX() - 2;
 			halign = GraphicsUtil.H_RIGHT;
 		}
-		if (labelLoc == facing) {
-			if (labelLoc == Direction.North || labelLoc == Direction.South) {
-				x += 2;
-				halign = GraphicsUtil.H_LEFT;
-			} else {
-				y -= 2;
-				valign = GraphicsUtil.V_BOTTOM;
-			}
+		if (labelLoc == facing) if (labelLoc == Direction.North || labelLoc == Direction.South) {
+			x += 2;
+			halign = GraphicsUtil.H_LEFT;
+		}
+		else {
+			y -= 2;
+			valign = GraphicsUtil.V_BOTTOM;
 		}
 
 		instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, x, y, halign, valign);
@@ -121,9 +118,7 @@ public class Button extends InstanceFactory {
 		if (painter.getShowState()) {
 			InstanceDataSingleton data = (InstanceDataSingleton) painter.getData();
 			val = data == null ? Value.FALSE : (Value) data.getValue();
-		} else {
-			val = Value.FALSE;
-		}
+		} else val = Value.FALSE;
 
 		Color color = painter.getAttributeValue(Io.ATTR_COLOR);
 		if (!painter.shouldDrawColor()) {
@@ -137,17 +132,15 @@ public class Button extends InstanceFactory {
 			x += DEPTH;
 			y += DEPTH;
 			Object labelLoc = painter.getAttributeValue(Io.ATTR_LABEL_LOC);
-			if (labelLoc == Io.LABEL_CENTER || labelLoc == Direction.North || labelLoc == Direction.West) {
+			if (labelLoc == Io.LABEL_CENTER || labelLoc == Direction.North || labelLoc == Direction.West)
 				depress = DEPTH;
-			} else {
-				depress = 0;
-			}
+			else depress = 0;
 
 			Object facing = painter.getAttributeValue(StdAttr.FACING);
 			if (facing == Direction.North || facing == Direction.West) {
 				Location p = painter.getLocation();
-				int px = p.getX();
-				int py = p.getY();
+				int px = p.x();
+				int py = p.y();
 				GraphicsUtil.switchToWidth(g, Wire.WIDTH);
 				g.setColor(Value.TRUE_COLOR);
 				if (facing == Direction.North)
@@ -163,8 +156,8 @@ public class Button extends InstanceFactory {
 			g.drawRect(x, y, w - DEPTH, h - DEPTH);
 		} else {
 			depress = 0;
-			int[] xp = new int[] { x, x + w - DEPTH, x + w, x + w, x + DEPTH, x };
-			int[] yp = new int[] { y, y, y + DEPTH, y + h, y + h, y + h - DEPTH };
+			int[] xp = { x, x + w - DEPTH, x + w, x + w, x + DEPTH, x };
+			int[] yp = { y, y, y + DEPTH, y + h, y + h, y + h - DEPTH };
 			g.setColor(color.darker());
 			g.fillPolygon(xp, yp, xp.length);
 			g.setColor(color);
@@ -195,11 +188,8 @@ public class Button extends InstanceFactory {
 
 		private void setValue(InstanceState state, Value val) {
 			InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
-			if (data == null) {
-				state.setData(new InstanceDataSingleton(val));
-			} else {
-				data.setValue(val);
-			}
+			if (data == null) state.setData(new InstanceDataSingleton(val));
+			else data.setValue(val);
 			state.getInstance().fireInvalidated();
 		}
 	}

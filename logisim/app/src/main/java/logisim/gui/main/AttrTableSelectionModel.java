@@ -11,10 +11,11 @@ import logisim.data.Attribute;
 import logisim.gui.generic.AttrTableSetException;
 import logisim.gui.generic.AttributeSetTableModel;
 import logisim.gui.main.Selection.Event;
+import logisim.gui.main.Selection.Listener;
 import logisim.proj.Project;
 import logisim.tools.SetAttributeAction;
 
-class AttrTableSelectionModel extends AttributeSetTableModel implements Selection.Listener {
+class AttrTableSelectionModel extends AttributeSetTableModel implements Listener {
 	private Project project;
 	private Frame frame;
 
@@ -37,38 +38,25 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
 		Selection selection = frame.getCanvas().getSelection();
 		for (Component comp : selection.getComponents()) {
 			ComponentFactory fact = comp.getFactory();
-			if (fact == factory) {
-				factoryCount++;
-			} else if (comp instanceof Wire) {
+			if (fact == factory) factoryCount++;
+			else if (comp instanceof Wire) {
 				wireFactory = fact;
-				if (factory == null) {
-					factoryCount++;
-				}
+				if (factory == null) factoryCount++;
 			} else if (factory == null) {
 				factory = fact;
 				factoryCount = 1;
-			} else {
-				variousFound = true;
-			}
-			if (!(comp instanceof Wire)) {
-				totalCount++;
-			}
+			} else variousFound = true;
+			if (!(comp instanceof Wire)) totalCount++;
 		}
 
-		if (factory == null) {
-			factory = wireFactory;
-		}
+		if (factory == null) factory = wireFactory;
 
-		if (variousFound) {
-			return Strings.get("selectionVarious", "" + totalCount);
-		} else if (factoryCount == 0) {
+		if (variousFound) return Strings.get("selectionVarious", "" + totalCount);
+		else if (factoryCount == 0) {
 			String circName = frame.getCanvas().getCircuit().getName();
 			return Strings.get("circuitAttrTitle", circName);
-		} else if (factoryCount == 1) {
-			return Strings.get("selectionOne", factory.getDisplayName());
-		} else {
-			return Strings.get("selectionMultiple", factory.getDisplayName(), "" + factoryCount);
-		}
+		} else if (factoryCount == 1) return Strings.get("selectionOne", factory.getDisplayName());
+		else return Strings.get("selectionMultiple", factory.getDisplayName(), "" + factoryCount);
 	}
 
 	@Override
@@ -80,11 +68,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
 			circuitModel.setValueRequested(attr, value);
 		} else {
 			SetAttributeAction act = new SetAttributeAction(circuit, Strings.getter("selectionAttributeAction"));
-			for (Component comp : selection.getComponents()) {
-				if (!(comp instanceof Wire)) {
-					act.set(comp, attr, value);
-				}
-			}
+			for (Component comp : selection.getComponents()) if (!(comp instanceof Wire)) act.set(comp, attr, value);
 			project.doAction(act);
 		}
 	}

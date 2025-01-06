@@ -6,7 +6,7 @@ package logisim.gui.main;
 import logisim.gui.menu.LogisimMenuItem;
 
 public abstract class EditHandler {
-	public static interface Listener {
+	public interface Listener {
 		void enableChanged(EditHandler handler, LogisimMenuItem action, boolean value);
 	}
 
@@ -18,9 +18,7 @@ public abstract class EditHandler {
 
 	protected void setEnabled(LogisimMenuItem action, boolean value) {
 		Listener l = listener;
-		if (l != null) {
-			l.enableChanged(this, action, value);
-		}
+		if (l != null) l.enableChanged(this, action, value);
 	}
 
 	public abstract void computeEnabled();

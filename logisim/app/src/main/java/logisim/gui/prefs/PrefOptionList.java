@@ -28,9 +28,7 @@ class PrefOptionList implements ActionListener, PropertyChangeListener {
 
 		label = new JLabel(labelStr.get() + " ");
 		combo = new JComboBox<>();
-		for (PrefOption opt : options) {
-			combo.addItem(opt);
-		}
+		for (PrefOption opt : options) combo.addItem(opt);
 
 		combo.addActionListener(this);
 		pref.addPropertyChangeListener(this);
@@ -62,19 +60,10 @@ class PrefOptionList implements ActionListener, PropertyChangeListener {
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
-		if (pref.isSource(event)) {
-			selectOption(pref.get());
-		}
+		if (pref.isSource(event)) selectOption(pref.get());
 	}
 
 	private void selectOption(Object value) {
-		for (int i = combo.getItemCount() - 1; i >= 0; i--) {
-			PrefOption opt = (PrefOption) combo.getItemAt(i);
-			if (opt.getValue().equals(value)) {
-				combo.setSelectedItem(opt);
-				return;
-			}
-		}
-		combo.setSelectedItem(combo.getItemAt(0));
+		PrefOption.setSelected(combo, value);
 	}
 }

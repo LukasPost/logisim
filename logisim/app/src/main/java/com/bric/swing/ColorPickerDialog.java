@@ -39,13 +39,11 @@ class ColorPickerDialog extends JDialog {
 	int alpha;
 	JButton ok = new JButton(ColorPicker.strings.getObject("OK").toString());
 	JButton cancel = new JButton(ColorPicker.strings.getObject("Cancel").toString());
-	Color returnValue = null;
+	Color returnValue;
 	ActionListener buttonListener = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			Object src = e.getSource();
-			if (src == ok) {
-				returnValue = cp.getColor();
-			}
+			if (src == ok) returnValue = cp.getColor();
 			setVisible(false);
 		}
 	};

@@ -112,14 +112,12 @@ public class Caret {
 					setDot(cursor - 1, shift);
 				break;
 			case KeyEvent.VK_DOWN:
-				if (cursor >= hex.getModel().getFirstOffset() && cursor <= hex.getModel().getLastOffset() - cols) {
+				if (cursor >= hex.getModel().getFirstOffset() && cursor <= hex.getModel().getLastOffset() - cols)
 					setDot(cursor + cols, shift);
-				}
 				break;
 			case KeyEvent.VK_RIGHT:
-				if (cursor >= hex.getModel().getFirstOffset() && cursor <= hex.getModel().getLastOffset() - 1) {
+				if (cursor >= hex.getModel().getFirstOffset() && cursor <= hex.getModel().getLastOffset() - 1)
 					setDot(cursor + 1, shift);
-				}
 				break;
 			case KeyEvent.VK_HOME:
 				if (cursor >= 0) {
@@ -139,9 +137,7 @@ public class Caret {
 						if (dest > end || dest == cursor)
 							dest = end;
 						setDot(dest, shift);
-					} else {
-						setDot(dest, shift);
-					}
+					} else setDot(dest, shift);
 				}
 				break;
 			case KeyEvent.VK_PAGE_DOWN:
@@ -150,9 +146,8 @@ public class Caret {
 					rows--;
 				if (cursor >= 0) {
 					long max = hex.getModel().getLastOffset();
-					if (cursor + rows * cols <= max) {
-						setDot(cursor + rows * cols, shift);
-					} else {
+					if (cursor + (long) rows * cols <= max) setDot(cursor + (long) rows * cols, shift);
+					else {
 						long n = cursor;
 						while (n + cols < max)
 							n += cols;
@@ -164,8 +159,8 @@ public class Caret {
 				rows = hex.getVisibleRect().height / hex.getMeasures().getCellHeight();
 				if (rows > 2)
 					rows--;
-				if (cursor >= rows * cols)
-					setDot(cursor - rows * cols, shift);
+				if (cursor >= (long) rows * cols)
+					setDot(cursor - (long) rows * cols, shift);
 				else if (cursor >= cols)
 					setDot(cursor % cols, shift);
 				break;
@@ -194,8 +189,8 @@ public class Caret {
 
 	Caret(HexEditor hex) {
 		this.hex = hex;
-		this.listeners = new ArrayList<ChangeListener>();
-		this.cursor = -1;
+		listeners = new ArrayList<>();
+		cursor = -1;
 
 		Listener l = new Listener();
 		hex.addMouseListener(l);
@@ -240,28 +235,21 @@ public class Caret {
 
 	public void setDot(long value, boolean keepMark) {
 		HexModel model = hex.getModel();
-		if (model == null || value < model.getFirstOffset() || value > model.getLastOffset()) {
-			value = -1;
-		}
+		if (model == null || value < model.getFirstOffset() || value > model.getLastOffset()) value = -1;
 		if (cursor != value) {
 			long oldValue = cursor;
 			if (highlight != null) {
 				hex.getHighlighter().remove(highlight);
 				highlight = null;
 			}
-			if (!keepMark) {
-				mark = value;
-			} else if (mark != value) {
-				highlight = hex.getHighlighter().add(mark, value, SELECT_COLOR);
-			}
+			if (!keepMark) mark = value;
+			else if (mark != value) highlight = hex.getHighlighter().add(mark, value, SELECT_COLOR);
 			cursor = value;
 			expose(oldValue, false);
 			expose(value, true);
 			if (!listeners.isEmpty()) {
 				ChangeEvent event = new ChangeEvent(this);
-				for (ChangeListener l : listeners) {
-					l.stateChanged(event);
-				}
+				for (ChangeListener l : listeners) l.stateChanged(event);
 			}
 		}
 	}
@@ -274,9 +262,7 @@ public class Caret {
 			int w = measures.getCellWidth();
 			int h = measures.getCellHeight();
 			hex.repaint(x - 1, y - 1, w + 2, h + 2);
-			if (scrollTo) {
-				hex.scrollRectToVisible(new Rectangle(x, y, w, h));
-			}
+			if (scrollTo) hex.scrollRectToVisible(new Rectangle(x, y, w, h));
 		}
 	}
 

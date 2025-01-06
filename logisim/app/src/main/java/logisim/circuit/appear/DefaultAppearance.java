@@ -6,11 +6,11 @@ package logisim.circuit.appear;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import draw.model.CanvasObject;
 import draw.shapes.Curve;
@@ -38,17 +38,13 @@ class DefaultAppearance {
 			Location aloc = a.getLocation();
 			Location bloc = b.getLocation();
 			if (byX) {
-				int ax = aloc.getX();
-				int bx = bloc.getX();
-				if (ax != bx) {
-					return ax < bx ? -1 : 1;
-				}
+				int ax = aloc.x();
+				int bx = bloc.x();
+				if (ax != bx) return ax < bx ? -1 : 1;
 			} else {
-				int ay = aloc.getY();
-				int by = bloc.getY();
-				if (ay != by) {
-					return ay < by ? -1 : 1;
-				}
+				int ay = aloc.y();
+				int by = bloc.y();
+				if (ay != by) return ay < by ? -1 : 1;
 			}
 			return aloc.compareTo(bloc);
 		}
@@ -57,20 +53,19 @@ class DefaultAppearance {
 	static void sortPinList(List<Instance> pins, Direction facing) {
 		if (facing == Direction.North || facing == Direction.South) {
 			Comparator<Instance> sortHorizontal = new CompareLocations(true);
-			Collections.sort(pins, sortHorizontal);
+			pins.sort(sortHorizontal);
 		} else {
 			Comparator<Instance> sortVertical = new CompareLocations(false);
-			Collections.sort(pins, sortVertical);
+			pins.sort(sortVertical);
 		}
 	}
 
 	public static List<CanvasObject> build(Collection<Instance> pins) {
-		Map<Direction, List<Instance>> edge;
-		edge = new HashMap<Direction, List<Instance>>();
-		edge.put(Direction.North, new ArrayList<Instance>());
-		edge.put(Direction.South, new ArrayList<Instance>());
-		edge.put(Direction.East, new ArrayList<Instance>());
-		edge.put(Direction.West, new ArrayList<Instance>());
+		Map<Direction, List<Instance>> edge = new HashMap<>();
+		edge.put(Direction.North, new ArrayList<>());
+		edge.put(Direction.South, new ArrayList<>());
+		edge.put(Direction.East, new ArrayList<>());
+		edge.put(Direction.West, new ArrayList<>());
 		for (Instance pin : pins) {
 			Direction pinFacing = pin.getAttributeValue(StdAttr.FACING);
 			Direction pinEdge = pinFacing.reverse();
@@ -78,9 +73,7 @@ class DefaultAppearance {
 			e.add(pin);
 		}
 
-		for (Map.Entry<Direction, List<Instance>> entry : edge.entrySet()) {
-			sortPinList(entry.getValue(), entry.getKey());
-		}
+		for (Entry<Direction, List<Instance>> entry : edge.entrySet()) sortPinList(entry.getValue(), entry.getKey());
 
 		int numNorth = edge.get(Direction.North).size();
 		int numSouth = edge.get(Direction.South).size();
@@ -125,12 +118,12 @@ class DefaultAppearance {
 		Location e1 = new Location(rx + (width + 8) / 2, ry + 1);
 		Location ct = new Location(rx + width / 2, ry + 11);
 		Curve notch = new Curve(e0, e1, ct);
-		notch.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(2));
+		notch.setValue(DrawAttr.STROKE_WIDTH, 2);
 		notch.setValue(DrawAttr.STROKE_COLOR, Color.GRAY);
 		Rectangle rect = new Rectangle(rx, ry, width, height);
-		rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(2));
+		rect.setValue(DrawAttr.STROKE_WIDTH, 2);
 
-		List<CanvasObject> ret = new ArrayList<CanvasObject>();
+		List<CanvasObject> ret = new ArrayList<>();
 		ret.add(notch);
 		ret.add(rect);
 		placePins(ret, edge.get(Direction.West), rx, ry + offsWest, 0, 10);
@@ -142,29 +135,18 @@ class DefaultAppearance {
 	}
 
 	private static int computeDimension(int maxThis, int maxOthers) {
-		if (maxThis < 3) {
-			return 30;
-		} else if (maxOthers == 0) {
-			return 10 * maxThis;
-		} else {
-			return 10 * maxThis + 10;
-		}
+		if (maxThis < 3) return 30;
+		else if (maxOthers == 0) return 10 * maxThis;
+		else return 10 * maxThis + 10;
 	}
 
 	private static int computeOffset(int numFacing, int numOpposite, int maxOthers) {
 		int maxThis = Math.max(numFacing, numOpposite);
-		int maxOffs;
-		switch (maxThis) {
-		case 0:
-		case 1:
-			maxOffs = (maxOthers == 0 ? 15 : 10);
-			break;
-		case 2:
-			maxOffs = 10;
-			break;
-		default:
-			maxOffs = (maxOthers == 0 ? 5 : 10);
-		}
+		int maxOffs = switch (maxThis) {
+			case 0, 1 -> (maxOthers == 0 ? 15 : 10);
+			case 2 -> 10;
+			default -> (maxOthers == 0 ? 5 : 10);
+		};
 		return maxOffs + 10 * ((maxThis - numFacing) / 2);
 	}
 

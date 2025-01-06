@@ -47,18 +47,15 @@ class XnorGate extends AbstractGate {
 	}
 
 	@Override
-	protected void paintDinShape(InstancePainter painter, int width, int height, int inputs) {
+	protected void paintDinShape(InstancePainter painter, int width, int height) {
 		PainterDin.paintXnor(painter, width, height, false);
 	}
 
 	@Override
 	protected Value computeOutput(Value[] inputs, int numInputs, InstanceState state) {
 		Object behavior = state.getAttributeValue(GateAttributes.ATTR_XOR);
-		if (behavior == GateAttributes.XOR_ODD) {
-			return GateFunctions.computeOddParity(inputs, numInputs).not();
-		} else {
-			return GateFunctions.computeExactlyOne(inputs, numInputs).not();
-		}
+		if (behavior == GateAttributes.XOR_ODD) return GateFunctions.computeOddParity(inputs, numInputs).not();
+		else return GateFunctions.computeExactlyOne(inputs, numInputs).not();
 	}
 
 	@Override

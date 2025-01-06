@@ -93,7 +93,7 @@ public class Counter extends InstanceFactory {
 
 		BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
 		Object triggerType = state.getAttributeValue(StdAttr.EDGE_TRIGGER);
-		int max = state.getAttributeValue(ATTR_MAX).intValue();
+		int max = state.getAttributeValue(ATTR_MAX);
 		Value clock = state.getPort(CK);
 		boolean triggered = data.updateClock(clock, triggerType);
 
@@ -107,38 +107,31 @@ public class Counter extends InstanceFactory {
 			boolean ct = state.getPort(CT) != Value.FALSE;
 			int oldVal = data.value;
 			int newVal;
-			if (!triggered) {
-				newVal = oldVal;
-			} else if (ct) { // trigger, enable = 1: should increment or decrement
+			if (!triggered) newVal = oldVal;
+			else if (ct) { // trigger, enable = 1: should increment or decrement
 				int goal = ld ? 0 : max;
 				if (oldVal == goal) {
 					Object onGoal = state.getAttributeValue(ATTR_ON_GOAL);
-					if (onGoal == ON_GOAL_WRAP) {
-						newVal = ld ? max : 0;
-					} else if (onGoal == ON_GOAL_STAY) {
-						newVal = oldVal;
-					} else if (onGoal == ON_GOAL_LOAD) {
+					if (onGoal == ON_GOAL_WRAP) newVal = ld ? max : 0;
+					else if (onGoal == ON_GOAL_STAY) newVal = oldVal;
+					else if (onGoal == ON_GOAL_LOAD) {
 						Value in = state.getPort(IN);
 						newVal = in.isFullyDefined() ? in.toIntValue() : 0;
 						if (newVal > max)
 							newVal &= max;
-					} else if (onGoal == ON_GOAL_CONT) {
-						newVal = ld ? oldVal - 1 : oldVal + 1;
-					} else {
+					} else if (onGoal == ON_GOAL_CONT) newVal = ld ? oldVal - 1 : oldVal + 1;
+					else {
 						System.err.println("Invalid goal attribute " + onGoal); // OK
 						newVal = ld ? max : 0;
 					}
-				} else {
-					newVal = ld ? oldVal - 1 : oldVal + 1;
-				}
-			} else if (ld) { // trigger, enable = 0, load = 1: should load
+				} else newVal = ld ? oldVal - 1 : oldVal + 1;
+			} else // trigger, enable = 0, load = 0: no change
+				if (ld) { // trigger, enable = 0, load = 1: should load
 				Value in = state.getPort(IN);
 				newVal = in.isFullyDefined() ? in.toIntValue() : 0;
 				if (newVal > max)
 					newVal &= max;
-			} else { // trigger, enable = 0, load = 0: no change
-				newVal = oldVal;
-			}
+			} else newVal = oldVal;
 			newValue = Value.createKnown(dataWidth, newVal);
 			newVal = newValue.toIntValue();
 			carry = newVal == (ld && ct ? 0 : max);
@@ -169,9 +162,8 @@ public class Counter extends InstanceFactory {
 		if (painter.getShowState()) {
 			int val = state == null ? 0 : state.value;
 			String str = StringUtil.toHexString(width, val);
-			if (str.length() <= 4) {
-				a = str;
-			} else {
+			if (str.length() <= 4) a = str;
+			else {
 				int split = str.length() - 4;
 				a = str.substring(0, split);
 				b = str.substring(split);
@@ -202,9 +194,9 @@ public class Counter extends InstanceFactory {
 		painter.drawClock(CK, Direction.North);
 
 		// draw contents
-		if (b == null) {
+		if (b == null)
 			GraphicsUtil.drawText(g, a, bds.getX() + 15, bds.getY() + 4, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
-		} else {
+		else {
 			GraphicsUtil.drawText(g, a, bds.getX() + 15, bds.getY() + 3, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
 			GraphicsUtil.drawText(g, b, bds.getX() + 15, bds.getY() + 15, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
 		}

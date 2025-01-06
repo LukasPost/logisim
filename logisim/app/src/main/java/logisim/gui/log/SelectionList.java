@@ -33,16 +33,14 @@ class SelectionList extends JList<SelectionItem> {
 		}
 	}
 
-	private class MyCellRenderer extends DefaultListCellRenderer {
+	private static class MyCellRenderer extends DefaultListCellRenderer {
 		@Override
 		public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean hasFocus) {
 			java.awt.Component ret = super.getListCellRendererComponent(list, value, index, isSelected, hasFocus);
-			if (ret instanceof JLabel && value instanceof SelectionItem) {
-				JLabel label = (JLabel) ret;
-				SelectionItem item = (SelectionItem) value;
+			if (ret instanceof JLabel label && value instanceof SelectionItem item) {
 				Component comp = item.getComponent();
 				label.setIcon(new ComponentIcon(comp));
-				label.setText(item.toString() + " - " + item.getRadix());
+				label.setText(item + " - " + item.getRadix());
 			}
 			return ret;
 		}

@@ -37,7 +37,7 @@ public class Analyzer extends LFrame {
 
 	private class MyListener implements LocaleListener {
 		public void localeChanged() {
-			Analyzer.this.setTitle(Strings.get("analyzerWindowTitle"));
+			setTitle(Strings.get("analyzerWindowTitle"));
 			tabbedPane.setTitleAt(INPUTS_TAB, Strings.get("inputsTab"));
 			tabbedPane.setTitleAt(OUTPUTS_TAB, Strings.get("outputsTab"));
 			tabbedPane.setTitleAt(TABLE_TAB, Strings.get("tableTab"));
@@ -72,31 +72,20 @@ public class Analyzer extends LFrame {
 		public void actionPerformed(ActionEvent e) {
 			Object src = e.getSource();
 			Component c = tabbedPane.getSelectedComponent();
-			if (c instanceof JScrollPane) {
-				c = ((JScrollPane) c).getViewport().getView();
-			}
-			if (!(c instanceof TabInterface))
-				return;
-			TabInterface tab = (TabInterface) c;
+			if (c instanceof JScrollPane) c = ((JScrollPane) c).getViewport().getView();
+			if (!(c instanceof TabInterface tab)) return;
 			if (src == LogisimMenuBar.CUT) {
 				tab.copy();
 				tab.delete();
-			} else if (src == LogisimMenuBar.COPY) {
-				tab.copy();
-			} else if (src == LogisimMenuBar.PASTE) {
-				tab.paste();
-			} else if (src == LogisimMenuBar.DELETE) {
-				tab.delete();
-			} else if (src == LogisimMenuBar.SELECT_ALL) {
-				tab.selectAll();
-			}
+			} else if (src == LogisimMenuBar.COPY) tab.copy();
+			else if (src == LogisimMenuBar.PASTE) tab.paste();
+			else if (src == LogisimMenuBar.DELETE) tab.delete();
+			else if (src == LogisimMenuBar.SELECT_ALL) tab.selectAll();
 		}
 
 		private void enableItems(LogisimMenuBar menubar) {
 			Component c = tabbedPane.getSelectedComponent();
-			if (c instanceof JScrollPane) {
-				c = ((JScrollPane) c).getViewport().getView();
-			}
+			if (c instanceof JScrollPane) c = ((JScrollPane) c).getViewport().getView();
 			boolean support = c instanceof TabInterface;
 			menubar.setEnabled(LogisimMenuBar.CUT, support);
 			menubar.setEnabled(LogisimMenuBar.COPY, support);
@@ -109,17 +98,11 @@ public class Analyzer extends LFrame {
 			enableItems((LogisimMenuBar) getJMenuBar());
 
 			Object selected = tabbedPane.getSelectedComponent();
-			if (selected instanceof JScrollPane) {
-				selected = ((JScrollPane) selected).getViewport().getView();
-			}
-			if (selected instanceof AnalyzerTab) {
-				((AnalyzerTab) selected).updateTab();
-			}
+			if (selected instanceof JScrollPane) selected = ((JScrollPane) selected).getViewport().getView();
+			if (selected instanceof AnalyzerTab) ((AnalyzerTab) selected).updateTab();
 		}
 	}
 
-	private MyListener myListener = new MyListener();
-	private EditListener editListener = new EditListener();
 	private AnalyzerModel model = new AnalyzerModel();
 	private JTabbedPane tabbedPane = new JTabbedPane();
 
@@ -140,7 +123,6 @@ public class Analyzer extends LFrame {
 
 		truthTablePanel.addMouseListener(new TruthTableMouseListener());
 
-		tabbedPane = new JTabbedPane();
 		addTab(INPUTS_TAB, inputsPanel);
 		addTab(OUTPUTS_TAB, outputsPanel);
 		addTab(TABLE_TAB, truthTablePanel);
@@ -164,20 +146,20 @@ public class Analyzer extends LFrame {
 		outputsPanel.registerDefaultButtons(registry);
 		expressionPanel.registerDefaultButtons(registry);
 
+		MyListener myListener = new MyListener();
 		LocaleManager.addLocaleListener(myListener);
 		myListener.localeChanged();
 
 		LogisimMenuBar menubar = new LogisimMenuBar(this, null);
 		setJMenuBar(menubar);
+		EditListener editListener = new EditListener();
 		editListener.register(menubar);
 	}
 
 	private void addTab(int index, final JComponent comp) {
 		final JScrollPane pane = new JScrollPane(comp, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		if (comp instanceof TableTab) {
-			pane.setVerticalScrollBar(((TableTab) comp).getVerticalScrollBar());
-		}
+		if (comp instanceof TableTab) pane.setVerticalScrollBar(((TableTab) comp).getVerticalScrollBar());
 		pane.addComponentListener(new ComponentListener() {
 			public void componentResized(ComponentEvent event) {
 				int width = pane.getViewport().getWidth();
@@ -202,9 +184,7 @@ public class Analyzer extends LFrame {
 
 	public void setSelectedTab(int index) {
 		Object found = tabbedPane.getComponentAt(index);
-		if (found instanceof AnalyzerTab) {
-			((AnalyzerTab) found).updateTab();
-		}
+		if (found instanceof AnalyzerTab) ((AnalyzerTab) found).updateTab();
 		tabbedPane.setSelectedIndex(index);
 	}
 

@@ -54,9 +54,7 @@ public class PokeTool extends Tool {
 			if (radix1 == null)
 				radix1 = RadixOption.RADIX_2;
 			String vStr = radix1.toString(v);
-			if (radix2 != null && v.getWidth() > 1) {
-				vStr += " / " + radix2.toString(v);
-			}
+			if (radix2 != null && v.getWidth() > 1) vStr += " / " + radix2.toString(v);
 
 			FontMetrics fm = g.getFontMetrics();
 			g.setColor(caretColor);
@@ -72,9 +70,8 @@ public class PokeTool extends Tool {
 		public void circuitChanged(CircuitEvent event) {
 			Circuit circ = pokedCircuit;
 			if (event.getCircuit() == circ && circ != null && (event.getAction() == CircuitEvent.ACTION_REMOVE
-					|| event.getAction() == CircuitEvent.ACTION_CLEAR) && !circ.contains(pokedComponent)) {
+					|| event.getAction() == CircuitEvent.ACTION_CLEAR) && !circ.contains(pokedComponent))
 				removeCaret(false);
-			}
 		}
 	}
 
@@ -86,7 +83,7 @@ public class PokeTool extends Tool {
 	private Caret pokeCaret;
 
 	public PokeTool() {
-		this.listener = new Listener();
+		listener = new Listener();
 	}
 
 	@Override
@@ -129,9 +126,7 @@ public class PokeTool extends Tool {
 		pokedCircuit = circ;
 		pokedComponent = comp;
 		pokeCaret = caret;
-		if (caret != null) {
-			circ.addCircuitListener(listener);
-		}
+		if (caret != null) circ.addCircuitListener(listener);
 	}
 
 	@Override
@@ -238,10 +233,9 @@ public class PokeTool extends Tool {
 	@Override
 	public void paintIcon(ComponentDrawContext c, int x, int y) {
 		Graphics g = c.getGraphics();
-		if (toolIcon != null) {
-			toolIcon.paintIcon(c.getDestination(), g, x + 2, y + 2);
-		} else {
-			g.setColor(java.awt.Color.black);
+		if (toolIcon != null) toolIcon.paintIcon(c.getDestination(), g, x + 2, y + 2);
+		else {
+			g.setColor(Color.black);
 			g.drawLine(x + 4, y + 2, x + 4, y + 17);
 			g.drawLine(x + 4, y + 17, x + 1, y + 11);
 			g.drawLine(x + 4, y + 17, x + 7, y + 11);

@@ -131,13 +131,13 @@ public class LogisimFileActions {
 
 		@Override
 		public boolean shouldAppendTo(Action other) {
-			return other instanceof MoveCircuit && ((MoveCircuit) other).tool == this.tool;
+			return other instanceof MoveCircuit && ((MoveCircuit) other).tool == tool;
 		}
 
 		@Override
 		public Action append(Action other) {
 			MoveCircuit ret = new MoveCircuit(tool, ((MoveCircuit) other).toIndex);
-			ret.fromIndex = this.fromIndex;
+			ret.fromIndex = fromIndex;
 			return ret.fromIndex == ret.toIndex ? null : ret;
 		}
 	}
@@ -151,25 +151,18 @@ public class LogisimFileActions {
 
 		@Override
 		public String getName() {
-			if (libs.length == 1) {
-				return Strings.get("loadLibraryAction");
-			} else {
-				return Strings.get("loadLibrariesAction");
-			}
+			if (libs.length == 1) return Strings.get("loadLibraryAction");
+			else return Strings.get("loadLibrariesAction");
 		}
 
 		@Override
 		public void doIt(Project proj) {
-			for (int i = 0; i < libs.length; i++) {
-				proj.getLogisimFile().addLibrary(libs[i]);
-			}
+			for (Library lib : libs) proj.getLogisimFile().addLibrary(lib);
 		}
 
 		@Override
 		public void undo(Project proj) {
-			for (int i = libs.length - 1; i >= 0; i--) {
-				proj.getLogisimFile().removeLibrary(libs[i]);
-			}
+			for (int i = libs.length - 1; i >= 0; i--) proj.getLogisimFile().removeLibrary(libs[i]);
 		}
 	}
 
@@ -182,25 +175,18 @@ public class LogisimFileActions {
 
 		@Override
 		public String getName() {
-			if (libs.length == 1) {
-				return Strings.get("unloadLibraryAction");
-			} else {
-				return Strings.get("unloadLibrariesAction");
-			}
+			if (libs.length == 1) return Strings.get("unloadLibraryAction");
+			else return Strings.get("unloadLibrariesAction");
 		}
 
 		@Override
 		public void doIt(Project proj) {
-			for (int i = libs.length - 1; i >= 0; i--) {
-				proj.getLogisimFile().removeLibrary(libs[i]);
-			}
+			for (int i = libs.length - 1; i >= 0; i--) proj.getLogisimFile().removeLibrary(libs[i]);
 		}
 
 		@Override
 		public void undo(Project proj) {
-			for (int i = 0; i < libs.length; i++) {
-				proj.getLogisimFile().addLibrary(libs[i]);
-			}
+			for (Library lib : libs) proj.getLogisimFile().addLibrary(lib);
 		}
 	}
 
@@ -243,12 +229,12 @@ public class LogisimFileActions {
 
 	private static class RevertDefaults extends Action {
 		private Options oldOpts;
-		private ArrayList<Library> libraries = null;
+		private ArrayList<Library> libraries;
 		private ArrayList<RevertAttributeValue> attrValues;
 
 		RevertDefaults() {
 			libraries = null;
-			attrValues = new ArrayList<RevertAttributeValue>();
+			attrValues = new ArrayList<>();
 		}
 
 		@Override
@@ -269,7 +255,7 @@ public class LogisimFileActions {
 					dstLib = dst.getLoader().loadLibrary(desc);
 					proj.getLogisimFile().addLibrary(dstLib);
 					if (libraries == null)
-						libraries = new ArrayList<Library>();
+						libraries = new ArrayList<>();
 					libraries.add(dstLib);
 				}
 				copyToolAttributes(srcLib, dstLib);
@@ -305,15 +291,9 @@ public class LogisimFileActions {
 		public void undo(Project proj) {
 			proj.getOptions().copyFrom(oldOpts, proj.getLogisimFile());
 
-			for (RevertAttributeValue attrValue : attrValues) {
-				attrValue.attrs.setValue(attrValue.attr, attrValue.value);
-			}
+			for (RevertAttributeValue attrValue : attrValues) attrValue.attrs.setValue(attrValue.attr, attrValue.value);
 
-			if (libraries != null) {
-				for (Library lib : libraries) {
-					proj.getLogisimFile().removeLibrary(lib);
-				}
-			}
+			if (libraries != null) for (Library lib : libraries) proj.getLogisimFile().removeLibrary(lib);
 		}
 	}
 }

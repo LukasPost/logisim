@@ -23,6 +23,8 @@ import logisim.gui.log.LogFrame;
 import logisim.gui.main.Canvas;
 import logisim.gui.main.Frame;
 import logisim.gui.main.Selection;
+import logisim.gui.main.Selection.Event;
+import logisim.gui.main.Selection.Listener;
 import logisim.gui.main.SelectionActions;
 import logisim.gui.opts.OptionsFrame;
 import logisim.tools.AddTool;
@@ -44,8 +46,8 @@ public class Project {
 		}
 	}
 
-	private class MyListener implements Selection.Listener, LibraryListener {
-		public void selectionChanged(Selection.Event e) {
+	private class MyListener implements Listener, LibraryListener {
+		public void selectionChanged(Event e) {
 			fireEvent(ProjectEvent.ACTION_SELECTION, e.getSource());
 		}
 
@@ -53,19 +55,13 @@ public class Project {
 			int action = event.getAction();
 			if (action == LibraryEvent.REMOVE_LIBRARY) {
 				Library unloaded = (Library) event.getData();
-				if (tool != null && unloaded.containsFromSource(tool)) {
-					setTool(null);
-				}
+				if (tool != null && unloaded.containsFromSource(tool)) setTool(null);
 			} else if (action == LibraryEvent.REMOVE_TOOL) {
 				Object data = event.getData();
 				if (data instanceof AddTool) {
 					Object factory = ((AddTool) data).getFactory();
-					if (factory instanceof SubcircuitFactory) {
-						SubcircuitFactory fact = (SubcircuitFactory) factory;
-						if (fact.getSubcircuit() == getCurrentCircuit()) {
-							setCurrentCircuit(file.getMainCircuit());
-						}
-					}
+					if (factory instanceof SubcircuitFactory fact)
+						if (fact.getSubcircuit() == getCurrentCircuit()) setCurrentCircuit(file.getMainCircuit());
 				}
 			}
 		}
@@ -74,19 +70,19 @@ public class Project {
 	private Simulator simulator = new Simulator();
 	private LogisimFile file;
 	private CircuitState circuitState;
-	private HashMap<Circuit, CircuitState> stateMap = new HashMap<Circuit, CircuitState>();
-	private Frame frame = null;
-	private OptionsFrame optionsFrame = null;
-	private LogFrame logFrame = null;
-	private Tool tool = null;
-	private LinkedList<ActionData> undoLog = new LinkedList<ActionData>();
-	private int undoMods = 0;
-	private EventSourceWeakSupport<ProjectListener> projectListeners = new EventSourceWeakSupport<ProjectListener>();
-	private EventSourceWeakSupport<LibraryListener> fileListeners = new EventSourceWeakSupport<LibraryListener>();
-	private EventSourceWeakSupport<CircuitListener> circuitListeners = new EventSourceWeakSupport<CircuitListener>();
+	private HashMap<Circuit, CircuitState> stateMap = new HashMap<>();
+	private Frame frame;
+	private OptionsFrame optionsFrame;
+	private LogFrame logFrame;
+	private Tool tool;
+	private LinkedList<ActionData> undoLog = new LinkedList<>();
+	private int undoMods;
+	private EventSourceWeakSupport<ProjectListener> projectListeners = new EventSourceWeakSupport<>();
+	private EventSourceWeakSupport<LibraryListener> fileListeners = new EventSourceWeakSupport<>();
+	private EventSourceWeakSupport<CircuitListener> circuitListeners = new EventSourceWeakSupport<>();
 	private Dependencies depends;
 	private MyListener myListener = new MyListener();
-	private boolean startupScreen = false;
+	private boolean startupScreen;
 
 	public Project(LogisimFile file) {
 		addLibraryListener(myListener);
@@ -126,20 +122,16 @@ public class Project {
 	}
 
 	public OptionsFrame getOptionsFrame(boolean create) {
-		if (optionsFrame == null || optionsFrame.getLogisimFile() != file) {
-			if (create)
-				optionsFrame = new OptionsFrame(this);
-			else
-				optionsFrame = null;
-		}
+		if (optionsFrame == null || optionsFrame.getLogisimFile() != file) if (create)
+			optionsFrame = new OptionsFrame(this);
+		else
+			optionsFrame = null;
 		return optionsFrame;
 	}
 
 	public LogFrame getLogFrame(boolean create) {
-		if (logFrame == null) {
-			if (create)
-				logFrame = new LogFrame(this);
-		}
+		if (logFrame == null) if (create)
+			logFrame = new LogFrame(this);
 		return logFrame;
 	}
 
@@ -152,9 +144,8 @@ public class Project {
 	}
 
 	public CircuitState getCircuitState(Circuit circuit) {
-		if (circuitState != null && circuitState.getCircuit() == circuit) {
-			return circuitState;
-		} else {
+		if (circuitState != null && circuitState.getCircuit() == circuit) return circuitState;
+		else {
 			CircuitState ret = stateMap.get(circuit);
 			if (ret == null) {
 				ret = new CircuitState(this, circuit);
@@ -165,11 +156,8 @@ public class Project {
 	}
 
 	public Action getLastAction() {
-		if (undoLog.size() == 0) {
-			return null;
-		} else {
-			return undoLog.getLast().action;
-		}
+		if (undoLog.size() == 0) return null;
+		else return undoLog.getLast().action;
 	}
 
 	public Tool getTool() {
@@ -242,9 +230,7 @@ public class Project {
 	}
 
 	private void fireEvent(ProjectEvent event) {
-		for (ProjectListener l : projectListeners) {
-			l.projectChanged(event);
-		}
+		for (ProjectListener l : projectListeners) l.projectChanged(event);
 	}
 
 	// We track whether this project is the empty project opened
@@ -267,12 +253,8 @@ public class Project {
 	}
 
 	public void setLogisimFile(LogisimFile value) {
-		LogisimFile old = this.file;
-		if (old != null) {
-			for (LibraryListener l : fileListeners) {
-				old.removeLibraryListener(l);
-			}
-		}
+		LogisimFile old = file;
+		if (old != null) for (LibraryListener l : fileListeners) old.removeLibraryListener(l);
 		file = value;
 		stateMap.clear();
 		depends = new Dependencies(file);
@@ -280,11 +262,7 @@ public class Project {
 		undoMods = 0;
 		fireEvent(ProjectEvent.ACTION_SET_FILE, old, file);
 		setCurrentCircuit(file.getMainCircuit());
-		if (file != null) {
-			for (LibraryListener l : fileListeners) {
-				file.addLibraryListener(l);
-			}
-		}
+		if (file != null) for (LibraryListener l : fileListeners) file.addLibraryListener(l);
 		file.setDirty(true); // toggle it so that everybody hears the file is fresh
 		file.setDirty(false);
 	}
@@ -305,29 +283,19 @@ public class Project {
 				Selection selection = canvas.getSelection();
 				if (selection != null) {
 					Action act = SelectionActions.dropAll(selection);
-					if (act != null) {
-						doAction(act);
-					}
+					if (act != null) doAction(act);
 				}
 				if (tool != null)
 					tool.select(canvas);
 			}
-			if (oldCircuit != null) {
-				for (CircuitListener l : circuitListeners) {
-					oldCircuit.removeCircuitListener(l);
-				}
-			}
+			if (oldCircuit != null) for (CircuitListener l : circuitListeners) oldCircuit.removeCircuitListener(l);
 		}
 		circuitState = value;
 		stateMap.put(circuitState.getCircuit(), circuitState);
 		simulator.setCircuitState(circuitState);
 		if (circuitChanged) {
 			fireEvent(ProjectEvent.ACTION_SET_CURRENT, oldCircuit, newCircuit);
-			if (newCircuit != null) {
-				for (CircuitListener l : circuitListeners) {
-					newCircuit.addCircuitListener(l);
-				}
-			}
+			if (newCircuit != null) for (CircuitListener l : circuitListeners) newCircuit.addCircuitListener(l);
 		}
 		fireEvent(ProjectEvent.ACTION_SET_STATE, old, circuitState);
 	}
@@ -352,14 +320,10 @@ public class Project {
 			CircuitMutation xn = new CircuitMutation(circuit);
 			if (value == null) {
 				Action act = SelectionActions.dropAll(selection);
-				if (act != null) {
-					doAction(act);
-				}
+				if (act != null) doAction(act);
 			} else if (!getOptions().getMouseMappings().containsSelectTool()) {
 				Action act = SelectionActions.dropAll(selection);
-				if (act != null) {
-					doAction(act);
-				}
+				if (act != null) doAction(act);
 			}
 			if (!xn.isEmpty())
 				doAction(xn.toAction(null));
@@ -397,9 +361,7 @@ public class Project {
 		undoLog.add(new ActionData(circuitState, toAdd));
 		fireEvent(new ProjectEvent(ProjectEvent.ACTION_START, this, act));
 		act.doIt(this);
-		while (undoLog.size() > MAX_UNDO_SIZE) {
-			undoLog.removeFirst();
-		}
+		while (undoLog.size() > MAX_UNDO_SIZE) undoLog.removeFirst();
 		if (toAdd.isModification())
 			++undoMods;
 		file.setDirty(isFileDirty());

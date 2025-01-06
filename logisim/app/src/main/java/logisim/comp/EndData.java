@@ -19,7 +19,7 @@ public class EndData {
 	public EndData(Location loc, BitWidth width, int type, boolean exclusive) {
 		this.loc = loc;
 		this.width = width;
-		this.i_o = type;
+		i_o = type;
 		this.exclusive = exclusive;
 	}
 
@@ -53,12 +53,7 @@ public class EndData {
 
 	@Override
 	public boolean equals(Object other) {
-		if (!(other instanceof EndData))
-			return false;
-		if (other == this)
-			return true;
-		EndData o = (EndData) other;
-		return o.loc.equals(this.loc) && o.width.equals(this.width) && o.i_o == this.i_o
-				&& o.exclusive == this.exclusive;
+		return other instanceof EndData o && (other == this || o.loc.equals(loc) && o.width.equals(width) && o.i_o == i_o
+				&& o.exclusive == exclusive);
 	}
 }

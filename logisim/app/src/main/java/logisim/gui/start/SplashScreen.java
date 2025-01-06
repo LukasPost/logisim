@@ -41,7 +41,7 @@ public class SplashScreen extends JWindow implements ActionListener {
 		}
 	}
 
-	Marker[] markers = new Marker[] { new Marker(377, Strings.get("progressLibraries")),
+	Marker[] markers = { new Marker(377, Strings.get("progressLibraries")),
 			new Marker(990, Strings.get("progressTemplateCreate")),
 			new Marker(1002, Strings.get("progressTemplateOpen")),
 			new Marker(1002, Strings.get("progressTemplateLoad")),
@@ -49,7 +49,7 @@ public class SplashScreen extends JWindow implements ActionListener {
 			new Marker(1478, Strings.get("progressGuiInitialize")), new Marker(2114, Strings.get("progressFileCreate")),
 			new Marker(2114, Strings.get("progressFileLoad")), new Marker(2383, Strings.get("progressProjectCreate")),
 			new Marker(2519, Strings.get("progressFrameCreate")), };
-	boolean inClose = false; // for avoiding mutual recursion
+	boolean inClose; // for avoiding mutual recursion
 	JProgressBar progress = new JProgressBar(0, PROGRESS_MAX);
 	JButton close = new JButton(Strings.get("startupCloseButton"));
 	JButton cancel = new JButton(Strings.get("startupQuitButton"));
@@ -83,21 +83,13 @@ public class SplashScreen extends JWindow implements ActionListener {
 	public void setProgress(int markerId) {
 		final Marker marker = markers == null ? null : markers[markerId];
 		if (marker != null) {
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					progress.setString(marker.message);
-					progress.setValue(marker.count);
-				}
+			SwingUtilities.invokeLater(() -> {
+				progress.setString(marker.message);
+				progress.setValue(marker.count);
 			});
-			if (PRINT_TIMES) {
-				System.err.println((System.currentTimeMillis() - startTime) // OK
-						+ " " + marker.message);
-			}
-		} else {
-			if (PRINT_TIMES) {
-				System.err.println((System.currentTimeMillis() - startTime) + " ??"); // OK
-			}
-		}
+			if (PRINT_TIMES) System.err.println((System.currentTimeMillis() - startTime) // OK
+					+ " " + marker.message);
+		} else if (PRINT_TIMES) System.err.println((System.currentTimeMillis() - startTime) + " ??"); // OK
 	}
 
 	@Override
@@ -118,19 +110,14 @@ public class SplashScreen extends JWindow implements ActionListener {
 		inClose = true;
 		setVisible(false);
 		inClose = false;
-		if (PRINT_TIMES) {
-			System.err.println((System.currentTimeMillis() - startTime) // OK
-					+ " closed");
-		}
+		if (PRINT_TIMES) System.err.println((System.currentTimeMillis() - startTime) // OK
+				+ " closed");
 		markers = null;
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		Object src = e.getSource();
-		if (src == cancel) {
-			System.exit(0);
-		} else if (src == close) {
-			close();
-		}
+		if (src == cancel) System.exit(0);
+		else if (src == close) close();
 	}
 }

@@ -44,7 +44,7 @@ public class Tty extends InstanceFactory {
 		super("TTY", Strings.getter("ttyComponent"));
 		setAttributes(
 				new Attribute[] { ATTR_ROWS, ATTR_COLUMNS, StdAttr.EDGE_TRIGGER, Io.ATTR_COLOR, Io.ATTR_BACKGROUND },
-				new Object[] { Integer.valueOf(8), Integer.valueOf(32), StdAttr.TRIG_RISING, Color.BLACK,
+				new Object[] {8, 32, StdAttr.TRIG_RISING, Color.BLACK,
 						DEFAULT_BACKGROUND });
 		setIconName("tty.gif");
 
@@ -80,9 +80,7 @@ public class Tty extends InstanceFactory {
 
 	@Override
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-		if (attr == ATTR_ROWS || attr == ATTR_COLUMNS) {
-			instance.recomputeBounds();
-		}
+		if (attr == ATTR_ROWS || attr == ATTR_COLUMNS) instance.recomputeBounds();
 	}
 
 	@Override
@@ -96,15 +94,11 @@ public class Tty extends InstanceFactory {
 
 		synchronized (state) {
 			Value lastClock = state.setLastClock(clock);
-			if (clear == Value.TRUE) {
-				state.clear();
-			} else if (enable != Value.FALSE) {
+			if (clear == Value.TRUE) state.clear();
+			else if (enable != Value.FALSE) {
 				boolean go;
-				if (trigger == StdAttr.TRIG_FALLING) {
-					go = lastClock == Value.TRUE && clock == Value.FALSE;
-				} else {
-					go = lastClock == Value.FALSE && clock == Value.TRUE;
-				}
+				if (trigger == StdAttr.TRIG_FALLING) go = lastClock == Value.TRUE && clock == Value.FALSE;
+				else go = lastClock == Value.FALSE && clock == Value.TRUE;
 				if (go)
 					state.add(in.isFullyDefined() ? (char) in.toIntValue() : '?');
 			}
@@ -146,9 +140,7 @@ public class Tty extends InstanceFactory {
 			int curCol;
 			TtyState state = getTtyState(painter);
 			synchronized (state) {
-				for (int i = 0; i < rows; i++) {
-					rowData[i] = state.getRowString(i);
-				}
+				for (int i = 0; i < rows; i++) rowData[i] = state.getRowString(i);
 				curRow = state.getCursorRow();
 				curCol = state.getCursorColumn();
 			}
@@ -187,9 +179,7 @@ public class Tty extends InstanceFactory {
 		if (ret == null) {
 			ret = new TtyState(rows, cols);
 			state.setData(ret);
-		} else {
-			ret.updateSize(rows, cols);
-		}
+		} else ret.updateSize(rows, cols);
 		return ret;
 	}
 
@@ -200,14 +190,14 @@ public class Tty extends InstanceFactory {
 
 	private static int getRowCount(Object val) {
 		if (val instanceof Integer)
-			return ((Integer) val).intValue();
+			return (Integer) val;
 		else
 			return 4;
 	}
 
 	private static int getColumnCount(Object val) {
 		if (val instanceof Integer)
-			return ((Integer) val).intValue();
+			return (Integer) val;
 		else
 			return 16;
 	}

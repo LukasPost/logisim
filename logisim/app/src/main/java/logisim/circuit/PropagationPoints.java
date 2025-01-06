@@ -25,10 +25,7 @@ class PropagationPoints {
 
 		@Override
 		public boolean equals(Object other) {
-			if (!(other instanceof Entry))
-				return false;
-			Entry o = (Entry) other;
-			return state.equals(o.state) && loc.equals(o.loc);
+			return other instanceof Entry o && state.equals(o.state) && loc.equals(o.loc);
 		}
 
 		@Override
@@ -40,7 +37,7 @@ class PropagationPoints {
 	private HashSet<Entry> data;
 
 	PropagationPoints() {
-		this.data = new HashSet<Entry>();
+		data = new HashSet<>();
 	}
 
 	void add(CircuitState state, Location loc) {
@@ -60,31 +57,27 @@ class PropagationPoints {
 			return;
 
 		CircuitState state = context.getCircuitState();
-		HashMap<CircuitState, CircuitState> stateMap = new HashMap<CircuitState, CircuitState>();
-		for (CircuitState s : state.getSubstates()) {
-			addSubstates(stateMap, s, s);
-		}
+		HashMap<CircuitState, CircuitState> stateMap = new HashMap<>();
+		for (CircuitState s : state.getSubstates()) addSubstates(stateMap, s, s);
 
 		Graphics g = context.getGraphics();
 		GraphicsUtil.switchToWidth(g, 2);
-		for (Entry e : data) {
+		for (Entry e : data)
 			if (e.state == state) {
 				Location p = e.loc;
-				g.drawOval(p.getX() - 4, p.getY() - 4, 8, 8);
-			} else if (stateMap.containsKey(e.state)) {
+				g.drawOval(p.x() - 4, p.y() - 4, 8, 8);
+			}
+			else if (stateMap.containsKey(e.state)) {
 				CircuitState substate = stateMap.get(e.state);
 				Component subcirc = substate.getSubcircuit();
 				Bounds b = subcirc.getBounds();
 				g.drawRect(b.getX(), b.getY(), b.getWidth(), b.getHeight());
 			}
-		}
 		GraphicsUtil.switchToWidth(g, 1);
 	}
 
 	private void addSubstates(HashMap<CircuitState, CircuitState> map, CircuitState source, CircuitState value) {
 		map.put(source, value);
-		for (CircuitState s : source.getSubstates()) {
-			addSubstates(map, s, value);
-		}
+		for (CircuitState s : source.getSubstates()) addSubstates(map, s, value);
 	}
 }

@@ -3,6 +3,8 @@
 
 package logisim.util;
 
+import logisim.util.HorizontalSplitPane.Dragbar;
+
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
@@ -51,11 +53,9 @@ public class VerticalSplitPane extends JPanel {
 			int maxWidth = parent.getWidth() - (in.left + in.right);
 			int maxHeight = parent.getHeight() - (in.top + in.bottom);
 			int split;
-			if (fraction <= 0.0) {
-				split = 0;
-			} else if (fraction >= 1.0) {
-				split = maxWidth;
-			} else {
+			if (fraction <= 0.0) split = 0;
+			else if (fraction >= 1.0) split = maxWidth;
+			else {
 				split = (int) Math.round(maxWidth * fraction);
 				split = Math.min(split, maxWidth - comp1.getMinimumSize().width);
 				split = Math.max(split, comp0.getMinimumSize().width);
@@ -68,7 +68,7 @@ public class VerticalSplitPane extends JPanel {
 		}
 	}
 
-	private class MyDragbar extends HorizontalSplitPane.Dragbar {
+	private class MyDragbar extends Dragbar {
 		MyDragbar() {
 			setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
 		}
@@ -98,7 +98,7 @@ public class VerticalSplitPane extends JPanel {
 	public VerticalSplitPane(JComponent comp0, JComponent comp1, double fraction) {
 		this.comp0 = comp0;
 		this.comp1 = comp1;
-		this.dragbar = new MyDragbar(); // above the other components
+		dragbar = new MyDragbar(); // above the other components
 		this.fraction = fraction;
 
 		setLayout(new MyLayout());

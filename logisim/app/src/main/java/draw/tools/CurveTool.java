@@ -143,56 +143,58 @@ public class CurveTool extends AbstractTool {
 		boolean ctrlDown = (mods & MouseEvent.CTRL_DOWN_MASK) != 0;
 		boolean altDown = (mods & MouseEvent.ALT_DOWN_MASK) != 0;
 		Curve ret = null;
-		switch (state) {
-		case ENDPOINT_DRAG:
-			if (mouseDown) {
-				if (shiftDown) {
-					Location p = LineUtil.snapTo8Cardinals(end0, mx, my);
-					mx = p.getX();
-					my = p.getY();
+		return switch (state) {
+			case ENDPOINT_DRAG -> {
+				if (mouseDown) {
+					if (shiftDown) {
+						Location p = LineUtil.snapTo8Cardinals(end0, mx, my);
+						mx = p.x();
+						my = p.y();
+					}
+					if (ctrlDown) {
+						mx = canvas.snapX(mx);
+						my = canvas.snapY(my);
+					}
+					end1 = new Location(mx, my);
 				}
-				if (ctrlDown) {
-					mx = canvas.snapX(mx);
-					my = canvas.snapY(my);
-				}
-				end1 = new Location(mx, my);
+				yield null;
 			}
-			break;
-		case CONTROL_DRAG:
-			if (mouseDown) {
-				int cx = mx;
-				int cy = my;
-				if (ctrlDown) {
-					cx = canvas.snapX(cx);
-					cy = canvas.snapY(cy);
+			case CONTROL_DRAG -> {
+				if (mouseDown) {
+					int cx = mx;
+					int cy = my;
+					if (ctrlDown) {
+						cx = canvas.snapX(cx);
+						cy = canvas.snapY(cy);
+					}
+					if (shiftDown) {
+						double x0 = end0.x();
+						double y0 = end0.y();
+						double x1 = end1.x();
+						double y1 = end1.y();
+						double midx = (x0 + x1) / 2;
+						double midy = (y0 + y1) / 2;
+						double dx = x1 - x0;
+						double dy = y1 - y0;
+						double[] p = LineUtil.nearestPointInfinite(cx, cy, midx, midy, midx - dy, midy + dx);
+						cx = (int) Math.round(p[0]);
+						cy = (int) Math.round(p[1]);
+					}
+					if (altDown) {
+						double[] e0 = {end0.x(), end0.y()};
+						double[] e1 = {end1.x(), end1.y()};
+						double[] mid = {cx, cy};
+						double[] ct = CurveUtil.interpolate(e0, e1, mid);
+						cx = (int) Math.round(ct[0]);
+						cy = (int) Math.round(ct[1]);
+					}
+					ret = new Curve(end0, end1, new Location(cx, cy));
+					curCurve = ret;
 				}
-				if (shiftDown) {
-					double x0 = end0.getX();
-					double y0 = end0.getY();
-					double x1 = end1.getX();
-					double y1 = end1.getY();
-					double midx = (x0 + x1) / 2;
-					double midy = (y0 + y1) / 2;
-					double dx = x1 - x0;
-					double dy = y1 - y0;
-					double[] p = LineUtil.nearestPointInfinite(cx, cy, midx, midy, midx - dy, midy + dx);
-					cx = (int) Math.round(p[0]);
-					cy = (int) Math.round(p[1]);
-				}
-				if (altDown) {
-					double[] e0 = { end0.getX(), end0.getY() };
-					double[] e1 = { end1.getX(), end1.getY() };
-					double[] mid = { cx, cy };
-					double[] ct = CurveUtil.interpolate(e0, e1, mid);
-					cx = (int) Math.round(ct[0]);
-					cy = (int) Math.round(ct[1]);
-				}
-				ret = new Curve(end0, end1, new Location(cx, cy));
-				curCurve = ret;
+				yield ret;
 			}
-			break;
-		}
-		return ret;
+			default -> null;
+		};
 	}
 
 	private void repaintArea(Canvas canvas) {
@@ -209,7 +211,7 @@ public class CurveTool extends AbstractTool {
 		g.setColor(Color.GRAY);
 		switch (state) {
 		case ENDPOINT_DRAG:
-			g.drawLine(end0.getX(), end0.getY(), end1.getX(), end1.getY());
+			g.drawLine(end0.x(), end0.y(), end1.x(), end1.y());
 			break;
 		case CONTROL_DRAG:
 			((Graphics2D) g).draw(curCurve.getCurve2D());

@@ -32,38 +32,27 @@ public class ParallelConfigurator implements KeyConfigurator, Cloneable {
 			e.printStackTrace();
 			return null;
 		}
-		int len = this.handlers.length;
+		int len = handlers.length;
 		ret.handlers = new KeyConfigurator[len];
-		for (int i = 0; i < len; i++) {
-			ret.handlers[i] = this.handlers[i].clone();
-		}
+		for (int i = 0; i < len; i++) ret.handlers[i] = handlers[i].clone();
 		return ret;
 	}
 
 	public KeyConfigurationResult keyEventReceived(KeyConfigurationEvent event) {
 		KeyConfigurator[] hs = handlers;
-		if (event.isConsumed()) {
-			return null;
-		}
+		if (event.isConsumed()) return null;
 		KeyConfigurationResult first = null;
 		HashMap<Attribute<?>, Object> map = null;
-		for (int i = 0; i < hs.length; i++) {
-			KeyConfigurationResult result = hs[i].keyEventReceived(event);
-			if (result != null) {
-				if (first == null) {
-					first = result;
-				} else if (map == null) {
-					map = new HashMap<Attribute<?>, Object>(first.getAttributeValues());
-					map.putAll(result.getAttributeValues());
-				} else {
-					map.putAll(result.getAttributeValues());
-				}
+		for (KeyConfigurator h : hs) {
+			KeyConfigurationResult result = h.keyEventReceived(event);
+			if (result != null) if (first == null) first = result;
+			else if (map == null) {
+				map = new HashMap<>(first.getAttributeValues());
+				map.putAll(result.getAttributeValues());
 			}
+			else map.putAll(result.getAttributeValues());
 		}
-		if (map != null) {
-			return new KeyConfigurationResult(event, map);
-		} else {
-			return first;
-		}
+		if (map != null) return new KeyConfigurationResult(event, map);
+		else return first;
 	}
 }

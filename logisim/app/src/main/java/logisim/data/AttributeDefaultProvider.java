@@ -6,7 +6,7 @@ package logisim.data;
 import logisim.LogisimVersion;
 
 public interface AttributeDefaultProvider {
-	public boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver);
+	boolean isAllDefaultValues(AttributeSet attrs);
 
-	public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver);
+	Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver);
 }

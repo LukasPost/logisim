@@ -11,25 +11,19 @@ class GateFunctions {
 
 	static Value computeOr(Value[] inputs, int numInputs) {
 		Value ret = inputs[0];
-		for (int i = 1; i < numInputs; i++) {
-			ret = ret.or(inputs[i]);
-		}
+		for (int i = 1; i < numInputs; i++) ret = ret.or(inputs[i]);
 		return ret;
 	}
 
 	static Value computeAnd(Value[] inputs, int numInputs) {
 		Value ret = inputs[0];
-		for (int i = 1; i < numInputs; i++) {
-			ret = ret.and(inputs[i]);
-		}
+		for (int i = 1; i < numInputs; i++) ret = ret.and(inputs[i]);
 		return ret;
 	}
 
 	static Value computeOddParity(Value[] inputs, int numInputs) {
 		Value ret = inputs[0];
-		for (int i = 1; i < numInputs; i++) {
-			ret = ret.xor(inputs[i]);
-		}
+		for (int i = 1; i < numInputs; i++) ret = ret.xor(inputs[i]);
 		return ret;
 	}
 
@@ -40,22 +34,16 @@ class GateFunctions {
 			int count = 0;
 			for (int j = 0; j < numInputs; j++) {
 				Value v = inputs[j].get(i);
-				if (v == Value.TRUE) {
-					count++;
-				} else if (v == Value.FALSE) {
-					; // do nothing
-				} else {
+				if (v == Value.TRUE) count++;
+				else if (v == Value.FALSE) ; // do nothing
+				else {
 					count = -1;
 					break;
 				}
 			}
-			if (count < 0) {
-				ret[i] = Value.ERROR;
-			} else if (count == 1) {
-				ret[i] = Value.TRUE;
-			} else {
-				ret[i] = Value.FALSE;
-			}
+			if (count < 0) ret[i] = Value.ERROR;
+			else if (count == 1) ret[i] = Value.TRUE;
+			else ret[i] = Value.FALSE;
 		}
 		return Value.create(ret);
 	}

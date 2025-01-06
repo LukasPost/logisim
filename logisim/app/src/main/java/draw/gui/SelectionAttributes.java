@@ -3,15 +3,8 @@
 
 package draw.gui;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.Map.Entry;
 
 import draw.canvas.Selection;
 import draw.canvas.SelectionEvent;
@@ -30,24 +23,20 @@ public class SelectionAttributes extends AbstractAttributeSet {
 		//
 		public void selectionChanged(SelectionEvent ex) {
 			Map<AttributeSet, CanvasObject> oldSel = selected;
-			Map<AttributeSet, CanvasObject> newSel = new HashMap<AttributeSet, CanvasObject>();
-			for (CanvasObject o : selection.getSelected()) {
-				newSel.put(o.getAttributeSet(), o);
-			}
+			Map<AttributeSet, CanvasObject> newSel = new HashMap<>();
+			for (CanvasObject o : selection.getSelected()) newSel.put(o.getAttributeSet(), o);
 			selected = newSel;
 			boolean change = false;
-			for (AttributeSet attrs : oldSel.keySet()) {
+			for (AttributeSet attrs : oldSel.keySet())
 				if (!newSel.containsKey(attrs)) {
 					change = true;
 					attrs.removeAttributeListener(this);
 				}
-			}
-			for (AttributeSet attrs : newSel.keySet()) {
+			for (AttributeSet attrs : newSel.keySet())
 				if (!oldSel.containsKey(attrs)) {
 					change = true;
 					attrs.addAttributeListener(this);
 				}
-			}
 			if (change) {
 				computeAttributeList(newSel.keySet());
 				fireAttributeListChanged();
@@ -55,19 +44,14 @@ public class SelectionAttributes extends AbstractAttributeSet {
 		}
 
 		private void computeAttributeList(Set<AttributeSet> attrsSet) {
-			Set<Attribute<?>> attrSet = new LinkedHashSet<Attribute<?>>();
+			Set<Attribute<?>> attrSet = new LinkedHashSet<>();
 			Iterator<AttributeSet> sit = attrsSet.iterator();
 			if (sit.hasNext()) {
 				AttributeSet first = sit.next();
 				attrSet.addAll(first.getAttributes());
 				while (sit.hasNext()) {
 					AttributeSet next = sit.next();
-					for (Iterator<Attribute<?>> ait = attrSet.iterator(); ait.hasNext();) {
-						Attribute<?> attr = ait.next();
-						if (!next.containsAttribute(attr)) {
-							ait.remove();
-						}
-					}
+					attrSet.removeIf(attr -> !next.containsAttribute(attr));
 				}
 			}
 
@@ -79,9 +63,9 @@ public class SelectionAttributes extends AbstractAttributeSet {
 				values[i] = getSelectionValue(attr, attrsSet);
 				i++;
 			}
-			SelectionAttributes.this.selAttrs = attrs;
-			SelectionAttributes.this.selValues = values;
-			SelectionAttributes.this.attrsView = Collections.unmodifiableList(Arrays.asList(attrs));
+			selAttrs = attrs;
+			selValues = values;
+			attrsView = List.of(attrs);
 			fireAttributeListChanged();
 		}
 
@@ -97,13 +81,10 @@ public class SelectionAttributes extends AbstractAttributeSet {
 			if (selected.containsKey(e.getSource())) {
 				@SuppressWarnings("unchecked")
 				Attribute<Object> attr = (Attribute<Object>) e.getAttribute();
-				Attribute<?>[] attrs = SelectionAttributes.this.selAttrs;
-				Object[] values = SelectionAttributes.this.selValues;
-				for (int i = 0; i < attrs.length; i++) {
-					if (attrs[i] == attr) {
-						values[i] = getSelectionValue(attr, selected.keySet());
-					}
-				}
+				Attribute<?>[] attrs = selAttrs;
+				Object[] values = selValues;
+				for (int i = 0; i < attrs.length; i++)
+					if (attrs[i] == attr) values[i] = getSelectionValue(attr, selected.keySet());
 			}
 		}
 	}
@@ -117,21 +98,19 @@ public class SelectionAttributes extends AbstractAttributeSet {
 
 	public SelectionAttributes(Selection selection) {
 		this.selection = selection;
-		this.listener = new Listener();
-		this.selected = Collections.emptyMap();
-		this.selAttrs = new Attribute<?>[0];
-		this.selValues = new Object[0];
-		this.attrsView = Collections.unmodifiableList(Arrays.asList(selAttrs));
+		listener = new Listener();
+		selected = Collections.emptyMap();
+		selAttrs = new Attribute<?>[0];
+		selValues = new Object[0];
+		attrsView = List.of(selAttrs);
 
 		selection.addSelectionListener(listener);
 		listener.selectionChanged(null);
 	}
 
-	public Iterable<Map.Entry<AttributeSet, CanvasObject>> entries() {
-		Set<Map.Entry<AttributeSet, CanvasObject>> raw = selected.entrySet();
-		ArrayList<Map.Entry<AttributeSet, CanvasObject>> ret;
-		ret = new ArrayList<Map.Entry<AttributeSet, CanvasObject>>(raw);
-		return ret;
+	public Iterable<Entry<AttributeSet, CanvasObject>> entries() {
+		Set<Entry<AttributeSet, CanvasObject>> raw = selected.entrySet();
+		return new ArrayList<>(raw);
 	}
 
 	//
@@ -150,50 +129,41 @@ public class SelectionAttributes extends AbstractAttributeSet {
 
 	@Override
 	public <V> V getValue(Attribute<V> attr) {
-		Attribute<?>[] attrs = this.selAttrs;
-		Object[] values = this.selValues;
-		for (int i = 0; i < attrs.length; i++) {
+		Attribute<?>[] attrs = selAttrs;
+		Object[] values = selValues;
+		for (int i = 0; i < attrs.length; i++)
 			if (attrs[i] == attr) {
 				@SuppressWarnings("unchecked")
 				V ret = (V) values[i];
 				return ret;
 			}
-		}
 		return null;
 	}
 
 	@Override
 	public <V> void setValue(Attribute<V> attr, V value) {
-		Attribute<?>[] attrs = this.selAttrs;
-		Object[] values = this.selValues;
-		for (int i = 0; i < attrs.length; i++) {
+		Attribute<?>[] attrs = selAttrs;
+		Object[] values = selValues;
+		for (int i = 0; i < attrs.length; i++)
 			if (attrs[i] == attr) {
-				boolean same = value == null ? values[i] == null : value.equals(values[i]);
+				boolean same = Objects.equals(value, values[i]);
 				if (!same) {
 					values[i] = value;
-					for (AttributeSet objAttrs : selected.keySet()) {
-						objAttrs.setValue(attr, value);
-					}
+					for (AttributeSet objAttrs : selected.keySet()) objAttrs.setValue(attr, value);
 				}
 				break;
 			}
-		}
 	}
 
 	private static Object getSelectionValue(Attribute<?> attr, Set<AttributeSet> sel) {
 		Object ret = null;
-		for (AttributeSet attrs : sel) {
+		for (AttributeSet attrs : sel)
 			if (attrs.containsAttribute(attr)) {
 				Object val = attrs.getValue(attr);
-				if (ret == null) {
-					ret = val;
-				} else if (val != null && val.equals(ret)) {
-					; // keep on, making sure everything else matches
-				} else {
-					return null;
-				}
+				if (ret == null) ret = val;
+				else if (ret.equals(val)) ; // keep on, making sure everything else matches
+				else return null;
 			}
-		}
 		return ret;
 	}
 }

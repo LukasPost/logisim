@@ -17,15 +17,11 @@ class MenuProject extends Menu {
 		public void actionPerformed(ActionEvent event) {
 			Object src = event.getSource();
 			Project proj = menubar.getProject();
-			if (src == loadBuiltin) {
-				ProjectLibraryActions.doLoadBuiltinLibrary(proj);
-			} else if (src == loadLogisim) {
-				ProjectLibraryActions.doLoadLogisimLibrary(proj);
-			} else if (src == loadJar) {
-				ProjectLibraryActions.doLoadJarLibrary(proj);
-			} else if (src == unload) {
-				ProjectLibraryActions.doUnloadLibraries(proj);
-			} else if (src == options) {
+			if (src == loadBuiltin) ProjectLibraryActions.doLoadBuiltinLibrary(proj);
+			else if (src == loadLogisim) ProjectLibraryActions.doLoadLogisimLibrary(proj);
+			else if (src == loadJar) ProjectLibraryActions.doLoadJarLibrary(proj);
+			else if (src == unload) ProjectLibraryActions.doUnloadLibraries(proj);
+			else if (src == options) {
 				JFrame frame = proj.getOptionsFrame(true);
 				frame.setVisible(true);
 			}
@@ -33,7 +29,6 @@ class MenuProject extends Menu {
 	}
 
 	private LogisimMenuBar menubar;
-	private MyListener myListener = new MyListener();
 
 	private MenuItemImpl addCircuit = new MenuItemImpl(this, LogisimMenuBar.ADD_CIRCUIT);
 	private JMenu loadLibrary = new JMenu();
@@ -58,6 +53,7 @@ class MenuProject extends Menu {
 		this.menubar = menubar;
 
 		menubar.registerItem(LogisimMenuBar.ADD_CIRCUIT, addCircuit);
+		MyListener myListener = new MyListener();
 		loadBuiltin.addActionListener(myListener);
 		loadLogisim.addActionListener(myListener);
 		loadJar.addActionListener(myListener);

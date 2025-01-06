@@ -50,15 +50,10 @@ public class PullResistor extends InstanceFactory {
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrs) {
 		Direction facing = attrs.getValue(StdAttr.FACING);
-		if (facing == Direction.East) {
-			return Bounds.create(-42, -6, 42, 12);
-		} else if (facing == Direction.West) {
-			return Bounds.create(0, -6, 42, 12);
-		} else if (facing == Direction.North) {
-			return Bounds.create(-6, 0, 12, 42);
-		} else {
-			return Bounds.create(-6, -42, 12, 42);
-		}
+		if (facing == Direction.East) return Bounds.create(-42, -6, 42, 12);
+		else if (facing == Direction.West) return Bounds.create(0, -6, 42, 12);
+		else if (facing == Direction.North) return Bounds.create(-6, 0, 12, 42);
+		else return Bounds.create(-6, -42, 12, 42);
 	}
 
 	//
@@ -67,11 +62,8 @@ public class PullResistor extends InstanceFactory {
 	@Override
 	public void paintIcon(InstancePainter painter) {
 		Icon icon;
-		if (painter.getGateShape() == AppPreferences.SHAPE_SHAPED) {
-			icon = ICON_SHAPED;
-		} else {
-			icon = ICON_RECTANGULAR;
-		}
+		if (painter.getGateShape() == AppPreferences.SHAPE_SHAPED) icon = ICON_SHAPED;
+		else icon = ICON_RECTANGULAR;
 		icon.paintIcon(painter.getDestination(), painter.getGraphics(), 2, 2);
 	}
 
@@ -84,8 +76,8 @@ public class PullResistor extends InstanceFactory {
 	@Override
 	public void paintInstance(InstancePainter painter) {
 		Location loc = painter.getLocation();
-		int x = loc.getX();
-		int y = loc.getY();
+		int x = loc.x();
+		int y = loc.y();
 		Graphics g = painter.getGraphics();
 		g.translate(x, y);
 		Value pull = getPullValue(painter.getAttributeSet());
@@ -103,16 +95,14 @@ public class PullResistor extends InstanceFactory {
 		GraphicsUtil.switchToWidth(g, 3);
 		if (color && inColor != null)
 			g.setColor(inColor);
-		if (facing == Direction.East) {
+		if (facing == Direction.East)
 			GraphicsUtil.drawText(g, pullValue.toDisplayString(), -32, 0, GraphicsUtil.H_RIGHT, GraphicsUtil.V_CENTER);
-		} else if (facing == Direction.West) {
+		else if (facing == Direction.West)
 			GraphicsUtil.drawText(g, pullValue.toDisplayString(), 32, 0, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
-		} else if (facing == Direction.North) {
+		else if (facing == Direction.North)
 			GraphicsUtil.drawText(g, pullValue.toDisplayString(), 0, 32, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
-		} else {
-			GraphicsUtil.drawText(g, pullValue.toDisplayString(), 0, -32, GraphicsUtil.H_CENTER,
-					GraphicsUtil.V_BASELINE);
-		}
+		else GraphicsUtil.drawText(g, pullValue.toDisplayString(), 0, -32, GraphicsUtil.H_CENTER,
+				GraphicsUtil.V_BASELINE);
 
 		double rotate = 0.0;
 		if (g instanceof Graphics2D) {
@@ -131,12 +121,8 @@ public class PullResistor extends InstanceFactory {
 			int[] xp = { 0, -5, 5, -5, 5, -5, 0 };
 			int[] yp = { -25, -23, -19, -15, -11, -7, -5 };
 			g.drawPolyline(xp, yp, xp.length);
-		} else {
-			g.drawRect(-5, -25, 10, 20);
-		}
-		if (rotate != 0.0) {
-			((Graphics2D) g).rotate(-rotate);
-		}
+		} else g.drawRect(-5, -25, 10, 20);
+		if (rotate != 0.0) ((Graphics2D) g).rotate(-rotate);
 	}
 
 	//
@@ -150,16 +136,13 @@ public class PullResistor extends InstanceFactory {
 
 	@Override
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-		if (attr == StdAttr.FACING) {
-			instance.recomputeBounds();
-		} else if (attr == ATTR_PULL_TYPE) {
-			instance.fireInvalidated();
-		}
+		if (attr == StdAttr.FACING) instance.recomputeBounds();
+		else if (attr == ATTR_PULL_TYPE) instance.fireInvalidated();
 	}
 
 	@Override
 	public void propagate(InstanceState state) {
-		; // nothing to do - handled by CircuitWires
+		// nothing to do - handled by CircuitWires
 	}
 
 	public static Value getPullValue(Instance instance) {

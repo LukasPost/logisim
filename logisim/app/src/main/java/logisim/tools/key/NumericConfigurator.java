@@ -25,12 +25,12 @@ public abstract class NumericConfigurator<V> implements KeyConfigurator, Cloneab
 
 	public NumericConfigurator(Attribute<V> attr, int min, int max, int modifiersEx, int radix) {
 		this.attr = attr;
-		this.minValue = min;
-		this.maxValue = max;
+		minValue = min;
+		maxValue = max;
 		this.radix = radix;
-		this.modsEx = modifiersEx;
-		this.curValue = 0;
-		this.whenTyped = 0;
+		modsEx = modifiersEx;
+		curValue = 0;
+		whenTyped = 0;
 	}
 
 	@Override
@@ -71,16 +71,12 @@ public abstract class NumericConfigurator<V> implements KeyConfigurator, Cloneab
 				int val = 0;
 				if (sinceLast < MAX_TIME_KEY_LASTS) {
 					val = radix * curValue;
-					if (val > max) {
-						val = 0;
-					}
+					if (val > max) val = 0;
 				}
 				val += digit;
 				if (val > max) {
 					val = digit;
-					if (val > max) {
-						return null;
-					}
+					if (val > max) return null;
 				}
 				event.consume();
 				whenTyped = now;

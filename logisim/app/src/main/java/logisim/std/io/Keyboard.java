@@ -44,7 +44,7 @@ public class Keyboard extends InstanceFactory {
 	public Keyboard() {
 		super("Keyboard", Strings.getter("keyboardComponent"));
 		setAttributes(new Attribute[] { ATTR_BUFFER, StdAttr.EDGE_TRIGGER },
-				new Object[] { Integer.valueOf(32), StdAttr.TRIG_RISING });
+				new Object[] {32, StdAttr.TRIG_RISING });
 		setOffsetBounds(Bounds.create(0, -15, WIDTH, HEIGHT));
 		setIconName("keyboard.gif");
 		setInstancePoker(Poker.class);
@@ -74,15 +74,11 @@ public class Keyboard extends InstanceFactory {
 
 		synchronized (state) {
 			Value lastClock = state.setLastClock(clock);
-			if (clear == Value.TRUE) {
-				state.clear();
-			} else if (enable != Value.FALSE) {
+			if (clear == Value.TRUE) state.clear();
+			else if (enable != Value.FALSE) {
 				boolean go;
-				if (trigger == StdAttr.TRIG_FALLING) {
-					go = lastClock == Value.TRUE && clock == Value.FALSE;
-				} else {
-					go = lastClock == Value.FALSE && clock == Value.TRUE;
-				}
+				if (trigger == StdAttr.TRIG_FALLING) go = lastClock == Value.TRUE && clock == Value.FALSE;
+				else go = lastClock == Value.FALSE && clock == Value.TRUE;
 				if (go)
 					state.dequeue();
 			}
@@ -109,14 +105,14 @@ public class Keyboard extends InstanceFactory {
 			String str;
 			int dispStart;
 			int dispEnd;
-			ArrayList<Integer> specials = new ArrayList<Integer>();
+			ArrayList<Integer> specials = new ArrayList<>();
 			FontMetrics fm = null;
 			KeyboardData state = getKeyboardState(painter);
 			synchronized (state) {
 				str = state.toString();
 				for (int i = state.getNextSpecial(0); i >= 0; i = state.getNextSpecial(i + 1)) {
 					char c = state.getChar(i);
-					specials.add(Integer.valueOf(c << 16 | i));
+					specials.add(c << 16 | i);
 				}
 				if (!state.isDisplayValid()) {
 					fm = g.getFontMetrics(DEFAULT_FONT);
@@ -126,7 +122,7 @@ public class Keyboard extends InstanceFactory {
 				dispEnd = state.getDisplayEnd();
 			}
 
-			if (str.length() > 0) {
+			if (!str.isEmpty()) {
 				Bounds bds = painter.getBounds();
 				drawBuffer(g, fm, str, dispStart, dispEnd, specials, bds);
 			}
@@ -141,12 +137,12 @@ public class Keyboard extends InstanceFactory {
 		}
 	}
 
-	private void drawDots(Graphics g, int x, int y, int width, int ascent) {
+	private void drawDots(Graphics g, int x, int y, int width) {
 		int r = width / 10;
 		if (r < 1)
 			r = 1;
 		int d = 2 * r;
-		if (2 * r + 1 * d <= width)
+		if (2 * r + d <= width)
 			g.fillOval(x + r, y - d, d, d);
 		if (3 * r + 2 * d <= width)
 			g.fillOval(x + 2 * r + d, y - d, d, d);
@@ -170,25 +166,21 @@ public class Keyboard extends InstanceFactory {
 		if (dispStart > 0) {
 			g.drawString(str.substring(0, 1), x0, ys);
 			xs = x0 + fm.stringWidth(str.charAt(0) + "m");
-			drawDots(g, xs - dotsWidth, ys, dotsWidth, asc);
+			drawDots(g, xs - dotsWidth, ys, dotsWidth);
 			String sub = str.substring(dispStart, dispEnd);
 			g.drawString(sub, xs, ys);
-			if (dispEnd < str.length()) {
-				drawDots(g, xs + fm.stringWidth(sub), ys, dotsWidth, asc);
-			}
+			if (dispEnd < str.length()) drawDots(g, xs + fm.stringWidth(sub), ys, dotsWidth);
 		} else if (dispEnd < str.length()) {
 			String sub = str.substring(dispStart, dispEnd);
 			xs = x0;
 			g.drawString(sub, xs, ys);
-			drawDots(g, xs + fm.stringWidth(sub), ys, dotsWidth, asc);
+			drawDots(g, xs + fm.stringWidth(sub), ys, dotsWidth);
 		} else {
 			xs = x0;
 			g.drawString(str, xs, ys);
 		}
 
-		if (specials.size() > 0) {
-			drawSpecials(specials, x0, xs, ys, asc, g, fm, str, dispStart, dispEnd);
-		}
+		if (specials.size() > 0) drawSpecials(specials, x0, xs, ys, asc, g, fm, str, dispStart, dispEnd);
 	}
 
 	private void drawSpecials(ArrayList<Integer> specials, int x0, int xs, int ys, int asc, Graphics g, FontMetrics fm,
@@ -196,7 +188,7 @@ public class Keyboard extends InstanceFactory {
 		int[] px = new int[3];
 		int[] py = new int[3];
 		for (Integer special : specials) {
-			int code = special.intValue();
+			int code = special;
 			int pos = code & 0xFF;
 			int w0;
 			int w1;
@@ -206,9 +198,7 @@ public class Keyboard extends InstanceFactory {
 			} else if (pos >= dispStart && pos < dispEnd) {
 				w0 = xs + fm.stringWidth(str.substring(dispStart, pos));
 				w1 = xs + fm.stringWidth(str.substring(dispStart, pos + 1));
-			} else {
-				continue; // this character is not in current view
-			}
+			} else continue; // this character is not in current view
 			w0++;
 			w1--;
 
@@ -239,15 +229,13 @@ public class Keyboard extends InstanceFactory {
 				px[2] = w0 + 3;
 				py[2] = y1 + 3;
 				g.drawPolyline(px, py, 3);
-			} else if (key == FORM_FEED) {
-				g.drawRect(w0, ys - asc, w1 - w0, asc);
-			}
+			} else if (key == FORM_FEED) g.drawRect(w0, ys - asc, w1 - w0, asc);
 		}
 	}
 
 	private static int getBufferLength(Object bufferAttr) {
 		if (bufferAttr instanceof Integer)
-			return ((Integer) bufferAttr).intValue();
+			return (Integer) bufferAttr;
 		else
 			return 32;
 	}
@@ -258,17 +246,13 @@ public class Keyboard extends InstanceFactory {
 		if (ret == null) {
 			ret = new KeyboardData(bufLen);
 			state.setData(ret);
-		} else {
-			ret.updateBufferLength(bufLen);
-		}
+		} else ret.updateBufferLength(bufLen);
 		return ret;
 	}
 
 	public static void addToBuffer(InstanceState state, char[] newChars) {
 		KeyboardData keyboardData = getKeyboardState(state);
-		for (int i = 0; i < newChars.length; i++) {
-			keyboardData.insert(newChars[i]);
-		}
+		for (char newChar : newChars) keyboardData.insert(newChar);
 	}
 
 	public static class Poker extends InstancePoker {
@@ -309,14 +293,13 @@ public class Keyboard extends InstanceFactory {
 			KeyboardData data = getKeyboardState(state);
 			char ch = e.getKeyChar();
 			boolean changed = false;
-			if (ch != KeyEvent.CHAR_UNDEFINED) {
+			if (ch != KeyEvent.CHAR_UNDEFINED)
 				if (!Character.isISOControl(ch) || ch == '\b' || ch == '\n' || ch == FORM_FEED) {
 					synchronized (data) {
 						changed = data.insert(ch);
 					}
 					e.consume();
 				}
-			}
 			if (changed)
 				state.getInstance().fireInvalidated();
 		}
@@ -343,11 +326,8 @@ public class Keyboard extends InstanceFactory {
 			if (dispStart > 0) {
 				x += fm.stringWidth(str.charAt(0) + "m");
 				x += fm.stringWidth(str.substring(dispStart, cursor));
-			} else if (cursor >= str.length()) {
-				x += fm.stringWidth(str);
-			} else {
-				x += fm.stringWidth(str.substring(0, cursor));
-			}
+			} else if (cursor >= str.length()) x += fm.stringWidth(str);
+			else x += fm.stringWidth(str.substring(0, cursor));
 			int y = bds.getY() + (bds.getHeight() + asc) / 2;
 			g.drawLine(x, y - asc, x, y);
 		}

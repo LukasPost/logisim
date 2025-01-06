@@ -28,9 +28,7 @@ public class JFileChoosers {
 		@Override
 		public File getSelectedFile() {
 			File dir = getCurrentDirectory();
-			if (dir != null) {
-				JFileChoosers.currentDirectory = dir.toString();
-			}
+			if (dir != null) JFileChoosers.currentDirectory = dir.toString();
 			return super.getSelectedFile();
 		}
 	}
@@ -49,62 +47,45 @@ public class JFileChoosers {
 	@SuppressWarnings("null")
 	public static JFileChooser create() {
 		RuntimeException first = null;
-		for (int i = 0; i < PROP_NAMES.length; i++) {
-			String prop = PROP_NAMES[i];
+		for (String prop : PROP_NAMES)
 			try {
 				String dirname;
 				if (prop == null) {
 					dirname = currentDirectory;
-					if (dirname.equals("")) {
-						dirname = AppPreferences.DIALOG_DIRECTORY.get();
-					}
-				} else {
-					dirname = System.getProperty(prop);
+					if (dirname.isEmpty()) dirname = AppPreferences.DIALOG_DIRECTORY.get();
 				}
-				if (dirname.equals("")) {
-					return new LogisimFileChooser();
-				} else {
+				else dirname = System.getProperty(prop);
+				if (dirname.isEmpty()) return new LogisimFileChooser();
+				else {
 					File dir = new File(dirname);
-					if (dir.canRead()) {
-						return new LogisimFileChooser(dir);
-					}
+					if (dir.canRead()) return new LogisimFileChooser(dir);
 				}
-			}
-			catch (RuntimeException t) {
+			} catch (RuntimeException t) {
 				if (first == null)
 					first = t;
 				Throwable u = t.getCause();
 				if (!(u instanceof IOException))
 					throw t;
 			}
-		}
 		throw first;
 	}
 
 	public static JFileChooser createAt(File openDirectory) {
-		if (openDirectory == null) {
-			return create();
-		} else {
-			try {
-				return new LogisimFileChooser(openDirectory);
+		if (openDirectory == null) return create();
+		else try {
+			return new LogisimFileChooser(openDirectory);
+		} catch (RuntimeException t) {
+			if (t.getCause() instanceof IOException) try {
+				return create();
+			} catch (RuntimeException u) {
 			}
-			catch (RuntimeException t) {
-				if (t.getCause() instanceof IOException) {
-					try {
-						return create();
-					}
-					catch (RuntimeException u) {
-					}
-				}
-				throw t;
-			}
+			throw t;
 		}
 	}
 
 	public static JFileChooser createSelected(File selected) {
-		if (selected == null) {
-			return create();
-		} else {
+		if (selected == null) return create();
+		else {
 			JFileChooser ret = createAt(selected.getParentFile());
 			ret.setSelectedFile(selected);
 			return ret;

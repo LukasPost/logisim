@@ -23,7 +23,7 @@ public class HorizontalSplitPane extends JPanel {
 	private static final Color DRAG_COLOR = new Color(0, 0, 0, 128);
 
 	abstract static class Dragbar extends JComponent implements MouseListener, MouseMotionListener {
-		private boolean dragging = false;
+		private boolean dragging;
 		private int curValue;
 
 		Dragbar() {
@@ -118,11 +118,9 @@ public class HorizontalSplitPane extends JPanel {
 			int maxWidth = parent.getWidth() - (in.left + in.right);
 			int maxHeight = parent.getHeight() - (in.top + in.bottom);
 			int split;
-			if (fraction <= 0.0) {
-				split = 0;
-			} else if (fraction >= 1.0) {
-				split = maxWidth;
-			} else {
+			if (fraction <= 0.0) split = 0;
+			else if (fraction >= 1.0) split = maxWidth;
+			else {
 				split = (int) Math.round(maxHeight * fraction);
 				split = Math.min(split, maxHeight - comp1.getMinimumSize().height);
 				split = Math.max(split, comp0.getMinimumSize().height);
@@ -164,7 +162,7 @@ public class HorizontalSplitPane extends JPanel {
 	public HorizontalSplitPane(JComponent comp0, JComponent comp1, double fraction) {
 		this.comp0 = comp0;
 		this.comp1 = comp1;
-		this.dragbar = new MyDragbar(); // above the other components
+		dragbar = new MyDragbar(); // above the other components
 		this.fraction = fraction;
 
 		setLayout(new MyLayout());

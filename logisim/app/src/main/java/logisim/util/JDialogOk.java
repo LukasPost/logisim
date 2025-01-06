@@ -32,7 +32,7 @@ public abstract class JDialogOk extends JDialog {
 
 		@Override
 		public void windowClosing(WindowEvent e) {
-			JDialogOk.this.removeWindowListener(this);
+			removeWindowListener(this);
 			cancelClicked();
 			dispose();
 		}
@@ -42,19 +42,19 @@ public abstract class JDialogOk extends JDialog {
 	protected JButton ok = new JButton(Strings.get("dlogOkButton"));
 	protected JButton cancel = new JButton(Strings.get("dlogCancelButton"));
 
-	public JDialogOk(Dialog parent, String title, boolean model) {
-		super(parent, title, true);
+	public JDialogOk(Dialog parent, String title, boolean modal) {
+		super(parent, title, modal);
 		configure();
 	}
 
-	public JDialogOk(Frame parent, String title, boolean model) {
-		super(parent, title, true);
+	public JDialogOk(Frame parent, String title, boolean modal) {
+		super(parent, title, modal);
 		configure();
 	}
 
 	private void configure() {
 		MyListener listener = new MyListener();
-		this.addWindowListener(listener);
+		addWindowListener(listener);
 		ok.addActionListener(listener);
 		cancel.addActionListener(listener);
 

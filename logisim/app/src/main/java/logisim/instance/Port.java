@@ -42,10 +42,10 @@ public class Port {
 		this.dx = dx;
 		this.dy = dy;
 		this.type = toType(type);
-		this.widthFixed = bits;
-		this.widthAttr = null;
+		widthFixed = bits;
+		widthAttr = null;
 		this.exclude = toExclusive(exclude);
-		this.toolTip = null;
+		toolTip = null;
 	}
 
 	public Port(int dx, int dy, String type, Attribute<BitWidth> attr) {
@@ -56,10 +56,10 @@ public class Port {
 		this.dx = dx;
 		this.dy = dy;
 		this.type = toType(type);
-		this.widthFixed = null;
-		this.widthAttr = attr;
+		widthFixed = null;
+		widthAttr = attr;
 		this.exclude = toExclusive(exclude);
-		this.toolTip = null;
+		toolTip = null;
 	}
 
 	public void setToolTip(StringGetter value) {
@@ -77,14 +77,11 @@ public class Port {
 
 	public EndData toEnd(Location loc, AttributeSet attrs) {
 		Location pt = loc.translate(dx, dy);
-		if (widthFixed != null) {
-			return new EndData(pt, widthFixed, type, exclude);
-		} else {
-			Object val = attrs.getValue(widthAttr);
-			if (!(val instanceof BitWidth)) {
-				throw new IllegalArgumentException("Width attribute not set");
-			}
-			return new EndData(pt, (BitWidth) val, type, exclude);
+		if (widthFixed != null) return new EndData(pt, widthFixed, type, exclude);
+		else {
+			BitWidth val = attrs.getValue(widthAttr);
+			if (val == null) throw new IllegalArgumentException("Width attribute not set");
+			return new EndData(pt, val, type, exclude);
 		}
 	}
 

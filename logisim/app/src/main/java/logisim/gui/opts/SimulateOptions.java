@@ -50,21 +50,16 @@ class SimulateOptions extends OptionsPanel {
 		public void attributeValueChanged(AttributeEvent e) {
 			Attribute<?> attr = e.getAttribute();
 			Object val = e.getValue();
-			if (attr == Options.sim_limit_attr) {
-				loadSimLimit((Integer) val);
-			} else if (attr == Options.sim_rand_attr) {
-				loadSimRandomness((Integer) val);
-			}
+			if (attr == Options.sim_limit_attr) loadSimLimit((Integer) val);
+			else if (attr == Options.sim_rand_attr) loadSimRandomness((Integer) val);
 		}
 
 		private void loadSimLimit(Integer val) {
-			int value = val.intValue();
+			int value = val;
 			ComboBoxModel<Integer> model = simLimit.getModel();
 			for (int i = 0; i < model.getSize(); i++) {
-				Integer opt = (Integer) model.getElementAt(i);
-				if (opt.intValue() == value) {
-					simLimit.setSelectedItem(opt);
-				}
+				Integer opt = model.getElementAt(i);
+				if (opt == value) simLimit.setSelectedItem(opt);
 			}
 		}
 
@@ -73,16 +68,14 @@ class SimulateOptions extends OptionsPanel {
 		}
 
 		private void loadSimRandomness(Integer val) {
-			simRandomness.setSelected(val.intValue() > 0);
+			simRandomness.setSelected(val > 0);
 		}
 	}
 
-	private MyListener myListener = new MyListener();
-
 	private JLabel simLimitLabel = new JLabel();
 	private JComboBox<Integer> simLimit = new JComboBox<>(
-			new Integer[] { Integer.valueOf(200), Integer.valueOf(500), Integer.valueOf(1000), Integer.valueOf(2000),
-					Integer.valueOf(5000), Integer.valueOf(10000), Integer.valueOf(20000), Integer.valueOf(50000), });
+			new Integer[] {200, 500, 1000, 2000,
+					5000, 10000, 20000, 50000, });
 	private JCheckBox simRandomness = new JCheckBox();
 	private JLabel gateUndefinedLabel = new JLabel();
 	private JComboBox<ComboOption> gateUndefined = new JComboBox<>(new ComboOption[] { new ComboOption(Options.GATE_UNDEFINED_IGNORE),
@@ -94,6 +87,7 @@ class SimulateOptions extends OptionsPanel {
 		JPanel simLimitPanel = new JPanel();
 		simLimitPanel.add(simLimitLabel);
 		simLimitPanel.add(simLimit);
+		MyListener myListener = new MyListener();
 		simLimit.addActionListener(myListener);
 
 		JPanel gateUndefinedPanel = new JPanel();

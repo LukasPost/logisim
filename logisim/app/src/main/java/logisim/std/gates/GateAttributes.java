@@ -18,11 +18,11 @@ class GateAttributes extends AbstractAttributeSet {
 	static final int MAX_INPUTS = 32;
 	static final int DELAY = 1;
 
-	static final AttributeOption SIZE_NARROW = new AttributeOption(Integer.valueOf(30),
+	static final AttributeOption SIZE_NARROW = new AttributeOption(30,
 			Strings.getter("gateSizeNarrowOpt"));
-	static final AttributeOption SIZE_MEDIUM = new AttributeOption(Integer.valueOf(50),
+	static final AttributeOption SIZE_MEDIUM = new AttributeOption(50,
 			Strings.getter("gateSizeNormalOpt"));
-	static final AttributeOption SIZE_WIDE = new AttributeOption(Integer.valueOf(70),
+	static final AttributeOption SIZE_WIDE = new AttributeOption(70,
 			Strings.getter("gateSizeWideOpt"));
 	public static final Attribute<AttributeOption> ATTR_SIZE = Attributes.forOption("size",
 			Strings.getter("gateSizeAttr"), new AttributeOption[] { SIZE_NARROW, SIZE_MEDIUM, SIZE_WIDE });
@@ -45,7 +45,7 @@ class GateAttributes extends AbstractAttributeSet {
 	BitWidth width = BitWidth.ONE;
 	AttributeOption size = SIZE_MEDIUM;
 	int inputs = 5;
-	int negated = 0;
+	int negated;
 	AttributeOption out = OUTPUT_01;
 	AttributeOption xorBehave;
 	String label = "";
@@ -57,7 +57,7 @@ class GateAttributes extends AbstractAttributeSet {
 
 	@Override
 	protected void copyInto(AbstractAttributeSet dest) {
-		; // nothing to do
+		// nothing to do
 	}
 
 	@Override
@@ -99,31 +99,20 @@ class GateAttributes extends AbstractAttributeSet {
 			int bits = width.getWidth();
 			int mask = bits >= 32 ? -1 : ((1 << inputs) - 1);
 			negated &= mask;
-		} else if (attr == StdAttr.FACING) {
-			facing = (Direction) value;
-		} else if (attr == StdAttr.LABEL) {
-			label = (String) value;
-		} else if (attr == StdAttr.LABEL_FONT) {
-			labelFont = (Font) value;
-		} else if (attr == ATTR_SIZE) {
-			size = (AttributeOption) value;
-		} else if (attr == ATTR_INPUTS) {
-			inputs = ((Integer) value).intValue();
+		} else if (attr == StdAttr.FACING) facing = (Direction) value;
+		else if (attr == StdAttr.LABEL) label = (String) value;
+		else if (attr == StdAttr.LABEL_FONT) labelFont = (Font) value;
+		else if (attr == ATTR_SIZE) size = (AttributeOption) value;
+		else if (attr == ATTR_INPUTS) {
+			inputs = (Integer) value;
 			fireAttributeListChanged();
-		} else if (attr == ATTR_XOR) {
-			xorBehave = (AttributeOption) value;
-		} else if (attr == ATTR_OUTPUT) {
-			out = (AttributeOption) value;
-		} else if (attr instanceof NegateAttribute) {
+		} else if (attr == ATTR_XOR) xorBehave = (AttributeOption) value;
+		else if (attr == ATTR_OUTPUT) out = (AttributeOption) value;
+		else if (attr instanceof NegateAttribute) {
 			int index = ((NegateAttribute) attr).index;
-			if (((Boolean) value).booleanValue()) {
-				negated |= 1 << index;
-			} else {
-				negated &= ~(1 << index);
-			}
-		} else {
-			throw new IllegalArgumentException("unrecognized argument");
-		}
+			if ((Boolean) value) negated |= 1 << index;
+			else negated &= ~(1 << index);
+		} else throw new IllegalArgumentException("unrecognized argument");
 		fireAttributeValueChanged(attr, value);
 	}
 }

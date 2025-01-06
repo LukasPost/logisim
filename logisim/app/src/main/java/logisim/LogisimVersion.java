@@ -46,7 +46,7 @@ public class LogisimVersion {
 		this.minor = minor;
 		this.release = release;
 		this.revision = revision;
-		this.repr = null;
+		repr = null;
 	}
 
 	@Override
@@ -59,30 +59,20 @@ public class LogisimVersion {
 
 	@Override
 	public boolean equals(Object other) {
-		if (other instanceof LogisimVersion) {
-			LogisimVersion o = (LogisimVersion) other;
-			return this.major == o.major && this.minor == o.minor && this.release == o.release
-					&& this.revision == o.revision;
-		} else {
-			return false;
-		}
+		return other instanceof LogisimVersion o && major == o.major && minor == o.minor && release == o.release
+				&& revision == o.revision;
 	}
 
 	public int compareTo(LogisimVersion other) {
-		int ret = this.major - other.major;
-		if (ret != 0) {
-			return ret;
-		} else {
-			ret = this.minor - other.minor;
-			if (ret != 0) {
-				return ret;
-			} else {
-				ret = this.release - other.release;
-				if (ret != 0) {
-					return ret;
-				} else {
-					return this.revision - other.revision;
-				}
+		int ret = major - other.major;
+		if (ret != 0) return ret;
+		else {
+			ret = minor - other.minor;
+			if (ret != 0) return ret;
+			else {
+				ret = release - other.release;
+				if (ret != 0) return ret;
+				else return revision - other.revision;
 			}
 		}
 	}

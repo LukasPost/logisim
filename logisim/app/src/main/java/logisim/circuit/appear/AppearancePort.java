@@ -34,12 +34,7 @@ public class AppearancePort extends AppearanceElement {
 
 	@Override
 	public boolean matches(CanvasObject other) {
-		if (other instanceof AppearancePort) {
-			AppearancePort that = (AppearancePort) other;
-			return this.matches(that) && this.pin == that.pin;
-		} else {
-			return false;
-		}
+		return other instanceof AppearancePort that && matches(that) && pin == that.pin;
 	}
 
 	@Override
@@ -58,11 +53,11 @@ public class AppearancePort extends AppearanceElement {
 		Location pinLoc = pin.getLocation();
 		Element ret = doc.createElement("circ-port");
 		int r = isInput() ? INPUT_RADIUS : OUTPUT_RADIUS;
-		ret.setAttribute("x", "" + (loc.getX() - r));
-		ret.setAttribute("y", "" + (loc.getY() - r));
+		ret.setAttribute("x", "" + (loc.x() - r));
+		ret.setAttribute("y", "" + (loc.y() - r));
 		ret.setAttribute("width", "" + 2 * r);
 		ret.setAttribute("height", "" + 2 * r);
-		ret.setAttribute("pin", "" + pinLoc.getX() + "," + pinLoc.getY());
+		ret.setAttribute("pin", pinLoc.x() + "," + pinLoc.y());
 		return ret;
 	}
 
@@ -82,16 +77,13 @@ public class AppearancePort extends AppearanceElement {
 	@Override
 	public Bounds getBounds() {
 		int r = isInput() ? INPUT_RADIUS : OUTPUT_RADIUS;
-		return super.getBounds(r);
+		return getBounds(r);
 	}
 
 	@Override
 	public boolean contains(Location loc, boolean assumeFilled) {
-		if (isInput()) {
-			return getBounds().contains(loc);
-		} else {
-			return super.isInCircle(loc, OUTPUT_RADIUS);
-		}
+		if (isInput()) return getBounds().contains(loc);
+		else return isInCircle(loc, OUTPUT_RADIUS);
 	}
 
 	@Override
@@ -107,8 +99,8 @@ public class AppearancePort extends AppearanceElement {
 	@Override
 	public void paint(Graphics g, HandleGesture gesture) {
 		Location location = getLocation();
-		int x = location.getX();
-		int y = location.getY();
+		int x = location.x();
+		int y = location.y();
 		g.setColor(COLOR);
 		if (isInput()) {
 			int r = INPUT_RADIUS;

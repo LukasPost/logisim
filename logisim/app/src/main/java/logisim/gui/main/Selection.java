@@ -39,15 +39,15 @@ public class Selection extends SelectionBase {
 		}
 	}
 
-	public static interface Listener {
-		public void selectionChanged(Selection.Event event);
+	public interface Listener {
+		void selectionChanged(Event event);
 	}
 
 	private class MyListener implements ProjectListener, CircuitListener {
 		private WeakHashMap<Action, SelectionSave> savedSelections;
 
 		MyListener() {
-			savedSelections = new WeakHashMap<Action, SelectionSave>();
+			savedSelections = new WeakHashMap<>();
 		}
 
 		public void projectChanged(ProjectEvent event) {
@@ -57,9 +57,7 @@ public class Selection extends SelectionBase {
 				savedSelections.put((Action) event.getData(), save);
 			} else if (type == ProjectEvent.ACTION_COMPLETE) {
 				SelectionSave save = savedSelections.get(event.getData());
-				if (save != null && save.isSame(Selection.this)) {
-					savedSelections.remove(event.getData());
-				}
+				if (save != null && save.isSame(Selection.this)) savedSelections.remove(event.getData());
 			} else if (type == ProjectEvent.ACTION_MERGE) {
 				SelectionSave save = savedSelections.get(event.getOldData());
 				savedSelections.put((Action) event.getData(), save);
@@ -77,15 +75,9 @@ public class Selection extends SelectionBase {
 						else
 							cs = save.getAnchoredComponents();
 
-						if (cs != null) {
-							for (Component c : cs) {
-								if (circ.contains(c)) {
-									selected.add(c);
-								} else {
-									lifted.add(c);
-								}
-							}
-						}
+						if (cs != null) for (Component c : cs)
+							if (circ.contains(c)) selected.add(c);
+							else lifted.add(c);
 					}
 					fireSelectionChanged();
 				}
@@ -98,39 +90,30 @@ public class Selection extends SelectionBase {
 				ReplacementMap repl = event.getResult().getReplacementMap(circuit);
 				boolean change = false;
 
-				ArrayList<Component> oldAnchored;
-				oldAnchored = new ArrayList<Component>(getComponents());
+				ArrayList<Component> oldAnchored = new ArrayList<>(getComponents());
 				for (Component comp : oldAnchored) {
 					Collection<Component> replacedBy = repl.get(comp);
 					if (replacedBy != null) {
 						change = true;
 						selected.remove(comp);
 						lifted.remove(comp);
-						for (Component add : replacedBy) {
-							if (circuit.contains(add)) {
-								selected.add(add);
-							} else {
-								lifted.add(add);
-							}
-						}
+						for (Component add : replacedBy)
+							if (circuit.contains(add)) selected.add(add);
+							else lifted.add(add);
 					}
 				}
 
-				if (change) {
-					fireSelectionChanged();
-				}
+				if (change) fireSelectionChanged();
 			}
 		}
 	}
 
-	private MyListener myListener;
-	private boolean isVisible = true;
 	private SelectionAttributes attrs;
 
 	public Selection(Project proj, Canvas canvas) {
 		super(proj);
 
-		myListener = new MyListener();
+		MyListener myListener = new MyListener();
 		attrs = new SelectionAttributes(canvas, this);
 		proj.addProjectListener(myListener);
 		proj.addCircuitListener(myListener);
@@ -149,10 +132,7 @@ public class Selection extends SelectionBase {
 
 	@Override
 	public boolean equals(Object other) {
-		if (!(other instanceof Selection))
-			return false;
-		Selection otherSelection = (Selection) other;
-		return this.selected.equals(otherSelection.selected) && this.lifted.equals(otherSelection.lifted);
+		return other instanceof Selection otherSelection && selected.equals(otherSelection.selected) && lifted.equals(otherSelection.lifted);
 	}
 
 	public Set<Component> getComponents() {
@@ -168,38 +148,34 @@ public class Selection extends SelectionBase {
 	}
 
 	public Collection<Component> getComponentsContaining(Location query) {
-		HashSet<Component> ret = new HashSet<Component>();
-		for (Component comp : unionSet) {
+		HashSet<Component> ret = new HashSet<>();
+		for (Component comp : unionSet)
 			if (comp.contains(query))
 				ret.add(comp);
-		}
 		return ret;
 	}
 
 	public Collection<Component> getComponentsContaining(Location query, Graphics g) {
-		HashSet<Component> ret = new HashSet<Component>();
-		for (Component comp : unionSet) {
+		HashSet<Component> ret = new HashSet<>();
+		for (Component comp : unionSet)
 			if (comp.contains(query, g))
 				ret.add(comp);
-		}
 		return ret;
 	}
 
 	public Collection<Component> getComponentsWithin(Bounds bds) {
-		HashSet<Component> ret = new HashSet<Component>();
-		for (Component comp : unionSet) {
+		HashSet<Component> ret = new HashSet<>();
+		for (Component comp : unionSet)
 			if (bds.contains(comp.getBounds()))
 				ret.add(comp);
-		}
 		return ret;
 	}
 
 	public Collection<Component> getComponentsWithin(Bounds bds, Graphics g) {
-		HashSet<Component> ret = new HashSet<Component>();
-		for (Component comp : unionSet) {
+		HashSet<Component> ret = new HashSet<>();
+		for (Component comp : unionSet)
 			if (bds.contains(comp.getBounds(g)))
 				ret.add(comp);
-		}
 		return ret;
 	}
 
@@ -213,30 +189,25 @@ public class Selection extends SelectionBase {
 	public void draw(ComponentDrawContext context, Set<Component> hidden) {
 		Graphics g = context.getGraphics();
 
-		for (Component c : lifted) {
+		for (Component c : lifted)
 			if (!hidden.contains(c)) {
 				Location loc = c.getLocation();
 
 				Graphics g_new = g.create();
 				context.setGraphics(g_new);
-				c.getFactory().drawGhost(context, Color.GRAY, loc.getX(), loc.getY(), c.getAttributeSet());
+				c.getFactory().drawGhost(context, Color.GRAY, loc.x(), loc.y(), c.getAttributeSet());
 				g_new.dispose();
 			}
-		}
 
-		for (Component comp : unionSet) {
+		for (Component comp : unionSet)
 			if (!suppressHandles.contains(comp) && !hidden.contains(comp)) {
 				Graphics g_new = g.create();
 				context.setGraphics(g_new);
 				CustomHandles handler = (CustomHandles) comp.getFeature(CustomHandles.class);
-				if (handler == null) {
-					context.drawHandles(comp);
-				} else {
-					handler.drawHandles(context);
-				}
+				if (handler == null) context.drawHandles(comp);
+				else handler.drawHandles(context);
 				g_new.dispose();
 			}
-		}
 
 		context.setGraphics(g);
 	}
@@ -250,8 +221,8 @@ public class Selection extends SelectionBase {
 		for (Component comp : unionSet) {
 			AttributeSet attrs = comp.getAttributeSet();
 			Location loc = comp.getLocation();
-			int x = loc.getX() + dx;
-			int y = loc.getY() + dy;
+			int x = loc.x() + dx;
+			int y = loc.y() + dy;
 			context.setGraphics(g.create());
 			comp.getFactory().drawGhost(context, Color.gray, x, y, attrs);
 			context.getGraphics().dispose();
@@ -261,6 +232,7 @@ public class Selection extends SelectionBase {
 
 	@Override
 	public void print() {
+		boolean isVisible = true;
 		System.err.println(" isVisible: " + isVisible); // OK
 		super.print();
 	}

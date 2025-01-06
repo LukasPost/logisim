@@ -5,7 +5,7 @@ package logisim.file;
 
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -14,7 +14,6 @@ import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -40,7 +39,7 @@ import logisim.util.StringUtil;
 
 class XmlWriter {
 	static void write(LogisimFile file, OutputStream out, LibraryLoader loader)
-			throws ParserConfigurationException, TransformerConfigurationException, TransformerException {
+			throws ParserConfigurationException, TransformerException {
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
@@ -50,7 +49,7 @@ class XmlWriter {
 
 		TransformerFactory tfFactory = TransformerFactory.newInstance();
 		try {
-			tfFactory.setAttribute("indent-number", Integer.valueOf(2));
+			tfFactory.setAttribute("indent-number", 2);
 		}
 		catch (IllegalArgumentException e) {
 		}
@@ -58,7 +57,7 @@ class XmlWriter {
 		tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 		tf.setOutputProperty(OutputKeys.INDENT, "yes");
 		try {
-			tf.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			tf.setOutputProperty("{https://xml.apache.org/xslt}indent-amount", "2");
 		}
 		catch (IllegalArgumentException e) {
 		}
@@ -71,7 +70,7 @@ class XmlWriter {
 	private LogisimFile file;
 	private Document doc;
 	private LibraryLoader loader;
-	private HashMap<Library, String> libs = new HashMap<Library, String>();
+	private HashMap<Library, String> libs = new HashMap<>();
 
 	private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader) {
 		this.file = file;
@@ -82,8 +81,7 @@ class XmlWriter {
 	Element fromLogisimFile() {
 		Element ret = doc.createElement("project");
 		doc.appendChild(ret);
-		ret.appendChild(doc.createTextNode(
-				"\nThis file is intended to be " + "loaded by Logisim (http://www.cburch.com/logisim/).\n"));
+		ret.appendChild(doc.createTextNode("\nThis file is intended to be " + "loaded by Logisim (https://www.cburch.com/logisim/).\n"));
 		ret.setAttribute("version", "1.0");
 		ret.setAttribute("source", Main.VERSION_NAME);
 
@@ -103,9 +101,7 @@ class XmlWriter {
 		ret.appendChild(fromMouseMappings());
 		ret.appendChild(fromToolbarData());
 
-		for (Circuit circ : file.getCircuits()) {
-			ret.appendChild(fromCircuit(circ));
-		}
+		for (Circuit circ : file.getCircuits()) ret.appendChild(fromCircuit(circ));
 		return ret;
 	}
 
@@ -128,9 +124,7 @@ class XmlWriter {
 				Element toAdd = doc.createElement("tool");
 				toAdd.setAttribute("name", t.getName());
 				addAttributeSetContent(toAdd, attrs, t);
-				if (toAdd.getChildNodes().getLength() > 0) {
-					ret.appendChild(toAdd);
-				}
+				if (toAdd.getChildNodes().getLength() > 0) ret.appendChild(toAdd);
 			}
 		}
 		return ret;
@@ -145,11 +139,11 @@ class XmlWriter {
 	Element fromMouseMappings() {
 		Element elt = doc.createElement("mappings");
 		MouseMappings map = file.getOptions().getMouseMappings();
-		for (Map.Entry<Integer, Tool> entry : map.getMappings().entrySet()) {
+		for (Entry<Integer, Tool> entry : map.getMappings().entrySet()) {
 			Integer mods = entry.getKey();
 			Tool tool = entry.getValue();
 			Element toolElt = fromTool(tool);
-			String mapValue = InputEventUtil.toString(mods.intValue());
+			String mapValue = InputEventUtil.toString(mods);
 			toolElt.setAttribute("map", mapValue);
 			elt.appendChild(toolElt);
 		}
@@ -159,13 +153,9 @@ class XmlWriter {
 	Element fromToolbarData() {
 		Element elt = doc.createElement("toolbar");
 		ToolbarData toolbar = file.getOptions().getToolbarData();
-		for (Tool tool : toolbar.getContents()) {
-			if (tool == null) {
-				elt.appendChild(doc.createElement("sep"));
-			} else {
-				elt.appendChild(fromTool(tool));
-			}
-		}
+		for (Tool tool : toolbar.getContents())
+			if (tool == null) elt.appendChild(doc.createElement("sep"));
+			else elt.appendChild(fromTool(tool));
 		return elt;
 	}
 
@@ -175,9 +165,8 @@ class XmlWriter {
 		if (lib == null) {
 			loader.showError(StringUtil.format("tool `%s' not found", tool.getDisplayName()));
 			return null;
-		} else if (lib == file) {
-			lib_name = null;
-		} else {
+		} else if (lib == file) lib_name = null;
+		else {
 			lib_name = libs.get(lib);
 			if (lib_name == null) {
 				loader.showError("unknown library within file");
@@ -199,19 +188,14 @@ class XmlWriter {
 		addAttributeSetContent(ret, circuit.getStaticAttributes(), null);
 		if (!circuit.getAppearance().isDefaultAppearance()) {
 			Element appear = doc.createElement("appear");
-			for (Object o : circuit.getAppearance().getObjectsFromBottom()) {
+			for (Object o : circuit.getAppearance().getObjectsFromBottom())
 				if (o instanceof AbstractCanvasObject) {
 					Element elt = ((AbstractCanvasObject) o).toSvgElement(doc);
-					if (elt != null) {
-						appear.appendChild(elt);
-					}
+					if (elt != null) appear.appendChild(elt);
 				}
-			}
 			ret.appendChild(appear);
 		}
-		for (Wire w : circuit.getWires()) {
-			ret.appendChild(fromWire(w));
-		}
+		for (Wire w : circuit.getWires()) ret.appendChild(fromWire(w));
 		for (Component comp : circuit.getNonWires()) {
 			Element elt = fromComponent(comp);
 			if (elt != null)
@@ -227,9 +211,8 @@ class XmlWriter {
 		if (lib == null) {
 			loader.showError(source.getName() + " component not found");
 			return null;
-		} else if (lib == file) {
-			lib_name = null;
-		} else {
+		} else if (lib == file) lib_name = null;
+		else {
 			lib_name = libs.get(lib);
 			if (lib_name == null) {
 				loader.showError("unknown library within file");
@@ -257,7 +240,7 @@ class XmlWriter {
 		if (attrs == null)
 			return;
 		LogisimVersion ver = Main.VERSION;
-		if (source != null && source.isAllDefaultValues(attrs, ver))
+		if (source != null && source.isAllDefaultValues(attrs))
 			return;
 		for (Attribute<?> attrBase : attrs.getAttributes()) {
 			@SuppressWarnings("unchecked")
@@ -265,15 +248,12 @@ class XmlWriter {
 			Object val = attrs.getValue(attr);
 			if (attrs.isToSave(attr) && val != null) {
 				Object dflt = source == null ? null : source.getDefaultAttributeValue(attr, ver);
-				if (dflt == null || !dflt.equals(val)) {
+				if (!val.equals(dflt)) {
 					Element a = doc.createElement("a");
 					a.setAttribute("name", attr.getName());
 					String value = attr.toStandardString(val);
-					if (value.indexOf("\n") >= 0) {
-						a.appendChild(doc.createTextNode(value));
-					} else {
-						a.setAttribute("val", attr.toStandardString(val));
-					}
+					if (value.contains("\n")) a.appendChild(doc.createTextNode(value));
+					else a.setAttribute("val", attr.toStandardString(val));
 					elt.appendChild(a);
 				}
 			}
@@ -281,32 +261,25 @@ class XmlWriter {
 	}
 
 	Library findLibrary(Tool tool) {
-		if (libraryContains(file, tool)) {
-			return file;
-		}
-		for (Library lib : file.getLibraries()) {
+		if (libraryContains(file, tool)) return file;
+		for (Library lib : file.getLibraries())
 			if (libraryContains(lib, tool))
 				return lib;
-		}
 		return null;
 	}
 
 	Library findLibrary(ComponentFactory source) {
-		if (file.contains(source)) {
-			return file;
-		}
-		for (Library lib : file.getLibraries()) {
+		if (file.contains(source)) return file;
+		for (Library lib : file.getLibraries())
 			if (lib.contains(source))
 				return lib;
-		}
 		return null;
 	}
 
 	boolean libraryContains(Library lib, Tool query) {
-		for (Tool tool : lib.getTools()) {
+		for (Tool tool : lib.getTools())
 			if (tool.sharesSource(query))
 				return true;
-		}
 		return false;
 	}
 }

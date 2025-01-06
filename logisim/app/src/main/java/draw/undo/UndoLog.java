@@ -16,10 +16,10 @@ public class UndoLog {
 	private int modCount;
 
 	public UndoLog() {
-		this.listeners = new EventSourceWeakSupport<UndoLogListener>();
-		this.undoLog = new LinkedList<Action>();
-		this.redoLog = new LinkedList<Action>();
-		this.modCount = 0;
+		listeners = new EventSourceWeakSupport<>();
+		undoLog = new LinkedList<>();
+		redoLog = new LinkedList<>();
+		modCount = 0;
 	}
 
 	//
@@ -46,19 +46,13 @@ public class UndoLog {
 	// accessor methods
 	//
 	public Action getUndoAction() {
-		if (undoLog.size() == 0) {
-			return null;
-		} else {
-			return undoLog.getLast();
-		}
+		if (undoLog.size() == 0) return null;
+		else return undoLog.getLast();
 	}
 
 	public Action getRedoAction() {
-		if (redoLog.size() == 0) {
-			return null;
-		} else {
-			return redoLog.getLast();
-		}
+		if (redoLog.size() == 0) return null;
+		else return redoLog.getLast();
 	}
 
 	public boolean isModified() {
@@ -89,9 +83,7 @@ public class UndoLog {
 				}
 				act = joined;
 			}
-			while (undoLog.size() > MAX_UNDO_SIZE) {
-				undoLog.removeFirst();
-			}
+			while (undoLog.size() > MAX_UNDO_SIZE) undoLog.removeFirst();
 		}
 		undoLog.add(act);
 		if (act.isModification())

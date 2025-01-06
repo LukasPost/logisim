@@ -44,6 +44,8 @@ import logisim.file.Options;
 import logisim.gui.generic.CanvasPane;
 import logisim.gui.generic.CanvasPaneContents;
 import logisim.gui.generic.GridPainter;
+import logisim.gui.main.Selection.Event;
+import logisim.gui.main.Selection.Listener;
 import logisim.prefs.AppPreferences;
 import logisim.proj.Project;
 import logisim.proj.ProjectEvent;
@@ -84,7 +86,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 	private static final Font TICK_RATE_FONT = new Font("serif", Font.BOLD, 12);
 
 	private class MyListener implements MouseInputListener, KeyListener, PopupMenuListener, PropertyChangeListener {
-		boolean menu_on = false;
+		boolean menu_on;
 
 		//
 		// MouseListener methods
@@ -96,54 +98,42 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 			if ((e.getModifiersEx() & BUTTONS_MASK) != 0) {
 				// If the control key is down while the mouse is being
 				// dragged, mouseMoved is called instead. This may well be
-				// an issue specific to the MacOS Java implementation,
+				// an issue specific to the macOS Java implementation,
 				// but it exists there in the 1.4 and 5.0 versions.
 				mouseDragged(e);
 				return;
 			}
 
 			Tool tool = getToolFor(e);
-			if (tool != null) {
-				tool.mouseMoved(Canvas.this, getGraphics(), e);
-			}
+			if (tool != null) tool.mouseMoved(Canvas.this, getGraphics(), e);
 		}
 
 		public void mouseDragged(MouseEvent e) {
-			if (drag_tool != null) {
-				drag_tool.mouseDragged(Canvas.this, getGraphics(), e);
-			}
+			if (drag_tool != null) drag_tool.mouseDragged(Canvas.this, getGraphics(), e);
 		}
 
 		public void mouseEntered(MouseEvent e) {
-			if (drag_tool != null) {
-				drag_tool.mouseEntered(Canvas.this, getGraphics(), e);
-			} else {
+			if (drag_tool != null) drag_tool.mouseEntered(Canvas.this, getGraphics(), e);
+			else {
 				Tool tool = getToolFor(e);
-				if (tool != null) {
-					tool.mouseEntered(Canvas.this, getGraphics(), e);
-				}
+				if (tool != null) tool.mouseEntered(Canvas.this, getGraphics(), e);
 			}
 		}
 
 		public void mouseExited(MouseEvent e) {
-			if (drag_tool != null) {
-				drag_tool.mouseExited(Canvas.this, getGraphics(), e);
-			} else {
+			if (drag_tool != null) drag_tool.mouseExited(Canvas.this, getGraphics(), e);
+			else {
 				Tool tool = getToolFor(e);
-				if (tool != null) {
-					tool.mouseExited(Canvas.this, getGraphics(), e);
-				}
+				if (tool != null) tool.mouseExited(Canvas.this, getGraphics(), e);
 			}
 		}
 
 		public void mousePressed(MouseEvent e) {
 			viewport.setErrorMessage(null, null);
 			proj.setStartupScreen(false);
-			Canvas.this.requestFocus();
+			requestFocus();
 			drag_tool = getToolFor(e);
-			if (drag_tool != null) {
-				drag_tool.mousePressed(Canvas.this, getGraphics(), e);
-			}
+			if (drag_tool != null) drag_tool.mousePressed(Canvas.this, getGraphics(), e);
 
 			completeAction();
 		}
@@ -155,9 +145,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 			}
 
 			Tool tool = proj.getTool();
-			if (tool != null) {
-				tool.mouseMoved(Canvas.this, getGraphics(), e);
-			}
+			if (tool != null) tool.mouseMoved(Canvas.this, getGraphics(), e);
 
 			completeAction();
 		}
@@ -195,7 +183,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 		}
 
 		//
-		// PopupMenuListener mtehods
+		// PopupMenuListener methods
 		//
 		public void popupMenuCanceled(PopupMenuEvent e) {
 			menu_on = false;
@@ -209,9 +197,9 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 		}
 
 		public void propertyChange(PropertyChangeEvent event) {
-			if (AppPreferences.GATE_SHAPE.isSource(event) || AppPreferences.SHOW_TICK_RATE.isSource(event)) {
+			if (AppPreferences.GATE_SHAPE.isSource(event) || AppPreferences.SHOW_TICK_RATE.isSource(event))
 				paintThread.requestRepaint();
-			} else if (AppPreferences.COMPONENT_TIPS.isSource(event)) {
+			else if (AppPreferences.COMPONENT_TIPS.isSource(event)) {
 				boolean showTips = AppPreferences.COMPONENT_TIPS.getBoolean();
 				setToolTipText(showTips ? "" : null);
 			}
@@ -219,14 +207,12 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 	}
 
 	private class MyProjectListener implements ProjectListener, LibraryListener, CircuitListener, AttributeListener,
-			SimulatorListener, Selection.Listener {
+			SimulatorListener, Listener {
 		public void projectChanged(ProjectEvent event) {
 			int act = event.getAction();
 			if (act == ProjectEvent.ACTION_SET_CURRENT) {
 				viewport.setErrorMessage(null, null);
-				if (painter.getHaloedComponent() != null) {
-					proj.getFrame().viewComponentAttributes(null, null);
-				}
+				if (painter.getHaloedComponent() != null) proj.getFrame().viewComponentAttributes(null, null);
 			} else if (act == ProjectEvent.ACTION_SET_FILE) {
 				LogisimFile old = (LogisimFile) event.getOldData();
 				if (old != null)
@@ -235,7 +221,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 				if (file != null) {
 					AttributeSet attrs = file.getOptions().getAttributeSet();
 					attrs.addAttributeListener(this);
-					loadOptions(attrs);
+					loadOptions();
 					mappings = file.getOptions().getMouseMappings();
 				}
 			} else if (act == ProjectEvent.ACTION_SET_TOOL) {
@@ -252,16 +238,12 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 				if (oldState != null && newState != null) {
 					Propagator oldProp = oldState.getPropagator();
 					Propagator newProp = newState.getPropagator();
-					if (oldProp != newProp) {
-						tickCounter.clear();
-					}
+					if (oldProp != newProp) tickCounter.clear();
 				}
 			}
 
 			if (act != ProjectEvent.ACTION_SELECTION && act != ProjectEvent.ACTION_START
-					&& act != ProjectEvent.UNDO_START) {
-				completeAction();
-			}
+					&& act != ProjectEvent.UNDO_START) completeAction();
 		}
 
 		public void libraryChanged(LibraryEvent event) {
@@ -270,23 +252,18 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 				Circuit circ = null;
 				if (t instanceof AddTool) {
 					t = ((AddTool) t).getFactory();
-					if (t instanceof SubcircuitFactory) {
-						circ = ((SubcircuitFactory) t).getSubcircuit();
-					}
+					if (t instanceof SubcircuitFactory) circ = ((SubcircuitFactory) t).getSubcircuit();
 				}
 
-				if (t == proj.getCurrentCircuit() && t != null) {
+				if (t == proj.getCurrentCircuit() && t != null)
 					proj.setCurrentCircuit(proj.getLogisimFile().getMainCircuit());
-				}
 
 				if (proj.getTool() == event.getData()) {
 					Tool next = findTool(proj.getLogisimFile().getOptions().getToolbarData().getContents());
-					if (next == null) {
-						for (Library lib : proj.getLogisimFile().getLibraries()) {
-							next = findTool(lib.getTools());
-							if (next != null)
-								break;
-						}
+					if (next == null) for (Library lib : proj.getLogisimFile().getLibraries()) {
+						next = findTool(lib.getTools());
+						if (next != null)
+							break;
 					}
 					proj.setTool(next);
 				}
@@ -298,21 +275,18 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 						last = state;
 						state = state.getParentState();
 					}
-					if (state != null) {
-						getProject().setCircuitState(last.cloneState());
-					}
+					if (state != null) getProject().setCircuitState(last.cloneState());
 				}
 			}
 		}
 
 		private Tool findTool(List<? extends Tool> opts) {
 			Tool ret = null;
-			for (Tool o : opts) {
+			for (Tool o : opts)
 				if (ret == null && o != null)
 					ret = o;
 				else if (o instanceof EditTool)
 					ret = o;
-			}
 			return ret;
 		}
 
@@ -320,16 +294,10 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 			int act = event.getAction();
 			if (act == CircuitEvent.ACTION_REMOVE) {
 				Component c = (Component) event.getData();
-				if (c == painter.getHaloedComponent()) {
-					proj.getFrame().viewComponentAttributes(null, null);
-				}
+				if (c == painter.getHaloedComponent()) proj.getFrame().viewComponentAttributes(null, null);
 			} else if (act == CircuitEvent.ACTION_CLEAR) {
-				if (painter.getHaloedComponent() != null) {
-					proj.getFrame().viewComponentAttributes(null, null);
-				}
-			} else if (act == CircuitEvent.ACTION_INVALIDATE) {
-				completeAction();
-			}
+				if (painter.getHaloedComponent() != null) proj.getFrame().viewComponentAttributes(null, null);
+			} else if (act == CircuitEvent.ACTION_INVALIDATE) completeAction();
 		}
 
 		public void propagationCompleted(SimulatorEvent e) {
@@ -337,7 +305,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 			 * This was a good idea for a while... but it leads to problems when a repaint is done just before a user
 			 * action takes place. // repaint - but only if it's been a while since the last one long now =
 			 * System.currentTimeMillis(); if (now > lastRepaint + repaintDuration) { lastRepaint = now; // (ensure that
-			 * multiple requests aren't made repaintDuration = 15 + (int) (20 * Math.random()); // repaintDuration is
+			 * multiple requests aren't made) repaintDuration = 15 + (int) (20 * Math.random()); // repaintDuration is
 			 * for jittering the repaints to // reduce aliasing effects repaint(); }
 			 */
 			paintThread.requestRepaint();
@@ -363,23 +331,23 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 			}
 		}
 
-		public void selectionChanged(Selection.Event event) {
+		public void selectionChanged(Event event) {
 			repaint();
 		}
 	}
 
 	private class MyViewport extends JViewport {
-		StringGetter errorMessage = null;
+		StringGetter errorMessage;
 		Color errorColor = DEFAULT_ERROR_COLOR;
-		String widthMessage = null;
-		boolean isNorth = false;
-		boolean isSouth = false;
-		boolean isWest = false;
-		boolean isEast = false;
-		boolean isNortheast = false;
-		boolean isNorthwest = false;
-		boolean isSoutheast = false;
-		boolean isSouthwest = false;
+		String widthMessage;
+		boolean isNorth;
+		boolean isSouth;
+		boolean isWest;
+		boolean isEast;
+		boolean isNortheast;
+		boolean isNorthwest;
+		boolean isSoutheast;
+		boolean isSouthwest;
 
 		MyViewport() {
 		}
@@ -404,36 +372,36 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 			isSouthwest = false;
 		}
 
-		void setNorth(boolean value) {
-			isNorth = value;
+		void setNorth() {
+			isNorth = true;
 		}
 
-		void setSouth(boolean value) {
-			isSouth = value;
+		void setSouth() {
+			isSouth = true;
 		}
 
-		void setEast(boolean value) {
-			isEast = value;
+		void setEast() {
+			isEast = true;
 		}
 
-		void setWest(boolean value) {
-			isWest = value;
+		void setWest() {
+			isWest = true;
 		}
 
-		void setNortheast(boolean value) {
-			isNortheast = value;
+		void setNortheast() {
+			isNortheast = true;
 		}
 
-		void setNorthwest(boolean value) {
-			isNorthwest = value;
+		void setNorthwest() {
+			isNorthwest = true;
 		}
 
-		void setSoutheast(boolean value) {
-			isSoutheast = value;
+		void setSoutheast() {
+			isSoutheast = true;
 		}
 
-		void setSouthwest(boolean value) {
-			isSouthwest = value;
+		void setSouthwest() {
+			isSouthwest = true;
 		}
 
 		@Override
@@ -480,9 +448,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 			Dimension sz = getSize();
 			g.setColor(Value.WIDTH_ERROR_COLOR);
 
-			if (widthMessage != null) {
-				paintString(g, widthMessage);
-			}
+			if (widthMessage != null) paintString(g, widthMessage);
 
 			GraphicsUtil.switchToWidth(g, 3);
 			if (isNorth)
@@ -504,7 +470,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 
 			if (AppPreferences.SHOW_TICK_RATE.getBoolean()) {
 				String hz = tickCounter.getTickRate();
-				if (hz != null && !hz.equals("")) {
+				if (hz != null && !hz.isEmpty()) {
 					g.setColor(TICK_RATE_COLOR);
 					g.setFont(TICK_RATE_FONT);
 					FontMetrics fm = g.getFontMetrics();
@@ -528,7 +494,6 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 				x = 0;
 			g.drawString(msg, x, getHeight() - 23);
 			g.setFont(old);
-			return;
 		}
 	}
 
@@ -545,19 +510,19 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 
 	private CanvasPaintThread paintThread;
 	private CanvasPainter painter;
-	private boolean paintDirty = false; // only for within paintComponent
-	private boolean inPaint = false; // only for within paintComponent
-	private Object repaintLock = new Object(); // for waitForRepaintDone
+	private boolean paintDirty; // only for within paintComponent
+	private boolean inPaint; // only for within paintComponent
+	private final Object repaintLock = new Object(); // for waitForRepaintDone
 
 	public Canvas(Project proj) {
 		this.proj = proj;
-		this.selection = new Selection(proj, this);
-		this.painter = new CanvasPainter(this);
-		this.oldPreferredSize = null;
-		this.paintThread = new CanvasPaintThread(this);
-		this.mappings = proj.getOptions().getMouseMappings();
-		this.canvasPane = null;
-		this.tickCounter = new TickCounter();
+		selection = new Selection(proj, this);
+		painter = new CanvasPainter(this);
+		oldPreferredSize = null;
+		paintThread = new CanvasPaintThread(this);
+		mappings = proj.getOptions().getMouseMappings();
+		canvasPane = null;
+		tickCounter = new TickCounter();
 
 		setBackground(Color.white);
 		addMouseListener(myListener);
@@ -576,7 +541,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 		AppPreferences.COMPONENT_TIPS.addPropertyChangeListener(myListener);
 		AppPreferences.GATE_SHAPE.addPropertyChangeListener(myListener);
 		AppPreferences.SHOW_TICK_RATE.addPropertyChangeListener(myListener);
-		loadOptions(options);
+		loadOptions();
 		paintThread.start();
 	}
 
@@ -584,7 +549,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 		paintThread.requestStop();
 	}
 
-	private void loadOptions(AttributeSet options) {
+	private void loadOptions() {
 		boolean showTips = AppPreferences.COMPONENT_TIPS.getBoolean();
 		setToolTipText(showTips ? "" : null);
 
@@ -686,17 +651,12 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 		int width = bounds.getX() + bounds.getWidth() + BOUNDS_BUFFER;
 		int height = bounds.getY() + bounds.getHeight() + BOUNDS_BUFFER;
 		Dimension dim;
-		if (canvasPane == null) {
-			dim = new Dimension(width, height);
-		} else {
-			dim = canvasPane.supportPreferredSize(width, height);
-		}
+		if (canvasPane == null) dim = new Dimension(width, height);
+		else dim = canvasPane.supportPreferredSize(width, height);
 		if (!immediate) {
 			Bounds old = oldPreferredSize;
 			if (old != null && Math.abs(old.getWidth() - dim.width) < THRESH_SIZE_UPDATE
-					&& Math.abs(old.getHeight() - dim.height) < THRESH_SIZE_UPDATE) {
-				return;
-			}
+					&& Math.abs(old.getHeight() - dim.height) < THRESH_SIZE_UPDATE) return;
 		}
 		oldPreferredSize = Bounds.create(0, 0, dim.width, dim.height);
 		setPreferredSize(dim);
@@ -706,9 +666,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 	private void waitForRepaintDone() {
 		synchronized (repaintLock) {
 			try {
-				while (inPaint) {
-					repaintLock.wait();
-				}
+				while (inPaint) repaintLock.wait();
 			}
 			catch (InterruptedException e) {
 			}
@@ -720,9 +678,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 		inPaint = true;
 		try {
 			super.paintComponent(g);
-			do {
-				painter.paintContents(g, proj);
-			} while (paintDirty);
+			do painter.paintContents(g, proj); while (paintDirty);
 			if (canvasPane == null)
 				viewport.paintContents(g);
 		} finally {
@@ -737,33 +693,27 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 		if (paintDirty) {
 			paintDirty = false;
 			return false;
-		} else {
-			return true;
-		}
+		} else return true;
 	}
 
 	private void computeViewportContents() {
 		Set<WidthIncompatibilityData> exceptions = proj.getCurrentCircuit().getWidthIncompatibilityData();
-		if (exceptions == null || exceptions.size() == 0) {
+		if (exceptions == null || exceptions.isEmpty()) {
 			viewport.setWidthMessage(null);
 			return;
 		}
 
 		Rectangle viewableBase;
 		Rectangle viewable;
-		if (canvasPane != null) {
-			viewableBase = canvasPane.getViewport().getViewRect();
-		} else {
+		if (canvasPane != null) viewableBase = canvasPane.getViewport().getViewRect();
+		else {
 			Bounds bds = proj.getCurrentCircuit().getBounds();
 			viewableBase = new Rectangle(0, 0, bds.getWidth(), bds.getHeight());
 		}
 		double zoom = getZoomFactor();
-		if (zoom == 1.0) {
-			viewable = viewableBase;
-		} else {
-			viewable = new Rectangle((int) (viewableBase.x / zoom), (int) (viewableBase.y / zoom),
-					(int) (viewableBase.width / zoom), (int) (viewableBase.height / zoom));
-		}
+		if (zoom == 1.0) viewable = viewableBase;
+		else viewable = new Rectangle((int) (viewableBase.x / zoom), (int) (viewableBase.y / zoom),
+				(int) (viewableBase.width / zoom), (int) (viewableBase.height / zoom));
 
 		viewport.setWidthMessage(
 				Strings.get("canvasWidthError") + (exceptions.size() == 1 ? "" : " (" + exceptions.size() + ")"));
@@ -772,8 +722,8 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 			boolean isWithin = false;
 			for (int i = 0; i < ex.size(); i++) {
 				Location p = ex.getPoint(i);
-				int x = p.getX();
-				int y = p.getY();
+				int x = p.x();
+				int y = p.y();
 				if (x >= viewable.x && x < viewable.x + viewable.width && y >= viewable.y
 						&& y < viewable.y + viewable.height) {
 					isWithin = true;
@@ -784,33 +734,29 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 			// If none are, insert an arrow.
 			if (!isWithin) {
 				Location p = ex.getPoint(0);
-				int x = p.getX();
-				int y = p.getY();
+				int x = p.x();
+				int y = p.y();
 				boolean isWest = x < viewable.x;
 				boolean isEast = x >= viewable.x + viewable.width;
 				boolean isNorth = y < viewable.y;
 				boolean isSouth = y >= viewable.y + viewable.height;
 
-				if (isNorth) {
-					if (isEast)
-						viewport.setNortheast(true);
-					else if (isWest)
-						viewport.setNorthwest(true);
-					else
-						viewport.setNorth(true);
-				} else if (isSouth) {
-					if (isEast)
-						viewport.setSoutheast(true);
-					else if (isWest)
-						viewport.setSouthwest(true);
-					else
-						viewport.setSouth(true);
-				} else {
-					if (isEast)
-						viewport.setEast(true);
-					else if (isWest)
-						viewport.setWest(true);
-				}
+				if (isNorth) if (isEast)
+					viewport.setNortheast();
+				else if (isWest)
+					viewport.setNorthwest();
+				else
+					viewport.setNorth();
+				else if (isSouth) if (isEast)
+					viewport.setSoutheast();
+				else if (isWest)
+					viewport.setSouthwest();
+				else
+					viewport.setSouth();
+				else if (isEast)
+					viewport.setEast();
+				else if (isWest)
+					viewport.setWest();
 			}
 		}
 	}
@@ -818,11 +764,8 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 	@Override
 	public void repaint(Rectangle r) {
 		double zoom = getZoomFactor();
-		if (zoom == 1.0) {
-			super.repaint(r);
-		} else {
-			this.repaint(r.x, r.y, r.width, r.height);
-		}
+		if (zoom == 1.0) super.repaint(r);
+		else repaint(r.x, r.y, r.width, r.height);
 	}
 
 	@Override
@@ -853,11 +796,8 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 			ComponentUserEvent e = null;
 			for (Component comp : getCircuit().getAllContaining(loc)) {
 				Object makerObj = comp.getFeature(ToolTipMaker.class);
-				if (makerObj != null && makerObj instanceof ToolTipMaker) {
-					ToolTipMaker maker = (ToolTipMaker) makerObj;
-					if (e == null) {
-						e = new ComponentUserEvent(this, loc.getX(), loc.getY());
-					}
+				if (makerObj instanceof ToolTipMaker maker) {
+					if (e == null) e = new ComponentUserEvent(this, loc.x(), loc.y());
 					String ret = maker.getToolTip(e);
 					if (ret != null) {
 						unrepairMouseEvent(event);
@@ -921,7 +861,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 	}
 
 	public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-		return canvasPane.supportScrollableBlockIncrement(visibleRect, orientation, direction);
+		return canvasPane.supportScrollableBlockIncrement(visibleRect, direction);
 	}
 
 	public boolean getScrollableTracksViewportHeight() {
@@ -933,26 +873,20 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 	}
 
 	public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-		return canvasPane.supportScrollableUnitIncrement(visibleRect, orientation, direction);
+		return canvasPane.supportScrollableUnitIncrement();
 	}
 
 	//
 	// static methods
 	//
 	public static int snapXToGrid(int x) {
-		if (x < 0) {
-			return -((-x + 5) / 10) * 10;
-		} else {
-			return ((x + 5) / 10) * 10;
-		}
+		if (x < 0) return -((-x + 5) / 10) * 10;
+		else return ((x + 5) / 10) * 10;
 	}
 
 	public static int snapYToGrid(int y) {
-		if (y < 0) {
-			return -((-y + 5) / 10) * 10;
-		} else {
-			return ((y + 5) / 10) * 10;
-		}
+		if (y < 0) return -((-y + 5) / 10) * 10;
+		else return ((y + 5) / 10) * 10;
 	}
 
 	public static void snapToGrid(MouseEvent e) {

@@ -63,19 +63,17 @@ public class PainterShaped {
 	private PainterShaped() {
 	}
 
-	private static HashMap<Integer, int[]> INPUT_LENGTHS = new HashMap<Integer, int[]>();
+	private static HashMap<Integer, int[]> INPUT_LENGTHS = new HashMap<>();
 
 	static void paintAnd(InstancePainter painter, int width, int height) {
 		Graphics g = painter.getGraphics();
 		GraphicsUtil.switchToWidth(g, 2);
-		int[] xp = new int[] { -width / 2, -width + 1, -width + 1, -width / 2 };
-		int[] yp = new int[] { -width / 2, -width / 2, width / 2, width / 2 };
+		int[] xp = { -width / 2, -width + 1, -width + 1, -width / 2 };
+		int[] yp = { -width / 2, -width / 2, width / 2, width / 2 };
 		GraphicsUtil.drawCenteredArc(g, -width / 2, 0, width / 2, -90, 180);
 
 		g.drawPolyline(xp, yp, 4);
-		if (height > width) {
-			g.drawLine(-width + 1, -height / 2, -width + 1, height / 2);
-		}
+		if (height > width) g.drawLine(-width + 1, -height / 2, -width + 1, height / 2);
 	}
 
 	static void paintOr(InstancePainter painter, int width, int height) {
@@ -90,17 +88,11 @@ public class PainterShaped {
 		 */
 
 		GeneralPath path;
-		if (width < 40) {
-			path = PATH_NARROW;
-		} else if (width < 60) {
-			path = PATH_MEDIUM;
-		} else {
-			path = PATH_WIDE;
-		}
+		if (width < 40) path = PATH_NARROW;
+		else if (width < 60) path = PATH_MEDIUM;
+		else path = PATH_WIDE;
 		((Graphics2D) g).draw(path);
-		if (height > width) {
-			paintShield(g, 0, width, height);
-		}
+		if (height > width) paintShield(g, 0, width, height);
 	}
 
 	static void paintNot(InstancePainter painter) {
@@ -160,25 +152,21 @@ public class PainterShaped {
 
 	private static GeneralPath computeShield(int width, int height) {
 		GeneralPath base;
-		if (width < 40) {
-			base = SHIELD_NARROW;
-		} else if (width < 60) {
-			base = SHIELD_MEDIUM;
-		} else {
-			base = SHIELD_WIDE;
-		}
+		if (width < 40) base = SHIELD_NARROW;
+		else if (width < 60) base = SHIELD_MEDIUM;
+		else base = SHIELD_WIDE;
 
-		if (height <= width) { // no wings
-			return base;
-		} else { // we need to add wings
+		// no wings
+		if (height <= width) return base;
+		else { // we need to add wings
 			int wingHeight = (height - width) / 2;
 			int dx = Math.min(20, wingHeight / 4);
 
 			GeneralPath path = new GeneralPath();
-			path.moveTo(-width, -height / 2);
-			path.quadTo(-width + dx, -(width + height) / 4, -width, -width / 2);
+			path.moveTo(-width, (float) -height / 2);
+			path.quadTo(-width + dx, (float) -(width + height) / 4, -width, (float) -width / 2);
 			path.append(base, true);
-			path.quadTo(-width + dx, (width + height) / 4, -width, height / 2);
+			path.quadTo(-width + dx, (float) (width + height) / 4, -width, (float) height / 2);
 			return path;
 		}
 	}
@@ -191,53 +179,49 @@ public class PainterShaped {
 		int inputs = attrs.inputs;
 		int negated = attrs.negated;
 
-		int[] lengths = getInputLineLengths(attrs, factory);
-		if (painter.getInstance() == null) { // drawing ghost - negation bubbles only
-			for (int i = 0; i < inputs; i++) {
-				boolean iNegated = ((negated >> i) & 1) == 1;
-				if (iNegated) {
-					Location offs = factory.getInputOffset(attrs, i);
-					Location loci = loc.translate(offs.getX(), offs.getY());
-					Location cent = loci.translate(facing, lengths[i] + 5);
-					painter.drawDongle(cent.getX(), cent.getY());
-				}
+		int[] lengths = getInputLineLengths(attrs);
+		// drawing ghost - negation bubbles only
+		if (painter.getInstance() == null) for (int i = 0; i < inputs; i++) {
+			boolean iNegated = ((negated >> i) & 1) == 1;
+			if (iNegated) {
+				Location offs = factory.getInputOffset(attrs, i);
+				Location loci = loc.translate(offs.x(), offs.y());
+				Location cent = loci.translate(facing, lengths[i] + 5);
+				painter.drawDongle(cent.x(), cent.y());
 			}
-		} else {
+		}
+		else {
 			Graphics g = painter.getGraphics();
 			Color baseColor = g.getColor();
 			GraphicsUtil.switchToWidth(g, 3);
 			for (int i = 0; i < inputs; i++) {
 				Location offs = factory.getInputOffset(attrs, i);
-				Location src = loc.translate(offs.getX(), offs.getY());
+				Location src = loc.translate(offs.x(), offs.y());
 				int len = lengths[i];
 				if (len != 0 && (!printView || painter.isPortConnected(i + 1))) {
 					if (painter.getShowState()) {
 						Value val = painter.getPort(i + 1);
 						g.setColor(val.getColor());
-					} else {
-						g.setColor(baseColor);
-					}
+					} else g.setColor(baseColor);
 					Location dst = src.translate(facing, len);
-					g.drawLine(src.getX(), src.getY(), dst.getX(), dst.getY());
+					g.drawLine(src.x(), src.y(), dst.x(), dst.y());
 				}
 				if (((negated >> i) & 1) == 1) {
 					Location cent = src.translate(facing, lengths[i] + 5);
 					g.setColor(baseColor);
-					painter.drawDongle(cent.getX(), cent.getY());
+					painter.drawDongle(cent.x(), cent.y());
 					GraphicsUtil.switchToWidth(g, 3);
 				}
 			}
 		}
 	}
 
-	private static int[] getInputLineLengths(GateAttributes attrs, AbstractGate factory) {
+	private static int[] getInputLineLengths(GateAttributes attrs) {
 		int inputs = attrs.inputs;
-		int mainHeight = ((Integer) attrs.size.getValue()).intValue();
-		Integer key = Integer.valueOf(inputs * 31 + mainHeight);
+		int mainHeight = (Integer) attrs.size.getValue();
+		Integer key = inputs * 31 + mainHeight;
 		Object ret = INPUT_LENGTHS.get(key);
-		if (ret != null) {
-			return (int[]) ret;
-		}
+		if (ret != null) return (int[]) ret;
 
 		Direction facing = attrs.facing;
 		if (facing != Direction.East) {
@@ -247,17 +231,16 @@ public class PainterShaped {
 
 		int[] lengths = new int[inputs];
 		INPUT_LENGTHS.put(key, lengths);
-		int width = mainHeight;
 		Location loc0 = OrGate.FACTORY.getInputOffset(attrs, 0);
 		Location locn = OrGate.FACTORY.getInputOffset(attrs, inputs - 1);
 		int totalHeight = 10 + loc0.manhattanDistanceTo(locn);
-		if (totalHeight < width)
-			totalHeight = width;
+		if (totalHeight < mainHeight)
+			totalHeight = mainHeight;
 
-		GeneralPath path = computeShield(width, totalHeight);
+		GeneralPath path = computeShield(mainHeight, totalHeight);
 		for (int i = 0; i < inputs; i++) {
 			Location loci = OrGate.FACTORY.getInputOffset(attrs, i);
-			Point2D p = new Point2D.Float(loci.getX() + 1, loci.getY());
+			Point2D p = new Point2D.Float(loci.x() + 1, loci.y());
 			int iters = 0;
 			while (path.contains(p) && iters < 15) {
 				iters++;

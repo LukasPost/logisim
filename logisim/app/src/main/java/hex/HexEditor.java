@@ -34,10 +34,10 @@ public class HexEditor extends JComponent implements Scrollable {
 
 	public HexEditor(HexModel model) {
 		this.model = model;
-		this.listener = new Listener();
-		this.measures = new Measures(this);
-		this.caret = new Caret(this);
-		this.highlighter = new Highlighter(this);
+		listener = new Listener();
+		measures = new Measures(this);
+		caret = new Caret(this);
+		highlighter = new Highlighter(this);
 
 		setOpaque(true);
 		setBackground(Color.WHITE);
@@ -92,11 +92,8 @@ public class HexEditor extends JComponent implements Scrollable {
 		int y0 = measures.toY(start);
 		int y1 = measures.toY(end);
 		int h = measures.getCellHeight();
-		if (y0 == y1) {
-			scrollRectToVisible(new Rectangle(x0, y0, x1 - x0, h));
-		} else {
-			scrollRectToVisible(new Rectangle(x0, y0, x1 - x0, (y1 + h) - y0));
-		}
+		if (y0 == y1) scrollRectToVisible(new Rectangle(x0, y0, x1 - x0, h));
+		else scrollRectToVisible(new Rectangle(x0, y0, x1 - x0, (y1 + h) - y0));
 	}
 
 	@Override
@@ -149,32 +146,26 @@ public class HexEditor extends JComponent implements Scrollable {
 			g.drawString(label, baseX - labelWidth + (labelWidth - labelFm.stringWidth(label)) / 2, baseY);
 			g.setFont(baseFont);
 			long b = a;
-			for (int j = 0; j < cols; j++, b++) {
+			for (int j = 0; j < cols; j++, b++)
 				if (b >= addr0 && b <= addr1) {
 					String val = toHex(model.get(b), cellChars);
 					int x = measures.toX(b) + (cellWidth - baseFm.stringWidth(val)) / 2;
 					g.drawString(val, x, baseY);
 				}
-			}
 		}
 
 		caret.paintForeground(g, xaddr0, xaddr1);
 	}
 
 	private String toHex(long value, int chars) {
-		String ret = Long.toHexString(value);
+		StringBuilder ret = new StringBuilder(Long.toHexString(value));
 		int retLen = ret.length();
 		if (retLen < chars) {
-			ret = "0" + ret;
-			for (int i = retLen + 1; i < chars; i++) {
-				ret = "0" + ret;
-			}
-			return ret;
-		} else if (retLen == chars) {
-			return ret;
-		} else {
-			return ret.substring(retLen - chars);
-		}
+			ret.insert(0, "0");
+			for (int i = retLen + 1; i < chars; i++) ret.insert(0, "0");
+			return ret.toString();
+		} else if (retLen == chars) return ret.toString();
+		else return ret.substring(retLen - chars);
 	}
 
 	//
@@ -219,9 +210,7 @@ public class HexEditor extends JComponent implements Scrollable {
 					return 1;
 			}
 			return ret;
-		} else {
-			return Math.max(1, vis.width / 20);
-		}
+		} else return Math.max(1, vis.width / 20);
 	}
 
 	public int getScrollableBlockIncrement(Rectangle vis, int orientation, int direction) {
@@ -235,9 +224,7 @@ public class HexEditor extends JComponent implements Scrollable {
 			}
 			int lines = Math.max(1, (vis.height / height) - 1);
 			return lines * height;
-		} else {
-			return 19 * vis.width / 20;
-		}
+		} else return 19 * vis.width / 20;
 	}
 
 	public boolean getScrollableTracksViewportWidth() {

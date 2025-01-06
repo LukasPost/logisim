@@ -9,14 +9,14 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public class VariableList {
-	private ArrayList<VariableListListener> listeners = new ArrayList<VariableListListener>();
+	private ArrayList<VariableListListener> listeners = new ArrayList<>();
 	private int maxSize;
 	private ArrayList<String> data;
 	private List<String> dataView;
 
 	public VariableList(int maxSize) {
 		this.maxSize = maxSize;
-		data = maxSize > 16 ? new ArrayList<String>() : new ArrayList<String>(maxSize);
+		data = maxSize > 16 ? new ArrayList<>() : new ArrayList<>(maxSize);
 		dataView = Collections.unmodifiableList(data);
 	}
 
@@ -43,9 +43,7 @@ public class VariableList {
 		if (listeners.size() == 0)
 			return;
 		VariableListEvent event = new VariableListEvent(this, type, variable, data);
-		for (VariableListListener l : listeners) {
-			l.listChanged(event);
-		}
+		for (VariableListListener l : listeners) l.listChanged(event);
 	}
 
 	//
@@ -88,18 +86,14 @@ public class VariableList {
 	}
 
 	public void setAll(List<String> values) {
-		if (values.size() > maxSize) {
-			throw new IllegalArgumentException("maximum size is " + maxSize);
-		}
+		if (values.size() > maxSize) throw new IllegalArgumentException("maximum size is " + maxSize);
 		data.clear();
 		data.addAll(values);
 		fireEvent(VariableListEvent.ALL_REPLACED);
 	}
 
 	public void add(String name) {
-		if (data.size() >= maxSize) {
-			throw new IllegalArgumentException("maximum size is " + maxSize);
-		}
+		if (data.size() >= maxSize) throw new IllegalArgumentException("maximum size is " + maxSize);
 		data.add(name);
 		fireEvent(VariableListEvent.ADD, name);
 	}
@@ -109,7 +103,7 @@ public class VariableList {
 		if (index < 0)
 			throw new NoSuchElementException("input " + name);
 		data.remove(index);
-		fireEvent(VariableListEvent.REMOVE, name, Integer.valueOf(index));
+		fireEvent(VariableListEvent.REMOVE, name, index);
 	}
 
 	public void move(String name, int delta) {
@@ -117,17 +111,14 @@ public class VariableList {
 		if (index < 0)
 			throw new NoSuchElementException(name);
 		int newIndex = index + delta;
-		if (newIndex < 0) {
-			throw new IllegalArgumentException("cannot move index " + index + " by " + delta);
-		}
-		if (newIndex > data.size() - 1) {
+		if (newIndex < 0) throw new IllegalArgumentException("cannot move index " + index + " by " + delta);
+		if (newIndex > data.size() - 1)
 			throw new IllegalArgumentException("cannot move index " + index + " by " + delta + ": size " + data.size());
-		}
 		if (index == newIndex)
 			return;
 		data.remove(index);
 		data.add(newIndex, name);
-		fireEvent(VariableListEvent.MOVE, name, Integer.valueOf(newIndex - index));
+		fireEvent(VariableListEvent.MOVE, name, newIndex - index);
 	}
 
 	public void replace(String oldName, String newName) {
@@ -137,7 +128,7 @@ public class VariableList {
 		if (oldName.equals(newName))
 			return;
 		data.set(index, newName);
-		fireEvent(VariableListEvent.REPLACE, oldName, Integer.valueOf(index));
+		fireEvent(VariableListEvent.REPLACE, oldName, index);
 	}
 
 }

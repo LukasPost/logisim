@@ -52,7 +52,7 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 		return AttributeSets.EMPTY;
 	}
 
-	public boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver) {
+	public boolean isAllDefaultValues(AttributeSet attrs) {
 		return false;
 	}
 
@@ -78,9 +78,8 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 
 	public void paintIcon(ComponentDrawContext context, int x, int y, AttributeSet attrs) {
 		Graphics g = context.getGraphics();
-		if (toolIcon != null) {
-			toolIcon.paintIcon(context.getDestination(), g, x + 2, y + 2);
-		} else {
+		if (toolIcon != null) toolIcon.paintIcon(context.getDestination(), g, x + 2, y + 2);
+		else {
 			g.setColor(Color.black);
 			g.drawRect(x + 5, y + 2, 11, 17);
 			Value[] v = { Value.TRUE, Value.FALSE };

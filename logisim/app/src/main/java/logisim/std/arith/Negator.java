@@ -42,36 +42,28 @@ public class Negator extends InstanceFactory {
 		// compute outputs
 		Value in = state.getPort(IN);
 		Value out;
-		if (in.isFullyDefined()) {
-			out = Value.createKnown(in.getBitWidth(), -in.toIntValue());
-		} else {
+		if (in.isFullyDefined()) out = Value.createKnown(in.getBitWidth(), -in.toIntValue());
+		else {
 			Value[] bits = in.getAll();
 			Value fill = Value.FALSE;
 			int pos = 0;
 			while (pos < bits.length) {
-				if (bits[pos] == Value.FALSE) {
-					bits[pos] = fill;
-				} else if (bits[pos] == Value.TRUE) {
+				if (bits[pos] == Value.FALSE) bits[pos] = fill;
+				else if (bits[pos] == Value.TRUE) {
 					if (fill != Value.FALSE)
 						bits[pos] = fill;
 					pos++;
 					break;
-				} else if (bits[pos] == Value.ERROR) {
-					fill = Value.ERROR;
-				} else {
-					if (fill == Value.FALSE)
-						fill = bits[pos];
-					else
-						bits[pos] = fill;
-				}
+				} else if (bits[pos] == Value.ERROR) fill = Value.ERROR;
+				else if (fill == Value.FALSE)
+					fill = bits[pos];
+				else
+					bits[pos] = fill;
 				pos++;
 			}
 			while (pos < bits.length) {
-				if (bits[pos] == Value.TRUE) {
-					bits[pos] = Value.FALSE;
-				} else if (bits[pos] == Value.FALSE) {
-					bits[pos] = Value.TRUE;
-				}
+				if (bits[pos] == Value.TRUE) bits[pos] = Value.FALSE;
+				else if (bits[pos] == Value.FALSE) bits[pos] = Value.TRUE;
 				pos++;
 			}
 			out = Value.create(bits);

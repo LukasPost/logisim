@@ -22,17 +22,13 @@ public class Dependencies {
 			case LibraryEvent.ADD_TOOL:
 				if (e.getData() instanceof AddTool) {
 					ComponentFactory factory = ((AddTool) e.getData()).getFactory();
-					if (factory instanceof SubcircuitFactory) {
-						SubcircuitFactory circFact = (SubcircuitFactory) factory;
-						processCircuit(circFact.getSubcircuit());
-					}
+					if (factory instanceof SubcircuitFactory circFact) processCircuit(circFact.getSubcircuit());
 				}
 				break;
 			case LibraryEvent.REMOVE_TOOL:
 				if (e.getData() instanceof AddTool) {
 					ComponentFactory factory = ((AddTool) e.getData()).getFactory();
-					if (factory instanceof SubcircuitFactory) {
-						SubcircuitFactory circFact = (SubcircuitFactory) factory;
+					if (factory instanceof SubcircuitFactory circFact) {
 						Circuit circ = circFact.getSubcircuit();
 						depends.removeNode(circ);
 						circ.removeCircuitListener(this);
@@ -47,22 +43,18 @@ public class Dependencies {
 			switch (e.getAction()) {
 			case CircuitEvent.ACTION_ADD:
 				comp = (Component) e.getData();
-				if (comp.getFactory() instanceof SubcircuitFactory) {
-					SubcircuitFactory factory = (SubcircuitFactory) comp.getFactory();
+				if (comp.getFactory() instanceof SubcircuitFactory factory)
 					depends.addEdge(e.getCircuit(), factory.getSubcircuit());
-				}
 				break;
 			case CircuitEvent.ACTION_REMOVE:
 				comp = (Component) e.getData();
-				if (comp.getFactory() instanceof SubcircuitFactory) {
-					SubcircuitFactory factory = (SubcircuitFactory) comp.getFactory();
+				if (comp.getFactory() instanceof SubcircuitFactory factory) {
 					boolean found = false;
-					for (Component o : e.getCircuit().getNonWires()) {
+					for (Component o : e.getCircuit().getNonWires())
 						if (o.getFactory() == factory) {
 							found = true;
 							break;
 						}
-					}
 					if (!found)
 						depends.removeEdge(e.getCircuit(), factory.getSubcircuit());
 				}
@@ -91,19 +83,13 @@ public class Dependencies {
 
 	private void addDependencies(LogisimFile file) {
 		file.addLibraryListener(myListener);
-		for (Circuit circuit : file.getCircuits()) {
-			processCircuit(circuit);
-		}
+		for (Circuit circuit : file.getCircuits()) processCircuit(circuit);
 	}
 
 	private void processCircuit(Circuit circ) {
 		circ.addCircuitListener(myListener);
-		for (Component comp : circ.getNonWires()) {
-			if (comp.getFactory() instanceof SubcircuitFactory) {
-				SubcircuitFactory factory = (SubcircuitFactory) comp.getFactory();
-				depends.addEdge(circ, factory.getSubcircuit());
-			}
-		}
+		for (Component comp : circ.getNonWires())
+			if (comp.getFactory() instanceof SubcircuitFactory factory) depends.addEdge(circ, factory.getSubcircuit());
 	}
 
 }

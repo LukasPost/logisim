@@ -3,10 +3,8 @@
 
 package logisim.circuit;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -36,17 +34,13 @@ class CircuitLocker {
 	}
 
 	void checkForWritePermission(String operationName) {
-		if (mutatingThread != Thread.currentThread()) {
+		if (mutatingThread != Thread.currentThread())
 			throw new IllegalStateException(operationName + " outside transaction");
-		}
 	}
 
 	void execute(CircuitTransaction xn) {
-		if (mutatingThread == Thread.currentThread()) {
-			xn.run(mutatingMutator);
-		} else {
-			xn.execute();
-		}
+		if (mutatingThread == Thread.currentThread()) xn.run(mutatingMutator);
+		else xn.execute();
 	}
 
 	private static class CircuitComparator implements Comparator<Circuit> {
@@ -59,7 +53,7 @@ class CircuitLocker {
 
 	static Map<Circuit, Lock> acquireLocks(CircuitTransaction xn, CircuitMutatorImpl mutator) {
 		Map<Circuit, Integer> requests = xn.getAccessedCircuits();
-		Map<Circuit, Lock> circuitLocks = new HashMap<Circuit, Lock>();
+		Map<Circuit, Lock> circuitLocks = new HashMap<>();
 		// Acquire locks in serial-number order to avoid deadlock
 		Circuit[] lockOrder = requests.keySet().toArray(new Circuit[0]);
 		Arrays.sort(lockOrder, new CircuitComparator());
@@ -67,37 +61,33 @@ class CircuitLocker {
 			for (Circuit circ : lockOrder) {
 				Integer access = requests.get(circ);
 				CircuitLocker locker = circ.getLocker();
-				if (access == CircuitTransaction.READ_ONLY) {
+				if (Objects.equals(access, CircuitTransaction.READ_ONLY)) {
 					Lock lock = locker.circuitLock.readLock();
 					lock.lock();
 					circuitLocks.put(circ, lock);
-				} else if (access == CircuitTransaction.READ_WRITE) {
+				} else if (Objects.equals(access, CircuitTransaction.READ_WRITE)) {
 					Thread curThread = Thread.currentThread();
-					if (locker.mutatingThread == curThread) {
-						; // nothing to do - thread already has lock
-					} else {
+					if (locker.mutatingThread != curThread) {
 						Lock lock = locker.circuitLock.writeLock();
 						lock.lock();
 						circuitLocks.put(circ, lock);
 						locker.mutatingThread = Thread.currentThread();
-						if (mutator == null) {
-							mutator = new CircuitMutatorImpl();
-						}
+						if (mutator == null) mutator = new CircuitMutatorImpl();
 						locker.mutatingMutator = mutator;
 					}
 				}
 			}
+			return circuitLocks;
 		}
 		catch (RuntimeException t) {
 			releaseLocks(circuitLocks);
 			throw t;
 		}
-		return circuitLocks;
 	}
 
 	static void releaseLocks(Map<Circuit, Lock> locks) {
 		Thread curThread = Thread.currentThread();
-		for (Map.Entry<Circuit, Lock> entry : locks.entrySet()) {
+		for (Entry<Circuit, Lock> entry : locks.entrySet()) {
 			Circuit circ = entry.getKey();
 			Lock lock = entry.getValue();
 			CircuitLocker locker = circ.getLocker();

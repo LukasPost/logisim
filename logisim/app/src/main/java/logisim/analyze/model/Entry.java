@@ -29,11 +29,11 @@ public class Entry {
 
 	private Entry(String description) {
 		this.description = description;
-		this.errorMessage = null;
+		errorMessage = null;
 	}
 
 	private Entry(StringGetter errorMessage) {
-		this.description = "!!";
+		description = "!!";
 		this.errorMessage = errorMessage;
 	}
 

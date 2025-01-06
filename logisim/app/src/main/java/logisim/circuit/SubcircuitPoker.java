@@ -40,11 +40,8 @@ public class SubcircuitPoker extends InstancePoker {
 			int[] xp = { tx - 1, cx + 8, cx + 10, tx + 1 };
 			int[] yp = { ty + 1, cy + 10, cy + 8, ty - 1 };
 			Graphics g = painter.getGraphics();
-			if (mouseDown) {
-				g.setColor(MAGNIFYING_INTERIOR_DOWN);
-			} else {
-				g.setColor(MAGNIFYING_INTERIOR);
-			}
+			if (mouseDown) g.setColor(MAGNIFYING_INTERIOR_DOWN);
+			else g.setColor(MAGNIFYING_INTERIOR);
 			g.fillOval(cx - 5, cy - 5, 10, 10);
 			g.setColor(Color.BLACK);
 			g.drawOval(cx - 5, cy - 5, 10, 10);
@@ -65,11 +62,9 @@ public class SubcircuitPoker extends InstancePoker {
 		if (mouseDown) {
 			mouseDown = false;
 			Object sub = state.getData();
-			if (e.getClickCount() == 2 && isWithin(state, e) && sub instanceof CircuitState) {
+			if (e.getClickCount() == 2 && isWithin(state, e) && sub instanceof CircuitState)
 				state.getProject().setCircuitState((CircuitState) sub);
-			} else {
-				state.getInstance().fireInvalidated();
-			}
+			else state.getInstance().fireInvalidated();
 		}
 	}
 

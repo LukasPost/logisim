@@ -17,7 +17,7 @@ public class CardPanel extends JPanel {
 
 	public CardPanel() {
 		super(new CardLayout());
-		listeners = new ArrayList<ChangeListener>();
+		listeners = new ArrayList<>();
 		current = "";
 	}
 
@@ -41,9 +41,7 @@ public class CardPanel extends JPanel {
 			current = choice;
 			((CardLayout) getLayout()).show(this, choice);
 			ChangeEvent e = new ChangeEvent(this);
-			for (ChangeListener listener : listeners) {
-				listener.stateChanged(e);
-			}
+			for (ChangeListener listener : listeners) listener.stateChanged(e);
 		}
 	}
 

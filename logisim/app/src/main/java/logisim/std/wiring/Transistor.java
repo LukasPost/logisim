@@ -1,10 +1,6 @@
 /* Copyright (c) 2011, Carl Burch. License information is located in the
  * logisim.Main source code and at www.cburch.com/logisim/. */
 
-/**
- * Based on PUCTools (v0.9 beta) by CRC - PUC - Minas (pucmg.crc at gmail.com)
- */
-
 package logisim.std.wiring;
 
 import java.awt.Color;
@@ -64,26 +60,18 @@ public class Transistor extends InstanceFactory {
 		if (attr == StdAttr.FACING || attr == Wiring.ATTR_GATE) {
 			instance.recomputeBounds();
 			updatePorts(instance);
-		} else if (attr == StdAttr.WIDTH) {
-			updatePorts(instance);
-		} else if (attr == ATTR_TYPE) {
-			instance.fireInvalidated();
-		}
+		} else if (attr == StdAttr.WIDTH) updatePorts(instance);
+		else if (attr == ATTR_TYPE) instance.fireInvalidated();
 	}
 
 	private void updatePorts(Instance instance) {
 		Direction facing = instance.getAttributeValue(StdAttr.FACING);
 		int dx = 0;
 		int dy = 0;
-		if (facing == Direction.North) {
-			dy = 1;
-		} else if (facing == Direction.East) {
-			dx = -1;
-		} else if (facing == Direction.South) {
-			dy = -1;
-		} else if (facing == Direction.West) {
-			dx = 1;
-		}
+		if (facing == Direction.North) dy = 1;
+		else if (facing == Direction.East) dx = -1;
+		else if (facing == Direction.South) dy = -1;
+		else if (facing == Direction.West) dx = 1;
 
 		Object powerLoc = instance.getAttributeValue(Wiring.ATTR_GATE);
 		boolean flip = (facing == Direction.South || facing == Direction.West) == (powerLoc == Wiring.GATE_TOP_LEFT);
@@ -91,11 +79,8 @@ public class Transistor extends InstanceFactory {
 		Port[] ports = new Port[3];
 		ports[OUTPUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
 		ports[INPUT] = new Port(40 * dx, 40 * dy, Port.INPUT, StdAttr.WIDTH);
-		if (flip) {
-			ports[GATE] = new Port(20 * (dx + dy), 20 * (-dx + dy), Port.INPUT, 1);
-		} else {
-			ports[GATE] = new Port(20 * (dx - dy), 20 * (dx + dy), Port.INPUT, 1);
-		}
+		if (flip) ports[GATE] = new Port(20 * (dx + dy), 20 * (-dx + dy), Port.INPUT, 1);
+		else ports[GATE] = new Port(20 * (dx - dy), 20 * (dx + dy), Port.INPUT, 1);
 		instance.setPorts(ports);
 	}
 
@@ -104,15 +89,11 @@ public class Transistor extends InstanceFactory {
 		Direction facing = attrs.getValue(StdAttr.FACING);
 		Object gateLoc = attrs.getValue(Wiring.ATTR_GATE);
 		int delta = gateLoc == Wiring.GATE_TOP_LEFT ? -20 : 0;
-		if (facing == Direction.North) {
-			return Bounds.create(delta, 0, 20, 40);
-		} else if (facing == Direction.South) {
-			return Bounds.create(delta, -40, 20, 40);
-		} else if (facing == Direction.West) {
-			return Bounds.create(0, delta, 40, 20);
-		} else { // facing == Direction.EAST
-			return Bounds.create(-40, delta, 40, 20);
-		}
+		if (facing == Direction.North) return Bounds.create(delta, 0, 20, 40);
+		else if (facing == Direction.South) return Bounds.create(delta, -40, 20, 40);
+		else // facing == Direction.EAST
+			if (facing == Direction.West) return Bounds.create(0, delta, 40, 20);
+			else return Bounds.create(-40, delta, 40, 20);
 	}
 
 	@Override
@@ -121,9 +102,7 @@ public class Transistor extends InstanceFactory {
 			Direction facing = attrs.getValue(StdAttr.FACING);
 			Location center = new Location(0, 0).translate(facing, -20);
 			return center.manhattanDistanceTo(loc) < 24;
-		} else {
-			return false;
-		}
+		} else return false;
 	}
 
 	@Override
@@ -137,23 +116,14 @@ public class Transistor extends InstanceFactory {
 		Value input = state.getPort(INPUT);
 		Value desired = state.getAttributeValue(ATTR_TYPE) == TYPE_P ? Value.FALSE : Value.TRUE;
 
-		if (!gate.isFullyDefined()) {
-			if (input.isFullyDefined()) {
-				return Value.createError(width);
-			} else {
-				Value[] v = input.getAll();
-				for (int i = 0; i < v.length; i++) {
-					if (v[i] != Value.UNKNOWN) {
-						v[i] = Value.ERROR;
-					}
-				}
-				return Value.create(v);
-			}
-		} else if (gate != desired) {
-			return Value.createUnknown(width);
-		} else {
-			return input;
+		if (!gate.isFullyDefined()) if (input.isFullyDefined()) return Value.createError(width);
+		else {
+			Value[] v = input.getAll();
+			for (int i = 0; i < v.length; i++) if (v[i] != Value.UNKNOWN) v[i] = Value.ERROR;
+			return Value.create(v);
 		}
+		else if (gate != desired) return Value.createUnknown(width);
+		else return input;
 	}
 
 	@Override
@@ -187,7 +157,7 @@ public class Transistor extends InstanceFactory {
 
 		Graphics2D g = (Graphics2D) painter.getGraphics();
 		Location loc = painter.getLocation();
-		g.translate(loc.getX(), loc.getY());
+		g.translate(loc.x(), loc.y());
 		g.rotate(radians);
 
 		Color gate;
@@ -239,6 +209,6 @@ public class Transistor extends InstanceFactory {
 		g.drawLine(-21, 0, -18, m * 3);
 
 		g.rotate(-radians);
-		g.translate(-loc.getX(), -loc.getY());
+		g.translate(-loc.x(), -loc.y());
 	}
 }

@@ -41,9 +41,7 @@ public class ProjectLibraryActions {
 	private static class LibraryJList extends JList<BuiltinOption> {
 		LibraryJList(List<Library> libraries) {
 			BuiltinOption[] options = new BuiltinOption[libraries.size()];
-			for (int i = 0; i< libraries.size(); i++) {
-				options[i] = new BuiltinOption(libraries.get(i));
-			}
+			for (int i = 0; i< libraries.size(); i++) options[i] = new BuiltinOption(libraries.get(i));
 			setListData(options);
 		}
 
@@ -51,20 +49,16 @@ public class ProjectLibraryActions {
 			var selected = getSelectedValuesList();
 			if (selected != null && selected.size() > 0) {
 				Library[] libs = new Library[selected.size()];
-				for (int i = 0; i < selected.size(); i++) {
-					libs[i] = selected.get(i).lib;
-				}
+				for (int i = 0; i < selected.size(); i++) libs[i] = selected.get(i).lib;
 				return libs;
-			} else {
-				return new Library[0];
-			}
+			} else return new Library[0];
 		}
 	}
 
 	public static void doLoadBuiltinLibrary(Project proj) {
 		LogisimFile file = proj.getLogisimFile();
 		List<Library> baseBuilt = file.getLoader().getBuiltin().getLibraries();
-		ArrayList<Library> builtins = new ArrayList<Library>(baseBuilt);
+		ArrayList<Library> builtins = new ArrayList<>(baseBuilt);
 		builtins.removeAll(file.getLibraries());
 		if (builtins.isEmpty()) {
 			JOptionPane.showMessageDialog(proj.getFrame(), Strings.get("loadBuiltinNoneError"),
@@ -77,8 +71,7 @@ public class ProjectLibraryActions {
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (action == JOptionPane.OK_OPTION) {
 			Library[] libs = list.getSelectedLibraries();
-			if (libs != null)
-				proj.doAction(LogisimFileActions.loadLibraries(libs));
+			proj.doAction(LogisimFileActions.loadLibraries(libs));
 		}
 	}
 
@@ -91,9 +84,7 @@ public class ProjectLibraryActions {
 		if (check == JFileChooser.APPROVE_OPTION) {
 			File f = chooser.getSelectedFile();
 			Library lib = loader.loadLogisimLibrary(f);
-			if (lib != null) {
-				proj.doAction(LogisimFileActions.loadLibrary(lib));
-			}
+			if (lib != null) proj.doAction(LogisimFileActions.loadLibrary(lib));
 		}
 	}
 
@@ -119,12 +110,9 @@ public class ProjectLibraryActions {
 			catch (IOException e) {
 				// if opening the JAR file failed, do nothing
 			} finally {
-				if (jarFile != null) {
-					try {
-						jarFile.close();
-					}
-					catch (IOException e) {
-					}
+				if (jarFile != null) try {
+					jarFile.close();
+				} catch (IOException e) {
 				}
 			}
 
@@ -138,15 +126,13 @@ public class ProjectLibraryActions {
 			}
 
 			Library lib = loader.loadJarLibrary(f, className);
-			if (lib != null) {
-				proj.doAction(LogisimFileActions.loadLibrary(lib));
-			}
+			if (lib != null) proj.doAction(LogisimFileActions.loadLibrary(lib));
 		}
 	}
 
 	public static void doUnloadLibraries(Project proj) {
 		LogisimFile file = proj.getLogisimFile();
-		ArrayList<Library> canUnload = new ArrayList<Library>();
+		ArrayList<Library> canUnload = new ArrayList<>();
 		for (Library lib : file.getLibraries()) {
 			String message = file.getUnloadLibraryMessage(lib);
 			if (message == null)
@@ -163,18 +149,14 @@ public class ProjectLibraryActions {
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (action == JOptionPane.OK_OPTION) {
 			Library[] libs = list.getSelectedLibraries();
-			if (libs != null)
-				proj.doAction(LogisimFileActions.unloadLibraries(libs));
+			proj.doAction(LogisimFileActions.unloadLibraries(libs));
 		}
 	}
 
 	public static void doUnloadLibrary(Project proj, Library lib) {
 		String message = proj.getLogisimFile().getUnloadLibraryMessage(lib);
-		if (message != null) {
-			JOptionPane.showMessageDialog(proj.getFrame(), message, Strings.get("unloadErrorTitle"),
-					JOptionPane.ERROR_MESSAGE);
-		} else {
-			proj.doAction(LogisimFileActions.unloadLibrary(lib));
-		}
+		if (message != null) JOptionPane.showMessageDialog(proj.getFrame(), message, Strings.get("unloadErrorTitle"),
+				JOptionPane.ERROR_MESSAGE);
+		else proj.doAction(LogisimFileActions.unloadLibrary(lib));
 	}
 }

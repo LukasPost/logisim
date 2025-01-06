@@ -44,9 +44,8 @@ class InstancePokerAdapter extends AbstractCaret implements Pokable {
 	}
 
 	public Caret getPokeCaret(ComponentUserEvent event) {
-		if (poker == null) {
-			return null;
-		} else {
+		if (poker == null) return null;
+		else {
 			canvas = event.getCanvas();
 			CircuitState circState = event.getCircuitState();
 			InstanceStateImpl state = new InstanceStateImpl(circState, comp);
@@ -55,7 +54,7 @@ class InstancePokerAdapter extends AbstractCaret implements Pokable {
 			boolean isAccepted = poker.init(state, e);
 			if (isAccepted) {
 				this.state = state;
-				this.context = new ComponentDrawContext(event.getCanvas(), event.getCanvas().getCircuit(), circState,
+				context = new ComponentDrawContext(event.getCanvas(), event.getCanvas().getCircuit(), circState,
 						null, null);
 				mousePressed(e);
 				return this;
@@ -128,9 +127,7 @@ class InstancePokerAdapter extends AbstractCaret implements Pokable {
 			context.setGraphics(g);
 			InstancePainter painter = new InstancePainter(context, comp);
 			return poker.getBounds(painter);
-		} else {
-			return Bounds.EMPTY_BOUNDS;
-		}
+		} else return Bounds.EMPTY_BOUNDS;
 	}
 
 	@Override
@@ -146,9 +143,7 @@ class InstancePokerAdapter extends AbstractCaret implements Pokable {
 		if (state != null && canvas != null) {
 			CircuitState s0 = state.getCircuitState();
 			CircuitState s1 = canvas.getCircuitState();
-			if (s0 != s1) {
-				state = new InstanceStateImpl(s1, comp);
-			}
+			if (s0 != s1) state = new InstanceStateImpl(s1, comp);
 		}
 	}
 }

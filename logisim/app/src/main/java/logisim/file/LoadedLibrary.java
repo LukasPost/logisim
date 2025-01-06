@@ -38,14 +38,12 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
 	LoadedLibrary(Library base) {
 		dirty = false;
 		myListener = new MyListener();
-		listeners = new EventSourceWeakSupport<LibraryListener>();
+		listeners = new EventSourceWeakSupport<>();
 
 		while (base instanceof LoadedLibrary)
 			base = ((LoadedLibrary) base).base;
 		this.base = base;
-		if (base instanceof LibraryEventSource) {
-			((LibraryEventSource) base).addLibraryListener(myListener);
-		}
+		if (base instanceof LibraryEventSource) ((LibraryEventSource) base).addLibraryListener(myListener);
 	}
 
 	public void addLibraryListener(LibraryListener l) {
@@ -93,15 +91,11 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
 	}
 
 	void setBase(Library value) {
-		if (base instanceof LibraryEventSource) {
-			((LibraryEventSource) base).removeLibraryListener(myListener);
-		}
+		if (base instanceof LibraryEventSource) ((LibraryEventSource) base).removeLibraryListener(myListener);
 		Library old = base;
 		base = value;
 		resolveChanges(old);
-		if (base instanceof LibraryEventSource) {
-			((LibraryEventSource) base).addLibraryListener(myListener);
-		}
+		if (base instanceof LibraryEventSource) ((LibraryEventSource) base).addLibraryListener(myListener);
 	}
 
 	private void fireLibraryEvent(int action, Object data) {
@@ -109,105 +103,80 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
 	}
 
 	private void fireLibraryEvent(LibraryEvent event) {
-		if (event.getSource() != this) {
-			event = new LibraryEvent(this, event.getAction(), event.getData());
-		}
-		for (LibraryListener l : listeners) {
-			l.libraryChanged(event);
-		}
+		if (event.getSource() != this) event = new LibraryEvent(this, event.getAction(), event.getData());
+		for (LibraryListener l : listeners) l.libraryChanged(event);
 	}
 
 	private void resolveChanges(Library old) {
 		if (listeners.isEmpty())
 			return;
 
-		if (!base.getDisplayName().equals(old.getDisplayName())) {
+		if (!base.getDisplayName().equals(old.getDisplayName()))
 			fireLibraryEvent(LibraryEvent.SET_NAME, base.getDisplayName());
-		}
 
-		HashSet<Library> changes = new HashSet<Library>(old.getLibraries());
+		HashSet<Library> changes = new HashSet<>(old.getLibraries());
 		changes.removeAll(base.getLibraries());
-		for (Library lib : changes) {
-			fireLibraryEvent(LibraryEvent.REMOVE_LIBRARY, lib);
-		}
+		for (Library lib : changes) fireLibraryEvent(LibraryEvent.REMOVE_LIBRARY, lib);
 
 		changes.clear();
 		changes.addAll(base.getLibraries());
 		changes.removeAll(old.getLibraries());
-		for (Library lib : changes) {
-			fireLibraryEvent(LibraryEvent.ADD_LIBRARY, lib);
-		}
+		for (Library lib : changes) fireLibraryEvent(LibraryEvent.ADD_LIBRARY, lib);
 
-		HashMap<ComponentFactory, ComponentFactory> componentMap;
-		HashMap<Tool, Tool> toolMap;
-		componentMap = new HashMap<ComponentFactory, ComponentFactory>();
-		toolMap = new HashMap<Tool, Tool>();
+		HashMap<ComponentFactory, ComponentFactory> componentMap = new HashMap<>();
+		HashMap<Tool, Tool> toolMap = new HashMap<>();
 		for (Tool oldTool : old.getTools()) {
 			Tool newTool = base.getTool(oldTool.getName());
 			toolMap.put(oldTool, newTool);
 			if (oldTool instanceof AddTool) {
 				ComponentFactory oldFactory = ((AddTool) oldTool).getFactory();
-				if (newTool != null && newTool instanceof AddTool) {
-					ComponentFactory newFactory = ((AddTool) newTool).getFactory();
+				if (newTool instanceof AddTool addTool) {
+					ComponentFactory newFactory = addTool.getFactory();
 					componentMap.put(oldFactory, newFactory);
-				} else {
-					componentMap.put(oldFactory, null);
-				}
+				} else componentMap.put(oldFactory, null);
 			}
 		}
 		replaceAll(componentMap, toolMap);
 
-		HashSet<Tool> toolChanges = new HashSet<Tool>(old.getTools());
+		HashSet<Tool> toolChanges = new HashSet<>(old.getTools());
 		toolChanges.removeAll(toolMap.keySet());
-		for (Tool tool : toolChanges) {
-			fireLibraryEvent(LibraryEvent.REMOVE_TOOL, tool);
-		}
+		for (Tool tool : toolChanges) fireLibraryEvent(LibraryEvent.REMOVE_TOOL, tool);
 
-		toolChanges = new HashSet<Tool>(base.getTools());
+		toolChanges = new HashSet<>(base.getTools());
 		toolChanges.removeAll(toolMap.values());
-		for (Tool tool : toolChanges) {
-			fireLibraryEvent(LibraryEvent.ADD_TOOL, tool);
-		}
+		for (Tool tool : toolChanges) fireLibraryEvent(LibraryEvent.ADD_TOOL, tool);
 	}
 
 	private static void replaceAll(Map<ComponentFactory, ComponentFactory> compMap, Map<Tool, Tool> toolMap) {
 		for (Project proj : Projects.getOpenProjects()) {
 			Tool oldTool = proj.getTool();
 			Circuit oldCircuit = proj.getCurrentCircuit();
-			if (toolMap.containsKey(oldTool)) {
-				proj.setTool(toolMap.get(oldTool));
-			}
+			if (toolMap.containsKey(oldTool)) proj.setTool(toolMap.get(oldTool));
 			SubcircuitFactory oldFactory = oldCircuit.getSubcircuitFactory();
 			if (compMap.containsKey(oldFactory)) {
-				SubcircuitFactory newFactory;
-				newFactory = (SubcircuitFactory) compMap.get(oldFactory);
+				SubcircuitFactory newFactory = (SubcircuitFactory) compMap.get(oldFactory);
 				proj.setCurrentCircuit(newFactory.getSubcircuit());
 			}
 			replaceAll(proj.getLogisimFile(), compMap, toolMap);
 		}
-		for (LogisimFile file : LibraryManager.instance.getLogisimLibraries()) {
-			replaceAll(file, compMap, toolMap);
-		}
+		for (LogisimFile file : LibraryManager.instance.getLogisimLibraries()) replaceAll(file, compMap, toolMap);
 	}
 
 	private static void replaceAll(LogisimFile file, Map<ComponentFactory, ComponentFactory> compMap,
 			Map<Tool, Tool> toolMap) {
 		file.getOptions().getToolbarData().replaceAll(toolMap);
 		file.getOptions().getMouseMappings().replaceAll(toolMap);
-		for (Circuit circuit : file.getCircuits()) {
-			replaceAll(circuit, compMap);
-		}
+		for (Circuit circuit : file.getCircuits()) replaceAll(circuit, compMap);
 	}
 
 	private static void replaceAll(Circuit circuit, Map<ComponentFactory, ComponentFactory> compMap) {
 		ArrayList<Component> toReplace = null;
-		for (Component comp : circuit.getNonWires()) {
+		for (Component comp : circuit.getNonWires())
 			if (compMap.containsKey(comp.getFactory())) {
 				if (toReplace == null)
-					toReplace = new ArrayList<Component>();
+					toReplace = new ArrayList<>();
 				toReplace.add(comp);
 			}
-		}
 		if (toReplace != null) {
 			CircuitMutation xn = new CircuitMutation(circuit);
 			for (Component comp : toReplace) {

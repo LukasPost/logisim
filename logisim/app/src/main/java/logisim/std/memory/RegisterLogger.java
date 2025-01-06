@@ -13,7 +13,7 @@ public class RegisterLogger extends InstanceLogger {
 	@Override
 	public String getLogName(InstanceState state, Object option) {
 		String ret = state.getAttributeValue(StdAttr.LABEL);
-		return ret != null && !ret.equals("") ? ret : null;
+		return ret != null && !ret.isEmpty() ? ret : null;
 	}
 
 	@Override

@@ -35,18 +35,16 @@ public class CircuitAppearance extends Drawing {
 
 	private Circuit circuit;
 	private EventSourceWeakSupport<CircuitAppearanceListener> listeners;
-	private PortManager portManager;
 	private CircuitPins circuitPins;
-	private MyListener myListener;
 	private boolean isDefault;
 	private boolean suppressRecompute;
 
 	public CircuitAppearance(Circuit circuit) {
 		this.circuit = circuit;
-		listeners = new EventSourceWeakSupport<CircuitAppearanceListener>();
-		portManager = new PortManager(this);
+		listeners = new EventSourceWeakSupport<>();
+		PortManager portManager = new PortManager(this);
 		circuitPins = new CircuitPins(portManager);
-		myListener = new MyListener();
+		MyListener myListener = new MyListener();
 		suppressRecompute = false;
 		addCanvasModelListener(myListener);
 		setDefaultAppearance(true);
@@ -65,11 +63,8 @@ public class CircuitAppearance extends Drawing {
 	}
 
 	void fireCircuitAppearanceChanged(int affected) {
-		CircuitAppearanceEvent event;
-		event = new CircuitAppearanceEvent(circuit, affected);
-		for (CircuitAppearanceListener listener : listeners) {
-			listener.circuitAppearanceChanged(event);
-		}
+		CircuitAppearanceEvent event = new CircuitAppearanceEvent(circuit, affected);
+		for (CircuitAppearanceListener listener : listeners) listener.circuitAppearanceChanged(event);
 	}
 
 	void replaceAutomatically(List<AppearancePort> removes, List<AppearancePort> adds) {
@@ -93,41 +88,32 @@ public class CircuitAppearance extends Drawing {
 	public void setDefaultAppearance(boolean value) {
 		if (isDefault != value) {
 			isDefault = value;
-			if (value) {
-				recomputeDefaultAppearance();
-			}
+			if (value) recomputeDefaultAppearance();
 		}
 	}
 
 	void recomputePorts() {
-		if (isDefault) {
-			recomputeDefaultAppearance();
-		} else {
-			fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
-		}
+		if (isDefault) recomputeDefaultAppearance();
+		else fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
 	}
 
 	private void recomputeDefaultAppearance() {
 		if (isDefault) {
-			List<CanvasObject> shapes;
-			shapes = DefaultAppearance.build(circuitPins.getPins());
+			List<CanvasObject> shapes = DefaultAppearance.build(circuitPins.getPins());
 			setObjectsForce(shapes);
 		}
 	}
 
 	public Direction getFacing() {
 		AppearanceAnchor anchor = findAnchor();
-		if (anchor == null) {
-			return Direction.East;
-		} else {
-			return anchor.getFacing();
-		}
+		if (anchor == null) return Direction.East;
+		else return anchor.getFacing();
 	}
 
 	public void setObjectsForce(List<? extends CanvasObject> shapesBase) {
 		// This shouldn't ever be an issue, but just to make doubly sure, we'll
 		// check that the anchor and all ports are in their proper places.
-		List<CanvasObject> shapes = new ArrayList<CanvasObject>(shapesBase);
+		List<CanvasObject> shapes = new ArrayList<>(shapesBase);
 		int n = shapes.size();
 		int ports = 0;
 		for (int i = n - 1; i >= 0; i--) { // count ports, move anchor to end
@@ -137,9 +123,7 @@ public class CircuitAppearance extends Drawing {
 					shapes.remove(i);
 					shapes.add(o);
 				}
-			} else if (o instanceof AppearancePort) {
-				ports++;
-			}
+			} else if (o instanceof AppearancePort) ports++;
 		}
 		for (int i = (n - ports - 1) - 1; i >= 0; i--) { // move ports to top
 			CanvasObject o = shapes.get(i);
@@ -152,7 +136,7 @@ public class CircuitAppearance extends Drawing {
 
 		try {
 			suppressRecompute = true;
-			super.removeObjects(new ArrayList<CanvasObject>(getObjectsFromBottom()));
+			super.removeObjects(new ArrayList<>(getObjectsFromBottom()));
 			super.addObjects(0, shapes);
 		} finally {
 			suppressRecompute = false;
@@ -168,35 +152,26 @@ public class CircuitAppearance extends Drawing {
 			((Graphics2D) g).rotate(rotate);
 		}
 		Location offset = findAnchorLocation();
-		g.translate(-offset.getX(), -offset.getY());
-		for (CanvasObject shape : getObjectsFromBottom()) {
+		g.translate(-offset.x(), -offset.y());
+		for (CanvasObject shape : getObjectsFromBottom())
 			if (!(shape instanceof AppearanceElement)) {
 				Graphics dup = g.create();
 				shape.paint(dup, null);
 				dup.dispose();
 			}
-		}
-		g.translate(offset.getX(), offset.getY());
-		if (rotate != 0.0) {
-			((Graphics2D) g).rotate(-rotate);
-		}
+		g.translate(offset.x(), offset.y());
+		if (rotate != 0.0) ((Graphics2D) g).rotate(-rotate);
 	}
 
 	private Location findAnchorLocation() {
 		AppearanceAnchor anchor = findAnchor();
-		if (anchor == null) {
-			return new Location(100, 100);
-		} else {
-			return anchor.getLocation();
-		}
+		if (anchor == null) return new Location(100, 100);
+		else return anchor.getLocation();
 	}
 
 	private AppearanceAnchor findAnchor() {
-		for (CanvasObject shape : getObjectsFromBottom()) {
-			if (shape instanceof AppearanceAnchor) {
-				return (AppearanceAnchor) shape;
-			}
-		}
+		for (CanvasObject shape : getObjectsFromBottom())
+			if (shape instanceof AppearanceAnchor) return (AppearanceAnchor) shape;
 		return null;
 	}
 
@@ -211,57 +186,36 @@ public class CircuitAppearance extends Drawing {
 	private Bounds getBounds(boolean relativeToAnchor) {
 		Bounds ret = null;
 		Location offset = null;
-		for (CanvasObject o : getObjectsFromBottom()) {
+		for (CanvasObject o : getObjectsFromBottom())
 			if (o instanceof AppearanceElement) {
 				Location loc = ((AppearanceElement) o).getLocation();
-				if (o instanceof AppearanceAnchor) {
-					offset = loc;
-				}
-				if (ret == null) {
-					ret = Bounds.create(loc);
-				} else {
-					ret = ret.add(loc);
-				}
-			} else {
-				if (ret == null) {
-					ret = o.getBounds();
-				} else {
-					ret = ret.add(o.getBounds());
-				}
+				if (o instanceof AppearanceAnchor) offset = loc;
+				if (ret == null) ret = Bounds.create(loc);
+				else ret = ret.add(loc);
 			}
-		}
-		if (ret == null) {
-			return Bounds.EMPTY_BOUNDS;
-		} else if (relativeToAnchor && offset != null) {
-			return ret.translate(-offset.getX(), -offset.getY());
-		} else {
-			return ret;
-		}
+			else if (ret == null) ret = o.getBounds();
+			else ret = ret.add(o.getBounds());
+		if (ret == null) return Bounds.EMPTY_BOUNDS;
+		else if (relativeToAnchor && offset != null) return ret.translate(-offset.x(), -offset.y());
+		else return ret;
 	}
 
 	public SortedMap<Location, Instance> getPortOffsets(Direction facing) {
 		Location anchor = null;
 		Direction defaultFacing = Direction.East;
-		List<AppearancePort> ports = new ArrayList<AppearancePort>();
-		for (CanvasObject shape : getObjectsFromBottom()) {
-			if (shape instanceof AppearancePort) {
-				ports.add((AppearancePort) shape);
-			} else if (shape instanceof AppearanceAnchor) {
-				AppearanceAnchor o = (AppearanceAnchor) shape;
+		List<AppearancePort> ports = new ArrayList<>();
+		for (CanvasObject shape : getObjectsFromBottom())
+			if (shape instanceof AppearancePort) ports.add((AppearancePort) shape);
+			else if (shape instanceof AppearanceAnchor o) {
 				anchor = o.getLocation();
 				defaultFacing = o.getFacing();
 			}
-		}
 
-		SortedMap<Location, Instance> ret = new TreeMap<Location, Instance>();
+		SortedMap<Location, Instance> ret = new TreeMap<>();
 		for (AppearancePort port : ports) {
 			Location loc = port.getLocation();
-			if (anchor != null) {
-				loc = loc.translate(-anchor.getX(), -anchor.getY());
-			}
-			if (facing != defaultFacing) {
-				loc = loc.rotate(defaultFacing, facing, 0, 0);
-			}
+			if (anchor != null) loc = loc.translate(-anchor.x(), -anchor.y());
+			if (facing != defaultFacing) loc = loc.rotate(defaultFacing, facing, 0, 0);
 			ret.put(loc, port.getPin());
 		}
 		return ret;
@@ -292,17 +246,11 @@ public class CircuitAppearance extends Drawing {
 	}
 
 	private void checkToFirePortsChanged(Collection<? extends CanvasObject> shapes) {
-		if (affectsPorts(shapes)) {
-			recomputePorts();
-		}
+		if (affectsPorts(shapes)) recomputePorts();
 	}
 
 	private boolean affectsPorts(Collection<? extends CanvasObject> shapes) {
-		for (CanvasObject o : shapes) {
-			if (o instanceof AppearanceElement) {
-				return true;
-			}
-		}
+		for (CanvasObject o : shapes) if (o instanceof AppearanceElement) return true;
 		return false;
 	}
 }

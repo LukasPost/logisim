@@ -15,11 +15,8 @@ import logisim.data.Location;
 
 public class Instance {
 	public static Instance getInstanceFor(Component comp) {
-		if (comp instanceof InstanceComponent) {
-			return ((InstanceComponent) comp).getInstance();
-		} else {
-			return null;
-		}
+		if (comp instanceof InstanceComponent) return ((InstanceComponent) comp).getInstance();
+		else return null;
 	}
 
 	public static Component getComponentFor(Instance instance) {
@@ -57,7 +54,7 @@ public class Instance {
 	}
 
 	public void addAttributeListener() {
-		comp.addAttributeListener(this);
+		comp.addAttributeListener();
 	}
 
 	public AttributeSet getAttributeSet() {

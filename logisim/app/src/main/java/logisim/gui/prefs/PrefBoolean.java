@@ -32,12 +32,10 @@ class PrefBoolean extends JCheckBox implements ActionListener, PropertyChangeLis
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		pref.setBoolean(this.isSelected());
+		pref.setBoolean(isSelected());
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
-		if (pref.isSource(event)) {
-			setSelected(pref.getBoolean());
-		}
+		if (pref.isSource(event)) setSelected(pref.getBoolean());
 	}
 }

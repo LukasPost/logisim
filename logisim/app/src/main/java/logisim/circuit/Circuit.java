@@ -52,15 +52,10 @@ public class Circuit {
 			for (Location loc : toRemove.keySet()) {
 				EndData removed = toRemove.get(loc);
 				EndData replaced = toAdd.remove(loc);
-				if (replaced == null) {
-					wires.remove(comp, removed);
-				} else if (!replaced.equals(removed)) {
-					wires.replace(comp, removed, replaced);
-				}
+				if (replaced == null) wires.remove(comp, removed);
+				else if (!replaced.equals(removed)) wires.replace(comp, removed, replaced);
 			}
-			for (EndData end : toAdd.values()) {
-				wires.add(comp, end);
-			}
+			for (EndData end : toAdd.values()) wires.add(comp, end);
 			((CircuitMutatorImpl) mutator).markModified(Circuit.this);
 		}
 	}
@@ -77,19 +72,12 @@ public class Circuit {
 		}
 
 		private HashMap<Location, EndData> toMap(Object val) {
-			HashMap<Location, EndData> map = new HashMap<Location, EndData>();
+			HashMap<Location, EndData> map = new HashMap<>();
 			if (val instanceof List) {
 				@SuppressWarnings("unchecked")
 				List<EndData> valList = (List<EndData>) val;
-				for (EndData end : valList) {
-					if (end != null) {
-						map.put(end.getLocation(), end);
-					}
-				}
-			} else if (val instanceof EndData) {
-				EndData end = (EndData) val;
-				map.put(end.getLocation(), end);
-			}
+				for (EndData end : valList) if (end != null) map.put(end.getLocation(), end);
+			} else if (val instanceof EndData end) map.put(end.getLocation(), end);
 			return map;
 		}
 
@@ -102,11 +90,11 @@ public class Circuit {
 	private CircuitAppearance appearance;
 	private AttributeSet staticAttrs;
 	private SubcircuitFactory subcircuitFactory;
-	private EventSourceWeakSupport<CircuitListener> listeners = new EventSourceWeakSupport<CircuitListener>();
-	private HashSet<Component> comps = new HashSet<Component>(); // doesn't include wires
+	private EventSourceWeakSupport<CircuitListener> listeners = new EventSourceWeakSupport<>();
+	private HashSet<Component> comps = new HashSet<>(); // doesn't include wires
 	CircuitWires wires = new CircuitWires();
 	// wires is package-protected for CircuitState and Analyze only.
-	private ArrayList<Component> clocks = new ArrayList<Component>();
+	private ArrayList<Component> clocks = new ArrayList<>();
 	private CircuitLocker locker;
 	private WeakHashMap<Component, Circuit> circuitsUsingThis;
 
@@ -115,7 +103,7 @@ public class Circuit {
 		staticAttrs = CircuitAttributes.createBaseAttrs(this, name);
 		subcircuitFactory = new SubcircuitFactory(this);
 		locker = new CircuitLocker();
-		circuitsUsingThis = new WeakHashMap<Component, Circuit>();
+		circuitsUsingThis = new WeakHashMap<>();
 	}
 
 	CircuitLocker getLocker() {
@@ -130,15 +118,11 @@ public class Circuit {
 		locker.checkForWritePermission("clear");
 
 		Set<Component> oldComps = comps;
-		comps = new HashSet<Component>();
+		comps = new HashSet<>();
 		wires = new CircuitWires();
 		clocks.clear();
-		for (Component comp : oldComps) {
-			if (comp.getFactory() instanceof SubcircuitFactory) {
-				SubcircuitFactory sub = (SubcircuitFactory) comp.getFactory();
-				sub.getSubcircuit().circuitsUsingThis.remove(comp);
-			}
-		}
+		for (Component comp : oldComps)
+			if (comp.getFactory() instanceof SubcircuitFactory sub) sub.getSubcircuit().circuitsUsingThis.remove(comp);
 		fireEvent(CircuitEvent.ACTION_CLEAR, oldComps);
 	}
 
@@ -167,9 +151,7 @@ public class Circuit {
 	}
 
 	private void fireEvent(CircuitEvent event) {
-		for (CircuitListener l : listeners) {
-			l.circuitChanged(event);
-		}
+		for (CircuitListener l : listeners) l.circuitChanged(event);
 	}
 
 	//
@@ -212,7 +194,7 @@ public class Circuit {
 	}
 
 	public boolean contains(Component c) {
-		return comps.contains(c) || wires.getWires().contains(c);
+		return comps.contains(c) || c instanceof Wire w && wires.getWires().contains(w);
 	}
 
 	public Set<Wire> getWires() {
@@ -240,10 +222,9 @@ public class Circuit {
 	}
 
 	public boolean isConnected(Location loc, Component ignore) {
-		for (Component o : wires.points.getComponents(loc)) {
+		for (Component o : wires.points.getComponents(loc))
 			if (o != ignore)
 				return true;
-		}
 		return false;
 	}
 
@@ -252,38 +233,34 @@ public class Circuit {
 	}
 
 	public Collection<Component> getAllContaining(Location pt) {
-		HashSet<Component> ret = new HashSet<Component>();
-		for (Component comp : getComponents()) {
+		HashSet<Component> ret = new HashSet<>();
+		for (Component comp : getComponents())
 			if (comp.contains(pt))
 				ret.add(comp);
-		}
 		return ret;
 	}
 
 	public Collection<Component> getAllContaining(Location pt, Graphics g) {
-		HashSet<Component> ret = new HashSet<Component>();
-		for (Component comp : getComponents()) {
+		HashSet<Component> ret = new HashSet<>();
+		for (Component comp : getComponents())
 			if (comp.contains(pt, g))
 				ret.add(comp);
-		}
 		return ret;
 	}
 
 	public Collection<Component> getAllWithin(Bounds bds) {
-		HashSet<Component> ret = new HashSet<Component>();
-		for (Component comp : getComponents()) {
+		HashSet<Component> ret = new HashSet<>();
+		for (Component comp : getComponents())
 			if (bds.contains(comp.getBounds()))
 				ret.add(comp);
-		}
 		return ret;
 	}
 
 	public Collection<Component> getAllWithin(Bounds bds, Graphics g) {
-		HashSet<Component> ret = new HashSet<Component>();
-		for (Component comp : getComponents()) {
+		HashSet<Component> ret = new HashSet<>();
+		for (Component comp : getComponents())
 			if (bds.contains(comp.getBounds(g)))
 				ret.add(comp);
-		}
 		return ret;
 	}
 
@@ -319,11 +296,8 @@ public class Circuit {
 				yMax = y1;
 		}
 		Bounds compBounds = Bounds.create(xMin, yMin, xMax - xMin, yMax - yMin);
-		if (wireBounds.getWidth() == 0 || wireBounds.getHeight() == 0) {
-			return compBounds;
-		} else {
-			return compBounds.add(wireBounds);
-		}
+		if (wireBounds.getWidth() == 0 || wireBounds.getHeight() == 0) return compBounds;
+		else return compBounds.add(wireBounds);
 	}
 
 	public Bounds getBounds(Graphics g) {
@@ -374,8 +348,7 @@ public class Circuit {
 	void mutatorAdd(Component c) {
 		locker.checkForWritePermission("add");
 
-		if (c instanceof Wire) {
-			Wire w = (Wire) c;
+		if (c instanceof Wire w) {
 			if (w.getEnd0().equals(w.getEnd1()))
 				return;
 			boolean added = wires.add(w);
@@ -389,12 +362,9 @@ public class Circuit {
 
 			wires.add(c);
 			ComponentFactory factory = c.getFactory();
-			if (factory instanceof Clock) {
-				clocks.add(c);
-			} else if (factory instanceof SubcircuitFactory) {
-				SubcircuitFactory subcirc = (SubcircuitFactory) factory;
-				subcirc.getSubcircuit().circuitsUsingThis.put(c, this);
-			}
+			if (factory instanceof Clock) clocks.add(c);
+			else if (factory instanceof SubcircuitFactory subcircuit)
+				subcircuit.getSubcircuit().circuitsUsingThis.put(c, this);
 			c.addComponentListener(myComponentListener);
 		}
 		fireEvent(CircuitEvent.ACTION_ADD, c);
@@ -403,18 +373,14 @@ public class Circuit {
 	void mutatorRemove(Component c) {
 		locker.checkForWritePermission("remove");
 
-		if (c instanceof Wire) {
-			wires.remove(c);
-		} else {
+		if (c instanceof Wire) wires.remove(c);
+		else {
 			wires.remove(c);
 			comps.remove(c);
 			ComponentFactory factory = c.getFactory();
-			if (factory instanceof Clock) {
-				clocks.remove(c);
-			} else if (factory instanceof SubcircuitFactory) {
-				SubcircuitFactory subcirc = (SubcircuitFactory) factory;
+			if (factory instanceof Clock) clocks.remove(c);
+			else if (factory instanceof SubcircuitFactory subcirc)
 				subcirc.getSubcircuit().circuitsUsingThis.remove(c);
-			}
 			c.removeComponentListener(myComponentListener);
 		}
 		fireEvent(CircuitEvent.ACTION_REMOVE, c);
@@ -429,33 +395,28 @@ public class Circuit {
 		context.setGraphics(g_copy);
 		wires.draw(context, hidden);
 
-		if (hidden == null || hidden.size() == 0) {
-			for (Component c : comps) {
+		if (hidden == null || hidden.isEmpty()) for (Component c : comps) {
+			Graphics g_new = g.create();
+			context.setGraphics(g_new);
+			g_copy.dispose();
+			g_copy = g_new;
+
+			c.draw(context);
+		}
+		else for (Component c : comps)
+			if (!hidden.contains(c)) {
 				Graphics g_new = g.create();
 				context.setGraphics(g_new);
 				g_copy.dispose();
 				g_copy = g_new;
 
-				c.draw(context);
-			}
-		} else {
-			for (Component c : comps) {
-				if (!hidden.contains(c)) {
-					Graphics g_new = g.create();
-					context.setGraphics(g_new);
-					g_copy.dispose();
-					g_copy = g_new;
-
-					try {
-						c.draw(context);
-					}
-					catch (RuntimeException e) {
-						// this is a JAR developer error - display it and move on
-						e.printStackTrace();
-					}
+				try {
+					c.draw(context);
+				} catch (RuntimeException e) {
+					// this is a JAR developer error - display it and move on
+					e.printStackTrace();
 				}
 			}
-		}
 		context.setGraphics(g);
 		g_copy.dispose();
 	}

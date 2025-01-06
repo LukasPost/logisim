@@ -17,11 +17,11 @@ class LogThread extends Thread implements ModelListener {
 	private static final int IDLE_UNTIL_CLOSE = 10000;
 
 	private Model model;
-	private boolean canceled = false;
-	private Object lock = new Object();
-	private PrintWriter writer = null;
+	private boolean canceled;
+	private final Object lock = new Object();
+	private PrintWriter writer;
 	private boolean headerDirty = true;
-	private long lastWrite = 0;
+	private long lastWrite;
 
 	public LogThread(Model model) {
 		this.model = model;
@@ -32,14 +32,11 @@ class LogThread extends Thread implements ModelListener {
 	public void run() {
 		while (!canceled) {
 			synchronized (lock) {
-				if (writer != null) {
-					if (System.currentTimeMillis() - lastWrite > IDLE_UNTIL_CLOSE) {
-						writer.close();
-						writer = null;
-					} else {
-						writer.flush();
-					}
+				if (writer != null) if (System.currentTimeMillis() - lastWrite > IDLE_UNTIL_CLOSE) {
+					writer.close();
+					writer = null;
 				}
+				else writer.flush();
 			}
 			try {
 				Thread.sleep(FLUSH_FREQUENCY);
@@ -91,11 +88,9 @@ class LogThread extends Thread implements ModelListener {
 					if (found)
 						addEntry(values);
 				}
-			} else {
-				if (writer != null) {
-					writer.close();
-					writer = null;
-				}
+			} else if (writer != null) {
+				writer.close();
+				writer = null;
 			}
 		}
 	}
@@ -107,14 +102,11 @@ class LogThread extends Thread implements ModelListener {
 	// Should hold lock and have verified that isFileEnabled() before
 	// entering this method.
 	private void addEntry(Value[] values) {
-		if (writer == null) {
-			try {
-				writer = new PrintWriter(new FileWriter(model.getFile(), true));
-			}
-			catch (IOException e) {
-				model.setFile(null);
-				return;
-			}
+		if (writer == null) try {
+			writer = new PrintWriter(new FileWriter(model.getFile(), true));
+		} catch (IOException e) {
+			model.setFile(null);
+			return;
 		}
 		Selection sel = model.getSelection();
 		if (headerDirty) {
@@ -125,7 +117,7 @@ class LogThread extends Thread implements ModelListener {
 						buf.append("\t");
 					buf.append(sel.get(i).toString());
 				}
-				writer.println(buf.toString());
+				writer.println(buf);
 			}
 			headerDirty = false;
 		}
@@ -138,7 +130,7 @@ class LogThread extends Thread implements ModelListener {
 				buf.append(values[i].toDisplayString(radix));
 			}
 		}
-		writer.println(buf.toString());
+		writer.println(buf);
 		lastWrite = System.currentTimeMillis();
 	}
 }

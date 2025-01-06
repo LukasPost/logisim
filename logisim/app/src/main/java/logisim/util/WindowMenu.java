@@ -21,7 +21,7 @@ import javax.swing.KeyStroke;
 public class WindowMenu extends JMenu {
 	private class MyListener implements LocaleListener, ActionListener {
 		public void localeChanged() {
-			WindowMenu.this.setText(Strings.get("windowMenu"));
+			setText(Strings.get("windowMenu"));
 			minimize.setText(Strings.get("windowMinimizeItem"));
 			close.setText(Strings.get("windowCloseItem"));
 			zoom.setText(MacCompatibility.isQuitAutomaticallyPresent() ? Strings.get("windowZoomItemMac")
@@ -30,33 +30,23 @@ public class WindowMenu extends JMenu {
 
 		public void actionPerformed(ActionEvent e) {
 			Object src = e.getSource();
-			if (src == minimize) {
-				doMinimize();
-			} else if (src == zoom) {
-				doZoom();
-			} else if (src == close) {
-				doClose();
-			} else if (src instanceof WindowMenuItem) {
-				WindowMenuItem choice = (WindowMenuItem) src;
-				if (choice.isSelected()) {
-					WindowMenuItem item = findOwnerItem();
-					if (item != null) {
-						item.setSelected(true);
-					}
-					choice.actionPerformed(e);
-				}
+			if (src == minimize) doMinimize();
+			else if (src == zoom) doZoom();
+			else if (src == close) doClose();
+			else if (src instanceof WindowMenuItem choice) if (choice.isSelected()) {
+				WindowMenuItem item = findOwnerItem();
+				if (item != null) item.setSelected(true);
+				choice.actionPerformed();
 			}
 		}
 
 		private WindowMenuItem findOwnerItem() {
-			for (WindowMenuItem i : persistentItems) {
+			for (WindowMenuItem i : persistentItems)
 				if (i.getJFrame() == owner)
 					return i;
-			}
-			for (WindowMenuItem i : transientItems) {
+			for (WindowMenuItem i : transientItems)
 				if (i.getJFrame() == owner)
 					return i;
-			}
 			return null;
 		}
 	}
@@ -67,8 +57,8 @@ public class WindowMenu extends JMenu {
 	private JMenuItem zoom = new JMenuItem();
 	private JMenuItem close = new JMenuItem();
 	private JRadioButtonMenuItem nullItem = new JRadioButtonMenuItem();
-	private ArrayList<WindowMenuItem> persistentItems = new ArrayList<WindowMenuItem>();
-	private ArrayList<WindowMenuItem> transientItems = new ArrayList<WindowMenuItem>();
+	private ArrayList<WindowMenuItem> persistentItems = new ArrayList<>();
+	private ArrayList<WindowMenuItem> transientItems = new ArrayList<>();
 
 	public WindowMenu(JFrame owner) {
 		this.owner = owner;
@@ -95,7 +85,7 @@ public class WindowMenu extends JMenu {
 		myListener.localeChanged();
 	}
 
-	void addMenuItem(Object source, WindowMenuItem item, boolean persistent) {
+	void addMenuItem(WindowMenuItem item, boolean persistent) {
 		if (persistent)
 			persistentItems.add(item);
 		else
@@ -104,10 +94,8 @@ public class WindowMenu extends JMenu {
 		computeContents();
 	}
 
-	void removeMenuItem(Object source, JRadioButtonMenuItem item) {
-		if (transientItems.remove(item)) {
-			item.removeActionListener(myListener);
-		}
+	void removeMenuItem(JRadioButtonMenuItem item) {
+		if (transientItems.remove((WindowMenuItem) item)) item.removeActionListener(myListener);
 		computeContents();
 	}
 
@@ -150,30 +138,21 @@ public class WindowMenu extends JMenu {
 		WindowMenuItemManager currentManager = WindowMenuManager.getCurrentManager();
 		if (currentManager != null) {
 			JRadioButtonMenuItem item = currentManager.getMenuItem(this);
-			if (item != null) {
-				item.setSelected(true);
-			}
+			if (item != null) item.setSelected(true);
 		}
 	}
 
 	void doMinimize() {
-		if (owner != null) {
-			owner.setExtendedState(Frame.ICONIFIED);
-		}
+		if (owner != null) owner.setExtendedState(Frame.ICONIFIED);
 	}
 
 	void doClose() {
-		if (owner instanceof WindowClosable) {
-			((WindowClosable) owner).requestClose();
-		} else if (owner != null) {
+		if (owner instanceof WindowClosable) ((WindowClosable) owner).requestClose();
+		else if (owner != null) {
 			int action = owner.getDefaultCloseOperation();
-			if (action == JFrame.EXIT_ON_CLOSE) {
-				System.exit(0);
-			} else if (action == JFrame.HIDE_ON_CLOSE) {
-				owner.setVisible(false);
-			} else if (action == JFrame.DISPOSE_ON_CLOSE) {
-				owner.dispose();
-			}
+			if (action == JFrame.EXIT_ON_CLOSE) System.exit(0);
+			else if (action == JFrame.HIDE_ON_CLOSE) owner.setVisible(false);
+			else if (action == JFrame.DISPOSE_ON_CLOSE) owner.dispose();
 		}
 	}
 

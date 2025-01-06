@@ -26,11 +26,11 @@ import javax.swing.*;
 public class PaintUtils {
 
 	/** Four shades of white, each with increasing opacity. */
-	public final static Color[] whites = new Color[] { new Color(255, 255, 255, 50), new Color(255, 255, 255, 100),
+	public static final Color[] whites = { new Color(255, 255, 255, 50), new Color(255, 255, 255, 100),
 			new Color(255, 255, 255, 150) };
 
 	/** Four shades of black, each with increasing opacity. */
-	public final static Color[] blacks = new Color[] { new Color(0, 0, 0, 50), new Color(0, 0, 0, 100),
+	public static final Color[] blacks = { new Color(0, 0, 0, 50), new Color(0, 0, 0, 100),
 			new Color(0, 0, 0, 150) };
 
 	/**
@@ -39,9 +39,9 @@ public class PaintUtils {
 	 *         <code>UIManager.put("focusRing",customColor);</code>
 	 */
 	public static Color getFocusRingColor() {
-		Object obj = UIManager.getColor("focusRing");
-		if (obj instanceof Color)
-			return (Color) obj;
+		Color obj = UIManager.getColor("focusRing");
+		if (obj != null)
+			return obj;
 		return new Color(64, 113, 167);
 	}
 
@@ -57,7 +57,7 @@ public class PaintUtils {
 	 */
 	public static void paintFocus(Graphics2D g, Shape shape, int biggestStroke) {
 		Color focusColor = getFocusRingColor();
-		Color[] focusArray = new Color[] {
+		Color[] focusArray = {
 				new Color(focusColor.getRed(), focusColor.getGreen(), focusColor.getBlue(), 255),
 				new Color(focusColor.getRed(), focusColor.getGreen(), focusColor.getBlue(), 170),
 				new Color(focusColor.getRed(), focusColor.getGreen(), focusColor.getBlue(), 110) };
@@ -96,15 +96,10 @@ public class PaintUtils {
 	private static void drawColors(Color[] colors, Graphics g, int x1, int y1, int x2, int y2, int direction) {
 		for (int a = 0; a < colors.length; a++) {
 			g.setColor(colors[colors.length - a - 1]);
-			if (direction == SwingConstants.SOUTH) {
-				g.drawLine(x1, y1 - a, x2, y2 - a);
-			} else if (direction == SwingConstants.NORTH) {
-				g.drawLine(x1, y1 + a, x2, y2 + a);
-			} else if (direction == SwingConstants.EAST) {
-				g.drawLine(x1 - a, y1, x2 - a, y2);
-			} else if (direction == SwingConstants.WEST) {
-				g.drawLine(x1 + a, y1, x2 + a, y2);
-			}
+			if (direction == SwingConstants.SOUTH) g.drawLine(x1, y1 - a, x2, y2 - a);
+			else if (direction == SwingConstants.NORTH) g.drawLine(x1, y1 + a, x2, y2 + a);
+			else if (direction == SwingConstants.EAST) g.drawLine(x1 - a, y1, x2 - a, y2);
+			else if (direction == SwingConstants.WEST) g.drawLine(x1 + a, y1, x2 + a, y2);
 		}
 	}
 }

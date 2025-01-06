@@ -26,7 +26,7 @@ class ConnectorThread extends Thread {
 		return INSTANCE.overrideRequest;
 	}
 
-	private Object lock;
+	private final Object lock;
 	private transient boolean overrideRequest;
 	private MoveRequest nextRequest;
 	private MoveRequest processingRequest;
@@ -48,14 +48,11 @@ class ConnectorThread extends Thread {
 			boolean wasOverride;
 			synchronized (lock) {
 				processingRequest = null;
-				while (nextRequest == null) {
-					try {
-						lock.wait();
-					}
-					catch (InterruptedException e) {
-						Thread.currentThread().interrupt();
-						return;
-					}
+				while (nextRequest == null) try {
+					lock.wait();
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					return;
 				}
 				req = nextRequest;
 				wasOverride = overrideRequest;
@@ -74,7 +71,7 @@ class ConnectorThread extends Thread {
 			catch (Throwable t) {
 				t.printStackTrace();
 				if (wasOverride) {
-					MoveResult result = new MoveResult(req, new ReplacementMap(), req.getMoveGesture().getConnections(),
+					MoveResult result = new MoveResult(new ReplacementMap(), req.getMoveGesture().getConnections(),
 							0);
 					req.getMoveGesture().notifyResult(req, result);
 				}

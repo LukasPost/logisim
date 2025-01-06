@@ -13,6 +13,7 @@ import java.awt.Graphics2D;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.JPopupMenu;
 import javax.swing.JMenuItem;
@@ -124,11 +125,8 @@ public class SubcircuitFactory extends InstanceFactory {
 
 	@Override
 	public void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-		if (attr == StdAttr.FACING) {
-			computePorts(instance);
-		} else if (attr == CircuitAttributes.LABEL_LOCATION_ATTR) {
-			configureLabel(instance);
-		}
+		if (attr == StdAttr.FACING) computePorts(instance);
+		else if (attr == CircuitAttributes.LABEL_LOCATION_ATTR) configureLabel(instance);
 	}
 
 	@Override
@@ -144,19 +142,17 @@ public class SubcircuitFactory extends InstanceFactory {
 		Port[] ports = new Port[portLocs.size()];
 		Instance[] pins = new Instance[portLocs.size()];
 		int i = -1;
-		for (Map.Entry<Location, Instance> portLoc : portLocs.entrySet()) {
+		for (Entry<Location, Instance> portLoc : portLocs.entrySet()) {
 			i++;
 			Location loc = portLoc.getKey();
 			Instance pin = portLoc.getValue();
 			String type = Pin.FACTORY.isInputPin(pin) ? Port.INPUT : Port.OUTPUT;
 			BitWidth width = pin.getAttributeValue(StdAttr.WIDTH);
-			ports[i] = new Port(loc.getX(), loc.getY(), type, width);
+			ports[i] = new Port(loc.x(), loc.y(), type, width);
 			pins[i] = pin;
 
 			String label = pin.getAttributeValue(StdAttr.LABEL);
-			if (label != null && label.length() > 0) {
-				ports[i].setToolTip(StringUtil.constantGetter(label));
-			}
+			if (label != null && !label.isEmpty()) ports[i].setToolTip(StringUtil.constantGetter(label));
 		}
 
 		CircuitAttributes attrs = (CircuitAttributes) instance.getAttributeSet();
@@ -249,9 +245,7 @@ public class SubcircuitFactory extends InstanceFactory {
 			((Graphics2D) g).setComposite(c);
 		}
 		paintBase(painter, g);
-		if (oldComposite != null) {
-			((Graphics2D) g).setComposite(oldComposite);
-		}
+		if (oldComposite != null) ((Graphics2D) g).setComposite(oldComposite);
 	}
 
 	@Override
@@ -265,17 +259,17 @@ public class SubcircuitFactory extends InstanceFactory {
 		Direction facing = attrs.getFacing();
 		Direction defaultFacing = source.getAppearance().getFacing();
 		Location loc = painter.getLocation();
-		g.translate(loc.getX(), loc.getY());
+		g.translate(loc.x(), loc.y());
 		source.getAppearance().paintSubcircuit(g, facing);
 		drawCircuitLabel(painter, getOffsetBounds(attrs), facing, defaultFacing);
-		g.translate(-loc.getX(), -loc.getY());
+		g.translate(-loc.x(), -loc.y());
 		painter.drawLabel();
 	}
 
 	private void drawCircuitLabel(InstancePainter painter, Bounds bds, Direction facing, Direction defaultFacing) {
 		AttributeSet staticAttrs = source.getStaticAttributes();
 		String label = staticAttrs.getValue(CircuitAttributes.CIRCUIT_LABEL_ATTR);
-		if (label != null && !label.equals("")) {
+		if (label != null && !label.isEmpty()) {
 			Direction up = staticAttrs.getValue(CircuitAttributes.CIRCUIT_LABEL_FACING_ATTR);
 			Font font = staticAttrs.getValue(CircuitAttributes.CIRCUIT_LABEL_FONT_ATTR);
 
@@ -295,14 +289,10 @@ public class SubcircuitFactory extends InstanceFactory {
 			int y = bds.getY() + bds.getHeight() / 2;
 			Graphics g = painter.getGraphics().create();
 			double angle = Math.PI / 2 - (up.toRadians() - defaultFacing.toRadians()) - facing.toRadians();
-			if (g instanceof Graphics2D && Math.abs(angle) > 0.01) {
-				Graphics2D g2 = (Graphics2D) g;
-				g2.rotate(angle, x, y);
-			}
+			if (g instanceof Graphics2D g2 && Math.abs(angle) > 0.01) g2.rotate(angle, x, y);
 			g.setFont(font);
-			if (lines == 1 && !backs) {
-				GraphicsUtil.drawCenteredText(g, label, x, y);
-			} else {
+			if (lines == 1 && !backs) GraphicsUtil.drawCenteredText(g, label, x, y);
+			else {
 				FontMetrics fm = g.getFontMetrics();
 				int height = fm.getHeight();
 				y = y - (height * lines - fm.getLeading()) / 2 + fm.getAscent();
@@ -318,9 +308,7 @@ public class SubcircuitFactory extends InstanceFactory {
 					} else if (c == '\\') {
 						label = label.substring(0, back) + label.substring(back + 1);
 						back = label.indexOf('\\', back + 1);
-					} else {
-						back = label.indexOf('\\', back + 2);
-					}
+					} else back = label.indexOf('\\', back + 2);
 				}
 				GraphicsUtil.drawText(g, label, x, y, GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
 			}

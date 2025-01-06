@@ -18,15 +18,14 @@ class CircuitJList extends JList<Circuit> {
 	public CircuitJList(Project proj, boolean includeEmpty) {
 		LogisimFile file = proj.getLogisimFile();
 		Circuit current = proj.getCurrentCircuit();
-		Vector<Circuit> options = new Vector<Circuit>();
+		Vector<Circuit> options = new Vector<>();
 		boolean currentFound = false;
-		for (Circuit circ : file.getCircuits()) {
+		for (Circuit circ : file.getCircuits())
 			if (!includeEmpty || circ.getBounds() != Bounds.EMPTY_BOUNDS) {
 				if (circ == current)
 					currentFound = true;
 				options.add(circ);
 			}
-		}
 
 		setListData(options);
 		if (currentFound)

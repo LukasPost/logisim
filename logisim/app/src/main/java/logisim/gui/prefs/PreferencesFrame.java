@@ -22,14 +22,14 @@ import logisim.util.LocaleManager;
 import logisim.util.WindowMenuItemManager;
 
 public class PreferencesFrame extends LFrame {
-	private static WindowMenuManager MENU_MANAGER = null;
+	private static WindowMenuManager MENU_MANAGER;
 
 	public static void initializeManager() {
 		MENU_MANAGER = new WindowMenuManager();
 	}
 
 	private static class WindowMenuManager extends WindowMenuItemManager implements LocaleListener {
-		private PreferencesFrame window = null;
+		private PreferencesFrame window;
 
 		WindowMenuManager() {
 			super(Strings.get("preferencesFrameMenuItem"), true);
@@ -38,11 +38,9 @@ public class PreferencesFrame extends LFrame {
 
 		@Override
 		public JFrame getJFrame(boolean create) {
-			if (create) {
-				if (window == null) {
-					window = new PreferencesFrame();
-					frameOpened(window);
-				}
+			if (create) if (window == null) {
+				window = new PreferencesFrame();
+				frameOpened(window);
 			}
 			return window;
 		}
@@ -57,7 +55,7 @@ public class PreferencesFrame extends LFrame {
 			Object src = event.getSource();
 			if (src == close) {
 				WindowEvent e = new WindowEvent(PreferencesFrame.this, WindowEvent.WINDOW_CLOSING);
-				PreferencesFrame.this.processWindowEvent(e);
+				processWindowEvent(e);
 			}
 		}
 
@@ -71,8 +69,6 @@ public class PreferencesFrame extends LFrame {
 			close.setText(Strings.get("closeButton"));
 		}
 	}
-
-	private MyListener myListener = new MyListener();
 
 	private OptionsPanel[] panels;
 	private JTabbedPane tabbedPane;
@@ -95,6 +91,7 @@ public class PreferencesFrame extends LFrame {
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(close);
+		MyListener myListener = new MyListener();
 		close.addActionListener(myListener);
 
 		Container contents = getContentPane();

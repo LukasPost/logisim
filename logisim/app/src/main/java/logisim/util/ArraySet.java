@@ -3,6 +3,11 @@
 
 package logisim.util;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.AbstractSet;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -13,20 +18,18 @@ public class ArraySet<E> extends AbstractSet<E> {
 
 	private class ArrayIterator implements Iterator<E> {
 		int itVersion = version;
-		int pos = 0; // position of next item to return
+		int pos; // position of next item to return
 		boolean hasNext = values.length > 0;
-		boolean removeOk = false;
+		boolean removeOk;
 
 		public boolean hasNext() {
 			return hasNext;
 		}
 
 		public E next() {
-			if (itVersion != version) {
-				throw new ConcurrentModificationException();
-			} else if (!hasNext) {
-				throw new NoSuchElementException();
-			} else {
+			if (itVersion != version) throw new ConcurrentModificationException();
+			else if (!hasNext) throw new NoSuchElementException();
+			else {
 				@SuppressWarnings("unchecked")
 				E ret = (E) values[pos];
 				++pos;
@@ -37,23 +40,17 @@ public class ArraySet<E> extends AbstractSet<E> {
 		}
 
 		public void remove() {
-			if (itVersion != version) {
-				throw new ConcurrentModificationException();
-			} else if (!removeOk) {
-				throw new IllegalStateException();
-			} else if (values.length == 1) {
+			if (itVersion != version) throw new ConcurrentModificationException();
+			else if (!removeOk) throw new IllegalStateException();
+			else if (values.length == 1) {
 				values = EMPTY_ARRAY;
 				++version;
 				itVersion = version;
 				removeOk = false;
 			} else {
 				Object[] newValues = new Object[values.length - 1];
-				if (pos > 1) {
-					System.arraycopy(values, 0, newValues, 0, pos - 1);
-				}
-				if (pos < values.length) {
-					System.arraycopy(values, pos, newValues, pos - 1, values.length - pos);
-				}
+				if (pos > 1) System.arraycopy(values, 0, newValues, 0, pos - 1);
+				if (pos < values.length) System.arraycopy(values, pos, newValues, pos - 1, values.length - pos);
 				values = newValues;
 				--pos;
 				++version;
@@ -63,25 +60,22 @@ public class ArraySet<E> extends AbstractSet<E> {
 		}
 	}
 
-	private int version = 0;
+	private int version;
 	private Object[] values = EMPTY_ARRAY;
 
 	public ArraySet() {
 	}
 
 	@Override
-	public Object[] toArray() {
+	public Object @NotNull [] toArray() {
 		return values;
 	}
 
 	@Override
 	public Object clone() {
-		ArraySet<E> ret = new ArraySet<E>();
-		if (this.values == EMPTY_ARRAY) {
-			ret.values = EMPTY_ARRAY;
-		} else {
-			ret.values = this.values.clone();
-		}
+		ArraySet<E> ret = new ArraySet<>();
+		if (values == EMPTY_ARRAY) ret.values = EMPTY_ARRAY;
+		else ret.values = values.clone();
 		return ret;
 	}
 
@@ -104,10 +98,9 @@ public class ArraySet<E> extends AbstractSet<E> {
 	@Override
 	public boolean add(Object value) {
 		int n = values.length;
-		for (int i = 0; i < n; i++) {
-			if (values[i].equals(value))
+		for (Object o : values)
+			if (o.equals(value))
 				return false;
-		}
 
 		Object[] newValues = new Object[n + 1];
 		System.arraycopy(values, 0, newValues, 0, n);
@@ -119,44 +112,36 @@ public class ArraySet<E> extends AbstractSet<E> {
 
 	@Override
 	public boolean contains(Object value) {
-		for (int i = 0, n = values.length; i < n; i++) {
-			if (values[i].equals(value))
+		for (Object o : values)
+			if (o.equals(value))
 				return true;
-		}
 		return false;
 	}
 
 	@Override
-	public Iterator<E> iterator() {
+	public @NotNull Iterator<E> iterator() {
 		return new ArrayIterator();
 	}
 
-	public static void main(String[] args) throws java.io.IOException {
-		ArraySet<String> set = new ArraySet<String>();
-		java.io.BufferedReader in = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
+	public static void main(String[] args) throws IOException {
+		ArraySet<String> set = new ArraySet<>();
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		while (true) {
 			System.out.print(set.size() + ":"); // OK
-			for (String str : set) {
-				System.out.print(" " + str); // OK
-			}
+			for (String str : set) System.out.print(" " + str); // OK
 			System.out.println(); // OK
 			System.out.print("> "); // OK
 			String cmd = in.readLine();
 			if (cmd == null)
 				break;
 			cmd = cmd.trim();
-			if (cmd.equals("")) {
-				;
-			} else if (cmd.startsWith("+")) {
-				set.add(cmd.substring(1));
-			} else if (cmd.startsWith("-")) {
-				set.remove(cmd.substring(1));
-			} else if (cmd.startsWith("?")) {
+			if (cmd.isEmpty()) ;
+			else if (cmd.startsWith("+")) set.add(cmd.substring(1));
+			else if (cmd.startsWith("-")) set.remove(cmd.substring(1));
+			else if (cmd.startsWith("?")) {
 				boolean ret = set.contains(cmd.substring(1));
 				System.out.println("  " + ret); // OK
-			} else {
-				System.out.println("unrecognized command"); // OK
-			}
+			} else System.out.println("unrecognized command"); // OK
 		}
 	}
 }

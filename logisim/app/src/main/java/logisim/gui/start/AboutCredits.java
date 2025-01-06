@@ -43,7 +43,7 @@ class AboutCredits extends JComponent {
 		}
 
 		public CreditsLine(int type, String text, Image img, int imgWidth) {
-			this.y = 0;
+			y = 0;
 			this.type = type;
 			this.text = text;
 			this.img = img;
@@ -84,16 +84,14 @@ class AboutCredits extends JComponent {
 
 		URL url = AboutCredits.class.getClassLoader().getResource(HENDRIX_PATH);
 		Image hendrixLogo = null;
-		if (url != null) {
-			hendrixLogo = getToolkit().createImage(url);
-		}
+		if (url != null) hendrixLogo = getToolkit().createImage(url);
 
 		// Logisim's policy concerning who is given credit:
 		// Past contributors are not acknowledged in the About dialog for the current
 		// version, but they do appear in the acknowledgements section of the User's
 		// Guide. Current contributors appear in both locations.
 
-		lines = new ArrayList<CreditsLine>();
+		lines = new ArrayList<>();
 		linesHeight = 0; // computed in paintComponent
 		lines.add(new CreditsLine(1, "www.cburch.com/logisim/"));
 		lines.add(new CreditsLine(0, Strings.get("creditsRoleLead"), hendrixLogo, HENDRIX_WIDTH));
@@ -106,22 +104,22 @@ class AboutCredits extends JComponent {
 		lines.add(new CreditsLine(0, Strings.get("creditsRoleGreek")));
 		lines.add(new CreditsLine(1, "Thanos Kakarountas"));
 		lines.add(new CreditsLine(2,
-				"\u03A4.\u0395.\u0399 \u0399\u03BF\u03BD\u03AF\u03C9\u03BD \u039D\u03AE\u03C3\u03C9\u03BD"));
+				"Τ.Ε.Ι Ιονίων Νήσων"));
 		lines.add(new CreditsLine(0, Strings.get("creditsRolePortuguese")));
 		lines.add(new CreditsLine(1, "Theldo Cruz Franqueira"));
 		lines.add(new CreditsLine(2, "PUC Minas"));
 		lines.add(new CreditsLine(0, Strings.get("creditsRoleRussian")));
 		lines.add(new CreditsLine(1, "Ilia Lilov"));
 		lines.add(new CreditsLine(2,
-				"\u041C\u043E\u0441\u043A\u043E\u0432\u0441\u043A\u0438\u0439 \u0433\u043E\u0441\u0443\u0434\u0430\u0440\u0441\u0442\u0432\u0435\u043D\u043D\u044B\u0439"));
+				"Московский государственный"));
 		lines.add(new CreditsLine(2,
-				"\u0443\u043D\u0438\u0432\u0435\u0440\u0441\u0438\u0442\u0435\u0442 \u043F\u0435\u0447\u0430\u0442\u0438"));
+				"университет печати"));
 		lines.add(new CreditsLine(0, Strings.get("creditsRoleTesting")));
 		lines.add(new CreditsLine(1, "Ilia Lilov"));
 		lines.add(new CreditsLine(2,
-				"\u041C\u043E\u0441\u043A\u043E\u0432\u0441\u043A\u0438\u0439 \u0433\u043E\u0441\u0443\u0434\u0430\u0440\u0441\u0442\u0432\u0435\u043D\u043D\u044B\u0439"));
+				"Московский государственный"));
 		lines.add(new CreditsLine(2,
-				"\u0443\u043D\u0438\u0432\u0435\u0440\u0441\u0438\u0442\u0435\u0442 \u043F\u0435\u0447\u0430\u0442\u0438"));
+				"университет печати"));
 
 		/*
 		 * If you fork Logisim, feel free to change the above lines, but please do not change these last four lines!
@@ -144,18 +142,14 @@ class AboutCredits extends JComponent {
 	@Override
 	protected void paintComponent(Graphics g) {
 		FontMetrics[] fms = new FontMetrics[font.length];
-		for (int i = 0; i < fms.length; i++) {
-			fms[i] = g.getFontMetrics(font[i]);
-		}
+		for (int i = 0; i < fms.length; i++) fms[i] = g.getFontMetrics(font[i]);
 		if (linesHeight == 0) {
 			int y = 0;
 			int index = -1;
 			for (CreditsLine line : lines) {
 				index++;
-				if (index == initialLines)
-					initialHeight = y;
-				if (line.type == 0)
-					y += 10;
+				if (index == initialLines) initialHeight = y;
+				if (line.type == 0) y += 10;
 				FontMetrics fm = fms[line.type];
 				line.y = y + fm.getAscent();
 				y += fm.getHeight();
@@ -164,7 +158,7 @@ class AboutCredits extends JComponent {
 		}
 
 		Paint[] paint = paintSteady;
-		int yPos = 0;
+		int yPos;
 		int height = getHeight();
 		int initY = Math.min(0, initialHeight - height + About.IMAGE_BORDER);
 		int maxY = linesHeight - height - initY;
@@ -173,11 +167,9 @@ class AboutCredits extends JComponent {
 		if (offs >= 0 && offs < MILLIS_FREEZE) {
 			// frozen before starting the credits scroll
 			int a = 255 * (MILLIS_FREEZE - offs) / MILLIS_FREEZE;
-			if (a > 245) {
-				paint = null;
-			} else if (a < 15) {
-				paint = paintSteady;
-			} else {
+			if (a > 245) paint = null;
+			else if (a < 15) paint = paintSteady;
+			else {
 				paint = new Paint[colorBase.length];
 				for (int i = 0; i < paint.length; i++) {
 					Color hue = colorBase[i];
@@ -185,16 +177,15 @@ class AboutCredits extends JComponent {
 				}
 			}
 			yPos = initY;
-		} else if (offs < MILLIS_FREEZE + maxY * MILLIS_PER_PIXEL) {
-			// scrolling through credits
-			yPos = initY + (offs - MILLIS_FREEZE) / MILLIS_PER_PIXEL;
-		} else if (offs < 2 * MILLIS_FREEZE + maxY * MILLIS_PER_PIXEL) {
-			// freezing at bottom of scroll
-			yPos = initY + maxY;
-		} else if (offs < 2 * MILLIS_FREEZE + (linesHeight - initY) * MILLIS_PER_PIXEL) {
-			// scrolling bottom off screen
-			yPos = initY + (offs - 2 * MILLIS_FREEZE) / MILLIS_PER_PIXEL;
-		} else {
+		} else // scrolling through credits
+			if (offs < MILLIS_FREEZE + maxY * MILLIS_PER_PIXEL)
+				yPos = initY + (offs - MILLIS_FREEZE) / MILLIS_PER_PIXEL;
+			else // freezing at bottom of scroll
+			if (offs < 2 * MILLIS_FREEZE + maxY * MILLIS_PER_PIXEL) yPos = initY + maxY;
+			else // scrolling bottom off screen
+			if (offs < 2 * MILLIS_FREEZE + (linesHeight - initY) * MILLIS_PER_PIXEL)
+				yPos = initY + (offs - 2 * MILLIS_FREEZE) / MILLIS_PER_PIXEL;
+			else {
 			// scrolling next credits onto screen
 			int millis = offs - 2 * MILLIS_FREEZE - (linesHeight - initY) * MILLIS_PER_PIXEL;
 			paint = null;
@@ -206,15 +197,11 @@ class AboutCredits extends JComponent {
 		maxY = getHeight();
 		for (CreditsLine line : lines) {
 			int y = line.y - yPos;
-			if (y < -100 || y > maxY + 50)
-				continue;
+			if (y < -100 || y > maxY + 50) continue;
 
 			int type = line.type;
-			if (paint == null) {
-				g.setColor(colorBase[type]);
-			} else {
-				((Graphics2D) g).setPaint(paint[type]);
-			}
+			if (paint == null) g.setColor(colorBase[type]);
+			else ((Graphics2D) g).setPaint(paint[type]);
 			g.setFont(font[type]);
 			int textWidth = fms[type].stringWidth(line.text);
 			g.drawString(line.text, centerX - textWidth / 2, line.y - yPos);

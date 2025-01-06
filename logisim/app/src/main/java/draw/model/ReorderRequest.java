@@ -23,13 +23,9 @@ public class ReorderRequest {
 		public int compare(ReorderRequest a, ReorderRequest b) {
 			int i = onFrom ? a.fromIndex : a.toIndex;
 			int j = onFrom ? b.fromIndex : b.toIndex;
-			if (i < j) {
-				return asc ? -1 : 1;
-			} else if (i > j) {
-				return asc ? 1 : -1;
-			} else {
-				return 0;
-			}
+			if (i < j) return asc ? -1 : 1;
+			else if (i > j) return asc ? 1 : -1;
+			else return 0;
 		}
 	}
 
@@ -39,8 +35,8 @@ public class ReorderRequest {
 
 	public ReorderRequest(CanvasObject object, int from, int to) {
 		this.object = object;
-		this.fromIndex = from;
-		this.toIndex = to;
+		fromIndex = from;
+		toIndex = to;
 	}
 
 	public CanvasObject getObject() {

@@ -4,7 +4,7 @@
 package logisim.comp;
 
 public interface ComponentListener {
-	public void endChanged(ComponentEvent e);
+	void endChanged(ComponentEvent e);
 
-	public void componentInvalidated(ComponentEvent e);
+	void componentInvalidated(ComponentEvent e);
 }

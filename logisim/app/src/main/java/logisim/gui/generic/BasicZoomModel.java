@@ -21,7 +21,7 @@ public class BasicZoomModel implements ZoomModel {
 		zoomFactor = 1.0;
 		showGrid = true;
 
-		setZoomFactor(zoomPref.get().doubleValue());
+		setZoomFactor(zoomPref.get());
 		setShowGrid(gridPref.getBoolean());
 	}
 
@@ -56,7 +56,7 @@ public class BasicZoomModel implements ZoomModel {
 		double oldValue = zoomFactor;
 		if (value != oldValue) {
 			zoomFactor = value;
-			support.firePropertyChange(ZoomModel.ZOOM, Double.valueOf(oldValue), Double.valueOf(value));
+			support.firePropertyChange(ZoomModel.ZOOM, oldValue, value);
 		}
 	}
 }
