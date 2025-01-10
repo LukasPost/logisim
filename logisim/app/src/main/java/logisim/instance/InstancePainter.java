@@ -15,7 +15,8 @@ import logisim.data.AttributeSet;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.proj.Project;
 
 public class InstancePainter implements InstanceState {
@@ -93,14 +94,14 @@ public class InstancePainter implements InstanceState {
 		return context.getCircuitState().getProject();
 	}
 
-	public Value getPort(int portIndex) {
+	public WireValue getPort(int portIndex) {
 		InstanceComponent c = comp;
 		CircuitState s = context.getCircuitState();
 		if (c != null && s != null) return s.getValue(c.getEnd(portIndex).getLocation());
-		else return Value.UNKNOWN;
+		else return WireValues.UNKNOWN;
 	}
 
-	public void setPort(int portIndex, Value value, int delay) {
+	public void setPort(int portIndex, WireValue value, int delay) {
 		throw new UnsupportedOperationException("setValue on InstancePainter");
 	}
 

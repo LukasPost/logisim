@@ -20,7 +20,7 @@ import logisim.data.AttributeSet;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 import logisim.instance.StdAttr;
 import logisim.std.gates.CircuitDetermination.Gate;
 import logisim.std.gates.CircuitDetermination.Input;
@@ -347,7 +347,7 @@ public class CircuitBuilder {
 			int index = layout.subLayouts.length / 2 + 1;
 			Object factory = parent.getFactory();
 			if (factory instanceof AbstractGate) {
-				Value val = ((AbstractGate) factory).getIdentity();
+				WireValue val = ((AbstractGate) factory).getIdentity();
 				Integer valInt = val.toIntValue();
 				Location loc = parent.getEnd(index).getLocation();
 				AttributeSet attrs = Constant.FACTORY.createAttributeSet();

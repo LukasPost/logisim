@@ -2,11 +2,9 @@ package logisim.gui.hex
 
 import java.awt.datatransfer.*
 import java.io.IOException
-import java.io.StringReader
 import javax.swing.JOptionPane
 import hex.Caret
 import hex.HexEditor
-import hex.HexModel
 
 class Clip(private val editor: HexEditor) : ClipboardOwner {
 

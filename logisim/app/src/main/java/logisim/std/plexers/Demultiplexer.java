@@ -13,7 +13,8 @@ import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -159,26 +160,26 @@ public class Demultiplexer extends InstanceFactory {
 		Boolean threeState = state.getAttributeValue(Plexers.ATTR_TRISTATE);
 		boolean enable = state.getAttributeValue(Plexers.ATTR_ENABLE);
 		int outputs = 1 << select.getWidth();
-		Value en = enable ? state.getPort(outputs + 1) : Value.TRUE;
+		WireValue en = enable ? state.getPort(outputs + 1) : WireValues.TRUE;
 
 		// determine output values
-		Value others; // the default output
-		if (threeState) others = Value.createUnknown(data);
-		else others = Value.createKnown(data, 0);
+		WireValue others; // the default output
+		if (threeState) others = WireValue.Companion.createUnknown(data);
+		else others = WireValue.Companion.createKnown(data, 0);
 		int outIndex = -1; // the special output
-		Value out = null;
-		if (en == Value.FALSE) {
+		WireValue out = null;
+		if (en == WireValues.FALSE) {
 			Object opt = state.getAttributeValue(Plexers.ATTR_DISABLED);
-			Value base = opt == Plexers.DISABLED_ZERO ? Value.FALSE : Value.UNKNOWN;
-			others = Value.repeat(base, data.getWidth());
-		} else if (en == Value.ERROR && state.isPortConnected(outputs + 1)) others = Value.createError(data);
+			WireValue base = opt == Plexers.DISABLED_ZERO ? WireValues.FALSE : WireValues.UNKNOWN;
+			others = WireValue.Companion.repeat(base, data.getWidth());
+		} else if (en == WireValues.ERROR && state.isPortConnected(outputs + 1)) others = WireValue.Companion.createError(data);
 		else {
-			Value sel = state.getPort(outputs);
+			WireValue sel = state.getPort(outputs);
 			if (sel.isFullyDefined()) {
 				outIndex = sel.toIntValue();
 				out = state.getPort(outputs + (enable ? 2 : 1));
-			} else if (sel.isErrorValue()) others = Value.createError(data);
-			else others = Value.createUnknown(data);
+			} else if (sel.isErrorValue()) others = WireValue.Companion.createError(data);
+			else others = WireValue.Companion.createUnknown(data);
 		}
 
 		// now propagate them

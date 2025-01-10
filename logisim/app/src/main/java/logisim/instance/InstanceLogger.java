@@ -3,7 +3,7 @@
 
 package logisim.instance;
 
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 
 public abstract class InstanceLogger {
 	public Object[] getLogOptions(InstanceState state) {
@@ -12,5 +12,5 @@ public abstract class InstanceLogger {
 
 	public abstract String getLogName(InstanceState state, Object option);
 
-	public abstract Value getLogValue(InstanceState state, Object option);
+	public abstract WireValue getLogValue(InstanceState state, Object option);
 }

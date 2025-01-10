@@ -11,7 +11,8 @@ import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
 import logisim.instance.InstanceState;
@@ -56,10 +57,10 @@ public class Adder extends InstanceFactory {
 		BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
 
 		// compute outputs
-		Value a = state.getPort(IN0);
-		Value b = state.getPort(IN1);
-		Value c_in = state.getPort(C_IN);
-		Value[] outs = Adder.computeSum(dataWidth, a, b, c_in);
+		WireValue a = state.getPort(IN0);
+		WireValue b = state.getPort(IN1);
+		WireValue c_in = state.getPort(C_IN);
+		WireValue[] outs = Adder.computeSum(dataWidth, a, b, c_in);
 
 		// propagate them
 		int delay = (dataWidth.getWidth() + 2) * PER_DELAY;
@@ -89,47 +90,47 @@ public class Adder extends InstanceFactory {
 		GraphicsUtil.switchToWidth(g, 1);
 	}
 
-	static Value[] computeSum(BitWidth width, Value a, Value b, Value c_in) {
+	static WireValue[] computeSum(BitWidth width, WireValue a, WireValue b, WireValue c_in) {
 		int w = width.getWidth();
-		if (c_in == Value.UNKNOWN || c_in == Value.NIL) c_in = Value.FALSE;
+		if (c_in == WireValues.UNKNOWN || c_in == WireValues.NIL) c_in = WireValues.FALSE;
 		if (a.isFullyDefined() && b.isFullyDefined() && c_in.isFullyDefined()) if (w >= 32) {
 			long mask = (1L << w) - 1;
 			long ax = (long) a.toIntValue() & mask;
 			long bx = (long) b.toIntValue() & mask;
 			long cx = (long) c_in.toIntValue() & mask;
 			long sum = ax + bx + cx;
-			return new Value[]{Value.createKnown(width, (int) sum),
-					((sum >> w) & 1) == 0 ? Value.FALSE : Value.TRUE};
+			return new WireValue[]{WireValue.Companion.createKnown(width, (int) sum),
+					((sum >> w) & 1) == 0 ? WireValues.FALSE : WireValues.TRUE};
 		}
 		else {
 			int sum = a.toIntValue() + b.toIntValue() + c_in.toIntValue();
-			return new Value[]{Value.createKnown(width, sum), ((sum >> w) & 1) == 0 ? Value.FALSE : Value.TRUE};
+			return new WireValue[]{WireValue.Companion.createKnown(width, sum), ((sum >> w) & 1) == 0 ? WireValues.FALSE : WireValues.TRUE};
 		}
 		else {
-			Value[] bits = new Value[w];
-			Value carry = c_in;
+			WireValue[] bits = new WireValue[w];
+			WireValue carry = c_in;
 			for (int i = 0; i < w; i++)
-				if (carry == Value.ERROR) bits[i] = Value.ERROR;
-				else if (carry == Value.UNKNOWN) bits[i] = Value.UNKNOWN;
+				if (carry == WireValues.ERROR) bits[i] = WireValues.ERROR;
+				else if (carry == WireValues.UNKNOWN) bits[i] = WireValues.UNKNOWN;
 				else {
-					Value ab = a.get(i);
-					Value bb = b.get(i);
-					if (ab == Value.ERROR || bb == Value.ERROR) {
-						bits[i] = Value.ERROR;
-						carry = Value.ERROR;
+					WireValue ab = a.get(i);
+					WireValue bb = b.get(i);
+					if (ab == WireValues.ERROR || bb == WireValues.ERROR) {
+						bits[i] = WireValues.ERROR;
+						carry = WireValues.ERROR;
 					}
-					else if (ab == Value.UNKNOWN || bb == Value.UNKNOWN) {
-						bits[i] = Value.UNKNOWN;
-						carry = Value.UNKNOWN;
+					else if (ab == WireValues.UNKNOWN || bb == WireValues.UNKNOWN) {
+						bits[i] = WireValues.UNKNOWN;
+						carry = WireValues.UNKNOWN;
 					}
 					else {
-						int sum = (ab == Value.TRUE ? 1 : 0) + (bb == Value.TRUE ? 1 : 0)
-								+ (carry == Value.TRUE ? 1 : 0);
-						bits[i] = (sum & 1) == 1 ? Value.TRUE : Value.FALSE;
-						carry = (sum >= 2) ? Value.TRUE : Value.FALSE;
+						int sum = (ab == WireValues.TRUE ? 1 : 0) + (bb == WireValues.TRUE ? 1 : 0)
+								+ (carry == WireValues.TRUE ? 1 : 0);
+						bits[i] = (sum & 1) == 1 ? WireValues.TRUE : WireValues.FALSE;
+						carry = (sum >= 2) ? WireValues.TRUE : WireValues.FALSE;
 					}
 				}
-			return new Value[] { Value.create(bits), carry };
+			return new WireValue[] { WireValue.Companion.create(bits), carry };
 		}
 	}
 }

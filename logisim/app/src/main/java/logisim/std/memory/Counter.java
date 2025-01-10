@@ -13,7 +13,8 @@ import logisim.data.Attributes;
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -94,17 +95,17 @@ public class Counter extends InstanceFactory {
 		BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
 		Object triggerType = state.getAttributeValue(StdAttr.EDGE_TRIGGER);
 		int max = state.getAttributeValue(ATTR_MAX);
-		Value clock = state.getPort(CK);
+		WireValue clock = state.getPort(CK);
 		boolean triggered = data.updateClock(clock, triggerType);
 
-		Value newValue;
+		WireValue newValue;
 		boolean carry;
-		if (state.getPort(CLR) == Value.TRUE) {
-			newValue = Value.createKnown(dataWidth, 0);
+		if (state.getPort(CLR) == WireValues.TRUE) {
+			newValue = WireValue.Companion.createKnown(dataWidth, 0);
 			carry = false;
 		} else {
-			boolean ld = state.getPort(LD) == Value.TRUE;
-			boolean ct = state.getPort(CT) != Value.FALSE;
+			boolean ld = state.getPort(LD) == WireValues.TRUE;
+			boolean ct = state.getPort(CT) != WireValues.FALSE;
 			int oldVal = data.value;
 			int newVal;
 			if (!triggered) newVal = oldVal;
@@ -115,7 +116,7 @@ public class Counter extends InstanceFactory {
 					if (onGoal == ON_GOAL_WRAP) newVal = ld ? max : 0;
 					else if (onGoal == ON_GOAL_STAY) newVal = oldVal;
 					else if (onGoal == ON_GOAL_LOAD) {
-						Value in = state.getPort(IN);
+						WireValue in = state.getPort(IN);
 						newVal = in.isFullyDefined() ? in.toIntValue() : 0;
 						if (newVal > max)
 							newVal &= max;
@@ -127,12 +128,12 @@ public class Counter extends InstanceFactory {
 				} else newVal = ld ? oldVal - 1 : oldVal + 1;
 			} else // trigger, enable = 0, load = 0: no change
 				if (ld) { // trigger, enable = 0, load = 1: should load
-				Value in = state.getPort(IN);
+					WireValue in = state.getPort(IN);
 				newVal = in.isFullyDefined() ? in.toIntValue() : 0;
 				if (newVal > max)
 					newVal &= max;
 			} else newVal = oldVal;
-			newValue = Value.createKnown(dataWidth, newVal);
+			newValue = WireValue.Companion.createKnown(dataWidth, newVal);
 			newVal = newValue.toIntValue();
 			carry = newVal == (ld && ct ? 0 : max);
 			/*
@@ -144,7 +145,7 @@ public class Counter extends InstanceFactory {
 
 		data.value = newValue.toIntValue();
 		state.setPort(OUT, newValue, DELAY);
-		state.setPort(CARRY, carry ? Value.TRUE : Value.FALSE, DELAY);
+		state.setPort(CARRY, carry ? WireValues.TRUE : WireValues.FALSE, DELAY);
 	}
 
 	@SuppressWarnings("null")

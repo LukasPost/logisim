@@ -3,12 +3,12 @@
 
 package logisim.gui.log;
 
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 
 interface ModelListener {
 	void selectionChanged(ModelEvent event);
 
-	void entryAdded(ModelEvent event, Value[] values);
+	void entryAdded(ModelEvent event, WireValue[] values);
 
 	void filePropertyChanged(ModelEvent event);
 }

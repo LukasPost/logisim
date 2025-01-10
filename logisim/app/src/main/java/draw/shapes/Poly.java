@@ -6,6 +6,7 @@ package draw.shapes;
 import java.awt.Graphics;
 import java.awt.geom.GeneralPath;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import draw.shapes.PolyUtil.ClosestResult;
@@ -24,45 +25,37 @@ public class Poly extends FillableCanvasObject {
 	private boolean closed;
 	// "handles" should be immutable - create a new array and change using
 	// setHandles rather than changing contents
-	private Handle[] handles;
+	private List<Handle> handles;
 	private GeneralPath path;
 	private double[] lens;
 	private Bounds bounds;
 
 	public Poly(boolean closed, List<Location> locations) {
-		Handle[] hs = new Handle[locations.size()];
-		int i = -1;
-		for (Location loc : locations) {
-			i++;
-			hs[i] = new Handle(this, loc.x(), loc.y());
-		}
-
+		handles = locations.stream().map(l->new Handle(this, l)).toList();
 		this.closed = closed;
-		handles = hs;
 		recomputeBounds();
 	}
 
 	@Override
 	public boolean matches(CanvasObject other) {
-		if (other instanceof Poly that) {
-			Handle[] a = handles;
-			Handle[] b = that.handles;
-			if (closed != that.closed || a.length != b.length) return false;
-			else {
-				for (int i = 0, n = a.length; i < n; i++)
-					if (!a[i].equals(b[i]))
-						return false;
-				return super.matches(that);
-			}
-		} else return false;
+		if (!(other instanceof Poly that))
+			return false;
+		List<Handle> a = handles;
+		List<Handle> b = that.handles;
+		if (closed != that.closed || a.size() != b.size())
+			return false;
+		for (int i = 0, n = a.size(); i < n; i++)
+			if (!Objects.equals(a.get(i), b.get(i)))
+				return false;
+		return super.matches(that);
 	}
 
 	@Override
 	public int matchesHashCode() {
 		int ret = super.matchesHashCode();
 		ret = ret * 3 + (closed ? 1 : 0);
-		Handle[] hs = handles;
-		for (Handle h : hs) ret = ret * 31 + h.hashCode();
+		for (Handle h : handles)
+			ret = ret * 31 + h.hashCode();
 		return ret;
 	}
 
@@ -111,21 +104,20 @@ public class Poly extends FillableCanvasObject {
 			if (w > 1) {
 				int dx = rand.nextInt(w) - w / 2;
 				int dy = rand.nextInt(w) - w / 2;
-				return ret.translate(dx, dy);
+				return ret.add(dx, dy);
 			}
 			return ret;
 		} else return super.getRandomPoint(bds, rand);
 	}
 
 	private Location getRandomBoundaryPoint(Bounds bds, Random rand) {
-		Handle[] hs = handles;
+		List<Handle> hs = handles;
 		double[] ls = lens;
 		if (ls == null) {
-			ls = new double[hs.length + (closed ? 1 : 0)];
+			ls = new double[hs.size() + (closed ? 1 : 0)];
 			double total = 0.0;
 			for (int i = 0; i < ls.length; i++) {
-				int j = (i + 1) % hs.length;
-				total += LineUtil.distance(hs[i].getX(), hs[i].getY(), hs[j].getX(), hs[j].getY());
+				total += LineUtil.distance(hs.get(i).location, hs.get(i).location);
 				ls[i] = total;
 			}
 			lens = ls;
@@ -133,8 +125,8 @@ public class Poly extends FillableCanvasObject {
 		double pos = ls[ls.length - 1] * rand.nextDouble();
 		for (int i = 0; true; i++)
 			if (pos < ls[i]) {
-				Handle p = hs[i];
-				Handle q = hs[(i + 1) % hs.length];
+				Handle p = hs.get(i);
+				Handle q = hs.get((i + 1) % hs.size());
 				double u = Math.random();
 				int x = (int) Math.round(p.getX() + u * (q.getX() - p.getX()));
 				int y = (int) Math.round(p.getY() + u * (q.getY() - p.getY()));
@@ -148,11 +140,8 @@ public class Poly extends FillableCanvasObject {
 	}
 
 	@Override
-	public void translate(int dx, int dy) {
-		Handle[] hs = handles;
-		Handle[] is = new Handle[hs.length];
-		for (int i = 0; i < hs.length; i++) is[i] = new Handle(this, hs[i].getX() + dx, hs[i].getY() + dy);
-		setHandles(is);
+	public void translate(Location distance) {
+		setHandles(handles.stream().map(h -> new Handle(this, h.location.add(distance))).toList());
 	}
 
 	public boolean isClosed() {
@@ -161,42 +150,45 @@ public class Poly extends FillableCanvasObject {
 
 	@Override
 	public List<Handle> getHandles(HandleGesture gesture) {
-		Handle[] hs = handles;
-		if (gesture == null) return UnmodifiableList.create(hs);
-		else {
-			Handle g = gesture.getHandle();
-			Handle[] ret = new Handle[hs.length];
-			for (int i = 0, n = hs.length; i < n; i++) {
-				Handle h = hs[i];
-				if (h.equals(g)) {
-					int x = h.getX() + gesture.getDeltaX();
-					int y = h.getY() + gesture.getDeltaY();
-					Location r;
-					if (gesture.isShiftDown()) {
-						Location prev = hs[(i + n - 1) % n].getLocation();
-						Location next = hs[(i + 1) % n].getLocation();
-						if (!closed) {
-							if (i == 0)
-								prev = null;
-							if (i == n - 1)
-								next = null;
-						}
-						if (prev == null) r = LineUtil.snapTo8Cardinals(next, x, y);
-						else if (next == null) r = LineUtil.snapTo8Cardinals(prev, x, y);
-						else {
-							Location to = new Location(x, y);
-							Location a = LineUtil.snapTo8Cardinals(prev, x, y);
-							Location b = LineUtil.snapTo8Cardinals(next, x, y);
-							int ad = a.manhattanDistanceTo(to);
-							int bd = b.manhattanDistanceTo(to);
-							r = ad < bd ? a : b;
-						}
-					} else r = new Location(x, y);
-					ret[i] = new Handle(this, r);
-				} else ret[i] = h;
+		List<Handle> hs = handles;
+		if (gesture == null)
+			return handles;
+
+		Handle g = gesture.getHandle();
+		Handle[] ret = new Handle[hs.size()];
+		for (int i = 0, n = hs.size(); i < n; i++) {
+			Handle h = hs.get(i);
+			if (!h.equals(g)) {
+				ret[i] = h;
+				continue;
 			}
-			return UnmodifiableList.create(ret);
+
+			Location to = h.getLocation().add(gesture.getDelta());
+			if (!gesture.isShiftDown()) {
+				ret[i] = new Handle(this, to);
+				continue;
+			}
+
+			Location prev = hs.get((i + n - 1) % n).getLocation();
+			Location next = hs.get((i + 1) % n).getLocation();
+			if (!closed) {
+				if (i == 0)
+					prev = null;
+				if (i == n - 1)
+					next = null;
+			}
+			if (prev == null)
+				to = LineUtil.snapTo8Cardinals(next, to);
+			else if (next == null)
+				to = LineUtil.snapTo8Cardinals(prev, to);
+			else {
+				Location a = LineUtil.snapTo8Cardinals(prev, to);
+				Location b = LineUtil.snapTo8Cardinals(next, to);
+				to = a.manhattanDistanceTo(to) < b.manhattanDistanceTo(to) ? a : b;
+			}
+			ret[i] = new Handle(this, to);
 		}
+		return UnmodifiableList.create(ret);
 	}
 
 	@Override
@@ -206,14 +198,7 @@ public class Poly extends FillableCanvasObject {
 
 	@Override
 	public Handle moveHandle(HandleGesture gesture) {
-		List<Handle> hs = getHandles(gesture);
-		Handle[] is = new Handle[hs.size()];
-		int i = -1;
-		for (Handle h : hs) {
-			i++;
-			is[i] = h;
-		}
-		setHandles(is);
+		setHandles(getHandles(gesture).stream().toList());
 		return null;
 	}
 
@@ -221,73 +206,40 @@ public class Poly extends FillableCanvasObject {
 	public Handle canInsertHandle(Location loc) {
 		ClosestResult result = PolyUtil.getClosestPoint(loc, closed, handles);
 		int thresh = Math.max(Line.ON_LINE_THRESH, getStrokeWidth() / 2);
-		if (result.getDistanceSq() < thresh * thresh) {
-			Location resLoc = result.getLocation();
-			if (result.getPreviousHandle().isAt(resLoc) || result.getNextHandle().isAt(resLoc)) return null;
-			else return new Handle(this, result.getLocation());
-		} else return null;
+		if (!(result.getDistanceSq() < thresh * thresh))
+			return null;
+		Location resLoc = result.getLocation();
+		return result.getPreviousHandle().isAt(resLoc) || result.getNextHandle().isAt(resLoc)
+				? null : new Handle(this, result.getLocation());
 	}
 
 	@Override
 	public Handle canDeleteHandle(Location loc) {
 		int minHandles = closed ? 3 : 2;
-		Handle[] hs = handles;
-		if (hs.length <= minHandles) return null;
+		if (handles.size() <= minHandles)
+			return null;
 
-		int qx = loc.x();
-		int qy = loc.y();
 		int w = Math.max(Line.ON_LINE_THRESH, getStrokeWidth() / 2);
-		for (Handle h : hs) {
-			int hx = h.getX();
-			int hy = h.getY();
-			if (LineUtil.distance(qx, qy, hx, hy) < w * w)
-				return h;
-		}
-		return null;
+		return handles.stream().filter(h->LineUtil.distance(loc, h.location) < w * w).findAny().orElse(null);
 	}
 
 	@Override
 	public void insertHandle(Handle desired, Handle previous) {
-		Location loc = desired.getLocation();
-		Handle[] hs = handles;
-		Handle prev;
-		if (previous == null) {
-			ClosestResult result = PolyUtil.getClosestPoint(loc, closed, hs);
-			prev = result.getPreviousHandle();
-		} else prev = previous;
-		Handle[] is = new Handle[hs.length + 1];
-		boolean inserted = false;
-		for (int i = 0; i < hs.length; i++)
-			if (inserted) is[i + 1] = hs[i];
-			else if (hs[i].equals(prev)) {
-				inserted = true;
-				is[i] = hs[i];
-				is[i + 1] = desired;
-			}
-			else is[i] = hs[i];
-		if (!inserted) throw new IllegalArgumentException("no such handle");
-		setHandles(is);
+		if (previous == null)
+			previous = PolyUtil.getClosestPoint(desired.getLocation(), closed, handles).getPreviousHandle();
+		int index = handles.indexOf(previous);
+		if(index == -1)
+			throw new IllegalArgumentException("no such handle");
+		handles.add(index, desired);
+		setHandles(handles);
 	}
 
 	@Override
 	public Handle deleteHandle(Handle handle) {
-		Handle[] hs = handles;
-		int n = hs.length;
-		Handle[] is = new Handle[n - 1];
-		Handle previous = null;
-		boolean deleted = false;
-		for (int i = 0; i < n; i++)
-			if (deleted) is[i - 1] = hs[i];
-			else if (hs[i].equals(handle)) {
-				if (previous == null) previous = hs[n - 1];
-				deleted = true;
-			}
-			else {
-				previous = hs[i];
-				is[i] = hs[i];
-			}
-		setHandles(is);
-		return previous;
+		int previous = handles.indexOf(handle) - 1;
+		handles.remove(handle);
+		setHandles(handles);
+		return handles.get(previous);
 	}
 
 	@Override
@@ -302,14 +254,17 @@ public class Poly extends FillableCanvasObject {
 			ys[i] = h.getY();
 		}
 
-		if (setForFill(g)) g.fillPolygon(xs, ys, xs.length);
-		if (setForStroke(g)) if (closed)
-			g.drawPolygon(xs, ys, xs.length);
-		else
-			g.drawPolyline(xs, ys, xs.length);
+		if (setForFill(g))
+			g.fillPolygon(xs, ys, xs.length);
+		if (setForStroke(g)) {
+			if (closed)
+				g.drawPolygon(xs, ys, xs.length);
+			else
+				g.drawPolyline(xs, ys, xs.length);
+		}
 	}
 
-	private void setHandles(Handle[] hs) {
+	private void setHandles(List<Handle> hs) {
 		handles = hs;
 		lens = null;
 		path = null;
@@ -317,14 +272,14 @@ public class Poly extends FillableCanvasObject {
 	}
 
 	private void recomputeBounds() {
-		Handle[] hs = handles;
-		int x0 = hs[0].getX();
-		int y0 = hs[0].getY();
+		List<Handle> hs = handles;
+		int x0 = hs.getFirst().getX();
+		int y0 = hs.getFirst().getY();
 		int x1 = x0;
 		int y1 = y0;
-		for (int i = 1; i < hs.length; i++) {
-			int x = hs[i].getX();
-			int y = hs[i].getY();
+		for (int i = 1; i < hs.size(); i++) {
+			int x = hs.get(i).getX();
+			int y = hs.get(i).getY();
 			if (x < x0)
 				x0 = x;
 			if (x > x1)
@@ -340,21 +295,15 @@ public class Poly extends FillableCanvasObject {
 	}
 
 	private GeneralPath getPath() {
-		GeneralPath p = path;
-		if (p == null) {
-			p = new GeneralPath();
-			Handle[] hs = handles;
-			if (hs.length > 0) {
-				boolean first = true;
-				for (Handle h : hs)
-					if (first) {
-						p.moveTo(h.getX(), h.getY());
-						first = false;
-					}
-					else p.lineTo(h.getX(), h.getY());
-			}
-			path = p;
-		}
-		return p;
+		if (path != null)
+			return path;
+		path = new GeneralPath();
+		if (handles.isEmpty())
+			return path;
+
+		Handle first = handles.getFirst();
+		path.moveTo(first.getX(), first.getY());
+		handles.stream().skip(1).forEach(h -> path.lineTo(h.getX(), h.getY()));
+		return path;
 	}
 }

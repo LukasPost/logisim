@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 import logisim.util.JFileChoosers;
 import logisim.util.StringUtil;
 
@@ -29,7 +29,7 @@ class FilePanel extends LogPanel {
 		public void selectionChanged(ModelEvent event) {
 		}
 
-		public void entryAdded(ModelEvent event, Value[] values) {
+		public void entryAdded(ModelEvent event, WireValue[] values) {
 		}
 
 		public void filePropertyChanged(ModelEvent event) {

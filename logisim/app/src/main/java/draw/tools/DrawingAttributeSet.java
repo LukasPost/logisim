@@ -3,7 +3,7 @@
 
 package draw.tools;
 
-import draw.model.CanvasObject;
+import draw.gui.SelectionAttributes.AttributeWithValue;
 import draw.model.AbstractCanvasObject;
 import draw.shapes.DrawAttr;
 import logisim.data.AbstractAttributeSet;
@@ -15,19 +15,21 @@ import logisim.util.EventSourceWeakSupport;
 import logisim.util.UnmodifiableList;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class DrawingAttributeSet implements AttributeSet, Cloneable {
-	static final List<Attribute<?>> ATTRS_ALL = UnmodifiableList
-			.create(new Attribute<?>[] { DrawAttr.FONT, DrawAttr.ALIGNMENT, DrawAttr.PAINT_TYPE, DrawAttr.STROKE_WIDTH,
-					DrawAttr.STROKE_COLOR, DrawAttr.FILL_COLOR, DrawAttr.TEXT_DEFAULT_FILL, DrawAttr.CORNER_RADIUS });
-	static final List<Object> DEFAULTS_ALL = Arrays.asList(DrawAttr.DEFAULT_FONT, DrawAttr.ALIGN_CENTER,
-			DrawAttr.PAINT_STROKE, 1, Color.BLACK, Color.WHITE, Color.BLACK, 10);
+	static final List<AttributeWithValue> ATTRS_ALL = UnmodifiableList
+			.create(new AttributeWithValue[] {
+					new AttributeWithValue(DrawAttr.FONT, DrawAttr.DEFAULT_FONT),
+					new AttributeWithValue(DrawAttr.ALIGNMENT, DrawAttr.ALIGN_CENTER),
+					new AttributeWithValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_STROKE),
+					new AttributeWithValue(DrawAttr.STROKE_WIDTH, 1),
+					new AttributeWithValue(DrawAttr.STROKE_COLOR, Color.BLACK),
+					new AttributeWithValue(DrawAttr.FILL_COLOR, Color.WHITE),
+					new AttributeWithValue(DrawAttr.TEXT_DEFAULT_FILL, Color.BLACK),
+					new AttributeWithValue(DrawAttr.CORNER_RADIUS, 10)
+			});
 
 	private class Restriction extends AbstractAttributeSet implements AttributeListener {
 		private AbstractTool tool;
@@ -40,15 +42,13 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
 		}
 
 		private void updateAttributes() {
-			List<Attribute<?>> toolAttrs;
-			if (tool == null) toolAttrs = Collections.emptyList();
-			else toolAttrs = tool.getAttributes();
-			if (!toolAttrs.equals(selectedAttrs)) {
-				selectedAttrs = new ArrayList<>(toolAttrs);
-				selectedView = Collections.unmodifiableList(selectedAttrs);
-				DrawingAttributeSet.this.addAttributeListener(this);
-				fireAttributeListChanged();
-			}
+			List<Attribute<?>> toolAttrs = tool == null ? Collections.emptyList() : tool.getAttributes();
+			if (toolAttrs.equals(selectedAttrs))
+				return;
+			selectedAttrs = new ArrayList<>(toolAttrs);
+			selectedView = Collections.unmodifiableList(selectedAttrs);
+			DrawingAttributeSet.this.addAttributeListener(this);
+			fireAttributeListChanged();
 		}
 
 		@Override
@@ -90,13 +90,11 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
 	}
 
 	private EventSourceWeakSupport<AttributeListener> listeners;
-	private List<Attribute<?>> attrs;
-	private List<Object> values;
+	private List<AttributeWithValue> attrs;
 
 	public DrawingAttributeSet() {
 		listeners = new EventSourceWeakSupport<>();
 		attrs = ATTRS_ALL;
-		values = DEFAULTS_ALL;
 	}
 
 	public AttributeSet createSubset(AbstractTool tool) {
@@ -116,7 +114,7 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
 		try {
 			DrawingAttributeSet ret = (DrawingAttributeSet) super.clone();
 			ret.listeners = new EventSourceWeakSupport<>();
-			ret.values = new ArrayList<>(values);
+			ret.attrs = new ArrayList<>(attrs);
 			return ret;
 		}
 		catch (CloneNotSupportedException e) {
@@ -125,18 +123,19 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
 	}
 
 	public List<Attribute<?>> getAttributes() {
-		return attrs;
+		return attrs.stream().map(a-> a.attr).collect(Collectors.toList());
 	}
 
 	public boolean containsAttribute(Attribute<?> attr) {
-		return attrs.contains(attr);
+		return attrs.stream().anyMatch(a->a.attr.equals(attr));
 	}
 
 	public Attribute<?> getAttribute(String name) {
-		for (Attribute<?> attr : attrs)
-			if (attr.getName().equals(name))
-				return attr;
-		return null;
+		return attrs.stream()
+				.filter(attr -> attr.attr.getName().equals(name))
+				.findFirst()
+				.map(attr -> attr.attr)
+				.orElse(null);
 	}
 
 	public boolean isReadOnly(Attribute<?> attr) {
@@ -152,52 +151,40 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
 	}
 
 	public <V> V getValue(Attribute<V> attr) {
-		Iterator<Attribute<?>> ait = attrs.iterator();
-		Iterator<Object> vit = values.iterator();
-		while (ait.hasNext()) {
-			Object a = ait.next();
-			Object v = vit.next();
-			if (a.equals(attr)) {
-				@SuppressWarnings("unchecked")
-				V ret = (V) v;
-				return ret;
-			}
-		}
-		return null;
+		return attrs.stream()
+				.filter(awv -> awv.attr.equals(attr))
+				.findFirst()
+				.map(a -> (V) a.value)
+				.orElse(null);
 	}
 
 	public <V> void setValue(Attribute<V> attr, V value) {
-		Iterator<Attribute<?>> ait = attrs.iterator();
-		ListIterator<Object> vit = values.listIterator();
-		while (ait.hasNext()) {
-			Object a = ait.next();
-			vit.next();
-			if (a.equals(attr)) {
-				vit.set(value);
-				AttributeEvent e = new AttributeEvent(this, attr, value);
-				for (AttributeListener listener : listeners) listener.attributeValueChanged(e);
-				if (attr == DrawAttr.PAINT_TYPE) {
-					e = new AttributeEvent(this);
-					for (AttributeListener listener : listeners) listener.attributeListChanged(e);
-				}
-				return;
-			}
+		Optional<AttributeWithValue> tochange = attrs.stream()
+				.filter(awv -> awv.attr.equals(attr))
+				.findFirst();
+		if (tochange.isEmpty())
+			throw new IllegalArgumentException(attr.toString());
+
+		tochange.get().value = value;
+		AttributeEvent e = new AttributeEvent(this, attr, value);
+		listeners.forEach(l->l.attributeValueChanged(e));
+		if (attr == DrawAttr.PAINT_TYPE) {
+			AttributeEvent e2 = new AttributeEvent(this);
+			listeners.forEach(l->l.attributeListChanged(e2));
 		}
-		throw new IllegalArgumentException(attr.toString());
 	}
 
-	public <E extends CanvasObject> E applyTo(E drawable) {
-		AbstractCanvasObject d = (AbstractCanvasObject) drawable;
+	public <E extends AbstractCanvasObject> E applyTo(E drawable) {
 		// use a for(i...) loop since the attribute list may change as we go on
-		for (int i = 0; i < d.getAttributes().size(); i++) {
-			Attribute<?> attr = d.getAttributes().get(i);
+		for (int i = 0; i < drawable.getAttributes().size(); i++) {
+			Attribute<?> attr = drawable.getAttributes().get(i);
 			@SuppressWarnings("unchecked")
 			Attribute<Object> a = (Attribute<Object>) attr;
 			if (attr == DrawAttr.FILL_COLOR && containsAttribute(DrawAttr.TEXT_DEFAULT_FILL))
-				d.setValue(a, getValue(DrawAttr.TEXT_DEFAULT_FILL));
+				drawable.setValue(a, getValue(DrawAttr.TEXT_DEFAULT_FILL));
 			else if (containsAttribute(a)) {
 				Object value = getValue(a);
-				d.setValue(a, value);
+				drawable.setValue(a, value);
 			}
 		}
 		return drawable;

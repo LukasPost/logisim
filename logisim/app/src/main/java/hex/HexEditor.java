@@ -162,10 +162,11 @@ public class HexEditor extends JComponent implements Scrollable {
 		int retLen = ret.length();
 		if (retLen < chars) {
 			ret.insert(0, "0");
-			for (int i = retLen + 1; i < chars; i++) ret.insert(0, "0");
+			for (int i = retLen + 1; i < chars; i++)
+				ret.insert(0, "0");
 			return ret.toString();
-		} else if (retLen == chars) return ret.toString();
-		else return ret.substring(retLen - chars);
+		}
+		return retLen == chars ? ret.toString() : ret.substring(retLen - chars);
 	}
 
 	//
@@ -201,30 +202,24 @@ public class HexEditor extends JComponent implements Scrollable {
 	}
 
 	public int getScrollableUnitIncrement(Rectangle vis, int orientation, int direction) {
-		if (orientation == SwingConstants.VERTICAL) {
-			int ret = measures.getCellHeight();
-			if (ret < 1) {
-				measures.recompute();
-				ret = measures.getCellHeight();
-				if (ret < 1)
-					return 1;
-			}
+		if (orientation != SwingConstants.VERTICAL)
+			return Math.max(1, vis.width / 20);
+		int ret = measures.getCellHeight();
+		if (ret >= 1)
 			return ret;
-		} else return Math.max(1, vis.width / 20);
+		measures.recompute();
+		return Math.max(measures.getCellHeight(), 1);
 	}
 
 	public int getScrollableBlockIncrement(Rectangle vis, int orientation, int direction) {
-		if (orientation == SwingConstants.VERTICAL) {
-			int height = measures.getCellHeight();
-			if (height < 1) {
-				measures.recompute();
-				height = measures.getCellHeight();
-				if (height < 1)
-					return 19 * vis.height / 20;
-			}
-			int lines = Math.max(1, (vis.height / height) - 1);
-			return lines * height;
-		} else return 19 * vis.width / 20;
+		if (orientation != SwingConstants.VERTICAL)
+			return 19 * vis.width / 20;
+		int height = measures.getCellHeight();
+		if (height >= 1)
+			return Math.max(1, (vis.height / height) - 1) * height;
+		measures.recompute();
+		height = measures.getCellHeight();
+		return height < 1 ? 19 * vis.height / 20 : Math.max(1, (vis.height / height) - 1) * height;
 	}
 
 	public boolean getScrollableTracksViewportWidth() {

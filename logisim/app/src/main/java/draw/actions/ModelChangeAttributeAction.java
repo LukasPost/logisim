@@ -51,8 +51,7 @@ public class ModelChangeAttributeAction extends ModelAction {
 			}
 			attr = a;
 		}
-		if (a == null) return Strings.get("actionChangeAttributes");
-		else return Strings.get("actionChangeAttribute", a.getDisplayName());
+		return a == null ? Strings.get("actionChangeAttributes") : Strings.get("actionChangeAttribute", a.getDisplayName());
 	}
 
 	@Override

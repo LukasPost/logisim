@@ -25,7 +25,7 @@ import logisim.data.Attribute;
 import logisim.data.AttributeSet;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValues;
 import logisim.gui.main.Canvas;
 import logisim.gui.main.Selection;
 import logisim.gui.main.SelectionActions;
@@ -141,7 +141,7 @@ public class EditTool extends Tool {
 			int x = loc.x();
 			int y = loc.y();
 			Graphics g = context.getGraphics();
-			g.setColor(Value.TRUE_COLOR);
+			g.setColor(WireValues.Companion.getTRUE_COLOR());
 			GraphicsUtil.switchToWidth(g, 2);
 			g.drawOval(x - 5, y - 5, 10, 10);
 			g.setColor(Color.BLACK);

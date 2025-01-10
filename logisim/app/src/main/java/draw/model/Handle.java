@@ -7,50 +7,46 @@ import logisim.data.Location;
 
 public class Handle {
 	private CanvasObject object;
-	private int x;
-	private int y;
+	public Location location;
 
 	public Handle(CanvasObject object, int x, int y) {
 		this.object = object;
-		this.x = x;
-		this.y = y;
+		location = new Location(x, y);
 	}
-
 	public Handle(CanvasObject object, Location loc) {
-		this(object, loc.x(), loc.y());
+		this.object = object;
+		location = loc;
 	}
 
 	public CanvasObject getObject() {
 		return object;
 	}
 
-	public int getX() {
-		return x;
-	}
+	public int getX() { return location.x(); }
 
 	public int getY() {
-		return y;
+		return location.y();
 	}
 
 	public Location getLocation() {
-		return new Location(x, y);
+		return location;
 	}
 
 	public boolean isAt(Location loc) {
-		return x == loc.x() && y == loc.y();
+		return location.equals(loc);
 	}
 
 	public boolean isAt(int xq, int yq) {
-		return x == xq && y == yq;
+		return new Location(xq, yq).equals(location);
 	}
 
 	@Override
 	public boolean equals(Object other) {
-		return other instanceof Handle that && object.equals(that.object) && x == that.x && y == that.y;
+		return other instanceof Handle that && object.equals(that.object) && location.equals(that.location);
 	}
 
 	@Override
 	public int hashCode() {
-		return (object.hashCode() * 31 + x) * 31 + y;
+		return (object.hashCode() * 31 + location.x()) * 31 + location.y();
 	}
 }

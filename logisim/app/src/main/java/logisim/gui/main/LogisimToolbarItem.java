@@ -4,7 +4,6 @@
 package logisim.gui.main;
 
 import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
 import java.awt.Dimension;
@@ -14,6 +13,7 @@ import java.awt.Graphics2D;
 import javax.swing.Icon;
 
 import draw.toolbar.ToolbarItem;
+import draw.tools.ToolbarToolItem;
 import logisim.gui.menu.LogisimMenuItem;
 import logisim.util.Icons;
 import logisim.util.StringGetter;
@@ -54,12 +54,7 @@ class LogisimToolbarItem implements ToolbarItem {
 		}
 
 		if (icon == null) {
-			g.setColor(new Color(255, 128, 128));
-			g.fillRect(4, 4, 8, 8);
-			g.setColor(Color.BLACK);
-			g.drawLine(4, 4, 12, 12);
-			g.drawLine(4, 12, 12, 4);
-			g.drawRect(4, 4, 8, 8);
+			ToolbarToolItem.drawErrorIcon(g);
 		} else icon.paintIcon(destination, g, 0, 1);
 	}
 

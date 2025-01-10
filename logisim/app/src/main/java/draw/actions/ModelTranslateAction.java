@@ -10,17 +10,16 @@ import java.util.HashSet;
 import draw.model.CanvasModel;
 import draw.model.CanvasObject;
 import draw.undo.Action;
+import logisim.data.Location;
 
 public class ModelTranslateAction extends ModelAction {
 	private HashSet<CanvasObject> moved;
-	private int dx;
-	private int dy;
+	private Location dLocation;
 
-	public ModelTranslateAction(CanvasModel model, Collection<CanvasObject> moved, int dx, int dy) {
+	public ModelTranslateAction(CanvasModel model, Collection<CanvasObject> moved, Location dLocation) {
 		super(model);
 		this.moved = new HashSet<>(moved);
-		this.dx = dx;
-		this.dy = dy;
+		this.dLocation = dLocation;
 	}
 
 	@Override
@@ -35,12 +34,12 @@ public class ModelTranslateAction extends ModelAction {
 
 	@Override
 	void doSub(CanvasModel model) {
-		model.translateObjects(moved, dx, dy);
+		model.translateObjects(moved, dLocation.x(), dLocation.y());
 	}
 
 	@Override
 	void undoSub(CanvasModel model) {
-		model.translateObjects(moved, -dx, -dy);
+		model.translateObjects(moved, -dLocation.x(), -dLocation.y());
 	}
 
 	@Override
@@ -50,8 +49,8 @@ public class ModelTranslateAction extends ModelAction {
 
 	@Override
 	public Action append(Action other) {
-		if (other instanceof ModelTranslateAction o)
-			if (moved.equals(o.moved)) return new ModelTranslateAction(getModel(), moved, dx + o.dx, dy + o.dy);
-		return super.append(other);
+		return other instanceof ModelTranslateAction o && moved.equals(o.moved)
+				? new ModelTranslateAction(getModel(), moved, dLocation.add(o.dLocation))
+				: super.append(other);
 	}
 }

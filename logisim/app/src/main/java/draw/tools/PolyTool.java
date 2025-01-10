@@ -16,7 +16,6 @@ import javax.swing.Icon;
 
 import draw.actions.ModelAddAction;
 import draw.canvas.Canvas;
-import draw.model.CanvasModel;
 import draw.model.CanvasObject;
 import draw.shapes.DrawAttr;
 import draw.shapes.LineUtil;
@@ -46,8 +45,7 @@ public class PolyTool extends AbstractTool {
 
 	@Override
 	public Icon getIcon() {
-		if (closed) return Icons.getIcon("drawpoly.gif");
-		else return Icons.getIcon("drawplin.gif");
+		return Icons.getIcon(closed ? "drawpoly.gif" : "drawplin.gif");
 	}
 
 	@Override
@@ -69,14 +67,12 @@ public class PolyTool extends AbstractTool {
 
 	@Override
 	public void mousePressed(Canvas canvas, MouseEvent e) {
-		int mx = e.getX();
-		int my = e.getY();
-		lastMouseX = mx;
-		lastMouseY = my;
+		lastMouseX = e.getX();
+		lastMouseY = e.getY();
 		int mods = e.getModifiersEx();
 		if ((mods & InputEvent.CTRL_DOWN_MASK) != 0) {
-			mx = canvas.snapX(mx);
-			my = canvas.snapY(my);
+			lastMouseX = canvas.snapX(lastMouseX);
+			lastMouseY = canvas.snapY(lastMouseY);
 		}
 
 		if (active && e.getClickCount() > 1) {
@@ -85,7 +81,7 @@ public class PolyTool extends AbstractTool {
 			return;
 		}
 
-		Location loc = new Location(mx, my);
+		Location loc = new Location(lastMouseX, lastMouseY);
 		ArrayList<Location> locs = locations;
 		if (!active) {
 			locs.clear();
@@ -105,19 +101,18 @@ public class PolyTool extends AbstractTool {
 
 	@Override
 	public void mouseReleased(Canvas canvas, MouseEvent e) {
-		if (active) {
-			updateMouse(canvas, e.getX(), e.getY(), e.getModifiersEx());
-			mouseDown = false;
-			int size = locations.size();
-			if (size >= 3) {
-				Location first = locations.getFirst();
-				Location last = locations.get(size - 1);
-				if (first.manhattanDistanceTo(last) <= CLOSE_TOLERANCE) {
-					locations.remove(size - 1);
-					CanvasObject add = commit(canvas);
-					canvas.toolGestureComplete(this, add);
-				}
-			}
+		if (!active)
+			return;
+		updateMouse(canvas, e.getX(), e.getY(), e.getModifiersEx());
+		mouseDown = false;
+		int size = locations.size();
+		if (size < 3)
+			return;
+
+		if (locations.getFirst().manhattanDistanceTo(locations.getLast()) <= CLOSE_TOLERANCE) {
+			locations.remove(size - 1);
+			CanvasObject add = commit(canvas);
+			canvas.toolGestureComplete(this, add);
 		}
 	}
 
@@ -135,17 +130,18 @@ public class PolyTool extends AbstractTool {
 
 	@Override
 	public void keyTyped(Canvas canvas, KeyEvent e) {
-		if (active) {
-			char ch = e.getKeyChar();
-			if (ch == '\u001b') { // escape key
-				active = false;
-				locations.clear();
-				repaintArea(canvas);
-				canvas.toolGestureComplete(this, null);
-			} else if (ch == '\n') { // enter key
-				CanvasObject add = commit(canvas);
-				canvas.toolGestureComplete(this, add);
-			}
+		if (!active)
+			return;
+
+		char ch = e.getKeyChar();
+		if (ch == '\u001b') { // escape key
+			active = false;
+			locations.clear();
+			repaintArea(canvas);
+			canvas.toolGestureComplete(this, null);
+		} else if (ch == '\n') { // enter key
+			CanvasObject add = commit(canvas);
+			canvas.toolGestureComplete(this, add);
 		}
 	}
 
@@ -159,9 +155,8 @@ public class PolyTool extends AbstractTool {
 			if (locs.get(i).equals(locs.get(i + 1)))
 				locs.remove(i);
 		if (locs.size() > 1) {
-			CanvasModel model = canvas.getModel();
 			add = new Poly(closed, locs);
-			canvas.doAction(new ModelAddAction(model, add));
+			canvas.doAction(new ModelAddAction(canvas.getModel(), add));
 			repaintArea(canvas);
 		}
 		locs.clear();
@@ -171,26 +166,19 @@ public class PolyTool extends AbstractTool {
 	private void updateMouse(Canvas canvas, int mx, int my, int mods) {
 		lastMouseX = mx;
 		lastMouseY = my;
-		if (active) {
-			int index = locations.size() - 1;
-			Location last = locations.get(index);
-			Location newLast;
-			if ((mods & MouseEvent.SHIFT_DOWN_MASK) != 0 && index > 0) {
-				Location nextLast = locations.get(index - 1);
-				newLast = LineUtil.snapTo8Cardinals(nextLast, mx, my);
-			} else newLast = new Location(mx, my);
-			if ((mods & MouseEvent.CTRL_DOWN_MASK) != 0) {
-				int lastX = newLast.x();
-				int lastY = newLast.y();
-				lastX = canvas.snapX(lastX);
-				lastY = canvas.snapY(lastY);
-				newLast = new Location(lastX, lastY);
-			}
+		if (!active)
+			return;
 
-			if (!newLast.equals(last)) {
-				locations.set(index, newLast);
-				repaintArea(canvas);
-			}
+		int index = locations.size() - 1;
+		Location last = locations.getLast();
+		Location newLast = (mods & MouseEvent.SHIFT_DOWN_MASK) != 0 && index > 0
+				? LineUtil.snapTo8Cardinals(last, mx, my) : new Location(mx, my);
+		if ((mods & MouseEvent.CTRL_DOWN_MASK) != 0)
+			newLast=canvas.snapXY(newLast);
+
+		if (!newLast.equals(last)) {
+			locations.set(index, newLast);
+			repaintArea(canvas);
 		}
 	}
 
@@ -200,20 +188,21 @@ public class PolyTool extends AbstractTool {
 
 	@Override
 	public void draw(Canvas canvas, Graphics g) {
-		if (active) {
-			g.setColor(Color.GRAY);
-			int size = locations.size();
-			int[] xs = new int[size];
-			int[] ys = new int[size];
-			for (int i = 0; i < size; i++) {
-				Location loc = locations.get(i);
-				xs[i] = loc.x();
-				ys[i] = loc.y();
-			}
-			g.drawPolyline(xs, ys, size);
-			int lastX = xs[xs.length - 1];
-			int lastY = ys[ys.length - 1];
-			g.fillOval(lastX - 2, lastY - 2, 4, 4);
+		if (!active)
+			return;
+
+		g.setColor(Color.GRAY);
+		int size = locations.size();
+		int[] xs = new int[size];
+		int[] ys = new int[size];
+		for (int i = 0; i < size; i++) {
+			Location loc = locations.get(i);
+			xs[i] = loc.x();
+			ys[i] = loc.y();
 		}
+		g.drawPolyline(xs, ys, size);
+		int lastX = xs[xs.length - 1];
+		int lastY = ys[ys.length - 1];
+		g.fillOval(lastX - 2, lastY - 2, 4, 4);
 	}
 }

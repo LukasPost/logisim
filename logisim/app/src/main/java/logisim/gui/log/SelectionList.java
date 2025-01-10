@@ -10,7 +10,7 @@ import javax.swing.JList;
 import javax.swing.ListSelectionModel;
 
 import logisim.comp.Component;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 
 class SelectionList extends JList<SelectionItem> {
 	private class Model extends AbstractListModel<SelectionItem> implements ModelListener {
@@ -26,7 +26,7 @@ class SelectionList extends JList<SelectionItem> {
 			fireContentsChanged(this, 0, getSize());
 		}
 
-		public void entryAdded(ModelEvent event, Value[] values) {
+		public void entryAdded(ModelEvent event, WireValue[] values) {
 		}
 
 		public void filePropertyChanged(ModelEvent event) {

@@ -12,7 +12,8 @@ import logisim.comp.ComponentDrawContext;
 import logisim.comp.ComponentState;
 import logisim.data.BitWidth;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceData;
 import logisim.instance.InstanceFactory;
@@ -111,7 +112,7 @@ public class CircuitState implements InstanceData {
 
 	private State wireData;
 	private HashMap<Component, Object> componentData = new HashMap<>();
-	private Map<Location, Value> values = new HashMap<>();
+	private Map<Location, WireValue> values = new HashMap<>();
 	private ArrayList<Component> dirtyComponents = new ArrayList<>();
 	private ArrayList<Location> dirtyPoints = new ArrayList<>();
 	HashMap<Location, SetData> causes = new HashMap<>();
@@ -249,16 +250,16 @@ public class CircuitState implements InstanceData {
 		componentData.put(comp, data);
 	}
 
-	public Value getValue(Location pt) {
-		Value ret = values.get(pt);
+	public WireValue getValue(Location pt) {
+		WireValue ret = values.get(pt);
 		if (ret != null)
 			return ret;
 
 		BitWidth wid = circuit.getWidth(pt);
-		return Value.createUnknown(wid);
+		return WireValue.Companion.createUnknown(wid);
 	}
 
-	public void setValue(Location pt, Value val, Component cause, int delay) {
+	public void setValue(Location pt, WireValue val, Component cause, int delay) {
 		if (base != null)
 			base.setValue(this, pt, val, cause, delay);
 	}
@@ -383,22 +384,22 @@ public class CircuitState implements InstanceData {
 		wireData = data;
 	}
 
-	Value getComponentOutputAt(Location p) {
+	WireValue getComponentOutputAt(Location p) {
 		// for CircuitWires - to get values, ignoring wires' contributions
 		SetData cause_list = causes.get(p);
 		return Propagator.computeValue(cause_list);
 	}
 
-	Value getValueByWire(Location p) {
+	WireValue getValueByWire(Location p) {
 		return values.get(p);
 	}
 
-	void setValueByWire(Location p, Value v) {
+	void setValueByWire(Location p, WireValue v) {
 		// for CircuitWires - to set value at point
 		boolean changed;
-		if (v == Value.NIL) {
+		if (v == WireValues.NIL) {
 			Object old = values.remove(p);
-			changed = (old != null && old != Value.NIL);
+			changed = (old != null && old != WireValues.NIL);
 		} else {
 			Object old = values.put(p, v);
 			changed = !v.equals(old);

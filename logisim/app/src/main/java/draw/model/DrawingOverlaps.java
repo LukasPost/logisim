@@ -23,10 +23,8 @@ class DrawingOverlaps {
 
 	public Collection<CanvasObject> getObjectsOverlapping(CanvasObject o) {
 		ensureUpdated();
-
 		List<CanvasObject> ret = map.get(o);
-		if (ret == null || ret.isEmpty()) return Collections.emptyList();
-		else return Collections.unmodifiableList(ret);
+		return ret == null || ret.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(ret);
 	}
 
 	private void ensureUpdated() {
@@ -44,7 +42,8 @@ class DrawingOverlaps {
 
 	private void addOverlap(CanvasObject a, CanvasObject b) {
 		List<CanvasObject> alist = map.computeIfAbsent(a, k -> new ArrayList<>());
-		if (!alist.contains(b)) alist.add(b);
+		if (!alist.contains(b))
+			alist.add(b);
 	}
 
 	public void addShape(CanvasObject shape) {
@@ -54,9 +53,11 @@ class DrawingOverlaps {
 	public void removeShape(CanvasObject shape) {
 		untested.remove(shape);
 		List<CanvasObject> mapped = map.remove(shape);
-		if (mapped != null) for (CanvasObject o : mapped) {
+		if (mapped != null)
+			for (CanvasObject o : mapped) {
 			List<CanvasObject> reverse = map.get(o);
-			if (reverse != null) reverse.remove(shape);
+			if (reverse != null)
+				reverse.remove(shape);
 		}
 	}
 

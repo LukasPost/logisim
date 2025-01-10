@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 import logisim.instance.InstancePainter;
 import logisim.util.GraphicsUtil;
 
@@ -184,8 +184,7 @@ public class PainterShaped {
 		if (painter.getInstance() == null) for (int i = 0; i < inputs; i++) {
 			boolean iNegated = ((negated >> i) & 1) == 1;
 			if (iNegated) {
-				Location offs = factory.getInputOffset(attrs, i);
-				Location loci = loc.translate(offs.x(), offs.y());
+				Location loci = loc.add(factory.getInputOffset(attrs, i));
 				Location cent = loci.translate(facing, lengths[i] + 5);
 				painter.drawDongle(cent.x(), cent.y());
 			}
@@ -195,12 +194,11 @@ public class PainterShaped {
 			Color baseColor = g.getColor();
 			GraphicsUtil.switchToWidth(g, 3);
 			for (int i = 0; i < inputs; i++) {
-				Location offs = factory.getInputOffset(attrs, i);
-				Location src = loc.translate(offs.x(), offs.y());
+				Location src = loc.add(factory.getInputOffset(attrs, i));
 				int len = lengths[i];
 				if (len != 0 && (!printView || painter.isPortConnected(i + 1))) {
 					if (painter.getShowState()) {
-						Value val = painter.getPort(i + 1);
+						WireValue val = painter.getPort(i + 1);
 						g.setColor(val.getColor());
 					} else g.setColor(baseColor);
 					Location dst = src.translate(facing, len);

@@ -3,7 +3,8 @@
 
 package logisim.std.memory;
 
-import logisim.data.Value;
+
+import logisim.data.WireValue.WireValue;
 
 public class DFlipFlop extends AbstractFlipFlop {
 	public DFlipFlop() {
@@ -16,7 +17,7 @@ public class DFlipFlop extends AbstractFlipFlop {
 	}
 
 	@Override
-	protected Value computeValue(Value[] inputs, Value curValue) {
+	protected WireValue computeValue(WireValue[] inputs, WireValue curValue) {
 		return inputs[0];
 	}
 }

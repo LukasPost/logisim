@@ -20,7 +20,8 @@ import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -45,7 +46,7 @@ public class Constant extends InstanceFactory {
 	private static class ConstantAttributes extends AbstractAttributeSet {
 		private Direction facing = Direction.East;
 		private BitWidth width = BitWidth.ONE;
-		private Value value = Value.TRUE;
+		private WireValue value = WireValues.TRUE;
 
 		@Override
 		protected void copyInto(AbstractAttributeSet destObj) {
@@ -80,7 +81,7 @@ public class Constant extends InstanceFactory {
 				this.value = this.value.extendWidth(width.getWidth(), this.value.get(this.value.getWidth() - 1));
 			} else if (attr == ATTR_VALUE) {
 				int val = (Integer) value;
-				this.value = Value.createKnown(width, val);
+				this.value = WireValue.Companion.createKnown(width, val);
 			} else throw new IllegalArgumentException("unknown attribute " + attr);
 			fireAttributeValueChanged(attr, value);
 		}
@@ -144,7 +145,7 @@ public class Constant extends InstanceFactory {
 	public void propagate(InstanceState state) {
 		BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
 		int value = state.getAttributeValue(ATTR_VALUE);
-		state.setPort(0, Value.createKnown(width, value), 1);
+		state.setPort(0, WireValue.Companion.createKnown(width, value), 1);
 	}
 
 	@Override
@@ -221,7 +222,7 @@ public class Constant extends InstanceFactory {
 		Graphics g = painter.getGraphics();
 		if (w == 1) {
 			int v = painter.getAttributeValue(ATTR_VALUE);
-			Value val = v == 1 ? Value.TRUE : Value.FALSE;
+			WireValue val = v == 1 ? WireValues.TRUE : WireValues.FALSE;
 			g.setColor(val.getColor());
 			GraphicsUtil.drawCenteredText(g, "" + v, 10, 9);
 		} else {
@@ -248,7 +249,7 @@ public class Constant extends InstanceFactory {
 		Bounds bds = painter.getOffsetBounds();
 		BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
 		int intValue = painter.getAttributeValue(ATTR_VALUE);
-		Value v = Value.createKnown(width, intValue);
+		WireValue v = WireValue.Companion.createKnown(width, intValue);
 		Location loc = painter.getLocation();
 		int x = loc.x();
 		int y = loc.y();

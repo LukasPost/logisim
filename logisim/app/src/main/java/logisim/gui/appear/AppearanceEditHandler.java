@@ -5,10 +5,7 @@ package logisim.gui.appear;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import draw.actions.ModelDeleteHandleAction;
@@ -23,7 +20,6 @@ import draw.model.CanvasModelEvent;
 import draw.model.CanvasModelListener;
 import draw.model.CanvasObject;
 import draw.model.Handle;
-import draw.util.MatchingSet;
 import draw.util.ZOrder;
 import logisim.circuit.Circuit;
 import logisim.circuit.appear.AppearanceAnchor;
@@ -134,7 +130,7 @@ public class AppearanceEditHandler extends EditHandler
 		// find how far we have to translate shapes so that at least one of the
 		// pasted shapes doesn't match what's already in the model
 		Collection<CanvasObject> raw = canvas.getModel().getObjectsFromBottom();
-		MatchingSet<CanvasObject> cur = new MatchingSet<>(raw);
+		HashSet<CanvasObject> cur = new HashSet<>(raw);
 		int dx = 0;
 		while (true) {
 			// if any shapes in "add" aren't in canvas, we are done
@@ -148,12 +144,12 @@ public class AppearanceEditHandler extends EditHandler
 				break;
 
 			// otherwise translate everything by 10 pixels and repeat test
-			for (CanvasObject o : add) o.translate(10, 10);
+			for (CanvasObject o : add) o.translate(new Location(10,10));
 			dx += 10;
 		}
 
 		Location anchorLocation = clip.getAnchorLocation();
-		if (anchorLocation != null && dx != 0) anchorLocation = anchorLocation.translate(dx, dx);
+		if (anchorLocation != null && dx != 0) anchorLocation = anchorLocation.add(dx, dx);
 
 		canvas.getProject().doAction(new SelectionAction(canvas, Strings.getter("pasteClipboardAction"), null, add, add,
 				anchorLocation, clip.getAnchorFacing()));
@@ -191,7 +187,7 @@ public class AppearanceEditHandler extends EditHandler
 		for (CanvasObject o : sel.getSelected())
 			if (o.canRemove()) {
 				CanvasObject copy = o.clone();
-				copy.translate(10, 10);
+				copy.translate(new Location(10, 10));
 				clones.add(copy);
 				select.add(copy);
 			}

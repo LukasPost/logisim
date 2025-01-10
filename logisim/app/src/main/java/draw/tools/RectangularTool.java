@@ -11,7 +11,6 @@ import java.awt.event.MouseEvent;
 
 import draw.actions.ModelAddAction;
 import draw.canvas.Canvas;
-import draw.model.CanvasModel;
 import draw.model.CanvasObject;
 import logisim.data.Bounds;
 import logisim.data.Location;
@@ -49,12 +48,11 @@ abstract class RectangularTool extends AbstractTool {
 	@Override
 	public void mousePressed(Canvas canvas, MouseEvent e) {
 		Location loc = new Location(e.getX(), e.getY());
-		Bounds bds = Bounds.create(loc);
 		dragStart = loc;
 		lastMouseX = loc.x();
 		lastMouseY = loc.y();
 		active = canvas.getModel() != null;
-		repaintArea(canvas, bds);
+		repaintArea(canvas, Bounds.create(loc));
 	}
 
 	@Override
@@ -64,20 +62,20 @@ abstract class RectangularTool extends AbstractTool {
 
 	@Override
 	public void mouseReleased(Canvas canvas, MouseEvent e) {
-		if (active) {
-			Bounds oldBounds = currentBounds;
-			Bounds bds = computeBounds(canvas, e.getX(), e.getY(), e.getModifiersEx());
-			currentBounds = Bounds.EMPTY_BOUNDS;
-			active = false;
-			CanvasObject add = null;
-			if (bds.getWidth() != 0 && bds.getHeight() != 0) {
-				CanvasModel model = canvas.getModel();
-				add = createShape(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
-				canvas.doAction(new ModelAddAction(model, add));
-				repaintArea(canvas, oldBounds.add(bds));
-			}
-			canvas.toolGestureComplete(this, add);
+		if (!active)
+			return;
+
+		Bounds oldBounds = currentBounds;
+		Bounds bds = computeBounds(canvas, e.getX(), e.getY(), e.getModifiersEx());
+		currentBounds = Bounds.EMPTY_BOUNDS;
+		active = false;
+		CanvasObject add = null;
+		if (bds.getWidth() != 0 && bds.getHeight() != 0) {
+			add = createShape(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
+			canvas.doAction(new ModelAddAction(canvas.getModel(), add));
+			repaintArea(canvas, oldBounds.add(bds));
 		}
+		canvas.toolGestureComplete(this, add);
 	}
 
 	@Override
@@ -104,56 +102,44 @@ abstract class RectangularTool extends AbstractTool {
 	private Bounds computeBounds(Canvas canvas, int mx, int my, int mods) {
 		lastMouseX = mx;
 		lastMouseY = my;
-		if (!active) return Bounds.EMPTY_BOUNDS;
-		else {
-			Location start = dragStart;
-			int x0 = start.x();
-			int y0 = start.y();
-			int x1 = mx;
-			int y1 = my;
-			if (x0 == x1 && y0 == y1) return Bounds.EMPTY_BOUNDS;
+		Location mLoc = new Location(mx, my);
+		if (!active)
+			return Bounds.EMPTY_BOUNDS;
 
-			boolean ctrlDown = (mods & MouseEvent.CTRL_DOWN_MASK) != 0;
-			if (ctrlDown) {
-				x0 = canvas.snapX(x0);
-				y0 = canvas.snapY(y0);
-				x1 = canvas.snapX(x1);
-				y1 = canvas.snapY(y1);
-			}
+		Location start = dragStart;
+		if (mLoc.equals(start))
+			return Bounds.EMPTY_BOUNDS;
 
-			boolean altDown = (mods & MouseEvent.ALT_DOWN_MASK) != 0;
-			boolean shiftDown = (mods & MouseEvent.SHIFT_DOWN_MASK) != 0;
-			if (altDown) if (shiftDown) {
-				int r = Math.min(Math.abs(x0 - x1), Math.abs(y0 - y1));
-				x1 = x0 + r;
-				y1 = y0 + r;
-				x0 -= r;
-				y0 -= r;
-			}
-			else {
-				x0 = x0 - (x1 - x0);
-				y0 = y0 - (y1 - y0);
-			}
-			else if (shiftDown) {
-				int r = Math.min(Math.abs(x0 - x1), Math.abs(y0 - y1));
-				y1 = y1 < y0 ? y0 - r : y0 + r;
-				x1 = x1 < x0 ? x0 - r : x0 + r;
-			}
-
-			int x = x0;
-			int y = y0;
-			int w = x1 - x0;
-			int h = y1 - y0;
-			if (w < 0) {
-				x = x1;
-				w = -w;
-			}
-			if (h < 0) {
-				y = y1;
-				h = -h;
-			}
-			return Bounds.create(x, y, w, h);
+		boolean ctrlDown = (mods & MouseEvent.CTRL_DOWN_MASK) != 0;
+		if (ctrlDown) {
+			start = canvas.snapXY(start);
+			mLoc = canvas.snapXY(mLoc);
 		}
+
+		boolean altDown = (mods & MouseEvent.ALT_DOWN_MASK) != 0;
+		boolean shiftDown = (mods & MouseEvent.SHIFT_DOWN_MASK) != 0;
+		if (altDown) {
+			if (shiftDown) {
+				Location diff = start.sub(mLoc).abs();
+				int r = Math.min(diff.x(), diff.y());
+				mLoc = mLoc.add(r, r);
+				start = start.sub(r, r);
+			}
+			else
+				start = start.add(mLoc.sub(start));
+		}
+		else if (shiftDown) {
+			Location diff = start.sub(mLoc).abs();
+			int r = Math.min(diff.x(), diff.y());
+			int rx = mLoc.x() < start.x() ? -r : r;
+			int ry = mLoc.y() < start.y() ? -r : r;
+			mLoc = start.add(rx, ry);
+		}
+
+
+		Location loc = new Location(Math.max(start.x(), mLoc.x()), Math.max(start.y(), mLoc.y()));
+		Location size = mLoc.sub(start).abs();
+		return Bounds.create(loc, size.x(), size.y());
 	}
 
 	private void repaintArea(Canvas canvas, Bounds bds) {

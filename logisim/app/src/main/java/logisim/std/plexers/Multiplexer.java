@@ -13,7 +13,8 @@ import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -160,18 +161,18 @@ public class Multiplexer extends InstanceFactory {
 		BitWidth select = state.getAttributeValue(Plexers.ATTR_SELECT);
 		boolean enable = state.getAttributeValue(Plexers.ATTR_ENABLE);
 		int inputs = 1 << select.getWidth();
-		Value en = enable ? state.getPort(inputs + 1) : Value.TRUE;
-		Value out;
-		if (en == Value.FALSE) {
+		WireValue en = enable ? state.getPort(inputs + 1) : WireValues.TRUE;
+		WireValue out;
+		if (en == WireValues.FALSE) {
 			Object opt = state.getAttributeValue(Plexers.ATTR_DISABLED);
-			Value base = opt == Plexers.DISABLED_ZERO ? Value.FALSE : Value.UNKNOWN;
-			out = Value.repeat(base, data.getWidth());
-		} else if (en == Value.ERROR && state.isPortConnected(inputs + 1)) out = Value.createError(data);
+			WireValue base = opt == Plexers.DISABLED_ZERO ? WireValues.FALSE : WireValues.UNKNOWN;
+			out = WireValue.Companion.repeat(base, data.getWidth());
+		} else if (en == WireValues.ERROR && state.isPortConnected(inputs + 1)) out = WireValue.Companion.createError(data);
 		else {
-			Value sel = state.getPort(inputs);
+			WireValue sel = state.getPort(inputs);
 			if (sel.isFullyDefined()) out = state.getPort(sel.toIntValue());
-			else if (sel.isErrorValue()) out = Value.createError(data);
-			else out = Value.createUnknown(data);
+			else if (sel.isErrorValue()) out = WireValue.Companion.createError(data);
+			else out = WireValue.Companion.createUnknown(data);
 		}
 		state.setPort(inputs + (enable ? 2 : 1), out, Plexers.DELAY);
 	}
@@ -255,10 +256,10 @@ public class Multiplexer extends InstanceFactory {
 		// at bottom
 		// at top
 		if (bds.getHeight() >= bds.getWidth())
-			if (loc.y() < bds.getY() + bds.getHeight() / 2) circLoc = loc.translate(0, locDelta);
-			else circLoc = loc.translate(0, -locDelta);
-		else if (loc.x() < bds.getX() + bds.getWidth() / 2) circLoc = loc.translate(locDelta, 0);
-		else circLoc = loc.translate(-locDelta, 0);
+			if (loc.y() < bds.getY() + bds.getHeight() / 2) circLoc = loc.add(0, locDelta);
+			else circLoc = loc.add(0, -locDelta);
+		else if (loc.x() < bds.getX() + bds.getWidth() / 2) circLoc = loc.add(locDelta, 0);
+		else circLoc = loc.add(-locDelta, 0);
 		g.setColor(Color.LIGHT_GRAY);
 		g.fillOval(circLoc.x() - 3, circLoc.y() - 3, 6, 6);
 	}

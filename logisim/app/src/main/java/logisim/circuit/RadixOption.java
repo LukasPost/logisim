@@ -7,7 +7,7 @@ import logisim.data.Attribute;
 import logisim.data.AttributeOption;
 import logisim.data.Attributes;
 import logisim.data.BitWidth;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 import logisim.util.StringGetter;
 
 public abstract class RadixOption extends AttributeOption {
@@ -53,11 +53,11 @@ public abstract class RadixOption extends AttributeOption {
 		return saveName;
 	}
 
-	public abstract String toString(Value value);
+	public abstract String toString(WireValue value);
 
 	public abstract int getMaxLength(BitWidth width);
 
-	public int getMaxLength(Value value) {
+	public int getMaxLength(WireValue value) {
 		return getMaxLength(value.getBitWidth());
 	}
 
@@ -67,12 +67,12 @@ public abstract class RadixOption extends AttributeOption {
 		}
 
 		@Override
-		public String toString(Value value) {
+		public String toString(WireValue value) {
 			return value.toDisplayString(2);
 		}
 
 		@Override
-		public int getMaxLength(Value value) {
+		public int getMaxLength(WireValue value) {
 			return value.toDisplayString(2).length();
 		}
 
@@ -91,7 +91,7 @@ public abstract class RadixOption extends AttributeOption {
 		}
 
 		@Override
-		public String toString(Value value) {
+		public String toString(WireValue value) {
 			return value.toDecimalString(true);
 		}
 
@@ -119,7 +119,7 @@ public abstract class RadixOption extends AttributeOption {
 		}
 
 		@Override
-		public String toString(Value value) {
+		public String toString(WireValue value) {
 			return value.toDecimalString(false);
 		}
 
@@ -146,12 +146,12 @@ public abstract class RadixOption extends AttributeOption {
 		}
 
 		@Override
-		public String toString(Value value) {
+		public String toString(WireValue value) {
 			return value.toDisplayString(8);
 		}
 
 		@Override
-		public int getMaxLength(Value value) {
+		public int getMaxLength(WireValue value) {
 			return value.toDisplayString(8).length();
 		}
 
@@ -167,7 +167,7 @@ public abstract class RadixOption extends AttributeOption {
 		}
 
 		@Override
-		public String toString(Value value) {
+		public String toString(WireValue value) {
 			return value.toDisplayString(16);
 		}
 

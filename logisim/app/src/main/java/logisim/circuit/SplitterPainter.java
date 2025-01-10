@@ -11,7 +11,7 @@ import java.awt.Graphics2D;
 import logisim.comp.ComponentDrawContext;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 import logisim.util.GraphicsUtil;
 
 class SplitterPainter {
@@ -40,7 +40,7 @@ class SplitterPainter {
 		for (int i = 0, n = attrs.fanout; i < n; i++) {
 			if (showState) {
 				@SuppressWarnings("null")
-				Value val = state.getValue(new Location(x, y));
+				WireValue val = state.getValue(new Location(x, y));
 				g.setColor(val.getColor());
 			}
 			g.drawLine(x, y, x + dxEndSpine, y + dyEndSpine);

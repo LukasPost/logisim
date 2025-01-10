@@ -104,9 +104,7 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 		int col = x / cellWidth;
 		int rows = 1 << ROW_VARS[inputs];
 		int cols = 1 << COL_VARS[inputs];
-		if (row >= rows || col >= cols)
-			return -1;
-		return getTableRow(row, col, rows, cols);
+		return row >= rows || col >= cols ? -1 : getTableRow(row, col, rows, cols);
 	}
 
 	public int getOutputColumn(MouseEvent event) {
@@ -139,8 +137,11 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 		TruthTable table = model.getTruthTable();
 
 		String message = null;
-		if (output == null) message = Strings.get("karnaughNoOutputError");
-		else if (table.getInputColumnCount() > MAX_VARS) message = Strings.get("karnaughTooManyInputsError");
+		if (output == null)
+			message = Strings.get("karnaughNoOutputError");
+		else if (table.getInputColumnCount() > MAX_VARS)
+			message = Strings.get("karnaughTooManyInputsError");
+
 		if (message != null) {
 			if (g == null) {
 				tableHeight = 15;
@@ -185,8 +186,11 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 		int inputCount = table.getInputColumnCount();
 		Dimension sz = getSize();
 		String message = null;
-		if (output == null) message = Strings.get("karnaughNoOutputError");
-		else if (inputCount > MAX_VARS) message = Strings.get("karnaughTooManyInputsError");
+		if (output == null)
+			message = Strings.get("karnaughNoOutputError");
+		else if (inputCount > MAX_VARS)
+			message = Strings.get("karnaughTooManyInputsError");
+
 		if (message != null) {
 			g.setFont(BODY_FONT);
 			GraphicsUtil.drawCenteredText(g, message, sz.width / 2, sz.height / 2);
@@ -389,23 +393,16 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 	}
 
 	private String label(int row, int rows) {
-		switch (rows) {
-		case 2:
-			return "" + row;
-		case 4:
-			switch (row) {
-			case 0:
-				return "00";
-			case 1:
-				return "01";
-			case 2:
-				return "11";
-			case 3:
-				return "10";
-			}
-		default:
-			return "";
-		}
+		return switch (rows) {
+			case 2 -> "" + row;
+			case 4 -> switch (row) {
+				case 1 -> "01";
+				case 2 -> "11";
+				case 3 -> "10";
+				default -> "00";
+			};
+			default -> "";
+		};
 	}
 
 	private int getTableRow(int row, int col, int rows, int cols) {
@@ -413,9 +410,7 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 	}
 
 	private int toRow(int row, int rows) {
-		if (rows != 4)
-			return row;
-		return switch (row) {
+		return rows != 4 ? row : switch (row) {
 			case 2 -> 3;
 			case 3 -> 2;
 			default -> row;

@@ -10,7 +10,8 @@ import logisim.data.Attribute;
 import logisim.data.AttributeSet;
 import logisim.data.Bounds;
 import logisim.data.Direction;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceDataSingleton;
 import logisim.instance.InstanceFactory;
@@ -91,7 +92,7 @@ public class Led extends InstanceFactory {
 
 	@Override
 	public void propagate(InstanceState state) {
-		Value val = state.getPort(0);
+		WireValue val = state.getPort(0);
 		InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
 		if (data == null) state.setData(new InstanceDataSingleton(val));
 		else data.setValue(val);
@@ -108,7 +109,7 @@ public class Led extends InstanceFactory {
 	@Override
 	public void paintInstance(InstancePainter painter) {
 		InstanceDataSingleton data = (InstanceDataSingleton) painter.getData();
-		Value val = data == null ? Value.FALSE : (Value) data.getValue();
+		WireValue val = data == null ? WireValues.FALSE : (WireValue) data.getValue();
 		Bounds bds = painter.getBounds().expand(-1);
 
 		Graphics g = painter.getGraphics();
@@ -116,7 +117,7 @@ public class Led extends InstanceFactory {
 			Color onColor = painter.getAttributeValue(Io.ATTR_ON_COLOR);
 			Color offColor = painter.getAttributeValue(Io.ATTR_OFF_COLOR);
 			Boolean activ = painter.getAttributeValue(Io.ATTR_ACTIVE);
-			Object desired = activ ? Value.TRUE : Value.FALSE;
+			Object desired = activ ? WireValues.TRUE : WireValues.FALSE;
 			g.setColor(val == desired ? onColor : offColor);
 			g.fillOval(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
 		}
@@ -136,11 +137,11 @@ public class Led extends InstanceFactory {
 		}
 
 		@Override
-		public Value getLogValue(InstanceState state, Object option) {
+		public WireValue getLogValue(InstanceState state, Object option) {
 			InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
 			if (data == null)
-				return Value.FALSE;
-			return data.getValue() == Value.TRUE ? Value.TRUE : Value.FALSE;
+				return WireValues.FALSE;
+			return data.getValue() == WireValues.TRUE ? WireValues.TRUE : WireValues.FALSE;
 		}
 	}
 }

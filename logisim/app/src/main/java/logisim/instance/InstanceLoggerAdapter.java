@@ -4,7 +4,8 @@
 package logisim.instance;
 
 import logisim.circuit.CircuitState;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.gui.log.Loggable;
 
 class InstanceLoggerAdapter implements Loggable {
@@ -45,11 +46,11 @@ class InstanceLoggerAdapter implements Loggable {
 		else return null;
 	}
 
-	public Value getLogValue(CircuitState circuitState, Object option) {
+	public WireValue getLogValue(CircuitState circuitState, Object option) {
 		if (logger != null) {
 			updateState(circuitState);
 			return logger.getLogValue(state, option);
-		} else return Value.UNKNOWN;
+		} else return WireValues.UNKNOWN;
 	}
 
 	private void updateState(CircuitState circuitState) {

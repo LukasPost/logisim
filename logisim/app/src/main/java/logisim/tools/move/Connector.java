@@ -92,7 +92,7 @@ class Connector {
 		ArrayList<ConnectionData> impossible = new ArrayList<>();
 		for (Iterator<ConnectionData> it = connects.iterator(); it.hasNext();) {
 			ConnectionData conn = it.next();
-			Location dest = conn.getLocation().translate(dx, dy);
+			Location dest = conn.getLocation().add(dx, dy);
 			if (avoid.get(dest) != null) {
 				boolean isInPath = false;
 				for (Wire w : pathWires)
@@ -128,7 +128,7 @@ class Connector {
 	private static void processConnection(ConnectionData conn, int dx, int dy, HashSet<Location> connLocs,
 			ArrayList<SearchNode> connNodes, AvoidanceMap selAvoid) {
 		Location cur = conn.getLocation();
-		Location dest = cur.translate(dx, dy);
+		Location dest = cur.add(dx, dy);
 		if (selAvoid.get(cur) == null) {
 			Direction preferred = conn.getDirection();
 			if (preferred == null)

@@ -71,4 +71,11 @@ public enum Direction implements AttributeOptionInterface {
 	public Object getValue() {
 		return this;
 	}
+
+	public boolean isHorizontal() {
+		return (id & 1) == 0;
+	}
+	public boolean isVertical() {
+		return (id & 1) == 1;
+	}
 }

@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 
 import draw.model.CanvasObject;
 import draw.shapes.Curve;
@@ -37,16 +38,9 @@ class DefaultAppearance {
 		public int compare(Instance a, Instance b) {
 			Location aloc = a.getLocation();
 			Location bloc = b.getLocation();
-			if (byX) {
-				int ax = aloc.x();
-				int bx = bloc.x();
-				if (ax != bx) return ax < bx ? -1 : 1;
-			} else {
-				int ay = aloc.y();
-				int by = bloc.y();
-				if (ay != by) return ay < by ? -1 : 1;
-			}
-			return aloc.compareTo(bloc);
+			Function<Location, Integer> transformer = byX ? Location::x : Location::y;
+			int ret = Integer.compare(transformer.apply(aloc), transformer.apply(bloc));
+			return ret != 0 ? ret : aloc.compareTo(bloc);
 		}
 	}
 
@@ -73,7 +67,8 @@ class DefaultAppearance {
 			e.add(pin);
 		}
 
-		for (Entry<Direction, List<Instance>> entry : edge.entrySet()) sortPinList(entry.getValue(), entry.getKey());
+		for (Entry<Direction, List<Instance>> entry : edge.entrySet())
+			sortPinList(entry.getValue(), entry.getKey());
 
 		int numNorth = edge.get(Direction.North).size();
 		int numSouth = edge.get(Direction.South).size();
@@ -135,9 +130,12 @@ class DefaultAppearance {
 	}
 
 	private static int computeDimension(int maxThis, int maxOthers) {
-		if (maxThis < 3) return 30;
-		else if (maxOthers == 0) return 10 * maxThis;
-		else return 10 * maxThis + 10;
+		if (maxThis < 3)
+			return 30;
+		else if (maxOthers == 0)
+			return 10 * maxThis;
+		else
+			return 10 * maxThis + 10;
 	}
 
 	private static int computeOffset(int numFacing, int numOpposite, int maxOthers) {

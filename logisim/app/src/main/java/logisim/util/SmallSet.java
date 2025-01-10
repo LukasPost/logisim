@@ -60,7 +60,7 @@ public class SmallSet<E> extends AbstractSet<E> {
 			} else {
 				Object[] vals = (Object[]) values;
 				if (size == 2) {
-					myValues = (pos == 2 ? vals[0] : vals[1]);
+					myValues = pos == 2 ? vals[0] : vals[1];
 					values = myValues;
 					size = 1;
 				} else {

@@ -4,12 +4,12 @@
 package logisim.gui.log;
 
 import logisim.circuit.CircuitState;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 
 public interface Loggable {
 	Object[] getLogOptions(CircuitState state);
 
 	String getLogName(Object option);
 
-	Value getLogValue(CircuitState state, Object option);
+	WireValue getLogValue(CircuitState state, Object option);
 }

@@ -60,7 +60,8 @@ class Highlighter {
 	public synchronized void clear() {
 		ArrayList<Entry> oldEntries = entries;
 		entries = new ArrayList<>();
-		for (int n = oldEntries.size(); true; n--) expose(oldEntries.get(n));
+		for (int n = oldEntries.size(); n > 0; n--)
+			expose(oldEntries.get(n));
 	}
 
 	private void expose(Entry entry) {
@@ -81,29 +82,31 @@ class Highlighter {
 	}
 
 	synchronized void paint(Graphics g, long start, long end) {
-		int size = entries.size();
-		if (size == 0)
+		if (entries.size() == 0)
 			return;
 		Measures m = hex.getMeasures();
 		int lineStart = m.getValuesX();
 		int lineWidth = m.getValuesWidth();
 		int cellWidth = m.getCellWidth();
 		int cellHeight = m.getCellHeight();
-		for (Entry e : entries)
-			if (e.start <= end && e.end >= start) {
-				int y0 = m.toY(e.start);
-				int y1 = m.toY(e.end);
-				int x0 = m.toX(e.start);
-				int x1 = m.toX(e.end);
-				g.setColor(e.color);
-				if (y0 == y1) g.fillRect(x0, y0, x1 - x0 + cellWidth, cellHeight);
-				else {
-					int midHeight = y1 - (y0 + cellHeight);
-					g.fillRect(x0, y0, lineStart + lineWidth - x0, cellHeight);
-					if (midHeight > 0)
-						g.fillRect(lineStart, y0 + cellHeight, lineWidth, midHeight);
-					g.fillRect(lineStart, y1, x1 + cellWidth - lineStart, cellHeight);
-				}
+		for (Entry e : entries) {
+			if (e.start > end || e.end < start)
+				continue;
+
+			int y0 = m.toY(e.start);
+			int y1 = m.toY(e.end);
+			int x0 = m.toX(e.start);
+			int x1 = m.toX(e.end);
+			g.setColor(e.color);
+			if (y0 == y1)
+				g.fillRect(x0, y0, x1 - x0 + cellWidth, cellHeight);
+			else {
+				int midHeight = y1 - (y0 + cellHeight);
+				g.fillRect(x0, y0, lineStart + lineWidth - x0, cellHeight);
+				if (midHeight > 0)
+					g.fillRect(lineStart, y0 + cellHeight, lineWidth, midHeight);
+				g.fillRect(lineStart, y1, x1 + cellWidth - lineStart, cellHeight);
 			}
+		}
 	}
 }

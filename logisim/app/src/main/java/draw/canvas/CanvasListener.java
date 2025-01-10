@@ -38,7 +38,8 @@ class CanvasListener implements MouseListener, MouseMotionListener, KeyListener,
 			if (value != null) {
 				value.toolSelected(canvas);
 				canvas.setCursor(value.getCursor(canvas));
-			} else canvas.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			} else
+				canvas.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
 	}
 
@@ -49,16 +50,18 @@ class CanvasListener implements MouseListener, MouseMotionListener, KeyListener,
 
 	public void mousePressed(MouseEvent e) {
 		canvas.requestFocus();
-		if (e.isPopupTrigger()) handlePopupTrigger(e);
-		else if (e.getButton() == 1) if (tool != null)
+		if (e.isPopupTrigger())
+			handlePopupTrigger(e);
+		else if (e.getButton() == 1 && tool != null)
 			tool.mousePressed(canvas, e);
 	}
 
 	public void mouseDragged(MouseEvent e) {
-		if (isButton1(e)) {
-			if (tool != null)
-				tool.mouseDragged(canvas, e);
-		} else if (tool != null)
+		if(tool == null)
+			return;
+		if (isButton1(e))
+			tool.mouseDragged(canvas, e);
+		else
 			tool.mouseMoved(canvas, e);
 	}
 
@@ -67,7 +70,7 @@ class CanvasListener implements MouseListener, MouseMotionListener, KeyListener,
 			if (tool != null)
 				tool.cancelMousePress(canvas);
 			handlePopupTrigger(e);
-		} else if (e.getButton() == 1) if (tool != null)
+		} else if (e.getButton() == 1 && tool != null)
 			tool.mouseReleased(canvas, e);
 	}
 
@@ -111,17 +114,13 @@ class CanvasListener implements MouseListener, MouseMotionListener, KeyListener,
 	private void handlePopupTrigger(MouseEvent e) {
 		Location loc = new Location(e.getX(), e.getY());
 		List<CanvasObject> objects = canvas.getModel().getObjectsFromTop();
-		CanvasObject clicked = null;
-		for (CanvasObject o : objects)
-			if (o.contains(loc, false)) {
-				clicked = o;
-				break;
-			}
-		if (clicked == null) for (CanvasObject o : objects)
-			if (o.contains(loc, true)) {
-				clicked = o;
-				break;
-			}
+		CanvasObject clicked = objects.stream()
+				.filter(o -> o.contains(loc, false))
+				.findFirst()
+				.orElse(objects.stream()
+						.filter(o -> o.contains(loc, true))
+						.findFirst()
+						.orElse(null));
 		canvas.showPopupMenu(e, clicked);
 	}
 }

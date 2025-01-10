@@ -11,7 +11,8 @@ import logisim.data.AttributeSet;
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -100,30 +101,30 @@ public class PriorityEncoder extends InstanceFactory {
 	public void propagate(InstanceState state) {
 		BitWidth select = state.getAttributeValue(Plexers.ATTR_SELECT);
 		int n = 1 << select.getWidth();
-		boolean enabled = state.getPort(n + EN_IN) != Value.FALSE;
+		boolean enabled = state.getPort(n + EN_IN) != WireValues.FALSE;
 
 		int out = -1;
-		Value outDefault;
+		WireValue outDefault;
 		if (enabled) {
-			outDefault = Value.createUnknown(select);
+			outDefault = WireValue.Companion.createUnknown(select);
 			for (int i = n - 1; i >= 0; i--)
-				if (state.getPort(i) == Value.TRUE) {
+				if (state.getPort(i) == WireValues.TRUE) {
 					out = i;
 					break;
 				}
 		} else {
 			Object opt = state.getAttributeValue(Plexers.ATTR_DISABLED);
-			Value base = opt == Plexers.DISABLED_ZERO ? Value.FALSE : Value.UNKNOWN;
-			outDefault = Value.repeat(base, select.getWidth());
+			WireValue base = opt == Plexers.DISABLED_ZERO ? WireValues.FALSE : WireValues.UNKNOWN;
+			outDefault = WireValue.Companion.repeat(base, select.getWidth());
 		}
 		if (out < 0) {
 			state.setPort(n + OUT, outDefault, Plexers.DELAY);
-			state.setPort(n + EN_OUT, enabled ? Value.TRUE : Value.FALSE, Plexers.DELAY);
-			state.setPort(n + GS, Value.FALSE, Plexers.DELAY);
+			state.setPort(n + EN_OUT, enabled ? WireValues.TRUE : WireValues.FALSE, Plexers.DELAY);
+			state.setPort(n + GS, WireValues.FALSE, Plexers.DELAY);
 		} else {
-			state.setPort(n + OUT, Value.createKnown(select, out), Plexers.DELAY);
-			state.setPort(n + EN_OUT, Value.FALSE, Plexers.DELAY);
-			state.setPort(n + GS, Value.TRUE, Plexers.DELAY);
+			state.setPort(n + OUT, WireValue.Companion.createKnown(select, out), Plexers.DELAY);
+			state.setPort(n + EN_OUT, WireValues.FALSE, Plexers.DELAY);
+			state.setPort(n + GS, WireValues.TRUE, Plexers.DELAY);
 		}
 	}
 

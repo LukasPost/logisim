@@ -41,8 +41,10 @@ class WireFactory extends AbstractComponentFactory {
 		Object dir = attrs.getValue(Wire.dir_attr);
 		int len = attrs.getValue(Wire.len_attr);
 
-		if (dir == Wire.VALUE_HORZ) return Wire.create(loc, loc.translate(len, 0));
-		else return Wire.create(loc, loc.translate(0, len));
+		if (dir == Wire.VALUE_HORZ)
+			return Wire.create(loc, loc.add(len, 0));
+		else
+			return Wire.create(loc, loc.add(0, len));
 	}
 
 	@Override
@@ -50,8 +52,10 @@ class WireFactory extends AbstractComponentFactory {
 		Object dir = attrs.getValue(Wire.dir_attr);
 		int len = attrs.getValue(Wire.len_attr);
 
-		if (dir == Wire.VALUE_HORZ) return Bounds.create(0, -2, len, 5);
-		else return Bounds.create(-2, 0, 5, len);
+		if (dir == Wire.VALUE_HORZ)
+			return Bounds.create(0, -2, len, 5);
+		else
+			return Bounds.create(-2, 0, 5, len);
 	}
 
 	//

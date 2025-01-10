@@ -21,7 +21,7 @@ import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -84,8 +84,8 @@ class NotGate extends InstanceFactory {
 
 	@Override
 	public void propagate(InstanceState state) {
-		Value in = state.getPort(1);
-		Value out = in.not();
+		WireValue in = state.getPort(1);
+		WireValue out = in.not();
 		out = Buffer.repair(state, out);
 		state.setPort(0, out, GateAttributes.DELAY);
 	}

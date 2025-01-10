@@ -13,7 +13,8 @@ import logisim.data.AttributeSet;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceDataSingleton;
 import logisim.instance.InstanceFactory;
@@ -102,7 +103,7 @@ public class Button extends InstanceFactory {
 	@Override
 	public void propagate(InstanceState state) {
 		InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
-		Value val = data == null ? Value.FALSE : (Value) data.getValue();
+		WireValue val = data == null ? WireValues.FALSE : (WireValue) data.getValue();
 		state.setPort(0, val, 1);
 	}
 
@@ -114,11 +115,11 @@ public class Button extends InstanceFactory {
 		int w = bds.getWidth();
 		int h = bds.getHeight();
 
-		Value val;
+		WireValue val;
 		if (painter.getShowState()) {
 			InstanceDataSingleton data = (InstanceDataSingleton) painter.getData();
-			val = data == null ? Value.FALSE : (Value) data.getValue();
-		} else val = Value.FALSE;
+			val = data == null ? WireValues.FALSE : (WireValue) data.getValue();
+		} else val = WireValues.FALSE;
 
 		Color color = painter.getAttributeValue(Io.ATTR_COLOR);
 		if (!painter.shouldDrawColor()) {
@@ -128,7 +129,7 @@ public class Button extends InstanceFactory {
 
 		Graphics g = painter.getGraphics();
 		int depress;
-		if (val == Value.TRUE) {
+		if (val == WireValues.TRUE) {
 			x += DEPTH;
 			y += DEPTH;
 			Object labelLoc = painter.getAttributeValue(Io.ATTR_LABEL_LOC);
@@ -142,7 +143,7 @@ public class Button extends InstanceFactory {
 				int px = p.x();
 				int py = p.y();
 				GraphicsUtil.switchToWidth(g, Wire.WIDTH);
-				g.setColor(Value.TRUE_COLOR);
+				g.setColor(WireValues.Companion.getTRUE_COLOR());
 				if (facing == Direction.North)
 					g.drawLine(px, py, px, py + 10);
 				else
@@ -178,15 +179,15 @@ public class Button extends InstanceFactory {
 	public static class Poker extends InstancePoker {
 		@Override
 		public void mousePressed(InstanceState state, MouseEvent e) {
-			setValue(state, Value.TRUE);
+			setValue(state, WireValues.TRUE);
 		}
 
 		@Override
 		public void mouseReleased(InstanceState state, MouseEvent e) {
-			setValue(state, Value.FALSE);
+			setValue(state, WireValues.FALSE);
 		}
 
-		private void setValue(InstanceState state, Value val) {
+		private void setValue(InstanceState state, WireValue val) {
 			InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
 			if (data == null) state.setData(new InstanceDataSingleton(val));
 			else data.setValue(val);
@@ -201,9 +202,9 @@ public class Button extends InstanceFactory {
 		}
 
 		@Override
-		public Value getLogValue(InstanceState state, Object option) {
+		public WireValue getLogValue(InstanceState state, Object option) {
 			InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
-			return data == null ? Value.FALSE : (Value) data.getValue();
+			return data == null ? WireValues.FALSE : (WireValue) data.getValue();
 		}
 	}
 }

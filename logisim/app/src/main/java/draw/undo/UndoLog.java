@@ -34,25 +34,19 @@ public class UndoLog {
 	}
 
 	private void fireEvent(int action, Action actionObject) {
-		UndoLogEvent e = null;
-		for (UndoLogListener listener : listeners) {
-			if (e == null)
-				e = new UndoLogEvent(this, action, actionObject);
-			listener.undoLogChanged(e);
-		}
+		UndoLogEvent e = new UndoLogEvent(this, action, actionObject);
+		listeners.forEach(l -> l.undoLogChanged(e));
 	}
 
 	//
 	// accessor methods
 	//
 	public Action getUndoAction() {
-		if (undoLog.size() == 0) return null;
-		else return undoLog.getLast();
+		return undoLog.size() == 0 ? null : undoLog.getLast();
 	}
 
 	public Action getRedoAction() {
-		if (redoLog.size() == 0) return null;
-		else return redoLog.getLast();
+		return redoLog.size() == 0 ? null : redoLog.getLast();
 	}
 
 	public boolean isModified() {
@@ -83,7 +77,8 @@ public class UndoLog {
 				}
 				act = joined;
 			}
-			while (undoLog.size() > MAX_UNDO_SIZE) undoLog.removeFirst();
+			while (undoLog.size() > MAX_UNDO_SIZE)
+				undoLog.removeFirst();
 		}
 		undoLog.add(act);
 		if (act.isModification())
@@ -92,25 +87,25 @@ public class UndoLog {
 	}
 
 	public void undoAction() {
-		if (undoLog.size() > 0) {
-			Action action = undoLog.removeLast();
-			if (action.isModification())
-				--modCount;
-			action.undo();
-			redoLog.add(action);
-			fireEvent(UndoLogEvent.ACTION_UNDONE, action);
-		}
+		if (undoLog.isEmpty())
+			return;
+		Action action = undoLog.removeLast();
+		if (action.isModification())
+			--modCount;
+		action.undo();
+		redoLog.add(action);
+		fireEvent(UndoLogEvent.ACTION_UNDONE, action);
 	}
 
 	public void redoAction() {
-		if (redoLog.size() > 0) {
-			Action action = redoLog.removeLast();
-			if (action.isModification())
-				++modCount;
-			action.doIt();
-			undoLog.add(action);
-			fireEvent(UndoLogEvent.ACTION_DONE, action);
-		}
+		if (redoLog.isEmpty())
+			return;
+		Action action = redoLog.removeLast();
+		if (action.isModification())
+			++modCount;
+		action.doIt();
+		undoLog.add(action);
+		fireEvent(UndoLogEvent.ACTION_DONE, action);
 	}
 
 	public void clearModified() {

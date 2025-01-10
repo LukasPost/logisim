@@ -8,7 +8,8 @@ import java.awt.Color;
 import logisim.data.Attribute;
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.InstanceDataSingleton;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -28,9 +29,9 @@ public class HexDigit extends InstanceFactory {
 	@Override
 	public void propagate(InstanceState state) {
 		int summary = 0;
-		Value baseVal = state.getPort(0);
+		WireValue baseVal = state.getPort(0);
 		if (baseVal == null)
-			baseVal = Value.createUnknown(BitWidth.create(4));
+			baseVal = WireValue.Companion.createUnknown(BitWidth.create(4));
 		int segs = switch (baseVal.toIntValue()) {
 			case 0 -> 0x1110111;
 			case 1 -> 0x0000011;
@@ -65,7 +66,7 @@ public class HexDigit extends InstanceFactory {
 			summary |= 16; // vertical seg at bottom left
 		if ((segs & 0x1000000) != 0)
 			summary |= 32; // vertical seg at top left
-		if (state.getPort(1) == Value.TRUE)
+		if (state.getPort(1) == WireValues.TRUE)
 			summary |= 128;
 
 		Object value = summary;

@@ -25,12 +25,12 @@ import logisim.util.UnmodifiableList;
 public class Text extends AbstractCanvasObject {
 	private EditableLabel label;
 
-	public Text(int x, int y, String text) {
-		this(x, y, EditableLabel.LEFT, EditableLabel.BASELINE, text, DrawAttr.DEFAULT_FONT, Color.BLACK);
+	public Text(Location loc, String text) {
+		this(loc, EditableLabel.LEFT, EditableLabel.BASELINE, text, DrawAttr.DEFAULT_FONT, Color.BLACK);
 	}
 
-	private Text(int x, int y, int halign, int valign, String text, Font font, Color color) {
-		label = new EditableLabel(x, y, text, font);
+	private Text(Location loc, int halign, int valign, String text, Font font, Color color) {
+		label = new EditableLabel(loc, text, font);
 		label.setColor(color);
 		label.setHorizontalAlignment(halign);
 		label.setVerticalAlignment(valign);
@@ -59,7 +59,7 @@ public class Text extends AbstractCanvasObject {
 	}
 
 	public Location getLocation() {
-		return new Location(label.getX(), label.getY());
+		return label.getLocation();
 	}
 
 	public String getText() {
@@ -87,26 +87,32 @@ public class Text extends AbstractCanvasObject {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <V> V getValue(Attribute<V> attr) {
-		if (attr == DrawAttr.FONT) return (V) label.getFont();
-		else if (attr == DrawAttr.FILL_COLOR) return (V) label.getColor();
+		if (attr == DrawAttr.FONT)
+			return (V) label.getFont();
+		else if (attr == DrawAttr.FILL_COLOR)
+			return (V) label.getColor();
 		else if (attr == DrawAttr.ALIGNMENT) {
 			int halign = label.getHorizontalAlignment();
 			AttributeOption h;
-			if (halign == EditableLabel.LEFT) h = DrawAttr.ALIGN_LEFT;
-			else if (halign == EditableLabel.RIGHT) h = DrawAttr.ALIGN_RIGHT;
-			else h = DrawAttr.ALIGN_CENTER;
+			if (halign == EditableLabel.LEFT)
+				h = DrawAttr.ALIGN_LEFT;
+			else if (halign == EditableLabel.RIGHT)
+				h = DrawAttr.ALIGN_RIGHT;
+			else
+				h = DrawAttr.ALIGN_CENTER;
 			return (V) h;
-		} else return null;
+		} else
+			return null;
 	}
 
 	@Override
 	public void updateValue(Attribute<?> attr, Object value) {
-		if (attr == DrawAttr.FONT) label.setFont((Font) value);
-		else if (attr == DrawAttr.FILL_COLOR) label.setColor((Color) value);
-		else if (attr == DrawAttr.ALIGNMENT) {
-			Integer intVal = (Integer) ((AttributeOption) value).getValue();
-			label.setHorizontalAlignment(intVal);
-		}
+		if (attr == DrawAttr.FONT)
+			label.setFont((Font) value);
+		else if (attr == DrawAttr.FILL_COLOR)
+			label.setColor((Color) value);
+		else if (attr == DrawAttr.ALIGNMENT)
+			label.setHorizontalAlignment((Integer) ((AttributeOption) value).getValue());
 	}
 
 	@Override
@@ -116,12 +122,12 @@ public class Text extends AbstractCanvasObject {
 
 	@Override
 	public boolean contains(Location loc, boolean assumeFilled) {
-		return label.contains(loc.x(), loc.y());
+		return label.contains(loc);
 	}
 
 	@Override
-	public void translate(int dx, int dy) {
-		label.setLocation(label.getX() + dx, label.getY() + dy);
+	public void translate(Location distance) {
+		label.setLocation(label.getLocation().add(distance));
 	}
 
 	public List<Handle> getHandles() {
@@ -130,8 +136,12 @@ public class Text extends AbstractCanvasObject {
 		int y = bds.getY();
 		int w = bds.getWidth();
 		int h = bds.getHeight();
-		return UnmodifiableList.create(new Handle[] { new Handle(this, x, y), new Handle(this, x + w, y),
-				new Handle(this, x + w, y + h), new Handle(this, x, y + h) });
+		return UnmodifiableList.create(new Handle[] {
+				new Handle(this, x, y),
+				new Handle(this, x + w, y),
+				new Handle(this, x + w, y + h),
+				new Handle(this, x, y + h)
+		});
 	}
 
 	@Override

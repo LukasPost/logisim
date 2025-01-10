@@ -97,13 +97,15 @@ public abstract class Expression {
 					text.append("(");
 					a.visit(this);
 					text.append(")");
-				} else a.visit(this);
+				} else
+					a.visit(this);
 				text.append(op);
 				if (b.getPrecedence() < level) {
 					text.append("(");
 					b.visit(this);
 					text.append(")");
-				} else b.visit(this);
+				} else
+					b.visit(this);
 			}
 
 			public void visitNot(Expression a) {
@@ -112,7 +114,8 @@ public abstract class Expression {
 					text.append("(");
 					a.visit(this);
 					text.append(")");
-				} else a.visit(this);
+				} else
+					a.visit(this);
 			}
 
 			public void visitVariable(String name) {
@@ -143,9 +146,7 @@ public abstract class Expression {
 			}
 
 			public int visitNot(Expression a) {
-				if (!visited.add(a))
-					return 1;
-				if (a.visit(this) == 1)
+				if (!visited.add(a) || a.visit(this) == 1)
 					return 1;
 				visited.remove(a);
 				return 0;
@@ -160,15 +161,11 @@ public abstract class Expression {
 			}
 
 			private int binary(Expression a, Expression b) {
-				if (!visited.add(a))
-					return 1;
-				if (a.visit(this) == 1)
+				if (!visited.add(a) || a.visit(this) == 1)
 					return 1;
 				visited.remove(a);
 
-				if (!visited.add(b))
-					return 1;
-				if (b.visit(this) == 1)
+				if (!visited.add(b) || b.visit(this) == 1)
 					return 1;
 				visited.remove(b);
 
@@ -182,37 +179,23 @@ public abstract class Expression {
 			public Expression visitAnd(Expression a, Expression b) {
 				Expression l = a.visit(this);
 				Expression r = b.visit(this);
-				if (l == null)
-					return r;
-				if (r == null)
-					return l;
 				return Expressions.and(l, r);
 			}
 
 			public Expression visitOr(Expression a, Expression b) {
 				Expression l = a.visit(this);
 				Expression r = b.visit(this);
-				if (l == null)
-					return r;
-				if (r == null)
-					return l;
 				return Expressions.or(l, r);
 			}
 
 			public Expression visitXor(Expression a, Expression b) {
 				Expression l = a.visit(this);
 				Expression r = b.visit(this);
-				if (l == null)
-					return r;
-				if (r == null)
-					return l;
 				return Expressions.xor(l, r);
 			}
 
 			public Expression visitNot(Expression a) {
 				Expression l = a.visit(this);
-				if (l == null)
-					return null;
 				return Expressions.not(l);
 			}
 
@@ -304,9 +287,7 @@ public abstract class Expression {
 			}
 
 			public int visitOr(Expression a, Expression b) {
-				if (level > 0)
-					return 0;
-				return a.visit(this) == 1 && b.visit(this) == 1 ? 1 : 0;
+				return level > 0 ? 0 : a.visit(this) == 1 && b.visit(this) == 1 ? 1 : 0;
 			}
 
 			public int visitXor(Expression a, Expression b) {

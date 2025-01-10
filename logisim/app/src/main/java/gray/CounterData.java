@@ -4,7 +4,8 @@
 package gray;
 
 import logisim.data.BitWidth;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.InstanceData;
 import logisim.instance.InstanceState;
 
@@ -19,21 +20,21 @@ class CounterData implements InstanceData, Cloneable {
 			// If it doesn't yet exist, then we'll set it up with our default
 			// values and put it into the circuit state so it can be retrieved
 			// in future propagations.
-			ret = new CounterData(null, Value.createKnown(width, 0));
+			ret = new CounterData(null, WireValue.Companion.createKnown(width, 0));
 			state.setData(ret);
 		} else if (!ret.value.getBitWidth().equals(width))
-			ret.value = ret.value.extendWidth(width.getWidth(), Value.FALSE);
+			ret.value = ret.value.extendWidth(width.getWidth(), WireValues.FALSE);
 		return ret;
 	}
 
 	/** The last clock input value observed. */
-	private Value lastClock;
+	private WireValue lastClock;
 
 	/** The current value emitted by the counter. */
-	private Value value;
+	private WireValue value;
 
 	/** Constructs a state with the given values. */
-	public CounterData(Value lastClock, Value value) {
+	public CounterData(WireValue lastClock, WireValue value) {
 		this.lastClock = lastClock;
 		this.value = value;
 	}
@@ -54,19 +55,19 @@ class CounterData implements InstanceData, Cloneable {
 	}
 
 	/** Updates the last clock observed, returning true if triggered. */
-	public boolean updateClock(Value value) {
-		Value old = lastClock;
+	public boolean updateClock(WireValue value) {
+		WireValue old = lastClock;
 		lastClock = value;
-		return old == Value.FALSE && value == Value.TRUE;
+		return old == WireValues.FALSE && value == WireValues.TRUE;
 	}
 
 	/** Returns the current value emitted by the counter. */
-	public Value getValue() {
+	public WireValue getValue() {
 		return value;
 	}
 
 	/** Updates the current value emitted by the counter. */
-	public void setValue(Value value) {
+	public void setValue(WireValue value) {
 		this.value = value;
 	}
 }

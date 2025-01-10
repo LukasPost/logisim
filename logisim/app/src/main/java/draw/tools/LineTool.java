@@ -61,14 +61,11 @@ public class LineTool extends AbstractTool {
 
 	@Override
 	public void mousePressed(Canvas canvas, MouseEvent e) {
-		int x = e.getX();
-		int y = e.getY();
+		Location loc = new Location(e.getX(), e.getY());
 		int mods = e.getModifiersEx();
-		if ((mods & InputEvent.CTRL_DOWN_MASK) != 0) {
-			x = canvas.snapX(x);
-			y = canvas.snapY(y);
-		}
-		Location loc = new Location(x, y);
+		if ((mods & InputEvent.CTRL_DOWN_MASK) != 0)
+			loc = canvas.snapXY(loc);
+
 		mouseStart = loc;
 		mouseEnd = loc;
 		lastMouseX = loc.x();
@@ -84,23 +81,24 @@ public class LineTool extends AbstractTool {
 
 	@Override
 	public void mouseReleased(Canvas canvas, MouseEvent e) {
-		if (active) {
-			updateMouse(canvas, e.getX(), e.getY(), e.getModifiersEx());
-			Location start = mouseStart;
-			Location end = mouseEnd;
-			CanvasObject add = null;
-			if (!start.equals(end)) {
-				active = false;
-				CanvasModel model = canvas.getModel();
-				Location[] ends = { start, end };
-				List<Location> locs = UnmodifiableList.create(ends);
-				add = attrs.applyTo(new Poly(false, locs));
-				add.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_STROKE);
-				canvas.doAction(new ModelAddAction(model, add));
-				repaintArea(canvas);
-			}
-			canvas.toolGestureComplete(this, add);
+		if (!active)
+			return;
+
+		updateMouse(canvas, e.getX(), e.getY(), e.getModifiersEx());
+		Location start = mouseStart;
+		Location end = mouseEnd;
+		CanvasObject add = null;
+		if (!start.equals(end)) {
+			active = false;
+			CanvasModel model = canvas.getModel();
+			Location[] ends = { start, end };
+			List<Location> locs = UnmodifiableList.create(ends);
+			add = attrs.applyTo(new Poly(false, locs));
+			add.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_STROKE);
+			canvas.doAction(new ModelAddAction(model, add));
+			repaintArea(canvas);
 		}
+		canvas.toolGestureComplete(this, add);
 	}
 
 	@Override
@@ -117,18 +115,12 @@ public class LineTool extends AbstractTool {
 
 	private void updateMouse(Canvas canvas, int mx, int my, int mods) {
 		if (active) {
-			boolean shift = (mods & MouseEvent.SHIFT_DOWN_MASK) != 0;
-			Location newEnd;
-			if (shift) newEnd = LineUtil.snapTo8Cardinals(mouseStart, mx, my);
-			else newEnd = new Location(mx, my);
+			Location newEnd = (mods & MouseEvent.SHIFT_DOWN_MASK) != 0
+					? LineUtil.snapTo8Cardinals(mouseStart, mx, my)
+					: new Location(mx, my);
 
-			if ((mods & InputEvent.CTRL_DOWN_MASK) != 0) {
-				int x = newEnd.x();
-				int y = newEnd.y();
-				x = canvas.snapX(x);
-				y = canvas.snapY(y);
-				newEnd = new Location(x, y);
-			}
+			if ((mods & InputEvent.CTRL_DOWN_MASK) != 0)
+				newEnd = canvas.snapXY(newEnd);
 
 			if (!newEnd.equals(mouseEnd)) {
 				mouseEnd = newEnd;
@@ -145,19 +137,22 @@ public class LineTool extends AbstractTool {
 
 	@Override
 	public void draw(Canvas canvas, Graphics g) {
-		if (active) {
-			Location start = mouseStart;
-			Location end = mouseEnd;
-			g.setColor(Color.GRAY);
-			g.drawLine(start.x(), start.y(), end.x(), end.y());
-		}
+		if (!active)
+			return;
+		Location start = mouseStart;
+		Location end = mouseEnd;
+		g.setColor(Color.GRAY);
+		g.drawLine(start.x(), start.y(), end.x(), end.y());
 	}
 
 	static Location snapTo4Cardinals(Location from, int mx, int my) {
 		int px = from.x();
 		int py = from.y();
-		if (mx != px && my != py) if (Math.abs(my - py) < Math.abs(mx - px)) return new Location(mx, py);
-		else return new Location(px, my);
+		if (mx != px && my != py)
+			if (Math.abs(my - py) < Math.abs(mx - px))
+				return new Location(mx, py);
+			else
+				return new Location(px, my);
 		return new Location(mx, my); // should never happen
 	}
 }

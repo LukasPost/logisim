@@ -25,7 +25,7 @@ import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -217,14 +217,14 @@ public class SubcircuitFactory extends InstanceFactory {
 			Instance pin = pins[i];
 			InstanceState pinState = subState.getInstanceState(pin);
 			if (Pin.FACTORY.isInputPin(pin)) {
-				Value newVal = superState.getPort(i);
-				Value oldVal = Pin.FACTORY.getValue(pinState);
+				WireValue newVal = superState.getPort(i);
+				WireValue oldVal = Pin.FACTORY.getValue(pinState);
 				if (!newVal.equals(oldVal)) {
 					Pin.FACTORY.setValue(pinState, newVal);
 					Pin.FACTORY.propagate(pinState);
 				}
 			} else { // it is output-only
-				Value val = pinState.getPort(0);
+				WireValue val = pinState.getPort(0);
 				superState.setPort(i, val, 1);
 			}
 		}

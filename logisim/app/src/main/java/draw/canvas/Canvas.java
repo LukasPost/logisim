@@ -13,6 +13,7 @@ import javax.swing.JPopupMenu;
 import draw.model.CanvasModel;
 import draw.model.CanvasObject;
 import draw.undo.Action;
+import logisim.data.Location;
 
 public class Canvas extends JComponent {
 	public static final String TOOL_PROPERTY = "tool";
@@ -94,6 +95,8 @@ public class Canvas extends JComponent {
 		return 1.0; // subclass will have to override this
 	}
 
+	public Location snapXY(Location loc) { return new Location(snapX(loc.x()), snapY(loc.y())); }
+
 	public int snapX(int x) {
 		return x; // subclass will have to override this
 	}
@@ -113,13 +116,12 @@ public class Canvas extends JComponent {
 	}
 
 	protected void paintForeground(Graphics g) {
-		CanvasModel model = this.model;
-		CanvasTool tool = listener.getTool();
 		if (model != null) {
 			Graphics dup = g.create();
 			model.paint(g, selection);
 			dup.dispose();
 		}
+		CanvasTool tool = listener.getTool();
 		if (tool != null) {
 			Graphics dup = g.create();
 			tool.draw(this, dup);

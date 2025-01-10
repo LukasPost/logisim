@@ -17,7 +17,8 @@ import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -110,19 +111,19 @@ public class Transistor extends InstanceFactory {
 		state.setPort(OUTPUT, computeOutput(state), 1);
 	}
 
-	private Value computeOutput(InstanceState state) {
+	private WireValue computeOutput(InstanceState state) {
 		BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
-		Value gate = state.getPort(GATE);
-		Value input = state.getPort(INPUT);
-		Value desired = state.getAttributeValue(ATTR_TYPE) == TYPE_P ? Value.FALSE : Value.TRUE;
+		WireValue gate = state.getPort(GATE);
+		WireValue input = state.getPort(INPUT);
+		WireValue desired = state.getAttributeValue(ATTR_TYPE) == TYPE_P ? WireValues.FALSE : WireValues.TRUE;
 
-		if (!gate.isFullyDefined()) if (input.isFullyDefined()) return Value.createError(width);
+		if (!gate.isFullyDefined()) if (input.isFullyDefined()) return WireValue.Companion.createError(width);
 		else {
-			Value[] v = input.getAll();
-			for (int i = 0; i < v.length; i++) if (v[i] != Value.UNKNOWN) v[i] = Value.ERROR;
-			return Value.create(v);
+			WireValue[] v = input.getAll();
+			for (int i = 0; i < v.length; i++) if (v[i] != WireValues.UNKNOWN) v[i] = WireValues.ERROR;
+			return WireValue.Companion.create(v);
 		}
-		else if (gate != desired) return Value.createUnknown(width);
+		else if (gate != desired) return WireValue.Companion.createUnknown(width);
 		else return input;
 	}
 
@@ -168,8 +169,8 @@ public class Transistor extends InstanceFactory {
 			gate = painter.getPort(GATE).getColor();
 			input = painter.getPort(INPUT).getColor();
 			output = painter.getPort(OUTPUT).getColor();
-			Value out = computeOutput(painter);
-			platform = out.isUnknown() ? Value.UNKNOWN.getColor() : out.getColor();
+			WireValue out = computeOutput(painter);
+			platform = out.isUnknown() ? WireValues.UNKNOWN.getColor() : out.getColor();
 		} else {
 			Color base = g.getColor();
 			gate = base;

@@ -4,7 +4,9 @@
 package logisim.circuit;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
+import kotlin.Pair;
 import logisim.analyze.model.AnalyzerModel;
 import logisim.analyze.model.Entry;
 import logisim.analyze.model.Expression;
@@ -16,7 +18,8 @@ import logisim.circuit.AnalyzeException.Conflict;
 import logisim.comp.Component;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceState;
 import logisim.instance.StdAttr;
@@ -40,10 +43,12 @@ public class Analyze {
 		Comparator<Instance> locOrder = (ac, bc) -> {
 			Location a = ac.getLocation();
 			Location b = bc.getLocation();
-			if (a.y() < b.y()) return -1;
-			if (a.y() > b.y()) return 1;
-			if (a.x() < b.x()) return -1;
-			if (a.x() > b.x()) return 1;
+			int ret = Integer.compare(a.y(), b.y());
+			if(ret != 0)
+				return ret;
+			ret = Integer.compare(a.x(), b.x());
+			if(ret != 0)
+				return ret;
 			return a.hashCode() - b.hashCode();
 		};
 		SortedMap<Instance, String> ret = new TreeMap<>(locOrder);
@@ -52,15 +57,15 @@ public class Analyze {
 		for (Instance pin : circuit.getAppearance().getPortOffsets(Direction.East).values()) ret.put(pin, null);
 
 		// Process first the pins that the user has given labels.
-		ArrayList<Instance> pinList = new ArrayList<>(ret.keySet());
 		HashSet<String> labelsTaken = new HashSet<>();
-		for (Instance pin : pinList) {
+		for (Instance pin : ret.keySet()) {
 			String label = pin.getAttributeSet().getValue(StdAttr.LABEL);
 			label = toValidLabel(label);
 			if (label != null) {
 				if (labelsTaken.contains(label)) {
 					int i = 2;
-					while (labelsTaken.contains(label + i)) i++;
+					while (labelsTaken.contains(label + i))
+						i++;
 					label = label + i;
 				}
 				ret.put(pin, label);
@@ -69,22 +74,26 @@ public class Analyze {
 		}
 
 		// Now process the unlabeled pins.
-		for (Instance pin : pinList) {
-			if (ret.get(pin) != null) continue;
+		for (Instance pin : ret.keySet()) {
+			if (ret.get(pin) != null)
+				continue;
 
 			String defaultList;
 			if (Pin.FACTORY.isInputPin(pin)) {
 				defaultList = Strings.get("defaultInputLabels");
-				if (!defaultList.contains(",")) defaultList = "a,b,c,d,e,f,g,h";
+				if (!defaultList.contains(","))
+					defaultList = "a,b,c,d,e,f,g,h";
 			} else {
 				defaultList = Strings.get("defaultOutputLabels");
-				if (!defaultList.contains(",")) defaultList = "x,y,z,u,v,w,s,t";
+				if (!defaultList.contains(","))
+					defaultList = "x,y,z,u,v,w,s,t";
 			}
 
 			String[] options = defaultList.split(",");
 			String label = null;
 			for (int i = 0; label == null && i < options.length; i++)
-				if (!labelsTaken.contains(options[i])) label = options[i];
+				if (!labelsTaken.contains(options[i]))
+					label = options[i];
 			if (label == null) {
 				// This is an extreme measure that should never happen
 				// if the default labels are defined properly and the
@@ -104,7 +113,8 @@ public class Analyze {
 	}
 
 	private static String toValidLabel(String label) {
-		if (label == null) return null;
+		if (label == null)
+			return null;
 		StringBuilder end = null;
 		StringBuilder ret = new StringBuilder();
 		boolean afterWhitespace = false;
@@ -120,16 +130,21 @@ public class Analyze {
 			} else if (Character.isJavaIdentifierPart(c)) {
 				// If we can't place it at the start, we'll dump it
 				// onto the end.
-				if (!ret.isEmpty()) ret.append(c);
+				if (!ret.isEmpty())
+					ret.append(c);
 				else {
-					if (end == null) end = new StringBuilder();
+					if (end == null)
+						end = new StringBuilder();
 					end.append(c);
 				}
 				afterWhitespace = false;
-			} else if (Character.isWhitespace(c)) afterWhitespace = true;
+			} else if (Character.isWhitespace(c))
+				afterWhitespace = true;
 		}
-		if (end != null && !ret.isEmpty()) ret.append(end);
-		if (ret.isEmpty()) return null;
+		if (end != null && !ret.isEmpty())
+			ret.append(end);
+		if (ret.isEmpty())
+			return null;
 		return ret.toString();
 	}
 
@@ -139,8 +154,7 @@ public class Analyze {
 	/**
 	 * Computes the expression corresponding to the given circuit, or raises ComputeException if difficulties arise.
 	 */
-	public static void computeExpression(AnalyzerModel model, Circuit circuit, Map<Instance, String> pinNames)
-			throws AnalyzeException {
+	public static void computeExpression(AnalyzerModel model, Circuit circuit, Map<Instance, String> pinNames) throws AnalyzeException {
 		ExpressionMap expressionMap = new ExpressionMap(circuit);
 
 		ArrayList<String> inputNames = new ArrayList<>();
@@ -163,16 +177,18 @@ public class Analyze {
 		propagateComponents(expressionMap, circuit.getNonWires());
 
 		for (int iterations = 0; !expressionMap.dirtyPoints.isEmpty(); iterations++) {
-			if (iterations > MAX_ITERATIONS) throw new Circular();
+			if (iterations > MAX_ITERATIONS)
+				throw new Circular();
 
 			propagateWires(expressionMap, new HashSet<>(expressionMap.dirtyPoints));
 
-			HashSet<Component> dirtyComponents = getDirtyComponents(circuit, expressionMap.dirtyPoints);
+			Set<Component> dirtyComponents = getDirtyComponents(circuit, expressionMap.dirtyPoints);
 			expressionMap.dirtyPoints.clear();
 			propagateComponents(expressionMap, dirtyComponents);
 
 			Expression expr = checkForCircularExpressions(expressionMap);
-			if (expr != null) throw new Circular();
+			if (expr != null)
+				throw new Circular();
 		}
 
 		model.setVariables(inputNames, outputNames);
@@ -195,27 +211,32 @@ public class Analyze {
 		@Override
 		public Expression put(Location point, Expression expression) {
 			Expression ret = super.put(point, expression);
-			if (currentCause != null) causes.put(point, currentCause);
-			if (!Objects.equals(ret, expression)) dirtyPoints.add(point);
+			if (currentCause != null)
+				causes.put(point, currentCause);
+			if (!Objects.equals(ret, expression))
+				dirtyPoints.add(point);
 			return ret;
 		}
 	}
 
 	// propagates expressions down wires
-	private static void propagateWires(ExpressionMap expressionMap, HashSet<Location> pointsToProcess)
-			throws AnalyzeException {
+	private static void propagateWires(ExpressionMap expressionMap, HashSet<Location> pointsToProcess) throws AnalyzeException {
 		expressionMap.currentCause = null;
 		for (Location p : pointsToProcess) {
 			Expression e = expressionMap.get(p);
 			expressionMap.currentCause = expressionMap.causes.get(p);
 			WireBundle bundle = expressionMap.circuit.wires.getWireBundle(p);
-			if (e != null && bundle != null && bundle.points != null) for (Location p2 : bundle.points) {
-				if (p2.equals(p)) continue;
+			if (e == null || bundle == null || bundle.points == null)
+				continue;
+			for (Location p2 : bundle.points) {
+				if (p2.equals(p))
+					continue;
 				Expression old = expressionMap.get(p2);
 				if (old != null) {
 					Component eCause = expressionMap.currentCause;
 					Component oldCause = expressionMap.causes.get(p2);
-					if (eCause != oldCause && !old.equals(e)) throw new Conflict();
+					if (eCause != oldCause && !old.equals(e))
+						throw new Conflict();
 				}
 				expressionMap.put(p2, e);
 			}
@@ -223,24 +244,21 @@ public class Analyze {
 	}
 
 	// computes outputs of affected components
-	private static HashSet<Component> getDirtyComponents(Circuit circuit, Set<Location> pointsToProcess) {
-		HashSet<Component> dirtyComponents = new HashSet<>();
-		for (Location point : pointsToProcess) dirtyComponents.addAll(circuit.getNonWires(point));
-		return dirtyComponents;
+	private static Set<Component> getDirtyComponents(Circuit circuit, Set<Location> pointsToProcess) {
+		return pointsToProcess.stream()
+				.map(circuit::getNonWires)
+				.flatMap(Collection::stream)
+				.collect(Collectors.toSet());
 	}
 
-	private static void propagateComponents(ExpressionMap expressionMap, Collection<Component> components)
-			throws AnalyzeException {
+	private static void propagateComponents(ExpressionMap expressionMap, Collection<Component> components) throws AnalyzeException {
 		for (Component comp : components) {
 			ExpressionComputer computer = (ExpressionComputer) comp.getFeature(ExpressionComputer.class);
 			// pins are handled elsewhere
-			if (computer != null) try {
-				expressionMap.currentCause = comp;
-				computer.computeExpression(expressionMap);
-			} catch (UnsupportedOperationException e) {
+			if (computer == null)
 				throw new CannotHandle(comp.getFactory().getDisplayName());
-			}
-			else throw new CannotHandle(comp.getFactory().getDisplayName());
+			expressionMap.currentCause = comp;
+			computer.computeExpression(expressionMap);
 		}
 	}
 
@@ -249,45 +267,39 @@ public class Analyze {
 	 * it.
 	 */
 	private static Expression checkForCircularExpressions(ExpressionMap expressionMap) {
-		for (Location point : expressionMap.dirtyPoints) {
-			Expression expr = expressionMap.get(point);
-			if (expr.isCircular()) return expr;
-		}
-		return null;
+		return expressionMap.dirtyPoints.stream()
+				.map(expressionMap::get)
+				.filter(Expression::isCircular)
+				.findFirst()
+				.orElse(null);
 	}
 
 	//
 	// ComputeTable
 	//
 	/** Returns a truth table corresponding to the circuit. */
-	public static void computeTable(AnalyzerModel model, Project proj, Circuit circuit,
-			Map<Instance, String> pinLabels) {
-		ArrayList<Instance> inputPins = new ArrayList<>();
-		ArrayList<String> inputNames = new ArrayList<>();
-		ArrayList<Instance> outputPins = new ArrayList<>();
-		ArrayList<String> outputNames = new ArrayList<>();
+	public static void computeTable(AnalyzerModel model, Project proj, Circuit circuit, Map<Instance, String> pinLabels) {
+		ArrayList<Pair<Instance,String>> inputs = new ArrayList<>();
+		ArrayList<Pair<Instance, String>> outputs = new ArrayList<>();
 		for (Map.Entry<Instance, String> entry : pinLabels.entrySet()) {
 			Instance pin = entry.getKey();
-			if (Pin.FACTORY.isInputPin(pin)) {
-				inputPins.add(pin);
-				inputNames.add(entry.getValue());
-			} else {
-				outputPins.add(pin);
-				outputNames.add(entry.getValue());
-			}
+			if (Pin.FACTORY.isInputPin(pin))
+				inputs.add(new Pair<>(pin, entry.getValue()));
+			else
+				outputs.add(new Pair<>(pin, entry.getValue()));
 		}
 
-		int inputCount = inputPins.size();
+		int inputCount = inputs.size();
 		int rowCount = 1 << inputCount;
-		Entry[][] columns = new Entry[outputPins.size()][rowCount];
+		Entry[][] columns = new Entry[outputs.size()][rowCount];
 
 		for (int i = 0; i < rowCount; i++) {
 			CircuitState circuitState = new CircuitState(proj, circuit);
 			for (int j = 0; j < inputCount; j++) {
-				Instance pin = inputPins.get(j);
+				Instance pin = inputs.get(j).component1();
 				InstanceState pinState = circuitState.getInstanceState(pin);
 				boolean value = TruthTable.isInputSet(i, j, inputCount);
-				Pin.FACTORY.setValue(pinState, value ? Value.TRUE : Value.FALSE);
+				Pin.FACTORY.setValue(pinState, value ? WireValues.TRUE : WireValues.FALSE);
 			}
 
 			Propagator prop = circuitState.getPropagator();
@@ -297,21 +309,30 @@ public class Analyze {
 			 */
 			// TODO: Search for circuit state
 
-			if (prop.isOscillating()) for (int j = 0; j < columns.length; j++) columns[j][i] = Entry.OSCILLATE_ERROR;
-			else for (int j = 0; j < columns.length; j++) {
-				Instance pin = outputPins.get(j);
-				InstanceState pinState = circuitState.getInstanceState(pin);
-				Entry out;
-				Value outValue = Pin.FACTORY.getValue(pinState).get(0);
-				if (outValue == Value.TRUE) out = Entry.ONE;
-				else if (outValue == Value.FALSE) out = Entry.ZERO;
-				else if (outValue == Value.ERROR) out = Entry.BUS_ERROR;
-				else out = Entry.DONT_CARE;
-				columns[j][i] = out;
+			if (prop.isOscillating()) {
+				for (int j = 0; j < columns.length; j++)
+					columns[j][i] = Entry.OSCILLATE_ERROR;
+			}
+			else {
+				for (int j = 0; j < columns.length; j++) {
+					Instance pin = outputs.get(j).component1();
+					InstanceState pinState = circuitState.getInstanceState(pin);
+					Entry out;
+					WireValue outValue = Pin.FACTORY.getValue(pinState).get(0);
+					if (outValue == WireValues.TRUE)
+						out = Entry.ONE;
+					else if (outValue == WireValues.FALSE)
+						out = Entry.ZERO;
+					else if (outValue == WireValues.ERROR)
+						out = Entry.BUS_ERROR;
+					else
+						out = Entry.DONT_CARE;
+					columns[j][i] = out;
+				}
 			}
 		}
 
-		model.setVariables(inputNames, outputNames);
+		model.setVariables(inputs.stream().map(Pair::component2).toList(), outputs.stream().map(Pair::component2).toList());
 		for (int i = 0; i < columns.length; i++) model.getTruthTable().setOutputColumn(i, columns[i]);
 	}
 }

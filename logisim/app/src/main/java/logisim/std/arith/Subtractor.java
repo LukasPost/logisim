@@ -11,7 +11,8 @@ import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
 import logisim.instance.InstanceState;
@@ -54,12 +55,12 @@ public class Subtractor extends InstanceFactory {
 		BitWidth data = state.getAttributeValue(StdAttr.WIDTH);
 
 		// compute outputs
-		Value a = state.getPort(IN0);
-		Value b = state.getPort(IN1);
-		Value b_in = state.getPort(B_IN);
-		if (b_in == Value.UNKNOWN || b_in == Value.NIL)
-			b_in = Value.FALSE;
-		Value[] outs = Adder.computeSum(data, a, b.not(), b_in.not());
+		WireValue a = state.getPort(IN0);
+		WireValue b = state.getPort(IN1);
+		WireValue b_in = state.getPort(B_IN);
+		if (b_in == WireValues.UNKNOWN || b_in == WireValues.NIL)
+			b_in = WireValues.FALSE;
+		WireValue[] outs = Adder.computeSum(data, a, b.not(), b_in.not());
 
 		// propagate them
 		int delay = (data.getWidth() + 4) * Adder.PER_DELAY;

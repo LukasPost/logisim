@@ -14,7 +14,8 @@ import logisim.data.AttributeSet;
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceData;
 import logisim.instance.InstanceFactory;
@@ -29,7 +30,7 @@ public class Probe extends InstanceFactory {
 	public static final Probe FACTORY = new Probe();
 
 	private static class StateData implements InstanceData, Cloneable {
-		Value curValue = Value.NIL;
+		WireValue curValue = WireValues.NIL;
 
 		@Override
 		public Object clone() {
@@ -53,7 +54,7 @@ public class Probe extends InstanceFactory {
 		}
 
 		@Override
-		public Value getLogValue(InstanceState state, Object option) {
+		public WireValue getLogValue(InstanceState state, Object option) {
 			return getValue(state);
 		}
 	}
@@ -88,7 +89,7 @@ public class Probe extends InstanceFactory {
 
 	@Override
 	public void paintInstance(InstancePainter painter) {
-		Value value = getValue(painter);
+		WireValue value = getValue(painter);
 
 		Graphics g = painter.getGraphics();
 		Bounds bds = painter.getBounds(); // intentionally with no graphics object - we don't want label included
@@ -112,7 +113,7 @@ public class Probe extends InstanceFactory {
 		painter.drawPorts();
 	}
 
-	static void paintValue(InstancePainter painter, Value value) {
+	static void paintValue(InstancePainter painter, WireValue value) {
 		Graphics g = painter.getGraphics();
 		Bounds bds = painter.getBounds(); // intentionally with no graphics object - we don't want label included
 
@@ -135,7 +136,7 @@ public class Probe extends InstanceFactory {
 			int cy = bds.getY() + bds.getHeight() - 12;
 			int cur = 0;
 			for (int k = 0; k < wid; k++) {
-				GraphicsUtil.drawCenteredText(g, value.get(k).toDisplayString(), cx, cy);
+				GraphicsUtil.drawCenteredText(g, value.get(k).toBinString(), cx, cy);
 				++cur;
 				if (cur == 8) {
 					cur = 0;
@@ -171,8 +172,8 @@ public class Probe extends InstanceFactory {
 	@Override
 	public void propagate(InstanceState state) {
 		StateData oldData = (StateData) state.getData();
-		Value oldValue = oldData == null ? Value.NIL : oldData.curValue;
-		Value newValue = state.getPort(0);
+		WireValue oldValue = oldData == null ? WireValues.NIL : oldData.curValue;
+		WireValue newValue = state.getPort(0);
 		boolean same = Objects.equals(oldValue, newValue);
 		if (!same) {
 			if (oldData == null) {
@@ -180,9 +181,9 @@ public class Probe extends InstanceFactory {
 				oldData.curValue = newValue;
 				state.setData(oldData);
 			} else oldData.curValue = newValue;
-			int oldWidth = oldValue == null ? 1 : oldValue.getBitWidth().getWidth();
+			int oldWidth = oldValue == null ? 1 : oldValue.getWidth();
 			@SuppressWarnings("null")
-			int newWidth = newValue.getBitWidth().getWidth();
+			int newWidth = newValue.getWidth();
 			if (oldWidth != newWidth) {
 				ProbeAttributes attrs = (ProbeAttributes) state.getAttributeSet();
 				attrs.width = newValue.getBitWidth();
@@ -193,9 +194,9 @@ public class Probe extends InstanceFactory {
 		}
 	}
 
-	private static Value getValue(InstanceState state) {
+	private static WireValue getValue(InstanceState state) {
 		StateData data = (StateData) state.getData();
-		return data == null ? Value.NIL : data.curValue;
+		return data == null ? WireValues.NIL : data.curValue;
 	}
 
 	void configureLabel(Instance instance) {

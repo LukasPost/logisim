@@ -4,7 +4,7 @@
 package logisim.std.memory;
 
 import logisim.data.BitWidth;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 import logisim.instance.InstanceLogger;
 import logisim.instance.InstanceState;
 import logisim.instance.StdAttr;
@@ -28,12 +28,12 @@ public class ShiftRegisterLogger extends InstanceLogger {
 	}
 
 	@Override
-	public Value getLogValue(InstanceState state, Object option) {
+	public WireValue getLogValue(InstanceState state, Object option) {
 		BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
 		if (dataWidth == null)
 			dataWidth = BitWidth.create(0);
 		ShiftRegisterData data = (ShiftRegisterData) state.getData();
-		if (data == null) return Value.createKnown(dataWidth, 0);
+		if (data == null) return WireValue.Companion.createKnown(dataWidth, 0);
 		else {
 			int index = option == null ? 0 : (Integer) option;
 			return data.get(index);

@@ -17,22 +17,25 @@ public class Parser {
 		if (tokens.size() == 0)
 			return null;
 
-		for (Token token : tokens)
-			if (token.type == TOKEN_ERROR) throw token.error(Strings.getter("invalidCharacterError", token.text));
-			else if (token.type == TOKEN_IDENT) {
+		for (Token token : tokens) {
+			if (token.type == TOKEN_ERROR)
+				throw token.error(Strings.getter("invalidCharacterError", token.text));
+
+			if (token.type == TOKEN_IDENT) {
 				int index = model.getInputs().indexOf(token.text);
 				if (index < 0) {
 					// ok; but maybe this is an operator
 					String opText = token.text.toUpperCase();
-					switch (opText) {
-						case "NOT" -> token.type = TOKEN_NOT;
-						case "AND" -> token.type = TOKEN_AND;
-						case "XOR" -> token.type = TOKEN_XOR;
-						case "OR" -> token.type = TOKEN_OR;
+					token.type = switch (opText) {
+						case "NOT" -> TOKEN_NOT;
+						case "AND" -> TOKEN_AND;
+						case "XOR" -> TOKEN_XOR;
+						case "OR" -> TOKEN_OR;
 						default -> throw token.error(Strings.getter("badVariableName", token.text));
-					}
+					};
 				}
 			}
+		}
 
 		return parse(tokens);
 	}
@@ -53,8 +56,7 @@ public class Parser {
 		StringBuilder ret = new StringBuilder();
 		ArrayList<Token> tokens = toTokens(in, true);
 		for (Token token : tokens)
-			if (token.type == TOKEN_IDENT && token.text.equals(oldName)) ret.append(newName);
-			else ret.append(token.text);
+			ret.append(token.type == TOKEN_IDENT && token.text.equals(oldName) ? newName : token.text);
 		return ret.toString();
 	}
 
@@ -188,9 +190,7 @@ public class Parser {
 		for (int i = 0; i < tokens.size(); i++) {
 			Token t = tokens.get(i);
 			if (t.type == TOKEN_IDENT || t.type == TOKEN_CONST) {
-				Expression here;
-				if (t.type == TOKEN_IDENT) here = Expressions.variable(t.text);
-				else here = Expressions.constant(Integer.parseInt(t.text, 16));
+				Expression here = t.type == TOKEN_IDENT ? Expressions.variable(t.text) : Expressions.constant(Integer.parseInt(t.text, 16));
 				while (i + 1 < tokens.size() && tokens.get(i + 1).type == TOKEN_NOT_POSTFIX) {
 					here = Expressions.not(here);
 					i++;
@@ -205,11 +205,12 @@ public class Parser {
 					current = Expressions.and(top.current, current);
 				}
 			} else if (t.type == TOKEN_NOT) {
-				if (current != null) push(stack, current, Expression.AND_LEVEL,
-						new Token(TOKEN_AND, t.offset, Strings.get("implicitAndOperator")));
+				if (current != null)
+					push(stack, current, Expression.AND_LEVEL, new Token(TOKEN_AND, t.offset, Strings.get("implicitAndOperator")));
 				push(stack, null, Expression.NOT_LEVEL, t);
 				current = null;
-			} else if (t.type == TOKEN_NOT_POSTFIX) throw t.error(Strings.getter("unexpectedApostrophe"));
+			} else if (t.type == TOKEN_NOT_POSTFIX)
+				throw t.error(Strings.getter("unexpectedApostrophe"));
 			else if (t.type == TOKEN_LPAREN) {
 				if (current != null) push(stack, current, Expression.AND_LEVEL,
 						new Token(TOKEN_AND, t.offset, 0, Strings.get("implicitAndOperator")));
@@ -218,7 +219,8 @@ public class Parser {
 			} else if (t.type == TOKEN_RPAREN) {
 				current = popTo(stack, -1, current);
 				// there had better be a LPAREN atop the stack now.
-				if (stack.isEmpty()) throw t.error(Strings.getter("lparenMissingError"));
+				if (stack.isEmpty())
+					throw t.error(Strings.getter("lparenMissingError"));
 				pop(stack);
 				while (i + 1 < tokens.size() && tokens.get(i + 1).type == TOKEN_NOT_POSTFIX) {
 					current = Expressions.not(current);
@@ -226,7 +228,8 @@ public class Parser {
 				}
 				current = popTo(stack, Expression.AND_LEVEL, current);
 			} else {
-				if (current == null) throw t.error(Strings.getter("missingLeftOperandError", t.text));
+				if (current == null)
+					throw t.error(Strings.getter("missingLeftOperandError", t.text));
 				int level = switch (t.type) {
 					case TOKEN_AND -> Expression.AND_LEVEL;
 					case TOKEN_OR -> Expression.OR_LEVEL;
@@ -265,20 +268,13 @@ public class Parser {
 			Context top = pop(stack);
 			if (current == null)
 				throw top.cause.error(Strings.getter("missingRightOperandError", top.cause.text));
-			switch (top.level) {
-			case Expression.AND_LEVEL:
-				current = Expressions.and(top.current, current);
-				break;
-			case Expression.OR_LEVEL:
-				current = Expressions.or(top.current, current);
-				break;
-			case Expression.XOR_LEVEL:
-				current = Expressions.xor(top.current, current);
-				break;
-			case Expression.NOT_LEVEL:
-				current = Expressions.not(current);
-				break;
-			}
+			current = switch (top.level) {
+				case Expression.AND_LEVEL -> Expressions.and(top.current, current);
+				case Expression.OR_LEVEL -> Expressions.or(top.current, current);
+				case Expression.XOR_LEVEL -> Expressions.xor(top.current, current);
+				case Expression.NOT_LEVEL -> Expressions.not(current);
+				default -> throw new IllegalStateException("Unexpected value: " + top.level);
+			};
 		}
 		return current;
 	}

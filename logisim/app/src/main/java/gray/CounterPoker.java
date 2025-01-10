@@ -10,7 +10,7 @@ import java.awt.event.MouseEvent;
 
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 import logisim.instance.InstancePainter;
 import logisim.instance.InstancePoker;
 import logisim.instance.InstanceState;
@@ -64,7 +64,7 @@ public class CounterPoker extends InstancePoker {
 		// compute the next value
 		CounterData cur = CounterData.get(state, width);
 		int newVal = (cur.getValue().toIntValue() * 16 + val) & width.getMask();
-		Value newValue = Value.createKnown(width, newVal);
+		WireValue newValue = WireValue.Companion.createKnown(width, newVal);
 		cur.setValue(newValue);
 		state.fireInvalidated();
 

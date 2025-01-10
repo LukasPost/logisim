@@ -11,7 +11,8 @@ import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
 import logisim.instance.InstanceState;
@@ -56,10 +57,10 @@ public class Divider extends InstanceFactory {
 		BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
 
 		// compute outputs
-		Value a = state.getPort(IN0);
-		Value b = state.getPort(IN1);
-		Value upper = state.getPort(UPPER);
-		Value[] outs = Divider.computeResult(dataWidth, a, b, upper);
+		WireValue a = state.getPort(IN0);
+		WireValue b = state.getPort(IN1);
+		WireValue upper = state.getPort(UPPER);
+		WireValue[] outs = Divider.computeResult(dataWidth, a, b, upper);
 
 		// propagate them
 		int delay = dataWidth.getWidth() * (dataWidth.getWidth() + 2) * PER_DELAY;
@@ -90,10 +91,10 @@ public class Divider extends InstanceFactory {
 		GraphicsUtil.switchToWidth(g, 1);
 	}
 
-	static Value[] computeResult(BitWidth width, Value a, Value b, Value upper) {
+	static WireValue[] computeResult(BitWidth width, WireValue a, WireValue b, WireValue upper) {
 		int w = width.getWidth();
-		if (upper == Value.NIL || upper.isUnknown())
-			upper = Value.createKnown(width, 0);
+		if (upper == WireValues.NIL || upper.isUnknown())
+			upper = WireValue.Companion.createKnown(width, 0);
 		if (a.isFullyDefined() && b.isFullyDefined() && upper.isFullyDefined()) {
 			long num = ((long) upper.toIntValue() << w) | ((long) a.toIntValue() & 0xFFFFFFFFL);
 			long den = (long) b.toIntValue() & 0xFFFFFFFFL;
@@ -105,9 +106,9 @@ public class Divider extends InstanceFactory {
 				rem += den;
 				result--;
 			}
-			return new Value[] { Value.createKnown(width, (int) result), Value.createKnown(width, (int) rem) };
+			return new WireValue[] { WireValue.Companion.createKnown(width, (int) result), WireValue.Companion.createKnown(width, (int) rem) };
 		} else if (a.isErrorValue() || b.isErrorValue() || upper.isErrorValue())
-			return new Value[]{Value.createError(width), Value.createError(width)};
-		else return new Value[]{Value.createUnknown(width), Value.createUnknown(width)};
+			return new WireValue[]{WireValue.Companion.createError(width), WireValue.Companion.createError(width)};
+		else return new WireValue[]{WireValue.Companion.createUnknown(width), WireValue.Companion.createUnknown(width)};
 	}
 }

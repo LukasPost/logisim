@@ -17,7 +17,8 @@ import logisim.data.AttributeSet;
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceData;
 import logisim.instance.InstanceFactory;
@@ -42,7 +43,7 @@ public class Clock extends InstanceFactory {
 	private static final Icon toolIcon = Icons.getIcon("clock.gif");
 
 	private static class ClockState implements InstanceData, Cloneable {
-		Value sending = Value.FALSE;
+		WireValue sending = WireValues.FALSE;
 		int clicks;
 
 		@Override
@@ -63,7 +64,7 @@ public class Clock extends InstanceFactory {
 		}
 
 		@Override
-		public Value getLogValue(InstanceState state, Object option) {
+		public WireValue getLogValue(InstanceState state, Object option) {
 			ClockState s = getState(state);
 			return s.sending;
 		}
@@ -120,7 +121,7 @@ public class Clock extends InstanceFactory {
 		if (toolIcon != null) toolIcon.paintIcon(painter.getDestination(), g, 2, 2);
 		else {
 			g.drawRect(4, 4, 13, 13);
-			g.setColor(Value.FALSE.getColor());
+			g.setColor(WireValues.FALSE.getColor());
 			g.drawPolyline(new int[] { 6, 6, 10, 10, 14, 14 }, new int[] { 10, 6, 6, 14, 14, 10 }, 6);
 		}
 
@@ -136,7 +137,7 @@ public class Clock extends InstanceFactory {
 			pinx = 8;
 			piny = 15;
 		}
-		g.setColor(Value.TRUE.getColor());
+		g.setColor(WireValues.TRUE.getColor());
 		g.fillOval(pinx, piny, 3, 3);
 	}
 
@@ -157,7 +158,7 @@ public class Clock extends InstanceFactory {
 		if (painter.getShowState()) {
 			ClockState state = getState(painter);
 			g.setColor(state.sending.getColor());
-			drawUp = state.sending == Value.TRUE;
+			drawUp = state.sending == WireValues.TRUE;
 		} else {
 			g.setColor(Color.BLACK);
 			drawUp = true;
@@ -194,7 +195,7 @@ public class Clock extends InstanceFactory {
 
 	@Override
 	public void propagate(InstanceState state) {
-		Value val = state.getPort(0);
+		WireValue val = state.getPort(0);
 		ClockState q = getState(state);
 		// ignore if no change
 		if (!val.equals(q.sending)) state.setPort(0, q.sending, 1);
@@ -215,7 +216,7 @@ public class Clock extends InstanceFactory {
 		boolean curValue = ticks % (durationHigh + durationLow) < durationLow;
 		if (state.clicks % 2 == 1)
 			curValue = !curValue;
-		Value desired = (curValue ? Value.FALSE : Value.TRUE);
+		WireValue desired = (curValue ? WireValues.FALSE : WireValues.TRUE);
 		if (!state.sending.equals(desired)) {
 			state.sending = desired;
 			Instance.getInstanceFor(comp).fireInvalidated();

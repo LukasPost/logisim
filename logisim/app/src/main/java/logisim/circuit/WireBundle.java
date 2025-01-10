@@ -5,12 +5,13 @@ package logisim.circuit;
 
 import logisim.data.BitWidth;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.util.SmallSet;
 
 class WireBundle {
 	private BitWidth width = BitWidth.UNKNOWN;
-	private Value pullValue = Value.UNKNOWN;
+	private WireValue pullValue = WireValues.UNKNOWN;
 	private WireBundle parent;
 	private Location widthDeterminant;
 	WireThread[] threads;
@@ -80,11 +81,11 @@ class WireBundle {
 		return ret;
 	}
 
-	void addPullValue(Value val) {
+	void addPullValue(WireValue val) {
 		pullValue = pullValue.combine(val);
 	}
 
-	Value getPullValue() {
+	WireValue getPullValue() {
 		return pullValue;
 	}
 }

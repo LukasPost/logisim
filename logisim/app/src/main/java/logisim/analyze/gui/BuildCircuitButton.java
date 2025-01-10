@@ -56,13 +56,15 @@ class BuildCircuitButton extends JButton {
 			for (int i = 0; i < options.length; i++) {
 				Project proj = projects.get(i);
 				options[i] = new ProjectItem(proj);
-				if (proj == model.getCurrentProject()) initialSelection = options[i];
+				if (proj == model.getCurrentProject())
+					initialSelection = options[i];
 			}
 			project = new JComboBox<>(options);
 			if (options.length == 1) {
 				project.setSelectedItem(options[0]);
 				project.setEnabled(false);
-			} else if (initialSelection != null) project.setSelectedItem(initialSelection);
+			} else if (initialSelection != null)
+				project.setSelectedItem(initialSelection);
 
 			Circuit defaultCircuit = model.getCurrentCircuit();
 			if (defaultCircuit != null) {
@@ -153,7 +155,8 @@ class BuildCircuitButton extends JButton {
 					int choice = JOptionPane.showConfirmDialog(parent,
 							StringUtil.format(Strings.get("buildConfirmReplaceMessage"), name),
 							Strings.get("buildConfirmReplaceTitle"), JOptionPane.YES_NO_OPTION);
-					if (choice != JOptionPane.YES_OPTION) continue;
+					if (choice != JOptionPane.YES_OPTION)
+						continue;
 					replace = true;
 				}
 
@@ -180,13 +183,11 @@ class BuildCircuitButton extends JButton {
 		setText(Strings.get("buildCircuitButton"));
 	}
 
-	private void performAction(Project dest, String name, boolean replace, final boolean twoInputs,
-			final boolean useNands) {
+	private void performAction(Project dest, String name, boolean replace, final boolean twoInputs, final boolean useNands) {
 		if (replace) {
 			final Circuit circuit = dest.getLogisimFile().getCircuit(name);
 			if (circuit == null) {
-				JOptionPane.showMessageDialog(parent, "Internal error prevents replacing circuit.", "Internal Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(parent, "Internal error prevents replacing circuit.", "Internal Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 

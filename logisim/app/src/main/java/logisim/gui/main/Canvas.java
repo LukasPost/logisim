@@ -35,7 +35,7 @@ import logisim.data.AttributeListener;
 import logisim.data.AttributeSet;
 import logisim.data.Bounds;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 import logisim.file.LibraryEvent;
 import logisim.file.LibraryListener;
 import logisim.file.LogisimFile;
@@ -446,7 +446,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
 
 			computeViewportContents();
 			Dimension sz = getSize();
-			g.setColor(Value.WIDTH_ERROR_COLOR);
+			g.setColor(WireValue.Companion.getWIDTH_ERROR_COLOR());
 
 			if (widthMessage != null) paintString(g, widthMessage);
 

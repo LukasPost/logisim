@@ -37,15 +37,18 @@ public class AttrTableDrawManager implements PropertyChangeListener {
 	//
 	public void propertyChange(PropertyChangeEvent evt) {
 		String prop = evt.getPropertyName();
-		if (prop.equals(Canvas.TOOL_PROPERTY)) updateToolAttributes();
+		if (prop.equals(Canvas.TOOL_PROPERTY))
+			updateToolAttributes();
 	}
 
 	private void updateToolAttributes() {
 		Object tool = canvas.getTool();
-		if (tool instanceof SelectTool) table.setAttrTableModel(selectionModel);
+		if (tool instanceof SelectTool)
+			table.setAttrTableModel(selectionModel);
 		else if (tool instanceof AbstractTool) {
 			toolModel.setTool((AbstractTool) tool);
 			table.setAttrTableModel(toolModel);
-		} else table.setAttrTableModel(null);
+		} else
+			table.setAttrTableModel(null);
 	}
 }

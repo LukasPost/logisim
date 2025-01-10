@@ -6,7 +6,7 @@ package gray;
 import logisim.data.Attribute;
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
 import logisim.instance.InstanceState;
@@ -65,11 +65,11 @@ class GrayIncrementer extends InstanceFactory {
 		// First we retrieve the value being fed into the input. Note that in
 		// the setPorts invocation above, the component's input was included at
 		// index 0 in the parameter array, so we use 0 as the parameter below.
-		Value in = state.getPort(0);
+		WireValue in = state.getPort(0);
 
 		// Now compute the output. We've farmed this out to a helper method,
 		// since the same logic is needed for the library's other components.
-		Value out = nextGray(in);
+		WireValue out = nextGray(in);
 
 		// Finally we propagate the output into the circuit. The first parameter
 		// is 1 because in our list of ports (configured by invocation of
@@ -95,10 +95,10 @@ class GrayIncrementer extends InstanceFactory {
 	 * Computes the next gray value in the sequence after prev. This static method just does some bit twiddling; it
 	 * doesn't have much to do with Logisim except that it manipulates Value and BitWidth objects.
 	 */
-	static Value nextGray(Value prev) {
+	static WireValue nextGray(WireValue prev) {
 		BitWidth bits = prev.getBitWidth();
 		if (!prev.isFullyDefined())
-			return Value.createError(bits);
+			return WireValue.Companion.createError(bits);
 		int x = prev.toIntValue();
 		int ct = (x >> 16) ^ x; // compute parity of x
 		ct = (ct >> 8) ^ ct;
@@ -106,12 +106,13 @@ class GrayIncrementer extends InstanceFactory {
 		ct = (ct >> 2) ^ ct;
 		ct = (ct >> 1) ^ ct;
 		// if parity is even, flip 1's bit
-		if ((ct & 1) == 0) x = x ^ 1;
+		if ((ct & 1) == 0)
+			x = x ^ 1;
 		else { // else flip bit just above last 1
 			int y = x ^ (x & (x - 1)); // first compute the last 1
 			y = (y << 1) & bits.getMask();
 			x = (y == 0 ? 0 : x ^ y);
 		}
-		return Value.createKnown(bits, x);
+		return WireValue.Companion.createKnown(bits, x);
 	}
 }

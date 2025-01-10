@@ -14,9 +14,16 @@ import logisim.data.Attribute;
 
 public abstract class AbstractTool extends CanvasTool {
 	public static AbstractTool[] getTools(DrawingAttributeSet attrs) {
-		return new AbstractTool[] { new SelectTool(), new LineTool(attrs), new CurveTool(attrs),
-				new PolyTool(false, attrs), new RectangleTool(attrs), new RoundRectangleTool(attrs),
-				new OvalTool(attrs), new PolyTool(true, attrs), };
+		return new AbstractTool[] {
+				new SelectTool(),
+				new LineTool(attrs),
+				new CurveTool(attrs),
+				new PolyTool(false, attrs),
+				new RectangleTool(attrs),
+				new RoundRectangleTool(attrs),
+				new OvalTool(attrs),
+				new PolyTool(true, attrs),
+		};
 	}
 
 	public abstract Icon getIcon();

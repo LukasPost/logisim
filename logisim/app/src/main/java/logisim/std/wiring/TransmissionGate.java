@@ -13,7 +13,8 @@ import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -97,20 +98,20 @@ public class TransmissionGate extends InstanceFactory {
 		state.setPort(OUTPUT, computeOutput(state), 1);
 	}
 
-	private Value computeOutput(InstanceState state) {
+	private WireValue computeOutput(InstanceState state) {
 		BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
-		Value input = state.getPort(INPUT);
-		Value gate0 = state.getPort(GATE0);
-		Value gate1 = state.getPort(GATE1);
+		WireValue input = state.getPort(INPUT);
+		WireValue gate0 = state.getPort(GATE0);
+		WireValue gate1 = state.getPort(GATE1);
 
 		if (gate0.isFullyDefined() && gate1.isFullyDefined() && gate0 != gate1)
-			if (gate0 == Value.TRUE) return Value.createUnknown(width);
+			if (gate0 == WireValues.TRUE) return WireValue.Companion.createUnknown(width);
 			else return input;
-		else if (input.isFullyDefined()) return Value.createError(width);
+		else if (input.isFullyDefined()) return WireValue.Companion.createError(width);
 		else {
-			Value[] v = input.getAll();
-			for (int i = 0; i < v.length; i++) if (v[i] != Value.UNKNOWN) v[i] = Value.ERROR;
-			return Value.create(v);
+			WireValue[] v = input.getAll();
+			for (int i = 0; i < v.length; i++) if (v[i] != WireValues.UNKNOWN) v[i] = WireValues.ERROR;
+			return WireValue.Companion.create(v);
 		}
 	}
 

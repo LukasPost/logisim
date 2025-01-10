@@ -73,7 +73,8 @@ public class CircuitPins {
 					comp.removeComponentListener(myComponentListener);
 					in.getAttributeSet().removeAttributeListener(myComponentListener);
 					Collection<Component> rs = repl.getComponentsReplacing(comp);
-					if (rs.isEmpty()) removes.add(in);
+					if (rs.isEmpty())
+						removes.add(in);
 					else {
 						Component r = rs.iterator().next();
 						Instance rin = Instance.getInstanceFor(r);

@@ -16,7 +16,8 @@ import logisim.circuit.Circuit;
 import logisim.circuit.CircuitState;
 import logisim.circuit.Propagator;
 import logisim.comp.Component;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.file.FileStatistics.Count;
 import logisim.file.LoadFailedException;
 import logisim.file.Loader;
@@ -206,14 +207,14 @@ public class TtyInterface {
 		long tickCount = 0;
 		long start = System.currentTimeMillis();
 		boolean halted = false;
-		ArrayList<Value> prevOutputs = null;
+		ArrayList<WireValue> prevOutputs = null;
 		Propagator prop = circState.getPropagator();
 		while (true) {
-			ArrayList<Value> curOutputs = new ArrayList<>();
+			ArrayList<WireValue> curOutputs = new ArrayList<>();
 			for (Instance pin : outputPins) {
 				InstanceState pinState = circState.getInstanceState(pin);
-				Value val = Pin.FACTORY.getValue(pinState);
-				if (pin == haltPin) halted |= val.equals(Value.TRUE);
+				WireValue val = Pin.FACTORY.getValue(pinState);
+				if (pin == haltPin) halted |= val.equals(WireValues.TRUE);
 				else if (showTable) curOutputs.add(val);
 			}
 			if (showTable) displayTableRow(prevOutputs, curOutputs);
@@ -245,12 +246,12 @@ public class TtyInterface {
 		return retCode;
 	}
 
-	private static void displayTableRow(ArrayList<Value> prevOutputs, ArrayList<Value> curOutputs) {
+	private static void displayTableRow(ArrayList<WireValue> prevOutputs, ArrayList<WireValue> curOutputs) {
 		boolean shouldPrint = false;
 		if (prevOutputs == null) shouldPrint = true;
 		else for (int i = 0; i < curOutputs.size(); i++) {
-			Value a = prevOutputs.get(i);
-			Value b = curOutputs.get(i);
+			WireValue a = prevOutputs.get(i);
+			WireValue b = curOutputs.get(i);
 			if (!a.equals(b)) {
 				shouldPrint = true;
 				break;
@@ -280,7 +281,7 @@ public class TtyInterface {
 		else
 			precision = 0.0000001;
 		hertz = (int) (hertz / precision) * precision;
-		String hertzStr = hertz == (int) hertz ? "" + (int) hertz : "" + hertz;
+		String hertzStr = "" + hertz;
 		System.out.println(StringUtil.format(Strings.get("ttySpeedMsg"), // OK
 				hertzStr, "" + tickCount, "" + elapse));
 	}

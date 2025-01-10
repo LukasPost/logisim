@@ -55,8 +55,8 @@ public abstract class AppearanceElement extends AbstractCanvasObject {
 	}
 
 	@Override
-	public void translate(int dx, int dy) {
-		location = location.translate(dx, dy);
+	public void translate(Location distance) {
+		location = location.add(distance);
 	}
 
 	protected boolean isInCircle(Location loc, int radius) {

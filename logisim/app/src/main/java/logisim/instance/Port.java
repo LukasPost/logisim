@@ -76,13 +76,13 @@ public class Port {
 	}
 
 	public EndData toEnd(Location loc, AttributeSet attrs) {
-		Location pt = loc.translate(dx, dy);
-		if (widthFixed != null) return new EndData(pt, widthFixed, type, exclude);
-		else {
-			BitWidth val = attrs.getValue(widthAttr);
-			if (val == null) throw new IllegalArgumentException("Width attribute not set");
-			return new EndData(pt, val, type, exclude);
-		}
+		Location pt = loc.add(dx, dy);
+		if (widthFixed != null)
+			return new EndData(pt, widthFixed, type, exclude);
+		BitWidth val = attrs.getValue(widthAttr);
+		if (val == null)
+			throw new IllegalArgumentException("Width attribute not set");
+		return new EndData(pt, val, type, exclude);
 	}
 
 	private static int toType(String s) {

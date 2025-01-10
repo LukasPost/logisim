@@ -10,7 +10,8 @@ import logisim.data.Attribute;
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -72,14 +73,14 @@ public class Register extends InstanceFactory {
 		Object triggerType = state.getAttributeValue(StdAttr.TRIGGER);
 		boolean triggered = data.updateClock(state.getPort(CK), triggerType);
 
-		if (state.getPort(CLR) == Value.TRUE) data.value = 0;
-		else if (triggered && state.getPort(EN) != Value.FALSE) {
-			Value in = state.getPort(IN);
+		if (state.getPort(CLR) == WireValues.TRUE) data.value = 0;
+		else if (triggered && state.getPort(EN) != WireValues.FALSE) {
+			WireValue in = state.getPort(IN);
 			if (in.isFullyDefined())
 				data.value = in.toIntValue();
 		}
 
-		state.setPort(OUT, Value.createKnown(dataWidth, data.value), DELAY);
+		state.setPort(OUT, WireValue.Companion.createKnown(dataWidth, data.value), DELAY);
 	}
 
 	@SuppressWarnings("null")

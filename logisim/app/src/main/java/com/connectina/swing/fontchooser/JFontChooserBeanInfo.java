@@ -66,7 +66,6 @@ public class JFontChooserBeanInfo extends SimpleBeanInfo {
 			case ICON_MONO_32x32 -> iconMono32;
 			default -> null;
 		};
-
 	}
 
 }

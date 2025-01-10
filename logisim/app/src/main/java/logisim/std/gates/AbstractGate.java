@@ -19,7 +19,8 @@ import logisim.data.AttributeSet;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.file.Options;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
@@ -271,7 +272,7 @@ abstract class AbstractGate extends InstanceFactory {
 	//
 	// protected methods intended to be overridden
 	//
-	protected abstract Value getIdentity();
+	protected abstract WireValue getIdentity();
 
 	protected abstract void paintShape(InstancePainter painter, int width, int height);
 
@@ -284,7 +285,7 @@ abstract class AbstractGate extends InstanceFactory {
 
 	protected abstract void paintDinShape(InstancePainter painter, int width, int height);
 
-	protected abstract Value computeOutput(Value[] inputs, int numInputs, InstanceState state);
+	protected abstract WireValue computeOutput(WireValue[] inputs, int numInputs, InstanceState state);
 
 	protected abstract Expression computeExpression(Expression[] inputs, int numInputs);
 
@@ -362,7 +363,7 @@ abstract class AbstractGate extends InstanceFactory {
 		AttributeSet opts = state.getProject().getOptions().getAttributeSet();
 		boolean errorIfUndefined = opts.getValue(Options.ATTR_GATE_UNDEFINED).equals(Options.GATE_UNDEFINED_ERROR);
 
-		Value[] inputs = new Value[inputCount];
+		WireValue[] inputs = new WireValue[inputCount];
 		int numInputs = 0;
 		boolean error = false;
 		for (int i = 1; i <= inputCount; i++)
@@ -373,8 +374,8 @@ abstract class AbstractGate extends InstanceFactory {
 				numInputs++;
 			}
 			else if (errorIfUndefined) error = true;
-		Value out;
-		if (numInputs == 0 || error) out = Value.createError(attrs.width);
+		WireValue out;
+		if (numInputs == 0 || error) out = WireValue.Companion.createError(attrs.width);
 		else {
 			out = computeOutput(inputs, numInputs, state);
 			out = pullOutput(out, attrs.out);
@@ -382,21 +383,21 @@ abstract class AbstractGate extends InstanceFactory {
 		state.setPort(0, out, GateAttributes.DELAY);
 	}
 
-	static Value pullOutput(Value value, Object outType) {
+	static WireValue pullOutput(WireValue value, Object outType) {
 		if (outType == GateAttributes.OUTPUT_01) return value;
 		else {
-			Value[] v = value.getAll();
+			WireValue[] v = value.getAll();
 			if (outType == GateAttributes.OUTPUT_0Z) {
 				for (int i = 0; i < v.length; i++)
-					if (v[i] == Value.TRUE)
-						v[i] = Value.UNKNOWN;
+					if (v[i] == WireValues.TRUE)
+						v[i] = WireValues.UNKNOWN;
 			}
 			else if (outType == GateAttributes.OUTPUT_Z1) {
 				for (int i = 0; i < v.length; i++)
-					if (v[i] == Value.FALSE)
-						v[i] = Value.UNKNOWN;
+					if (v[i] == WireValues.FALSE)
+						v[i] = WireValues.UNKNOWN;
 			}
-			return Value.create(v);
+			return WireValue.Companion.create(v);
 		}
 	}
 

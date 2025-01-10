@@ -5,6 +5,7 @@ package logisim.data;
 
 import javax.swing.JComboBox;
 
+import logisim.data.WireValue.WireValue;
 import logisim.util.StringGetter;
 
 import java.awt.Component;
@@ -102,7 +103,7 @@ public class BitWidth implements Comparable<BitWidth> {
 
 	private static void ensurePrefab() {
 		if (prefab == null) {
-			prefab = new BitWidth[Math.min(32, Value.MAX_WIDTH)];
+			prefab = new BitWidth[Math.min(32, WireValue.MAX_WIDTH)];
 			prefab[0] = ONE;
 			for (int i = 1; i < prefab.length; i++) prefab[i] = new BitWidth(i + 1);
 		}

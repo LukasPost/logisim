@@ -15,7 +15,8 @@ import logisim.comp.EndData;
 import logisim.data.AttributeEvent;
 import logisim.data.AttributeListener;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.file.Options;
 
 public class Propagator {
@@ -25,10 +26,10 @@ public class Propagator {
 		CircuitState state; // state of circuit containing component
 		Component cause; // component emitting the value
 		Location loc; // the location at which value is emitted
-		Value val; // value being emitted
+		WireValue val; // value being emitted
 		SetData next;
 
-		private SetData(int time, int serialNumber, CircuitState state, Location loc, Component cause, Value val) {
+		private SetData(int time, int serialNumber, CircuitState state, Location loc, Component cause, WireValue val) {
 			this.time = time;
 			this.serialNumber = serialNumber;
 			this.state = state;
@@ -240,9 +241,9 @@ public class Propagator {
 
 			// change the information about value
 			SetData oldHead = state.causes.get(data.loc);
-			Value oldVal = computeValue(oldHead);
+			WireValue oldVal = computeValue(oldHead);
 			SetData newHead = addCause(state, oldHead, data);
-			Value newVal = computeValue(newHead);
+			WireValue newVal = computeValue(newHead);
 
 			// if the value at point has changed, propagate it
 			if (!newVal.equals(oldVal)) state.markPointAsDirty(data.loc);
@@ -286,7 +287,7 @@ public class Propagator {
 	//
 	// package-protected helper methods
 	//
-	void setValue(CircuitState state, Location pt, Value val, Component cause, int delay) {
+	void setValue(CircuitState state, Location pt, WireValue val, Component cause, int delay) {
 		if (cause instanceof Wire || cause instanceof Splitter)
 			return;
 		if (delay <= 0) delay = 1;
@@ -326,14 +327,14 @@ public class Propagator {
 		for (EndData end : comp.getEnds()) {
 			Location loc = end.getLocation();
 			SetData oldHead = state.causes.get(loc);
-			Value oldVal = computeValue(oldHead);
+			WireValue oldVal = computeValue(oldHead);
 			SetData newHead = removeCause(state, oldHead, loc, comp);
-			Value newVal = computeValue(newHead);
-			Value wireVal = state.getValueByWire(loc);
+			WireValue newVal = computeValue(newHead);
+			WireValue wireVal = state.getValueByWire(loc);
 
 			if (!newVal.equals(oldVal) || wireVal != null) state.markPointAsDirty(loc);
 			if (wireVal != null)
-				state.setValueByWire(loc, Value.NIL);
+				state.setValueByWire(loc, logisim.data.WireValue.WireValues.NIL);
 		}
 	}
 
@@ -401,10 +402,10 @@ public class Propagator {
 	//
 	// static methods
 	//
-	static Value computeValue(SetData causes) {
+	static WireValue computeValue(SetData causes) {
 		if (causes == null)
-			return Value.NIL;
-		Value ret = causes.val;
+			return WireValues.NIL;
+		WireValue ret = causes.val;
 		for (SetData n = causes.next; n != null; n = n.next) ret = ret.combine(n.val);
 		return ret;
 	}

@@ -200,7 +200,7 @@ class InstanceComponent implements Component, AttributeListener, ToolTipMaker {
 	}
 
 	public boolean contains(Location pt) {
-		Location translated = pt.translate(-loc.x(), -loc.y());
+		Location translated = pt.sub(loc);
 		InstanceFactory factory = instance.getFactory();
 		return factory.contains(translated, instance.getAttributeSet());
 	}

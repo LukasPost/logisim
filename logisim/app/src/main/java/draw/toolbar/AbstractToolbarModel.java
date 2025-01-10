@@ -23,12 +23,12 @@ public abstract class AbstractToolbarModel implements ToolbarModel {
 
 	protected void fireToolbarContentsChanged() {
 		ToolbarModelEvent event = new ToolbarModelEvent(this);
-		for (ToolbarModelListener listener : listeners) listener.toolbarContentsChanged(event);
+		listeners.forEach(l -> l.toolbarContentsChanged(event));
 	}
 
 	protected void fireToolbarAppearanceChanged() {
 		ToolbarModelEvent event = new ToolbarModelEvent(this);
-		for (ToolbarModelListener listener : listeners) listener.toolbarAppearanceChanged(event);
+		listeners.forEach(l -> l.toolbarAppearanceChanged(event));
 	}
 
 	public abstract List<ToolbarItem> getItems();

@@ -18,7 +18,8 @@ import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.file.Options;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
@@ -99,7 +100,7 @@ class ControlledBuffer extends InstanceFactory {
 			g.drawPolyline(xp, yp, 4);
 			if (isInverter)
 				g.drawOval(x + 13, 8, 4, 4);
-			g.setColor(Value.FALSE_COLOR);
+			g.setColor(WireValues.Companion.getFALSE_COLOR());
 			g.drawLine(x + 8, 14, x + 8, 18);
 		}
 	}
@@ -200,21 +201,21 @@ class ControlledBuffer extends InstanceFactory {
 
 	@Override
 	public void propagate(InstanceState state) {
-		Value control = state.getPort(2);
+		WireValue control = state.getPort(2);
 		BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
-		if (control == Value.TRUE) {
-			Value in = state.getPort(1);
+		if (control == WireValues.TRUE) {
+			WireValue in = state.getPort(1);
 			state.setPort(0, isInverter ? in.not() : in, GateAttributes.DELAY);
-		} else if (control == Value.ERROR || control == Value.UNKNOWN)
-			state.setPort(0, Value.createError(width), GateAttributes.DELAY);
+		} else if (control == WireValues.ERROR || control == WireValues.UNKNOWN)
+			state.setPort(0, WireValue.Companion.createError(width), GateAttributes.DELAY);
 		else {
-			Value out;
-			if (control == Value.NIL) {
+			WireValue out;
+			if (control == WireValues.NIL) {
 				AttributeSet opts = state.getProject().getOptions().getAttributeSet();
 				if (opts.getValue(Options.ATTR_GATE_UNDEFINED).equals(Options.GATE_UNDEFINED_ERROR))
-					out = Value.createError(width);
-				else out = Value.createUnknown(width);
-			} else out = Value.createUnknown(width);
+					out = WireValue.Companion.createError(width);
+				else out = WireValue.Companion.createUnknown(width);
+			} else out = WireValue.Companion.createUnknown(width);
 			state.setPort(0, out, GateAttributes.DELAY);
 		}
 	}

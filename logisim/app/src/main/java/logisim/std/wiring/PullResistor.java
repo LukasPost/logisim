@@ -17,7 +17,8 @@ import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -31,9 +32,9 @@ import logisim.util.Icons;
 public class PullResistor extends InstanceFactory {
 	public static final Attribute<AttributeOption> ATTR_PULL_TYPE = Attributes.forOption("pull",
 			Strings.getter("pullTypeAttr"),
-			new AttributeOption[] { new AttributeOption(Value.FALSE, "0", Strings.getter("pullZeroType")),
-					new AttributeOption(Value.TRUE, "1", Strings.getter("pullOneType")),
-					new AttributeOption(Value.ERROR, "X", Strings.getter("pullErrorType")) });
+			new AttributeOption[] { new AttributeOption(WireValues.FALSE, "0", Strings.getter("pullZeroType")),
+					new AttributeOption(WireValues.TRUE, "1", Strings.getter("pullOneType")),
+					new AttributeOption(WireValues.ERROR, "X", Strings.getter("pullErrorType")) });
 
 	public static final PullResistor FACTORY = new PullResistor();
 
@@ -69,7 +70,7 @@ public class PullResistor extends InstanceFactory {
 
 	@Override
 	public void paintGhost(InstancePainter painter) {
-		Value pull = getPullValue(painter.getAttributeSet());
+		WireValue pull = getPullValue(painter.getAttributeSet());
 		paintBase(painter, pull, null, null);
 	}
 
@@ -80,14 +81,14 @@ public class PullResistor extends InstanceFactory {
 		int y = loc.y();
 		Graphics g = painter.getGraphics();
 		g.translate(x, y);
-		Value pull = getPullValue(painter.getAttributeSet());
-		Value actual = painter.getPort(0);
+		WireValue pull = getPullValue(painter.getAttributeSet());
+		WireValue actual = painter.getPort(0);
 		paintBase(painter, pull, pull.getColor(), actual.getColor());
 		g.translate(-x, -y);
 		painter.drawPorts();
 	}
 
-	private void paintBase(InstancePainter painter, Value pullValue, Color inColor, Color outColor) {
+	private void paintBase(InstancePainter painter, WireValue pullValue, Color inColor, Color outColor) {
 		boolean color = painter.shouldDrawColor();
 		Direction facing = painter.getAttributeValue(StdAttr.FACING);
 		Graphics g = painter.getGraphics();
@@ -96,12 +97,12 @@ public class PullResistor extends InstanceFactory {
 		if (color && inColor != null)
 			g.setColor(inColor);
 		if (facing == Direction.East)
-			GraphicsUtil.drawText(g, pullValue.toDisplayString(), -32, 0, GraphicsUtil.H_RIGHT, GraphicsUtil.V_CENTER);
+			GraphicsUtil.drawText(g, pullValue.toBinString(), -32, 0, GraphicsUtil.H_RIGHT, GraphicsUtil.V_CENTER);
 		else if (facing == Direction.West)
-			GraphicsUtil.drawText(g, pullValue.toDisplayString(), 32, 0, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+			GraphicsUtil.drawText(g, pullValue.toBinString(), 32, 0, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
 		else if (facing == Direction.North)
-			GraphicsUtil.drawText(g, pullValue.toDisplayString(), 0, 32, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
-		else GraphicsUtil.drawText(g, pullValue.toDisplayString(), 0, -32, GraphicsUtil.H_CENTER,
+			GraphicsUtil.drawText(g, pullValue.toBinString(), 0, 32, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+		else GraphicsUtil.drawText(g, pullValue.toBinString(), 0, -32, GraphicsUtil.H_CENTER,
 				GraphicsUtil.V_BASELINE);
 
 		double rotate = 0.0;
@@ -145,12 +146,12 @@ public class PullResistor extends InstanceFactory {
 		// nothing to do - handled by CircuitWires
 	}
 
-	public static Value getPullValue(Instance instance) {
+	public static WireValue getPullValue(Instance instance) {
 		return getPullValue(instance.getAttributeSet());
 	}
 
-	private static Value getPullValue(AttributeSet attrs) {
+	private static WireValue getPullValue(AttributeSet attrs) {
 		AttributeOption opt = attrs.getValue(ATTR_PULL_TYPE);
-		return (Value) opt.getValue();
+		return (WireValue) opt.getValue();
 	}
 }

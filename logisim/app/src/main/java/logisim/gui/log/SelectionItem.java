@@ -11,7 +11,8 @@ import logisim.circuit.SubcircuitFactory;
 import logisim.comp.Component;
 import logisim.data.AttributeEvent;
 import logisim.data.AttributeListener;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.StdAttr;
 
 class SelectionItem implements AttributeListener, CircuitListener {
@@ -107,14 +108,14 @@ class SelectionItem implements AttributeListener, CircuitListener {
 		return longDescriptor;
 	}
 
-	public Value fetchValue(CircuitState root) {
+	public WireValue fetchValue(CircuitState root) {
 		CircuitState cur = root;
 		for (Component component : path) {
 			SubcircuitFactory circFact = (SubcircuitFactory) component.getFactory();
 			cur = circFact.getSubstate(cur, component);
 		}
 		Loggable log = (Loggable) comp.getFeature(Loggable.class);
-		return log == null ? Value.NIL : log.getLogValue(cur, option);
+		return log == null ? WireValues.NIL : log.getLogValue(cur, option);
 	}
 
 	public void attributeListChanged(AttributeEvent e) {

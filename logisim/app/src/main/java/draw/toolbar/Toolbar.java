@@ -70,7 +70,8 @@ public class Toolbar extends JPanel {
 		} else if (value == VERTICAL) {
 			axis = BoxLayout.Y_AXIS;
 			position = BorderLayout.NORTH;
-		} else throw new IllegalArgumentException();
+		} else
+			throw new IllegalArgumentException();
 		remove(subpanel);
 		subpanel.setLayout(new BoxLayout(subpanel, axis));
 		add(subpanel, position);
@@ -81,7 +82,8 @@ public class Toolbar extends JPanel {
 		subpanel.removeAll();
 		ToolbarModel m = model;
 		if (m != null) {
-			for (ToolbarItem item : m.getItems()) subpanel.add(new ToolbarButton(this, item));
+			for (ToolbarItem item : m.getItems())
+				subpanel.add(new ToolbarButton(this, item));
 			subpanel.add(Box.createGlue());
 		}
 		revalidate();

@@ -27,9 +27,7 @@ import logisim.analyze.model.OutputExpressionsListener;
 class MinimizedTab extends AnalyzerTab {
 	private static class FormatModel extends AbstractListModel<String> implements ComboBoxModel<String> {
 		static int getFormatIndex(int choice) {
-			if (choice == AnalyzerModel.FORMAT_PRODUCT_OF_SUMS)
-				return 1;
-			return 0;
+			return choice == AnalyzerModel.FORMAT_PRODUCT_OF_SUMS ? 1 : 0;
 		}
 
 		private String[] choices;
@@ -48,9 +46,7 @@ class MinimizedTab extends AnalyzerTab {
 		}
 
 		int getSelectedFormat() {
-			if (selected == 1)
-				return AnalyzerModel.FORMAT_PRODUCT_OF_SUMS;
-			return AnalyzerModel.FORMAT_SUM_OF_PRODUCTS;
+			return selected == 1 ? AnalyzerModel.FORMAT_PRODUCT_OF_SUMS : AnalyzerModel.FORMAT_SUM_OF_PRODUCTS;
 		}
 
 		public int getSize() {
@@ -66,7 +62,9 @@ class MinimizedTab extends AnalyzerTab {
 		}
 
 		public void setSelectedItem(Object value) {
-			for (int i = 0; i < choices.length; i++) if (choices[i].equals(value)) selected = i;
+			for (int i = 0; i < choices.length; i++)
+				if (choices[i].equals(value))
+					selected = i;
 		}
 	}
 
@@ -94,7 +92,8 @@ class MinimizedTab extends AnalyzerTab {
 				String output = getCurrentVariable();
 				FormatModel model = (FormatModel) formatChoice.getModel();
 				outputExpressions.setMinimizedFormat(output, model.getSelectedFormat());
-			} else updateTab();
+			} else
+				updateTab();
 		}
 	}
 

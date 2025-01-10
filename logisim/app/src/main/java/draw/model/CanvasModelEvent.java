@@ -108,12 +108,11 @@ public class CanvasModelEvent extends EventObject {
 		this.gesture = gesture;
 	}
 
-	private CanvasModelEvent(CanvasModel source, int action, Map<AttributeMapKey, Object> oldValues,
-			Map<AttributeMapKey, Object> newValues) {
+	private CanvasModelEvent(CanvasModel source, int action, Map<AttributeMapKey, Object> oldValues, Map<AttributeMapKey, Object> newValues) {
 		this(source, action, Collections.emptySet());
-
 		HashSet<CanvasObject> affected = new HashSet<>(newValues.size());
-		for (AttributeMapKey key : newValues.keySet()) affected.add(key.getObject());
+		for (AttributeMapKey key : newValues.keySet())
+			affected.add(key.getObject());
 		this.affected = affected;
 
 		Map<AttributeMapKey, Object> oldValuesCopy = new HashMap<>(oldValues);
@@ -147,16 +146,14 @@ public class CanvasModelEvent extends EventObject {
 	}
 
 	public Collection<? extends CanvasObject> getAffected() {
-		Collection<? extends CanvasObject> ret = affected;
-		if (ret == null) {
-			Map<AttributeMapKey, Object> newVals = newValues;
-			if (newVals != null) {
-				HashSet<CanvasObject> keys = new HashSet<>();
-				for (AttributeMapKey key : newVals.keySet()) keys.add(key.getObject());
-				ret = Collections.unmodifiableCollection(keys);
-				affected = ret;
-			}
-		}
+		if (affected != null)
+			return affected;
+		if (newValues == null)
+			return null;
+		HashSet<CanvasObject> keys = new HashSet<>();
+		for (AttributeMapKey key : newValues.keySet())
+			keys.add(key.getObject());
+		affected = Collections.unmodifiableCollection(keys);
 		return affected;
 	}
 

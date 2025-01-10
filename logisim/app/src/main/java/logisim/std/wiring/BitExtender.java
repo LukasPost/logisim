@@ -13,7 +13,8 @@ import logisim.data.Attributes;
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -45,7 +46,7 @@ public class BitExtender extends InstanceFactory {
 				new Object[] { BitWidth.create(8), BitWidth.create(16), ATTR_TYPE.parse("zero") });
 		setFacingAttribute(StdAttr.FACING);
 		setKeyConfigurator(JoinedConfigurator.create(new BitWidthConfigurator(ATTR_OUT_WIDTH),
-				new BitWidthConfigurator(ATTR_IN_WIDTH, 1, Value.MAX_WIDTH, 0)));
+				new BitWidthConfigurator(ATTR_IN_WIDTH, 1, WireValue.MAX_WIDTH, 0)));
 		setOffsetBounds(Bounds.create(-40, -20, 40, 40));
 	}
 
@@ -111,25 +112,25 @@ public class BitExtender extends InstanceFactory {
 
 	@Override
 	public void propagate(InstanceState state) {
-		Value in = state.getPort(1);
+		WireValue in = state.getPort(1);
 		BitWidth wout = state.getAttributeValue(ATTR_OUT_WIDTH);
 		String type = getType(state.getAttributeSet());
-		Value extend;
+		WireValue extend;
 		switch (type) {
-			case "one" -> extend = Value.TRUE;
+			case "one" -> extend = WireValues.TRUE;
 			case "sign" -> {
 				int win = in.getWidth();
-				extend = win > 0 ? in.get(win - 1) : Value.ERROR;
+				extend = win > 0 ? in.get(win - 1) : WireValues.ERROR;
 			}
 			case "input" -> {
 				extend = state.getPort(2);
 				if (extend.getWidth() != 1)
-					extend = Value.ERROR;
+					extend = WireValues.ERROR;
 			}
-			case null, default -> extend = Value.FALSE;
+			case null, default -> extend = WireValues.FALSE;
 		}
 
-		Value out = in.extendWidth(wout.getWidth(), extend);
+		WireValue out = in.extendWidth(wout.getWidth(), extend);
 		state.setPort(0, out, 1);
 	}
 

@@ -10,7 +10,8 @@ import logisim.data.Attributes;
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceData;
 import logisim.instance.InstanceFactory;
@@ -74,10 +75,10 @@ public class Random extends InstanceFactory {
 		Object triggerType = state.getAttributeValue(StdAttr.EDGE_TRIGGER);
 		boolean triggered = data.updateClock(state.getPort(CK), triggerType);
 
-		if (state.getPort(RST) == Value.TRUE) data.reset(state.getAttributeValue(ATTR_SEED));
-		else if (triggered && state.getPort(NXT) != Value.FALSE) data.step();
+		if (state.getPort(RST) == WireValues.TRUE) data.reset(state.getAttributeValue(ATTR_SEED));
+		else if (triggered && state.getPort(NXT) != WireValues.FALSE) data.step();
 
-		state.setPort(OUT, Value.createKnown(dataWidth, data.value), 4);
+		state.setPort(OUT, WireValue.Companion.createKnown(dataWidth, data.value), 4);
 	}
 
 	@Override
@@ -157,14 +158,14 @@ public class Random extends InstanceFactory {
 		}
 
 		@Override
-		public Value getLogValue(InstanceState state, Object option) {
+		public WireValue getLogValue(InstanceState state, Object option) {
 			BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
 			if (dataWidth == null)
 				dataWidth = BitWidth.create(0);
 			StateData data = (StateData) state.getData();
 			if (data == null)
-				return Value.createKnown(dataWidth, 0);
-			return Value.createKnown(dataWidth, data.value);
+				return WireValue.Companion.createKnown(dataWidth, 0);
+			return WireValue.Companion.createKnown(dataWidth, data.value);
 		}
 	}
 }

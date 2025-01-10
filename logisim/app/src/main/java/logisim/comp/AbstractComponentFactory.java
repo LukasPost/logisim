@@ -14,7 +14,8 @@ import logisim.data.AttributeSet;
 import logisim.data.AttributeSets;
 import logisim.data.Bounds;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.util.GraphicsUtil;
 import logisim.util.Icons;
 import logisim.util.StringGetter;
@@ -82,7 +83,7 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 		else {
 			g.setColor(Color.black);
 			g.drawRect(x + 5, y + 2, 11, 17);
-			Value[] v = { Value.TRUE, Value.FALSE };
+			WireValue[] v = { WireValues.TRUE, WireValues.FALSE };
 			for (int i = 0; i < 3; i++) {
 				g.setColor(v[i % 2].getColor());
 				g.fillOval(x + 5 - 1, y + 5 + 5 * i - 1, 3, 3);

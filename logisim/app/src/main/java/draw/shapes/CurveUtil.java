@@ -102,8 +102,7 @@ public class CurveUtil {
 			}
 		}
 
-		if (tMin == Double.MAX_VALUE) return null;
-		else return posMin;
+		return tMin == Double.MAX_VALUE ? null : posMin;
 	}
 
 	private static void getPos(double[] result, double t, double[] p0, double[] p1, double[] p2) {
@@ -135,8 +134,8 @@ public class CurveUtil {
 				z = Math.sqrt(D);
 				double u = (-q + z) / 2;
 				double v = (-q - z) / 2;
-				u = (u >= 0) ? Math.pow(u, 1. / 3) : -Math.pow(-u, 1. / 3);
-				v = (v >= 0) ? Math.pow(v, 1. / 3) : -Math.pow(-v, 1. / 3);
+				u = u >= 0 ? Math.pow(u, 1. / 3) : -Math.pow(-u, 1. / 3);
+				v = v >= 0 ? Math.pow(v, 1. / 3) : -Math.pow(-v, 1. / 3);
 				return new double[] { u + v + offset };
 			} else if (D < -zeroMax) {
 				// D negative
@@ -146,11 +145,7 @@ public class CurveUtil {
 						u * Math.cos(v + 4 * Math.PI / 3) + offset };
 			} else {
 				// D zero
-				double u;
-				if (q < 0)
-					u = Math.pow(-q / 2, 1. / 3);
-				else
-					u = -Math.pow(q / 2, 1. / 3);
+				double u = q < 0 ? Math.pow(-q / 2, 1. / 3) : -Math.pow(q / 2, 1. / 3);
 				return new double[] { 2 * u + offset, -u + offset };
 			}
 		} else if (Math.abs(b) > zeroMax) {
@@ -161,17 +156,20 @@ public class CurveUtil {
 			c = d;
 			double D = b * b - 4 * a * c;
 			// D negative
-			if (D <= -zeroMax) return null;
+			if (D <= -zeroMax)
+				return null;
 			else // D zero
 				if (D > zeroMax) {
 				// D positive
-				D = Math.sqrt(D);
-				return new double[] { (-b - D) / (2 * a), (-b + D) / (2 * a) };
-			} else return new double[]{-b / (2 * a)};
-		} else // a, b, and c are all 0 - this is a constant equation
-			// a and b are both 0 - we're looking at a linear equation
-			if (Math.abs(c) > zeroMax) return new double[]{-d / c};
-			else return null;
+					D = Math.sqrt(D);
+					return new double[] { (-b - D) / (2 * a), (-b + D) / (2 * a) };
+				}
+				else
+					return new double[]{-b / (2 * a)};
+		}
+		// a, b, and c are all 0 - this is a constant equation
+		// a and b are both 0 - we're looking at a linear equation
+		return Math.abs(c) > zeroMax ? new double[]{-d / c} : null;
 	}
 
 	// Translated from ActionScript written by Jim Armstrong, at

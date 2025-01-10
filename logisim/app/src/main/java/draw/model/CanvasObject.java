@@ -48,7 +48,7 @@ public interface CanvasObject {
 
 	Handle deleteHandle(Handle handle);
 
-	void translate(int dx, int dy);
+	void translate(Location distance);
 
 	<V> void setValue(Attribute<V> attr, V value);
 }

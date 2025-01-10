@@ -14,7 +14,8 @@ import logisim.data.Attributes;
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
 import logisim.instance.InstancePoker;
@@ -67,27 +68,27 @@ public class Keyboard extends InstanceFactory {
 	public void propagate(InstanceState circState) {
 		Object trigger = circState.getAttributeValue(StdAttr.EDGE_TRIGGER);
 		KeyboardData state = getKeyboardState(circState);
-		Value clear = circState.getPort(CLR);
-		Value clock = circState.getPort(CK);
-		Value enable = circState.getPort(RE);
+		WireValue clear = circState.getPort(CLR);
+		WireValue clock = circState.getPort(CK);
+		WireValue enable = circState.getPort(RE);
 		char c;
 
 		synchronized (state) {
-			Value lastClock = state.setLastClock(clock);
-			if (clear == Value.TRUE) state.clear();
-			else if (enable != Value.FALSE) {
+			WireValue lastClock = state.setLastClock(clock);
+			if (clear == WireValues.TRUE) state.clear();
+			else if (enable != WireValues.FALSE) {
 				boolean go;
-				if (trigger == StdAttr.TRIG_FALLING) go = lastClock == Value.TRUE && clock == Value.FALSE;
-				else go = lastClock == Value.FALSE && clock == Value.TRUE;
+				if (trigger == StdAttr.TRIG_FALLING) go = lastClock == WireValues.TRUE && clock == WireValues.FALSE;
+				else go = lastClock == WireValues.FALSE && clock == WireValues.TRUE;
 				if (go)
 					state.dequeue();
 			}
 
 			c = state.getChar(0);
 		}
-		Value out = Value.createKnown(BitWidth.create(7), c & 0x7F);
+		WireValue out = WireValue.Companion.createKnown(BitWidth.create(7), c & 0x7F);
 		circState.setPort(OUT, out, DELAY0);
-		circState.setPort(AVL, c != '\0' ? Value.TRUE : Value.FALSE, DELAY1);
+		circState.setPort(AVL, c != '\0' ? WireValues.TRUE : WireValues.FALSE, DELAY1);
 	}
 
 	@Override

@@ -35,6 +35,9 @@ public class Bounds {
 	public static Bounds create(Location pt) {
 		return create(pt.x(), pt.y(), 1, 1);
 	}
+	public static Bounds create(Location pt, int wid, int ht) {
+		return create(pt.x(), pt.y(), wid, ht);
+	}
 
 	private final int x;
 	private final int y;
@@ -184,6 +187,10 @@ public class Bounds {
 		return create(x - d, y - d, wid + 2 * d, ht + 2 * d);
 	}
 
+	public Bounds translate(Location distance){
+		return translate(distance.x(), distance.y());
+	}
+
 	public Bounds translate(int dx, int dy) {
 		if (this == EMPTY_BOUNDS)
 			return this;
@@ -228,5 +235,9 @@ public class Bounds {
 			y1 = y3;
 		if (x1 < x0 || y1 < y0) return EMPTY_BOUNDS;
 		else return create(x0, y0, x1 - x0, y1 - y0);
+	}
+
+	public Location getLocation() {
+		return new Location(x, y);
 	}
 }

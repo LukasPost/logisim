@@ -5,6 +5,7 @@ package logisim.std.wiring;
 
 import java.awt.Graphics2D;
 
+import logisim.data.WireValue.WireValue;
 import logisim.tools.key.BitWidthConfigurator;
 import logisim.util.GraphicsUtil;
 
@@ -15,7 +16,7 @@ import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -52,7 +53,7 @@ public class Power extends InstanceFactory {
 	@Override
 	public void propagate(InstanceState state) {
 		BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
-		state.setPort(0, Value.repeat(Value.TRUE, width.getWidth()), 1);
+		state.setPort(0, WireValue.Companion.repeat(WireValues.TRUE, width.getWidth()), 1);
 	}
 
 	@Override
@@ -83,7 +84,7 @@ public class Power extends InstanceFactory {
 		GraphicsUtil.switchToWidth(g, 1);
 		if (!isGhost && painter.shouldDrawColor()) {
 			BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
-			g.setColor(Value.repeat(Value.TRUE, width.getWidth()).getColor());
+			g.setColor(WireValue.Companion.repeat(WireValues.TRUE, width.getWidth()).getColor());
 		}
 		g.drawPolygon(new int[] { 6, 14, 6 }, new int[] { -8, 0, 8 }, 3);
 

@@ -89,11 +89,8 @@ public class Caret {
 				int digit = Character.digit(e.getKeyChar(), 16);
 				if (digit >= 0) {
 					HexModel model = hex.getModel();
-					if (model != null && cursor >= model.getFirstOffset() && cursor <= model.getLastOffset()) {
-						int curValue = model.get(cursor);
-						int newValue = 16 * curValue + digit;
-						model.set(cursor, newValue);
-					}
+					if (model != null && cursor >= model.getFirstOffset() && cursor <= model.getLastOffset())
+						model.set(cursor, 16 * model.get(cursor) + digit);
 				}
 			}
 		}
@@ -122,10 +119,7 @@ public class Caret {
 			case KeyEvent.VK_HOME:
 				if (cursor >= 0) {
 					int dist = (int) (cursor % cols);
-					if (dist == 0)
-						setDot(0, shift);
-					else
-						setDot(cursor - dist, shift);
+					setDot(dist == 0 ? 0 : cursor - dist, shift);
 					break;
 				}
 			case KeyEvent.VK_END:
@@ -137,7 +131,8 @@ public class Caret {
 						if (dest > end || dest == cursor)
 							dest = end;
 						setDot(dest, shift);
-					} else setDot(dest, shift);
+					} else
+						setDot(dest, shift);
 				}
 				break;
 			case KeyEvent.VK_PAGE_DOWN:
@@ -146,7 +141,8 @@ public class Caret {
 					rows--;
 				if (cursor >= 0) {
 					long max = hex.getModel().getLastOffset();
-					if (cursor + (long) rows * cols <= max) setDot(cursor + (long) rows * cols, shift);
+					if (cursor + (long) rows * cols <= max)
+						setDot(cursor + (long) rows * cols, shift);
 					else {
 						long n = cursor;
 						while (n + cols < max)
@@ -235,48 +231,55 @@ public class Caret {
 
 	public void setDot(long value, boolean keepMark) {
 		HexModel model = hex.getModel();
-		if (model == null || value < model.getFirstOffset() || value > model.getLastOffset()) value = -1;
-		if (cursor != value) {
-			long oldValue = cursor;
-			if (highlight != null) {
-				hex.getHighlighter().remove(highlight);
-				highlight = null;
-			}
-			if (!keepMark) mark = value;
-			else if (mark != value) highlight = hex.getHighlighter().add(mark, value, SELECT_COLOR);
-			cursor = value;
-			expose(oldValue, false);
-			expose(value, true);
-			if (!listeners.isEmpty()) {
-				ChangeEvent event = new ChangeEvent(this);
-				for (ChangeListener l : listeners) l.stateChanged(event);
-			}
+		if (model == null || value < model.getFirstOffset() || value > model.getLastOffset())
+			value = -1;
+		if (cursor == value)
+			return;
+
+		if (highlight != null) {
+			hex.getHighlighter().remove(highlight);
+			highlight = null;
+		}
+		if (!keepMark)
+			mark = value;
+		else if (mark != value)
+			highlight = hex.getHighlighter().add(mark, value, SELECT_COLOR);
+
+		long oldValue = cursor;
+		cursor = value;
+		expose(oldValue, false);
+		expose(value, true);
+		if (!listeners.isEmpty()) {
+			ChangeEvent event = new ChangeEvent(this);
+			listeners.forEach(l -> l.stateChanged(event));
 		}
 	}
 
 	private void expose(long loc, boolean scrollTo) {
-		if (loc >= 0) {
-			Measures measures = hex.getMeasures();
-			int x = measures.toX(loc);
-			int y = measures.toY(loc);
-			int w = measures.getCellWidth();
-			int h = measures.getCellHeight();
-			hex.repaint(x - 1, y - 1, w + 2, h + 2);
-			if (scrollTo) hex.scrollRectToVisible(new Rectangle(x, y, w, h));
-		}
+		if (loc < 0)
+			return;
+		Measures measures = hex.getMeasures();
+		int x = measures.toX(loc);
+		int y = measures.toY(loc);
+		int w = measures.getCellWidth();
+		int h = measures.getCellHeight();
+		hex.repaint(x - 1, y - 1, w + 2, h + 2);
+		if (scrollTo)
+			hex.scrollRectToVisible(new Rectangle(x, y, w, h));
 	}
 
 	void paintForeground(Graphics g, long start, long end) {
-		if (cursor >= start && cursor < end && hex.isFocusOwner()) {
-			Measures measures = hex.getMeasures();
-			int x = measures.toX(cursor);
-			int y = measures.toY(cursor);
-			Graphics2D g2 = (Graphics2D) g;
-			Stroke oldStroke = g2.getStroke();
-			g2.setColor(hex.getForeground());
-			g2.setStroke(CURSOR_STROKE);
-			g2.drawRect(x, y, measures.getCellWidth() - 1, measures.getCellHeight() - 1);
-			g2.setStroke(oldStroke);
-		}
+		if (cursor < start || cursor >= end || !hex.isFocusOwner())
+			return;
+
+		Measures measures = hex.getMeasures();
+		int x = measures.toX(cursor);
+		int y = measures.toY(cursor);
+		Graphics2D g2 = (Graphics2D) g;
+		Stroke oldStroke = g2.getStroke();
+		g2.setColor(hex.getForeground());
+		g2.setStroke(CURSOR_STROKE);
+		g2.drawRect(x, y, measures.getCellWidth() - 1, measures.getCellHeight() - 1);
+		g2.setStroke(oldStroke);
 	}
 }

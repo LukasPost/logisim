@@ -10,7 +10,7 @@ import logisim.comp.EndData;
 import logisim.data.Attribute;
 import logisim.data.AttributeSet;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 import logisim.proj.Project;
 
 class InstanceStateImpl implements InstanceState {
@@ -53,7 +53,7 @@ class InstanceStateImpl implements InstanceState {
 		return component.getAttributeSet().getValue(attr);
 	}
 
-	public Value getPort(int portIndex) {
+	public WireValue getPort(int portIndex) {
 		EndData data = component.getEnd(portIndex);
 		return circuitState.getValue(data.getLocation());
 	}
@@ -64,7 +64,7 @@ class InstanceStateImpl implements InstanceState {
 		return circ.isConnected(loc, component);
 	}
 
-	public void setPort(int portIndex, Value value, int delay) {
+	public void setPort(int portIndex, WireValue value, int delay) {
 		EndData end = component.getEnd(portIndex);
 		circuitState.setValue(end.getLocation(), value, component, delay);
 	}

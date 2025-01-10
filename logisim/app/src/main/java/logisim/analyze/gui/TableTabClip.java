@@ -10,6 +10,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 import javax.swing.JOptionPane;
@@ -41,19 +42,20 @@ class TableTabClip implements ClipboardOwner {
 		public @NotNull Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
 			if (flavor == binaryFlavor)
 				return this;
-			else if (flavor == DataFlavor.stringFlavor) {
-				StringBuilder buf = new StringBuilder();
-				for (int i = 0; i < headers.length; i++) {
-					buf.append(headers[i]);
-					buf.append(i == headers.length - 1 ? '\n' : '\t');
+			else if (flavor != DataFlavor.stringFlavor)
+				throw new UnsupportedFlavorException(flavor);
+
+			StringBuilder buf = new StringBuilder();
+			for (int i = 0; i < headers.length; i++) {
+				buf.append(headers[i]);
+				buf.append(i == headers.length - 1 ? '\n' : '\t');
+			}
+			for (String[] content : contents)
+				for (int j = 0; j < content.length; j++) {
+					buf.append(content[j]);
+					buf.append(j == content.length - 1 ? '\n' : '\t');
 				}
-				for (String[] content : contents)
-					for (int j = 0; j < content.length; j++) {
-						buf.append(content[j]);
-						buf.append(j == content.length - 1 ? '\n' : '\t');
-					}
-				return buf.toString();
-			} else throw new UnsupportedFlavorException(flavor);
+			return buf.toString();
 		}
 	}
 
@@ -89,8 +91,7 @@ class TableTabClip implements ClipboardOwner {
 		String[][] contents = new String[r1 - r0 + 1][c1 - c0 + 1];
 		for (int r = r0; r <= r1; r++)
 			for (int c = c0; c <= c1; c++)
-				if (c < inputs) contents[r - r0][c - c0] = t.getInputEntry(r, c).getDescription();
-				else contents[r - r0][c - c0] = t.getOutputEntry(r, c - inputs).getDescription();
+				contents[r - r0][c - c0] = (c < inputs ? t.getInputEntry(r, c) : t.getOutputEntry(r, c - inputs)).getDescription();
 
 		Clipboard clip = table.getToolkit().getSystemClipboard();
 		clip.setContents(new Data(header, contents), this);
@@ -116,17 +117,17 @@ class TableTabClip implements ClipboardOwner {
 			return;
 		}
 		Entry[][] entries;
-		if (xfer.isDataFlavorSupported(binaryFlavor)) try {
-			Data data = (Data) xfer.getTransferData(binaryFlavor);
-			entries = new Entry[data.contents.length][];
-			for (int i = 0; i < entries.length; i++) {
-				Entry[] row = new Entry[data.contents[i].length];
-				for (int j = 0; j < row.length; j++) row[j] = Entry.parse(data.contents[i][j]);
-				entries[i] = row;
+		if (xfer.isDataFlavorSupported(binaryFlavor))
+			try {
+				Data data = (Data) xfer.getTransferData(binaryFlavor);
+				entries = Arrays.stream(data.contents)
+						.map(c->Arrays.stream(c)
+								.map(Entry::parse)
+								.toArray(Entry[]::new))
+						.toArray(Entry[][]::new);
+			} catch (UnsupportedFlavorException | IOException e) {
+				return;
 			}
-		} catch (UnsupportedFlavorException | IOException e) {
-			return;
-		}
 		else if (xfer.isDataFlavorSupported(DataFlavor.stringFlavor)) try {
 			String buf = (String) xfer.getTransferData(DataFlavor.stringFlavor);
 			StringTokenizer lines = new StringTokenizer(buf, "\r\n");
@@ -204,7 +205,8 @@ class TableTabClip implements ClipboardOwner {
 		}
 		for (int r = 0; r < entries.length; r++)
 			for (int c = 0; c < entries[0].length; c++)
-				if (c0 + c >= inputs) model.setOutputEntry(r0 + r, c0 + c - inputs, entries[r][c]);
+				if (c0 + c >= inputs)
+					model.setOutputEntry(r0 + r, c0 + c - inputs, entries[r][c]);
 	}
 
 	public void lostOwnership(Clipboard clip, Transferable transfer) {

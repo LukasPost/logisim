@@ -24,7 +24,8 @@ public class SelectionAttributes extends AbstractAttributeSet {
 		public void selectionChanged(SelectionEvent ex) {
 			Map<AttributeSet, CanvasObject> oldSel = selected;
 			Map<AttributeSet, CanvasObject> newSel = new HashMap<>();
-			for (CanvasObject o : selection.getSelected()) newSel.put(o.getAttributeSet(), o);
+			for (CanvasObject o : selection.getSelected())
+				newSel.put(o.getAttributeSet(), o);
 			selected = newSel;
 			boolean change = false;
 			for (AttributeSet attrs : oldSel.keySet())
@@ -44,28 +45,16 @@ public class SelectionAttributes extends AbstractAttributeSet {
 		}
 
 		private void computeAttributeList(Set<AttributeSet> attrsSet) {
-			Set<Attribute<?>> attrSet = new LinkedHashSet<>();
-			Iterator<AttributeSet> sit = attrsSet.iterator();
-			if (sit.hasNext()) {
-				AttributeSet first = sit.next();
-				attrSet.addAll(first.getAttributes());
-				while (sit.hasNext()) {
-					AttributeSet next = sit.next();
-					attrSet.removeIf(attr -> !next.containsAttribute(attr));
-				}
-			}
+			if (attrsSet.isEmpty())
+				return;
 
-			Attribute<?>[] attrs = new Attribute[attrSet.size()];
-			Object[] values = new Object[attrs.length];
-			int i = 0;
-			for (Attribute<?> attr : attrSet) {
-				attrs[i] = attr;
-				values[i] = getSelectionValue(attr, attrsSet);
-				i++;
-			}
-			selAttrs = attrs;
-			selValues = values;
-			attrsView = List.of(attrs);
+			Set<Attribute<?>> attrSet = new LinkedHashSet<>(attrsSet.stream().findFirst().get().getAttributes());
+			attrsSet.stream().skip(1)
+					.forEach(duplicate ->
+							attrSet.removeIf(attr -> !duplicate.containsAttribute(attr)));
+
+			selAttrs = attrSet.stream().map(attr -> new AttributeWithValue(attr, getSelectionValue(attr, attrsSet))).toArray(AttributeWithValue[]::new);
+			attrsView = new ArrayList<>(attrSet);
 			fireAttributeListChanged();
 		}
 
@@ -78,39 +67,44 @@ public class SelectionAttributes extends AbstractAttributeSet {
 		}
 
 		public void attributeValueChanged(AttributeEvent e) {
-			if (selected.containsKey(e.getSource())) {
-				@SuppressWarnings("unchecked")
-				Attribute<Object> attr = (Attribute<Object>) e.getAttribute();
-				Attribute<?>[] attrs = selAttrs;
-				Object[] values = selValues;
-				for (int i = 0; i < attrs.length; i++)
-					if (attrs[i] == attr) values[i] = getSelectionValue(attr, selected.keySet());
-			}
+			if (!selected.containsKey(e.getSource()))
+				return;
+			Attribute<?> attr = e.getAttribute();
+			for (AttributeWithValue selAttr : selAttrs)
+				if (selAttr.attr == attr)
+					selAttr.value = getSelectionValue(attr, selected.keySet());
 		}
+	}
+
+	public static class AttributeWithValue {
+		public Attribute<?> attr;
+		public Object value;
+		public AttributeWithValue(Attribute<?> attr, Object value) {
+			this.attr = attr;
+			this.value = value;
+		}
+		public AttributeWithValue() {}
 	}
 
 	private Selection selection;
 	private Listener listener;
 	private Map<AttributeSet, CanvasObject> selected;
-	private Attribute<?>[] selAttrs;
-	private Object[] selValues;
+	private AttributeWithValue[] selAttrs;
 	private List<Attribute<?>> attrsView;
 
 	public SelectionAttributes(Selection selection) {
 		this.selection = selection;
 		listener = new Listener();
 		selected = Collections.emptyMap();
-		selAttrs = new Attribute<?>[0];
-		selValues = new Object[0];
-		attrsView = List.of(selAttrs);
+		selAttrs = new AttributeWithValue[0];
+		attrsView = new ArrayList<>(0);
 
 		selection.addSelectionListener(listener);
 		listener.selectionChanged(null);
 	}
 
 	public Iterable<Entry<AttributeSet, CanvasObject>> entries() {
-		Set<Entry<AttributeSet, CanvasObject>> raw = selected.entrySet();
-		return new ArrayList<>(raw);
+		return new ArrayList<>(selected.entrySet());
 	}
 
 	//
@@ -129,37 +123,31 @@ public class SelectionAttributes extends AbstractAttributeSet {
 
 	@Override
 	public <V> V getValue(Attribute<V> attr) {
-		Attribute<?>[] attrs = selAttrs;
-		Object[] values = selValues;
-		for (int i = 0; i < attrs.length; i++)
-			if (attrs[i] == attr) {
-				@SuppressWarnings("unchecked")
-				V ret = (V) values[i];
-				return ret;
-			}
-		return null;
+		return  Arrays.stream(selAttrs)
+				.filter(awv -> awv.attr.equals(attr))
+				.findFirst()
+				.map(awv->(V) awv.value)
+				.orElse(null);
 	}
 
 	@Override
 	public <V> void setValue(Attribute<V> attr, V value) {
-		Attribute<?>[] attrs = selAttrs;
-		Object[] values = selValues;
-		for (int i = 0; i < attrs.length; i++)
-			if (attrs[i] == attr) {
-				boolean same = Objects.equals(value, values[i]);
-				if (!same) {
-					values[i] = value;
-					for (AttributeSet objAttrs : selected.keySet()) objAttrs.setValue(attr, value);
-				}
-				break;
-			}
+		var different = Arrays.stream(selAttrs)
+				.filter(awv -> awv.attr.equals(attr) && !Objects.equals(value, awv.value))
+				.findFirst()
+				.orElse(null);
+		if(different == null)
+			return;
+		different.value = value;
+		for (AttributeSet objAttrs : selected.keySet())
+			objAttrs.setValue(attr, value);
 	}
 
-	private static Object getSelectionValue(Attribute<?> attr, Set<AttributeSet> sel) {
-		Object ret = null;
+	private static <V> V getSelectionValue(Attribute<V> attr, Set<AttributeSet> sel) {
+		V ret = null;
 		for (AttributeSet attrs : sel)
 			if (attrs.containsAttribute(attr)) {
-				Object val = attrs.getValue(attr);
+				V val = attrs.getValue(attr);
 				if (ret == null) ret = val;
 				else if (ret.equals(val)) ; // keep on, making sure everything else matches
 				else return null;

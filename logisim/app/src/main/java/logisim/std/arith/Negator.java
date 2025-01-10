@@ -7,7 +7,8 @@ import logisim.data.Attribute;
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
 import logisim.instance.InstanceState;
@@ -40,33 +41,33 @@ public class Negator extends InstanceFactory {
 		BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
 
 		// compute outputs
-		Value in = state.getPort(IN);
-		Value out;
-		if (in.isFullyDefined()) out = Value.createKnown(in.getBitWidth(), -in.toIntValue());
+		WireValue in = state.getPort(IN);
+		WireValue out;
+		if (in.isFullyDefined()) out = WireValue.Companion.createKnown(in.getBitWidth(), -in.toIntValue());
 		else {
-			Value[] bits = in.getAll();
-			Value fill = Value.FALSE;
+			WireValue[] bits = in.getAll();
+			WireValue fill = WireValues.FALSE;
 			int pos = 0;
 			while (pos < bits.length) {
-				if (bits[pos] == Value.FALSE) bits[pos] = fill;
-				else if (bits[pos] == Value.TRUE) {
-					if (fill != Value.FALSE)
+				if (bits[pos] == WireValues.FALSE) bits[pos] = fill;
+				else if (bits[pos] == WireValues.TRUE) {
+					if (fill != WireValues.FALSE)
 						bits[pos] = fill;
 					pos++;
 					break;
-				} else if (bits[pos] == Value.ERROR) fill = Value.ERROR;
-				else if (fill == Value.FALSE)
+				} else if (bits[pos] == WireValues.ERROR) fill = WireValues.ERROR;
+				else if (fill == WireValues.FALSE)
 					fill = bits[pos];
 				else
 					bits[pos] = fill;
 				pos++;
 			}
 			while (pos < bits.length) {
-				if (bits[pos] == Value.TRUE) bits[pos] = Value.FALSE;
-				else if (bits[pos] == Value.FALSE) bits[pos] = Value.TRUE;
+				if (bits[pos] == WireValues.TRUE) bits[pos] = WireValues.FALSE;
+				else if (bits[pos] == WireValues.FALSE) bits[pos] = WireValues.TRUE;
 				pos++;
 			}
-			out = Value.create(bits);
+			out = WireValue.Companion.create(bits);
 		}
 
 		// propagate them

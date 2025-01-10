@@ -72,20 +72,27 @@ public class Analyzer extends LFrame {
 		public void actionPerformed(ActionEvent e) {
 			Object src = e.getSource();
 			Component c = tabbedPane.getSelectedComponent();
-			if (c instanceof JScrollPane) c = ((JScrollPane) c).getViewport().getView();
-			if (!(c instanceof TabInterface tab)) return;
+			if (c instanceof JScrollPane sp)
+				c = sp.getViewport().getView();
+			if (!(c instanceof TabInterface tab))
+				return;
 			if (src == LogisimMenuBar.CUT) {
 				tab.copy();
 				tab.delete();
-			} else if (src == LogisimMenuBar.COPY) tab.copy();
-			else if (src == LogisimMenuBar.PASTE) tab.paste();
-			else if (src == LogisimMenuBar.DELETE) tab.delete();
-			else if (src == LogisimMenuBar.SELECT_ALL) tab.selectAll();
+			} else if (src == LogisimMenuBar.COPY)
+				tab.copy();
+			else if (src == LogisimMenuBar.PASTE)
+				tab.paste();
+			else if (src == LogisimMenuBar.DELETE)
+				tab.delete();
+			else if (src == LogisimMenuBar.SELECT_ALL)
+				tab.selectAll();
 		}
 
 		private void enableItems(LogisimMenuBar menubar) {
 			Component c = tabbedPane.getSelectedComponent();
-			if (c instanceof JScrollPane) c = ((JScrollPane) c).getViewport().getView();
+			if (c instanceof JScrollPane sp)
+				c = sp.getViewport().getView();
 			boolean support = c instanceof TabInterface;
 			menubar.setEnabled(LogisimMenuBar.CUT, support);
 			menubar.setEnabled(LogisimMenuBar.COPY, support);
@@ -98,8 +105,10 @@ public class Analyzer extends LFrame {
 			enableItems((LogisimMenuBar) getJMenuBar());
 
 			Object selected = tabbedPane.getSelectedComponent();
-			if (selected instanceof JScrollPane) selected = ((JScrollPane) selected).getViewport().getView();
-			if (selected instanceof AnalyzerTab) ((AnalyzerTab) selected).updateTab();
+			if (selected instanceof JScrollPane sp)
+				selected = sp.getViewport().getView();
+			if (selected instanceof AnalyzerTab at)
+				at.updateTab();
 		}
 	}
 
@@ -159,7 +168,8 @@ public class Analyzer extends LFrame {
 	private void addTab(int index, final JComponent comp) {
 		final JScrollPane pane = new JScrollPane(comp, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		if (comp instanceof TableTab) pane.setVerticalScrollBar(((TableTab) comp).getVerticalScrollBar());
+		if (comp instanceof TableTab tt)
+			pane.setVerticalScrollBar(tt.getVerticalScrollBar());
 		pane.addComponentListener(new ComponentListener() {
 			public void componentResized(ComponentEvent event) {
 				int width = pane.getViewport().getWidth();
@@ -184,7 +194,8 @@ public class Analyzer extends LFrame {
 
 	public void setSelectedTab(int index) {
 		Object found = tabbedPane.getComponentAt(index);
-		if (found instanceof AnalyzerTab) ((AnalyzerTab) found).updateTab();
+		if (found instanceof AnalyzerTab at)
+			at.updateTab();
 		tabbedPane.setSelectedIndex(index);
 	}
 

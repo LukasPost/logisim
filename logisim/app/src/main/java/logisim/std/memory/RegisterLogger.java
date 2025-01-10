@@ -4,7 +4,7 @@
 package logisim.std.memory;
 
 import logisim.data.BitWidth;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 import logisim.instance.InstanceLogger;
 import logisim.instance.InstanceState;
 import logisim.instance.StdAttr;
@@ -17,13 +17,13 @@ public class RegisterLogger extends InstanceLogger {
 	}
 
 	@Override
-	public Value getLogValue(InstanceState state, Object option) {
+	public WireValue getLogValue(InstanceState state, Object option) {
 		BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
 		if (dataWidth == null)
 			dataWidth = BitWidth.create(0);
 		RegisterData data = (RegisterData) state.getData();
 		if (data == null)
-			return Value.createKnown(dataWidth, 0);
-		return Value.createKnown(dataWidth, data.value);
+			return WireValue.Companion.createKnown(dataWidth, 0);
+		return WireValue.Companion.createKnown(dataWidth, data.value);
 	}
 }

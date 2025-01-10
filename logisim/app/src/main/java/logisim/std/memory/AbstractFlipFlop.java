@@ -12,7 +12,8 @@ import logisim.data.AttributeOption;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceData;
 import logisim.instance.InstanceFactory;
@@ -69,7 +70,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 	//
 	protected abstract String getInputName(int index);
 
-	protected abstract Value computeValue(Value[] inputs, Value curValue);
+	protected abstract WireValue computeValue(WireValue[] inputs, WireValue curValue);
 
 	//
 	// concrete methods not intended to be overridden
@@ -93,17 +94,17 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 		Object triggerType = state.getAttributeValue(triggerAttribute);
 		boolean triggered = data.updateClock(state.getPort(n), triggerType);
 
-		if (state.getPort(n + 3) == Value.TRUE) // clear requested
-			data.curValue = Value.FALSE;
-		else if (state.getPort(n + 4) == Value.TRUE) // preset requested
-			data.curValue = Value.TRUE;
-		else if (triggered && state.getPort(n + 5) != Value.FALSE) {
+		if (state.getPort(n + 3) == WireValues.TRUE) // clear requested
+			data.curValue = WireValues.FALSE;
+		else if (state.getPort(n + 4) == WireValues.TRUE) // preset requested
+			data.curValue = WireValues.TRUE;
+		else if (triggered && state.getPort(n + 5) != WireValues.FALSE) {
 			// Clock has triggered and flip-flop is enabled: Update the state
-			Value[] inputs = new Value[n];
+			WireValue[] inputs = new WireValue[n];
 			for (int i = 0; i < n; i++) inputs[i] = state.getPort(i);
 
-			Value newVal = computeValue(inputs, data.curValue);
-			if (newVal == Value.TRUE || newVal == Value.FALSE) data.curValue = newVal;
+			WireValue newVal = computeValue(inputs, data.curValue);
+			if (newVal == WireValues.TRUE || newVal == WireValues.FALSE) data.curValue = newVal;
 		}
 
 		state.setPort(n + 1, data.curValue, Memory.DELAY);
@@ -124,7 +125,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 				g.setColor(myState.curValue.getColor());
 				g.fillOval(x - 26, y + 4, 13, 13);
 				g.setColor(Color.WHITE);
-				GraphicsUtil.drawCenteredText(g, myState.curValue.toDisplayString(), x - 19, y + 9);
+				GraphicsUtil.drawCenteredText(g, myState.curValue.toBinString(), x - 19, y + 9);
 				g.setColor(Color.BLACK);
 			}
 		}
@@ -142,7 +143,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 	}
 
 	private static class StateData extends ClockState implements InstanceData {
-		Value curValue = Value.FALSE;
+		WireValue curValue = WireValues.FALSE;
 	}
 
 	public static class Logger extends InstanceLogger {
@@ -153,9 +154,9 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 		}
 
 		@Override
-		public Value getLogValue(InstanceState state, Object option) {
+		public WireValue getLogValue(InstanceState state, Object option) {
 			StateData s = (StateData) state.getData();
-			return s == null ? Value.FALSE : s.curValue;
+			return s == null ? WireValues.FALSE : s.curValue;
 		}
 	}
 

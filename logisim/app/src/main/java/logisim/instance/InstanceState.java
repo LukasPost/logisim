@@ -5,7 +5,7 @@ package logisim.instance;
 
 import logisim.data.Attribute;
 import logisim.data.AttributeSet;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 import logisim.proj.Project;
 
 public interface InstanceState {
@@ -19,11 +19,11 @@ public interface InstanceState {
 
 	<E> E getAttributeValue(Attribute<E> attr);
 
-	Value getPort(int portIndex);
+	WireValue getPort(int portIndex);
 
 	boolean isPortConnected(int portIndex);
 
-	void setPort(int portIndex, Value value, int delay);
+	void setPort(int portIndex, WireValue value, int delay);
 
 	InstanceData getData();
 

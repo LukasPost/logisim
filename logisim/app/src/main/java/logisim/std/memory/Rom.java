@@ -19,7 +19,8 @@ import logisim.circuit.CircuitState;
 import logisim.data.Attribute;
 import logisim.data.AttributeSet;
 import logisim.data.BitWidth;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.gui.hex.HexFile;
 import logisim.gui.hex.HexFrame;
 import logisim.gui.main.Frame;
@@ -88,12 +89,12 @@ public class Rom extends Mem {
 		MemState myState = getState(state);
 		BitWidth dataBits = state.getAttributeValue(DATA_ATTR);
 
-		Value addrValue = state.getPort(ADDR);
-		boolean chipSelect = state.getPort(CS) != Value.FALSE;
+		WireValue addrValue = state.getPort(ADDR);
+		boolean chipSelect = state.getPort(CS) != WireValues.FALSE;
 
 		if (!chipSelect) {
 			myState.setCurrent(-1);
-			state.setPort(DATA, Value.createUnknown(dataBits), DELAY);
+			state.setPort(DATA, WireValue.Companion.createUnknown(dataBits), DELAY);
 			return;
 		}
 
@@ -106,7 +107,7 @@ public class Rom extends Mem {
 		}
 
 		int val = myState.getContents().get(addr);
-		state.setPort(DATA, Value.createKnown(dataBits, val), DELAY);
+		state.setPort(DATA, WireValue.Companion.createKnown(dataBits, val), DELAY);
 	}
 
 	@Override

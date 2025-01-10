@@ -23,7 +23,7 @@ import logisim.comp.ComponentDrawContext;
 import logisim.comp.ComponentUserEvent;
 import logisim.data.AttributeSet;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 import logisim.gui.main.Canvas;
 import logisim.prefs.AppPreferences;
 import logisim.proj.Project;
@@ -48,7 +48,7 @@ public class PokeTool extends Tool {
 
 		@Override
 		public void draw(Graphics g) {
-			Value v = canvas.getCircuitState().getValue(wire.getEnd0());
+			WireValue v = canvas.getCircuitState().getValue(wire.getEnd0());
 			RadixOption radix1 = RadixOption.decode(AppPreferences.POKE_WIRE_RADIX1.get());
 			RadixOption radix2 = RadixOption.decode(AppPreferences.POKE_WIRE_RADIX2.get());
 			if (radix1 == null)

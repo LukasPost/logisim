@@ -25,16 +25,17 @@ public class ModelReorderAction extends ModelAction {
 			CanvasObject above = ZOrder.getObjectAbove(obj, model, objects);
 			if (above != null) {
 				int to = ZOrder.getZIndex(above, model);
-				if (objects.contains(above)) to--;
+				if (objects.contains(above))
+					to--;
 				reqs.add(new ReorderRequest(obj, from, to));
 			}
 		}
-		if (reqs.isEmpty()) return null;
-		else {
-			reqs.sort(ReorderRequest.DESCENDING_FROM);
-			repairRequests(reqs);
-			return new ModelReorderAction(model, reqs);
-		}
+		if (reqs.isEmpty())
+			return null;
+
+		reqs.sort(ReorderRequest.DESCENDING_FROM);
+		repairRequests(reqs);
+		return new ModelReorderAction(model, reqs);
 	}
 
 	public static ModelReorderAction createLower(CanvasModel model, Collection<? extends CanvasObject> objects) {
@@ -46,16 +47,16 @@ public class ModelReorderAction extends ModelAction {
 			CanvasObject above = ZOrder.getObjectBelow(obj, model, objects);
 			if (above != null) {
 				int to = ZOrder.getZIndex(above, model);
-				if (objects.contains(above)) to++;
+				if (objects.contains(above))
+					to++;
 				reqs.add(new ReorderRequest(obj, from, to));
 			}
 		}
-		if (reqs.isEmpty()) return null;
-		else {
-			reqs.sort(ReorderRequest.ASCENDING_FROM);
-			repairRequests(reqs);
-			return new ModelReorderAction(model, reqs);
-		}
+		if (reqs.isEmpty())
+			return null;
+		reqs.sort(ReorderRequest.ASCENDING_FROM);
+		repairRequests(reqs);
+		return new ModelReorderAction(model, reqs);
 	}
 
 	public static ModelReorderAction createRaiseTop(CanvasModel model, Collection<? extends CanvasObject> objects) {
@@ -67,12 +68,11 @@ public class ModelReorderAction extends ModelAction {
 			int from = entry.getValue();
 			reqs.add(new ReorderRequest(obj, from, to));
 		}
-		if (reqs.isEmpty()) return null;
-		else {
-			reqs.sort(ReorderRequest.ASCENDING_FROM);
-			repairRequests(reqs);
-			return new ModelReorderAction(model, reqs);
-		}
+		if (reqs.isEmpty())
+			return null;
+		reqs.sort(ReorderRequest.ASCENDING_FROM);
+		repairRequests(reqs);
+		return new ModelReorderAction(model, reqs);
 	}
 
 	public static ModelReorderAction createLowerBottom(CanvasModel model, Collection<? extends CanvasObject> objects) {
@@ -84,12 +84,11 @@ public class ModelReorderAction extends ModelAction {
 			int from = entry.getValue();
 			reqs.add(new ReorderRequest(obj, from, to));
 		}
-		if (reqs.isEmpty()) return null;
-		else {
-			reqs.sort(ReorderRequest.ASCENDING_FROM);
-			repairRequests(reqs);
-			return new ModelReorderAction(model, reqs);
-		}
+		if (reqs.isEmpty())
+			return null;
+		reqs.sort(ReorderRequest.ASCENDING_FROM);
+		repairRequests(reqs);
+		return new ModelReorderAction(model, reqs);
 	}
 
 	private static void repairRequests(List<ReorderRequest> reqs) {
@@ -111,7 +110,8 @@ public class ModelReorderAction extends ModelAction {
 		}
 		for (int i = reqs.size() - 1; i >= 0; i--) {
 			ReorderRequest req = reqs.get(i);
-			if (req.getFromIndex() == req.getToIndex()) reqs.remove(i);
+			if (req.getFromIndex() == req.getToIndex())
+				reqs.remove(i);
 		}
 	}
 
@@ -123,15 +123,10 @@ public class ModelReorderAction extends ModelAction {
 		super(model);
 		this.requests = new ArrayList<>(requests);
 		objects = new ArrayList<>(requests.size());
-		for (ReorderRequest r : requests) objects.add(r.getObject());
-		int type = 0; // 0 = mixed/unknown, -1 = to greater index, 1 = to smaller index
-		for (ReorderRequest r : requests) {
-			int from = r.getFromIndex();
-			int to = r.getToIndex();
-			int thisType = Integer.compare(to, from);
-			if (type != thisType) break;
-		}
-		this.type = type;
+		for (ReorderRequest r : requests)
+			objects.add(r.getObject());
+		// 0 = mixed/unknown, -1 = to greater index, 1 = to smaller index
+		type = 0;
 	}
 
 	public List<ReorderRequest> getReorderRequests() {
@@ -145,9 +140,12 @@ public class ModelReorderAction extends ModelAction {
 
 	@Override
 	public String getName() {
-		if (type < 0) return Strings.get("actionRaise", getShapesName(objects));
-		else if (type > 0) return Strings.get("actionLower", getShapesName(objects));
-		else return Strings.get("actionReorder", getShapesName(objects));
+		if (type < 0)
+			return Strings.get("actionRaise", getShapesName(objects));
+		else if (type > 0)
+			return Strings.get("actionLower", getShapesName(objects));
+		else
+			return Strings.get("actionReorder", getShapesName(objects));
 	}
 
 	@Override

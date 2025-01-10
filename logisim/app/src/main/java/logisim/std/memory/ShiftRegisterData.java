@@ -6,18 +6,19 @@ package logisim.std.memory;
 import java.util.Arrays;
 
 import logisim.data.BitWidth;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.InstanceData;
 
 class ShiftRegisterData extends ClockState implements InstanceData {
 	private BitWidth width;
-	private Value[] vs;
+	private WireValue[] vs;
 	private int vsPos;
 
 	public ShiftRegisterData(BitWidth width, int len) {
 		this.width = width;
-		vs = new Value[len];
-		Arrays.fill(vs, Value.createKnown(width, 0));
+		vs = new WireValue[len];
+		Arrays.fill(vs, WireValue.Companion.createKnown(width, 0));
 		vsPos = 0;
 	}
 
@@ -33,12 +34,12 @@ class ShiftRegisterData extends ClockState implements InstanceData {
 	}
 
 	public void setDimensions(BitWidth newWidth, int newLength) {
-		Value[] v = vs;
+		WireValue[] v = vs;
 		BitWidth oldWidth = width;
 		int oldW = oldWidth.getWidth();
 		int newW = newWidth.getWidth();
 		if (v.length != newLength) {
-			Value[] newV = new Value[newLength];
+			WireValue[] newV = new WireValue[newLength];
 			int j = vsPos;
 			int copy = Math.min(newLength, v.length);
 			for (int i = 0; i < copy; i++) {
@@ -47,42 +48,42 @@ class ShiftRegisterData extends ClockState implements InstanceData {
 				if (j == v.length)
 					j = 0;
 			}
-			Arrays.fill(newV, copy, newLength, Value.createKnown(newWidth, 0));
+			Arrays.fill(newV, copy, newLength, WireValue.Companion.createKnown(newWidth, 0));
 			v = newV;
 			vsPos = 0;
 			vs = newV;
 		}
 		if (oldW != newW) {
 			for (int i = 0; i < v.length; i++) {
-				Value vi = v[i];
-				if (vi.getWidth() != newW) v[i] = vi.extendWidth(newW, Value.FALSE);
+				WireValue vi = v[i];
+				if (vi.getWidth() != newW) v[i] = vi.extendWidth(newW, WireValues.FALSE);
 			}
 			width = newWidth;
 		}
 	}
 
 	public void clear() {
-		Arrays.fill(vs, Value.createKnown(width, 0));
+		Arrays.fill(vs, WireValue.Companion.createKnown(width, 0));
 		vsPos = 0;
 	}
 
-	public void push(Value v) {
+	public void push(WireValue v) {
 		int pos = vsPos;
 		vs[pos] = v;
 		vsPos = pos >= vs.length - 1 ? 0 : pos + 1;
 	}
 
-	public Value get(int index) {
+	public WireValue get(int index) {
 		int i = vsPos + index;
-		Value[] v = vs;
+		WireValue[] v = vs;
 		if (i >= v.length)
 			i -= v.length;
 		return v[i];
 	}
 
-	public void set(int index, Value val) {
+	public void set(int index, WireValue val) {
 		int i = vsPos + index;
-		Value[] v = vs;
+		WireValue[] v = vs;
 		if (i >= v.length)
 			i -= v.length;
 		v[i] = val;

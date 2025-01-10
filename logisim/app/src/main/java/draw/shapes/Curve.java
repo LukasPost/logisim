@@ -19,6 +19,8 @@ import logisim.data.Bounds;
 import logisim.data.Location;
 import logisim.util.UnmodifiableList;
 
+import static logisim.data.Location.toArray;
+
 public class Curve extends FillableCanvasObject {
 	private Location p0;
 	private Location p1;
@@ -85,7 +87,8 @@ public class Curve extends FillableCanvasObject {
 	@Override
 	public boolean contains(Location loc, boolean assumeFilled) {
 		Object type = getPaintType();
-		if (assumeFilled && type == DrawAttr.PAINT_STROKE) type = DrawAttr.PAINT_STROKE_FILL;
+		if (assumeFilled && type == DrawAttr.PAINT_STROKE)
+			type = DrawAttr.PAINT_STROKE_FILL;
 		if (type != DrawAttr.PAINT_FILL) {
 			int stroke = getStrokeWidth();
 			double[] q = toArray(loc);
@@ -96,24 +99,19 @@ public class Curve extends FillableCanvasObject {
 			if (p == null)
 				return false;
 
-			int thr;
-			if (type == DrawAttr.PAINT_STROKE) thr = Math.max(Line.ON_LINE_THRESH, stroke / 2);
-			else thr = stroke / 2;
-			if (LineUtil.distanceSquared(p[0], p[1], q[0], q[1]) < thr * thr) return true;
+			int thr = type == DrawAttr.PAINT_STROKE ? Math.max(Line.ON_LINE_THRESH, stroke / 2) : stroke / 2;
+			if (LineUtil.distanceSquared(p[0], p[1], q[0], q[1]) < thr * thr)
+				return true;
 		}
-		if (type != DrawAttr.PAINT_STROKE) {
-			QuadCurve2D curve = getCurve(null);
-			return curve.contains(loc.x(), loc.y());
-		}
-		return false;
+		return type != DrawAttr.PAINT_STROKE && getCurve(null).contains(loc.x(), loc.y());
 	}
 
 	@Override
-	public void translate(int dx, int dy) {
-		p0 = p0.translate(dx, dy);
-		p1 = p1.translate(dx, dy);
-		p2 = p2.translate(dx, dy);
-		bounds = bounds.translate(dx, dy);
+	public void translate(Location distance) {
+		p0 = p0.add(distance);
+		p1 = p1.add(distance);
+		p2 = p2.add(distance);
+		bounds = bounds.translate(distance);
 	}
 
 	public List<Handle> getHandles() {
@@ -126,48 +124,36 @@ public class Curve extends FillableCanvasObject {
 	}
 
 	private Handle[] getHandleArray(HandleGesture gesture) {
-		if (gesture == null) return new Handle[]{new Handle(this, p0), new Handle(this, p1), new Handle(this, p2)};
-		else {
-			Handle g = gesture.getHandle();
-			int gx = g.getX() + gesture.getDeltaX();
-			int gy = g.getY() + gesture.getDeltaY();
-			Handle[] ret = { new Handle(this, p0), new Handle(this, p1), new Handle(this, p2) };
-			if (g.isAt(p0)) if (gesture.isShiftDown()) {
-				Location p = LineUtil.snapTo8Cardinals(p2, gx, gy);
-				ret[0] = new Handle(this, p);
-			}
-			else ret[0] = new Handle(this, gx, gy);
-			else if (g.isAt(p2)) if (gesture.isShiftDown()) {
-				Location p = LineUtil.snapTo8Cardinals(p0, gx, gy);
-				ret[2] = new Handle(this, p);
-			}
-			else ret[2] = new Handle(this, gx, gy);
-			else if (g.isAt(p1)) {
-				if (gesture.isShiftDown()) {
-					double x0 = p0.x();
-					double y0 = p0.y();
-					double x1 = p2.x();
-					double y1 = p2.y();
-					double midx = (x0 + x1) / 2;
-					double midy = (y0 + y1) / 2;
-					double dx = x1 - x0;
-					double dy = y1 - y0;
-					double[] p = LineUtil.nearestPointInfinite(gx, gy, midx, midy, midx - dy, midy + dx);
-					gx = (int) Math.round(p[0]);
-					gy = (int) Math.round(p[1]);
-				}
-				if (gesture.isAltDown()) {
-					double[] e0 = { p0.x(), p0.y() };
-					double[] e1 = { p2.x(), p2.y() };
-					double[] mid = { gx, gy };
-					double[] ct = CurveUtil.interpolate(e0, e1, mid);
-					gx = (int) Math.round(ct[0]);
-					gy = (int) Math.round(ct[1]);
-				}
-				ret[1] = new Handle(this, gx, gy);
-			}
+		Handle[] ret = {
+				new Handle(this, p0),
+				new Handle(this, p1),
+				new Handle(this, p2)
+		};
+		if (gesture == null)
 			return ret;
+
+		Handle g = gesture.getHandle();
+		Location gLoc = g.getLocation().add(gesture.getDeltaX(), gesture.getDeltaY());
+		if (g.isAt(p0))
+			ret[0] = new Handle(this, gesture.isShiftDown() ? LineUtil.snapTo8Cardinals(p2, gLoc) : gLoc);
+		else if (g.isAt(p2))
+			ret[2] = new Handle(this, gesture.isShiftDown() ? LineUtil.snapTo8Cardinals(p0, gLoc) : gLoc);
+		else if (g.isAt(p1)) {
+			if (gesture.isShiftDown()) {
+				double midx = (double) (p0.x() + p2.x()) / 2;
+				double midy = (double) (p0.y() + p2.y()) / 2;
+				double dx = p2.x() - p0.x();
+				double dy = p2.y() - p0.y();
+				double[] p = LineUtil.nearestPointInfinite(gLoc.x(), gLoc.y(), midx, midy, midx - dy, midy + dx);
+				gLoc = new Location((int) Math.round(p[0]), (int) Math.round(p[1]));
+			}
+			if (gesture.isAltDown()) {
+				double[] ct = CurveUtil.interpolate(toArray(p0), toArray(p1), toArray(gLoc));
+				gLoc = new Location((int) Math.round(ct[0]), (int) Math.round(ct[1]));
+			}
+			ret[1] = new Handle(this, gLoc);
 		}
+		return ret;
 	}
 
 	@Override
@@ -188,16 +174,14 @@ public class Curve extends FillableCanvasObject {
 	@Override
 	public void paint(Graphics g, HandleGesture gesture) {
 		QuadCurve2D curve = getCurve(gesture);
-		if (setForFill(g)) ((Graphics2D) g).fill(curve);
-		if (setForStroke(g)) ((Graphics2D) g).draw(curve);
+		if (setForFill(g))
+			((Graphics2D) g).fill(curve);
+		if (setForStroke(g))
+			((Graphics2D) g).draw(curve);
 	}
 
 	private QuadCurve2D getCurve(HandleGesture gesture) {
 		Handle[] p = getHandleArray(gesture);
 		return new QuadCurve2D.Double(p[0].getX(), p[0].getY(), p[1].getX(), p[1].getY(), p[2].getX(), p[2].getY());
-	}
-
-	private static double[] toArray(Location loc) {
-		return new double[] { loc.x(), loc.y() };
 	}
 }

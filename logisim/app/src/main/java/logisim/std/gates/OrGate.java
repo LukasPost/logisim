@@ -7,7 +7,8 @@ import java.awt.Graphics;
 
 import logisim.analyze.model.Expression;
 import logisim.analyze.model.Expressions;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstancePainter;
 import logisim.instance.InstanceState;
@@ -43,7 +44,7 @@ class OrGate extends AbstractGate {
 	}
 
 	@Override
-	protected Value computeOutput(Value[] inputs, int numInputs, InstanceState state) {
+	protected WireValue computeOutput(WireValue[] inputs, int numInputs, InstanceState state) {
 		return GateFunctions.computeOr(inputs, numInputs);
 	}
 
@@ -60,7 +61,7 @@ class OrGate extends AbstractGate {
 	}
 
 	@Override
-	protected Value getIdentity() {
-		return Value.FALSE;
+	protected WireValue getIdentity() {
+		return WireValues.FALSE;
 	}
 }

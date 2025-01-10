@@ -32,14 +32,14 @@ class ExpressionView extends JPanel {
 	private class MyListener implements ComponentListener {
 		public void componentResized(ComponentEvent arg0) {
 			int width = getWidth();
-			if (renderData != null && Math.abs(renderData.width - width) > 2) {
-				Graphics g = getGraphics();
-				FontMetrics fm = g == null ? null : g.getFontMetrics();
-				renderData = new RenderData(renderData.exprData, width, fm);
-				setPreferredSize(renderData.getPreferredSize());
-				revalidate();
-				repaint();
-			}
+			if (renderData == null || Math.abs(renderData.width - width) <= 2)
+				return;
+			Graphics g = getGraphics();
+			FontMetrics fm = g == null ? null : g.getFontMetrics();
+			renderData = new RenderData(renderData.exprData, width, fm);
+			setPreferredSize(renderData.getPreferredSize());
+			revalidate();
+			repaint();
 		}
 
 		public void componentMoved(ComponentEvent arg0) {
@@ -126,13 +126,15 @@ class ExpressionView extends JPanel {
 						text.append("(");
 						a.visit(this);
 						text.append(")");
-					} else a.visit(this);
+					} else
+						a.visit(this);
 					text.append(op);
 					if (b.getPrecedence() < level) {
 						text.append("(");
 						b.visit(this);
 						text.append(")");
-					} else b.visit(this);
+					} else
+						b.visit(this);
 					return null;
 				}
 

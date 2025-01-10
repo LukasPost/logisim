@@ -58,7 +58,7 @@ class AvoidanceMap {
 				// that loc isn't in the component, we can remove it.
 				String prev = avoid.put(loc, Connector.ALLOW_NEITHER);
 				if (!Objects.equals(prev, Connector.ALLOW_NEITHER)) {
-					Location baseLoc = translated ? loc.translate(-dx, -dy) : loc;
+					Location baseLoc = translated ? loc.add(-dx, -dy) : loc;
 					if (!comp.contains(baseLoc)) if (prev == null) avoid.remove(loc);
 					else avoid.put(loc, prev);
 				}
@@ -71,8 +71,8 @@ class AvoidanceMap {
 		Location loc0 = w.getEnd0();
 		Location loc1 = w.getEnd1();
 		if (translated) {
-			loc0 = loc0.translate(dx, dy);
-			loc1 = loc1.translate(dx, dy);
+			loc0 = loc0.add(dx, dy);
+			loc1 = loc1.add(dx, dy);
 		}
 		avoid.put(loc0, Connector.ALLOW_NEITHER);
 		avoid.put(loc1, Connector.ALLOW_NEITHER);

@@ -13,7 +13,8 @@ import logisim.data.Attributes;
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -79,9 +80,9 @@ public class Shifter extends InstanceFactory {
 		// compute output
 		BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
 		int bits = dataWidth.getWidth();
-		Value vx = state.getPort(IN0);
-		Value vd = state.getPort(IN1);
-		Value vy; // y will by x shifted by d
+		WireValue vx = state.getPort(IN0);
+		WireValue vd = state.getPort(IN1);
+		WireValue vy; // y will by x shifted by d
 		if (vd.isFullyDefined() && vx.getWidth() == bits) {
 			int d = vd.toIntValue();
 			Object shift = state.getAttributeValue(ATTR_SHIFT);
@@ -104,15 +105,15 @@ public class Shifter extends InstanceFactory {
 						d -= bits;
 					y = (x << d) | (x >>> (bits - d));
 				} else y = x << d;
-				vy = Value.createKnown(dataWidth, y);
+				vy = WireValue.Companion.createKnown(dataWidth, y);
 			} else {
-				Value[] x = vx.getAll();
-				Value[] y = new Value[bits];
+				WireValue[] x = vx.getAll();
+				WireValue[] y = new WireValue[bits];
 				if (shift == SHIFT_LOGICAL_RIGHT) {
 					if (d >= bits)
 						d = bits;
 					System.arraycopy(x, d, y, 0, bits - d);
-					Arrays.fill(y, bits - d, bits, Value.FALSE);
+					Arrays.fill(y, bits - d, bits, WireValues.FALSE);
 				} else if (shift == SHIFT_ARITHMETIC_RIGHT) {
 					if (d >= bits)
 						d = bits;
@@ -131,12 +132,12 @@ public class Shifter extends InstanceFactory {
 				} else { // SHIFT_LOGICAL_LEFT
 					if (d >= bits)
 						d = bits;
-					Arrays.fill(y, 0, d, Value.FALSE);
+					Arrays.fill(y, 0, d, WireValues.FALSE);
 					System.arraycopy(x, 0, y, d, bits - d);
 				}
-				vy = Value.create(y);
+				vy = WireValue.Companion.create(y);
 			}
-		} else vy = Value.createError(dataWidth);
+		} else vy = WireValue.Companion.createError(dataWidth);
 
 		// propagate them
 		int delay = dataWidth.getWidth() * (3 * Adder.PER_DELAY);

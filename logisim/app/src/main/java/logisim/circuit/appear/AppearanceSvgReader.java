@@ -29,9 +29,9 @@ public class AppearanceSvgReader {
 			String[] pinStr = elt.getAttribute("pin").split(",");
 			Location pinLoc = new Location(Integer.parseInt(pinStr[0].trim()), Integer.parseInt(pinStr[1].trim()));
 			Instance pin = pins.get(pinLoc);
-			if (pin == null) return null;
-			else return new AppearancePort(loc, pin);
-		} else return SvgReader.createShape(elt);
+			return pin == null ? null : new AppearancePort(loc, pin);
+		} else
+			return SvgReader.createShape(elt);
 	}
 
 	private static Location getLocation(Element elt) {

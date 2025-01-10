@@ -32,11 +32,11 @@ public class OutputExpressions {
 		}
 
 		String getExpressionString() {
-			if (exprString == null) {
-				if (expr == null)
-					invalidate(false, false);
-				exprString = expr == null ? "" : expr.toString();
-			}
+			if (exprString != null)
+				return exprString;
+			if (expr == null)
+				invalidate(false, false);
+			exprString = expr == null ? "" : expr.toString();
 			return exprString;
 		}
 
@@ -84,14 +84,16 @@ public class OutputExpressions {
 			minimalImplicants = null;
 			minimalExpr = null;
 
-			if (exprString != null) exprString = null; // invalidate it so it recomputes
+			if (exprString != null)
+				exprString = null; // invalidate it so it recomputes
 			if (expr != null) {
 				Expression oldExpr = expr;
 				Expression newExpr;
 				if (oldExpr == oldMinExpr) {
 					newExpr = getMinimalExpression();
 					expr = newExpr;
-				} else newExpr = expr.removeVariable(input);
+				} else
+					newExpr = expr.removeVariable(input);
 				if (!oldExpr.equals(newExpr)) {
 					expr = newExpr;
 					fireModelChanged(OutputExpressionsEvent.OUTPUT_EXPRESSION, output, expr);
@@ -103,14 +105,16 @@ public class OutputExpressions {
 		private void replaceInput(String input, String newName) {
 			minimalExpr = null;
 
-			if (exprString != null) exprString = Parser.replaceVariable(exprString, input, newName);
+			if (exprString != null)
+				exprString = Parser.replaceVariable(exprString, input, newName);
 			if (expr != null) {
 				Expression newExpr = expr.replaceVariable(input, newName);
 				if (!newExpr.equals(expr)) {
 					expr = newExpr;
 					fireModelChanged(OutputExpressionsEvent.OUTPUT_EXPRESSION, output);
 				}
-			} else fireModelChanged(OutputExpressionsEvent.OUTPUT_EXPRESSION, output);
+			} else
+				fireModelChanged(OutputExpressionsEvent.OUTPUT_EXPRESSION, output);
 			fireModelChanged(OutputExpressionsEvent.OUTPUT_MINIMAL, output);
 		}
 
@@ -140,12 +144,14 @@ public class OutputExpressions {
 						expr = minimalExpr;
 						if (exprChanged) {
 							exprString = null;
-							if (!initializing) fireModelChanged(OutputExpressionsEvent.OUTPUT_EXPRESSION, output);
+							if (!initializing)
+								fireModelChanged(OutputExpressionsEvent.OUTPUT_EXPRESSION, output);
 						}
 					}
 				}
 
-				if (!initializing && minChanged) fireModelChanged(OutputExpressionsEvent.OUTPUT_MINIMAL, output);
+				if (!initializing && minChanged)
+					fireModelChanged(OutputExpressionsEvent.OUTPUT_MINIMAL, output);
 			} finally {
 				invalidating = false;
 			}
@@ -194,7 +200,8 @@ public class OutputExpressions {
 			if (type == VariableListEvent.ALL_REPLACED && !outputData.isEmpty()) {
 				outputData.clear();
 				fireModelChanged(OutputExpressionsEvent.ALL_VARIABLES_REPLACED);
-			} else if (type == VariableListEvent.REMOVE) outputData.remove(event.getVariable());
+			} else if (type == VariableListEvent.REMOVE)
+				outputData.remove(event.getVariable());
 			else if (type == VariableListEvent.REPLACE) {
 				String oldName = event.getVariable();
 				if (outputData.containsKey(oldName)) {
@@ -257,15 +264,11 @@ public class OutputExpressions {
 	// access methods
 	//
 	public Expression getExpression(String output) {
-		if (output == null)
-			return null;
-		return getOutputData(output, true).getExpression();
+		return output == null ? null : getOutputData(output, true).getExpression();
 	}
 
 	public String getExpressionString(String output) {
-		if (output == null)
-			return "";
-		return getOutputData(output, true).getExpressionString();
+		return output == null ? "" : getOutputData(output, true).getExpressionString();
 	}
 
 	public boolean isExpressionMinimal(String output) {
@@ -274,21 +277,15 @@ public class OutputExpressions {
 	}
 
 	public Expression getMinimalExpression(String output) {
-		if (output == null)
-			return Expressions.constant(0);
-		return getOutputData(output, true).getMinimalExpression();
+		return output == null ? Expressions.constant(0) : getOutputData(output, true).getMinimalExpression();
 	}
 
 	public List<Implicant> getMinimalImplicants(String output) {
-		if (output == null)
-			return Implicant.MINIMAL_LIST;
-		return getOutputData(output, true).getMinimalImplicants();
+		return output == null ? Implicant.MINIMAL_LIST : getOutputData(output, true).getMinimalImplicants();
 	}
 
 	public int getMinimizedFormat(String output) {
-		if (output == null)
-			return AnalyzerModel.FORMAT_SUM_OF_PRODUCTS;
-		return getOutputData(output, true).getMinimizedFormat();
+		return output == null ? AnalyzerModel.FORMAT_SUM_OF_PRODUCTS : getOutputData(output, true).getMinimizedFormat();
 	}
 
 	//
@@ -323,7 +320,7 @@ public class OutputExpressions {
 			throw new IllegalArgumentException("null output name");
 		OutputData ret = outputData.get(output);
 		if (ret == null && create) {
-			if (model.getOutputs().indexOf(output) < 0)
+			if (!model.getOutputs().contains(output))
 				throw new IllegalArgumentException("unrecognized output " + output);
 			ret = new OutputData(output);
 			outputData.put(output, ret);
@@ -335,13 +332,15 @@ public class OutputExpressions {
 		int rows = table.getRowCount();
 		int cols = table.getInputColumnCount();
 		Entry[] values = new Entry[rows];
-		if (expr == null) Arrays.fill(values, Entry.DONT_CARE);
-		else {
-			Assignments assn = new Assignments();
-			for (int i = 0; i < rows; i++) {
-				for (int j = 0; j < cols; j++) assn.put(table.getInputHeader(j), TruthTable.isInputSet(i, j, cols));
-				values[i] = expr.evaluate(assn) ? Entry.ONE : Entry.ZERO;
-			}
+		if (expr == null) {
+			Arrays.fill(values, Entry.DONT_CARE);
+			return values;
+		}
+		Assignments assn = new Assignments();
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++)
+				assn.put(table.getInputHeader(j), TruthTable.isInputSet(i, j, cols));
+			values[i] = expr.evaluate(assn) ? Entry.ONE : Entry.ZERO;
 		}
 		return values;
 	}
@@ -360,26 +359,24 @@ public class OutputExpressions {
 	}
 
 	private static boolean isAllUndefined(Entry[] a) {
-		for (Entry entry : a)
-			if (entry == Entry.ZERO || entry == Entry.ONE)
-				return false;
-		return true;
+		return Arrays.stream(a).allMatch(e -> e == Entry.ZERO || e == Entry.ONE);
 	}
 
 	private static boolean implicantsSame(List<Implicant> a, List<Implicant> b) {
-		if (a == null) return b == null || b.size() == 0;
-		else if (b == null) return a.size() == 0;
-		else if (a.size() != b.size()) return false;
-		else {
-			Iterator<Implicant> ait = a.iterator();
-			for (Implicant bi : b) {
-				if (!ait.hasNext())
-					return false; // should never happen
-				Implicant ai = ait.next();
-				if (!ai.equals(bi))
-					return false;
-			}
-			return true;
+		if (a == null)
+			return b == null || b.size() == 0;
+		if (b == null)
+			return a.size() == 0;
+		if (a.size() != b.size())
+			return false;
+		Iterator<Implicant> ait = a.iterator();
+		for (Implicant bi : b) {
+			if (!ait.hasNext())
+				return false; // should never happen
+			Implicant ai = ait.next();
+			if (!ai.equals(bi))
+				return false;
 		}
+		return true;
 	}
 }

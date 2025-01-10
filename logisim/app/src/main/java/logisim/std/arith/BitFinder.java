@@ -11,7 +11,8 @@ import logisim.data.AttributeSet;
 import logisim.data.Attributes;
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -93,38 +94,38 @@ public class BitFinder extends InstanceFactory {
 		int outWidth = computeOutputBits(width - 1);
 		Object type = state.getAttributeValue(TYPE);
 
-		Value[] bits = state.getPort(2).getAll();
-		Value want;
+		WireValue[] bits = state.getPort(2).getAll();
+		WireValue want;
 		int i;
 		if (type == HIGH_ZERO) {
-			want = Value.FALSE;
-			for (i = bits.length - 1; i >= 0 && bits[i] == Value.TRUE; i--) {
+			want = WireValues.FALSE;
+			for (i = bits.length - 1; i >= 0 && bits[i] == WireValues.TRUE; i--) {
 			}
 		} else if (type == LOW_ZERO) {
-			want = Value.FALSE;
-			for (i = 0; i < bits.length && bits[i] == Value.TRUE; i++) {
+			want = WireValues.FALSE;
+			for (i = 0; i < bits.length && bits[i] == WireValues.TRUE; i++) {
 			}
 		} else if (type == HIGH_ONE) {
-			want = Value.TRUE;
-			for (i = bits.length - 1; i >= 0 && bits[i] == Value.FALSE; i--) {
+			want = WireValues.TRUE;
+			for (i = bits.length - 1; i >= 0 && bits[i] == WireValues.FALSE; i--) {
 			}
 		} else {
-			want = Value.TRUE;
-			for (i = 0; i < bits.length && bits[i] == Value.FALSE; i++) {
+			want = WireValues.TRUE;
+			for (i = 0; i < bits.length && bits[i] == WireValues.FALSE; i++) {
 			}
 		}
 
-		Value present;
-		Value index;
+		WireValue present;
+		WireValue index;
 		if (i < 0 || i >= bits.length) {
-			present = Value.FALSE;
-			index = Value.createKnown(BitWidth.create(outWidth), 0);
+			present = WireValues.FALSE;
+			index = WireValue.Companion.createKnown(BitWidth.create(outWidth), 0);
 		} else if (bits[i] == want) {
-			present = Value.TRUE;
-			index = Value.createKnown(BitWidth.create(outWidth), i);
+			present = WireValues.TRUE;
+			index = WireValue.Companion.createKnown(BitWidth.create(outWidth), i);
 		} else {
-			present = Value.ERROR;
-			index = Value.createError(BitWidth.create(outWidth));
+			present = WireValues.ERROR;
+			index = WireValue.Companion.createError(BitWidth.create(outWidth));
 		}
 
 		int delay = outWidth * Adder.PER_DELAY;

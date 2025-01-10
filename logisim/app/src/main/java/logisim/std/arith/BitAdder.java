@@ -11,7 +11,8 @@ import logisim.data.Attributes;
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -108,12 +109,12 @@ public class BitAdder extends InstanceFactory {
 		int minCount = 0; // number that are definitely 1
 		int maxCount = 0; // number that are definitely not 0 (incl X/Z)
 		for (int i = 1; i <= inputs; i++) {
-			Value v = state.getPort(i);
-			Value[] bits = v.getAll();
-			for (Value b : bits) {
-				if (b == Value.TRUE)
+			WireValue v = state.getPort(i);
+			WireValue[] bits = v.getAll();
+			for (WireValue b : bits) {
+				if (b == WireValues.TRUE)
 					minCount++;
-				if (b != Value.FALSE)
+				if (b != WireValues.FALSE)
 					maxCount++;
 			}
 		}
@@ -122,14 +123,14 @@ public class BitAdder extends InstanceFactory {
 		int unknownMask = 0;
 		for (int i = minCount + 1; i <= maxCount; i++) unknownMask |= (minCount ^ i);
 
-		Value[] out = new Value[computeOutputBits(width, inputs)];
+		WireValue[] out = new WireValue[computeOutputBits(width, inputs)];
 		for (int i = 0; i < out.length; i++)
-			if (((unknownMask >> i) & 1) != 0) out[i] = Value.ERROR;
-			else if (((minCount >> i) & 1) != 0) out[i] = Value.TRUE;
-			else out[i] = Value.FALSE;
+			if (((unknownMask >> i) & 1) != 0) out[i] = WireValues.ERROR;
+			else if (((minCount >> i) & 1) != 0) out[i] = WireValues.TRUE;
+			else out[i] = WireValues.FALSE;
 
 		int delay = out.length * Adder.PER_DELAY;
-		state.setPort(0, Value.create(out), delay);
+		state.setPort(0, WireValue.Companion.create(out), delay);
 	}
 
 	@Override

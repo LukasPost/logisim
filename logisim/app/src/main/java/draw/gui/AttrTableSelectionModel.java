@@ -5,6 +5,7 @@ package draw.gui;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import draw.actions.ModelChangeAttributeAction;
 import draw.canvas.Canvas;
@@ -30,22 +31,17 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
 	@Override
 	public String getTitle() {
 		Selection sel = canvas.getSelection();
-		Class<? extends CanvasObject> commonClass = null;
-		int commonCount = 0;
-		CanvasObject firstObject = null;
-		int totalCount = 0;
-		for (CanvasObject obj : sel.getSelected()) {
-			if (firstObject == null) {
-				firstObject = obj;
-				commonClass = obj.getClass();
-				commonCount = 1;
-			} else if (obj.getClass() == commonClass) commonCount++;
-			else commonClass = null;
-			totalCount++;
-		}
+		Set<CanvasObject> selected = sel.getSelected();
+		if(selected.isEmpty())
+			return null;
 
-		if (firstObject == null) return null;
-		else if (commonClass == null) return Strings.get("selectionVarious", "" + totalCount);
+		CanvasObject firstObject = selected.stream().findFirst().get();
+		final Class<? extends CanvasObject> commonClass = firstObject.getClass();
+		long differentCount = selected.stream().filter(obj -> obj.getClass() != commonClass).count();
+		int totalCount = selected.size();
+		int commonCount = (int) (totalCount - differentCount);
+
+		if (differentCount != 0) return Strings.get("selectionVarious", "" + totalCount);
 		else if (commonCount == 1) return Strings.get("selectionOne", firstObject.getDisplayName());
 		else return Strings.get("selectionMultiple", firstObject.getDisplayName(), "" + commonCount);
 	}

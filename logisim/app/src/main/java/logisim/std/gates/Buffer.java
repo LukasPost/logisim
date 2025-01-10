@@ -15,7 +15,8 @@ import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.file.Options;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
@@ -58,7 +59,7 @@ class Buffer extends InstanceFactory {
 
 	@Override
 	public void propagate(InstanceState state) {
-		Value in = state.getPort(1);
+		WireValue in = state.getPort(1);
 		in = Buffer.repair(state, in);
 		state.setPort(0, in, GateAttributes.DELAY);
 	}
@@ -151,23 +152,23 @@ class Buffer extends InstanceFactory {
 	//
 	// static methods - shared with other classes
 	//
-	static Value repair(InstanceState state, Value v) {
+	static WireValue repair(InstanceState state, WireValue v) {
 		AttributeSet opts = state.getProject().getOptions().getAttributeSet();
 		Object onUndefined = opts.getValue(Options.ATTR_GATE_UNDEFINED);
 		boolean errorIfUndefined = onUndefined.equals(Options.GATE_UNDEFINED_ERROR);
-		Value repaired;
+		WireValue repaired;
 		if (errorIfUndefined) {
 			int vw = v.getWidth();
 			BitWidth w = state.getAttributeValue(StdAttr.WIDTH);
 			int ww = w.getWidth();
 			if (vw == ww && v.isFullyDefined())
 				return v;
-			Value[] vs = new Value[w.getWidth()];
+			WireValue[] vs = new WireValue[w.getWidth()];
 			for (int i = 0; i < vs.length; i++) {
-				Value ini = i < vw ? v.get(i) : Value.ERROR;
-				vs[i] = ini.isFullyDefined() ? ini : Value.ERROR;
+				WireValue ini = i < vw ? v.get(i) : WireValues.ERROR;
+				vs[i] = ini.isFullyDefined() ? ini : WireValues.ERROR;
 			}
-			repaired = Value.create(vs);
+			repaired = WireValue.Companion.create(vs);
 		} else repaired = v;
 
 		Object outType = state.getAttributeValue(GateAttributes.ATTR_OUTPUT);

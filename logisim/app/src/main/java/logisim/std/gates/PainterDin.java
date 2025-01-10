@@ -8,7 +8,7 @@ import java.awt.Graphics;
 import java.util.HashMap;
 
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 import logisim.instance.InstancePainter;
 import logisim.util.GraphicsUtil;
 
@@ -64,7 +64,7 @@ class PainterDin {
 		int x0 = xMid - diam / 2;
 		Color oldColor = g.getColor();
 		if (painter.getShowState()) {
-			Value val = painter.getPort(0);
+			WireValue val = painter.getPort(0);
 			g.setColor(val.getColor());
 		}
 		g.drawLine(x0 + diam, 0, 0, 0);

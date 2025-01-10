@@ -23,7 +23,7 @@ import logisim.comp.ComponentDrawContext;
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 import logisim.gui.generic.GridPainter;
 import logisim.prefs.AppPreferences;
 import logisim.proj.Project;
@@ -174,7 +174,7 @@ class CanvasPainter implements PropertyChangeListener {
 		if (exceptions == null || exceptions.isEmpty())
 			return;
 
-		g.setColor(Value.WIDTH_ERROR_COLOR);
+		g.setColor(WireValue.Companion.getWIDTH_ERROR_COLOR());
 		GraphicsUtil.switchToWidth(g, 2);
 		FontMetrics fm = base.getFontMetrics(g.getFont());
 		for (WidthIncompatibilityData ex : exceptions)

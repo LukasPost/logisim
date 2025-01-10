@@ -8,7 +8,8 @@ import java.awt.Graphics;
 import logisim.analyze.model.Expression;
 import logisim.analyze.model.Expressions;
 import logisim.data.AttributeSet;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstancePainter;
 import logisim.instance.InstanceState;
@@ -58,7 +59,7 @@ class XorGate extends AbstractGate {
 	}
 
 	@Override
-	protected Value computeOutput(Value[] inputs, int numInputs, InstanceState state) {
+	protected WireValue computeOutput(WireValue[] inputs, int numInputs, InstanceState state) {
 		Object behavior = state.getAttributeValue(GateAttributes.ATTR_XOR);
 		if (behavior == GateAttributes.XOR_ODD) return GateFunctions.computeOddParity(inputs, numInputs);
 		else return GateFunctions.computeExactlyOne(inputs, numInputs);
@@ -75,8 +76,8 @@ class XorGate extends AbstractGate {
 	}
 
 	@Override
-	protected Value getIdentity() {
-		return Value.FALSE;
+	protected WireValue getIdentity() {
+		return WireValues.FALSE;
 	}
 
 	protected static Expression xorExpression(Expression[] inputs, int numInputs) {

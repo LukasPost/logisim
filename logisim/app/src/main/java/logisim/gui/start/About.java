@@ -20,7 +20,8 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
 import logisim.Main;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.util.GraphicsUtil;
 
 public class About {
@@ -42,8 +43,8 @@ public class About {
 			while (running) {
 				long elapse = System.currentTimeMillis() - start;
 				int count = (int) (elapse / 500) % 4;
-				panel.upper = (count == 2 || count == 3) ? Value.TRUE : Value.FALSE;
-				panel.lower = (count == 1 || count == 2) ? Value.TRUE : Value.FALSE;
+				panel.upper = (count == 2 || count == 3) ? WireValues.TRUE : WireValues.FALSE;
+				panel.lower = (count == 1 || count == 2) ? WireValues.TRUE : WireValues.FALSE;
 				panel.credits.setScroll((int) elapse);
 				panel.repaint();
 				try {
@@ -63,8 +64,8 @@ public class About {
 		private final Font versionFont = new Font("Serif", Font.PLAIN | Font.ITALIC, 32);
 		private final Font copyrightFont = new Font("Serif", Font.ITALIC, 18);
 
-		private Value upper = Value.FALSE;
-		private Value lower = Value.TRUE;
+		private WireValue upper = WireValues.FALSE;
+		private WireValue lower = WireValues.TRUE;
 		private AboutCredits credits;
 		private PanelThread thread;
 
@@ -110,11 +111,11 @@ public class About {
 		}
 
 		private void drawWires(Graphics g, int x0, int y0) {
-			Value upperNot = upper.not();
-			Value lowerNot = lower.not();
-			Value upperAnd = upperNot.and(lower);
-			Value lowerAnd = lowerNot.and(upper);
-			Value out = upperAnd.or(lowerAnd);
+			WireValue upperNot = upper.not();
+			WireValue lowerNot = lower.not();
+			WireValue upperAnd = upperNot.and(lower);
+			WireValue lowerAnd = lowerNot.and(upper);
+			WireValue out = upperAnd.or(lowerAnd);
 
 			g.setColor(upper.getColor());
 			int x = toX(x0, 20);

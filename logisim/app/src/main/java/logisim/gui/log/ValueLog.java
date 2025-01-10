@@ -3,17 +3,18 @@
 
 package logisim.gui.log;
 
-import logisim.data.Value;
+
+import logisim.data.WireValue.WireValue;
 
 class ValueLog {
 	private static final int LOG_SIZE = 400;
 
-	private Value[] log;
+	private WireValue[] log;
 	private short curSize;
 	private short firstIndex;
 
 	public ValueLog() {
-		log = new Value[LOG_SIZE];
+		log = new WireValue[LOG_SIZE];
 		curSize = 0;
 		firstIndex = 0;
 	}
@@ -22,19 +23,20 @@ class ValueLog {
 		return curSize;
 	}
 
-	public Value get(int index) {
+	public WireValue get(int index) {
 		int i = firstIndex + index;
 		if (i >= LOG_SIZE)
 			i -= LOG_SIZE;
 		return log[i];
 	}
 
-	public Value getLast() {
-		return curSize < LOG_SIZE ? (curSize == 0 ? null : log[curSize - 1])
-				: (firstIndex == 0 ? log[curSize - 1] : log[firstIndex - 1]);
+	public WireValue getLast() {
+		if (curSize < LOG_SIZE)
+			return curSize == 0 ? null : log[curSize - 1];
+		return firstIndex == 0 ? log[curSize - 1] : log[firstIndex - 1];
 	}
 
-	public void append(Value val) {
+	public void append(WireValue val) {
 		if (curSize < LOG_SIZE) {
 			log[curSize] = val;
 			curSize++;

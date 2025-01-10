@@ -32,8 +32,7 @@ import logisim.analyze.model.ParserException;
 import logisim.util.StringGetter;
 
 class ExpressionTab extends AnalyzerTab implements TabInterface {
-	private class MyListener extends AbstractAction
-			implements DocumentListener, OutputExpressionsListener, ItemListener {
+	private class MyListener extends AbstractAction implements DocumentListener, OutputExpressionsListener, ItemListener {
 		boolean edited;
 
 		public void actionPerformed(ActionEvent event) {
@@ -82,13 +81,13 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
 		}
 
 		public void expressionChanged(OutputExpressionsEvent event) {
-			if (event.getType() == OutputExpressionsEvent.OUTPUT_EXPRESSION) {
-				String output = event.getVariable();
-				if (output.equals(getCurrentVariable())) {
-					prettyView.setExpression(model.getOutputExpressions().getExpression(output));
-					currentStringChanged();
-				}
-			}
+			if (event.getType() != OutputExpressionsEvent.OUTPUT_EXPRESSION)
+				return;
+			String output = event.getVariable();
+			if (!output.equals(getCurrentVariable()))
+				return;
+			prettyView.setExpression(model.getOutputExpressions().getExpression(output));
+			currentStringChanged();
 		}
 
 		public void itemStateChanged(ItemEvent event) {
@@ -182,7 +181,8 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
 		clear.setText(Strings.get("exprClearButton"));
 		revert.setText(Strings.get("exprRevertButton"));
 		enter.setText(Strings.get("exprEnterButton"));
-		if (errorMessage != null) error.setText(errorMessage.get());
+		if (errorMessage != null)
+			error.setText(errorMessage.get());
 	}
 
 	@Override
@@ -201,13 +201,8 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
 	}
 
 	private void setError(StringGetter msg) {
-		if (msg == null) {
-			errorMessage = null;
-			error.setText(" ");
-		} else {
-			errorMessage = msg;
-			error.setText(msg.get());
-		}
+		errorMessage = msg;
+		error.setText(msg == null ? "" : msg.get());
 	}
 
 	public void copy() {

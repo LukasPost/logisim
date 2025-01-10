@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import logisim.circuit.CircuitState;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 import logisim.util.EventSourceWeakSupport;
 
 class Model {
@@ -92,13 +92,13 @@ class Model {
 
 	public void propagationCompleted() {
 		CircuitState circuitState = getCircuitState();
-		Value[] vals = new Value[selection.size()];
+		WireValue[] vals = new WireValue[selection.size()];
 		boolean changed = false;
 		for (int i = selection.size() - 1; i >= 0; i--) {
 			SelectionItem item = selection.get(i);
 			vals[i] = item.fetchValue(circuitState);
 			if (!changed) {
-				Value v = getValueLog(item).getLast();
+				WireValue v = getValueLog(item).getLast();
 				changed = !Objects.equals(v, vals[i]);
 			}
 		}
@@ -133,7 +133,7 @@ class Model {
 		for (ModelListener l : listeners) l.selectionChanged(e);
 	}
 
-	private void fireEntryAdded(ModelEvent e, Value[] values) {
+	private void fireEntryAdded(ModelEvent e, WireValue[] values) {
 		for (ModelListener l : listeners) l.entryAdded(e, values);
 	}
 

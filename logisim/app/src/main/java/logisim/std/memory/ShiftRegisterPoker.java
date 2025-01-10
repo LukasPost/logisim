@@ -10,7 +10,8 @@ import java.awt.event.MouseEvent;
 
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.InstancePainter;
 import logisim.instance.InstancePoker;
 import logisim.instance.InstanceState;
@@ -83,11 +84,11 @@ public class ShiftRegisterPoker extends InstancePoker {
 			if (oldLoc == newLoc) {
 				ShiftRegisterData data = (ShiftRegisterData) state.getData();
 				int i = data.getLength() - 1 - loc;
-				Value v = data.get(i);
-				if (v == Value.FALSE)
-					v = Value.TRUE;
+				WireValue v = data.get(i);
+				if (v == WireValues.FALSE)
+					v = WireValues.TRUE;
 				else
-					v = Value.FALSE;
+					v = WireValues.FALSE;
 				data.set(i, v);
 				state.fireInvalidated();
 			}
@@ -116,7 +117,7 @@ public class ShiftRegisterPoker extends InstancePoker {
 			BitWidth widObj = state.getAttributeValue(StdAttr.WIDTH);
 			if ((val & ~widObj.getMask()) != 0)
 				return;
-			Value valObj = Value.createKnown(widObj, val);
+			WireValue valObj = WireValue.Companion.createKnown(widObj, val);
 			ShiftRegisterData data = (ShiftRegisterData) state.getData();
 			int i = data.getLength() - 1 - loc;
 			if (!data.get(i).equals(valObj)) {

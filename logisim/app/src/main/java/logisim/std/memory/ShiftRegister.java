@@ -11,7 +11,7 @@ import logisim.data.Attributes;
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -127,12 +127,12 @@ public class ShiftRegister extends InstanceFactory {
 		int len = data.getLength();
 
 		boolean triggered = data.updateClock(state.getPort(CK), triggerType);
-		if (state.getPort(CLR) == Value.TRUE) data.clear();
-		else if (triggered) if (parallel && state.getPort(LD) == Value.TRUE) {
+		if (state.getPort(CLR) == WireValues.TRUE) data.clear();
+		else if (triggered) if (parallel && state.getPort(LD) == WireValues.TRUE) {
 			data.clear();
 			for (int i = len - 1; i >= 0; i--) data.push(state.getPort(6 + 2 * i));
 		}
-		else if (state.getPort(SH) != Value.FALSE) data.push(state.getPort(IN));
+		else if (state.getPort(SH) != WireValues.FALSE) data.push(state.getPort(IN));
 
 		state.setPort(OUT, data.get(0), 4);
 		if (parallel) for (int i = 0; i < len; i++) state.setPort(6 + 2 * i + 1, data.get(len - 1 - i), 4);

@@ -3,6 +3,8 @@
 
 package logisim.analyze.model;
 
+import kotlin.jvm.functions.Function2;
+
 public class Expressions {
 	private Expressions() {
 	}
@@ -224,34 +226,28 @@ public class Expressions {
 		}
 	}
 
-	public static Expression and(Expression a, Expression b) {
+	private static Expression form(Expression a, Expression b, Function2<Expression, Expression, Expression> former) {
 		if (a == null)
 			return b;
 		if (b == null)
 			return a;
-		return new And(a, b);
+		return former.invoke(a, b);
+	}
+
+	public static Expression and(Expression a, Expression b) {
+		return form(a,b,And::new);
 	}
 
 	public static Expression or(Expression a, Expression b) {
-		if (a == null)
-			return b;
-		if (b == null)
-			return a;
-		return new Or(a, b);
+		return form(a,b,Or::new);
 	}
 
 	public static Expression xor(Expression a, Expression b) {
-		if (a == null)
-			return b;
-		if (b == null)
-			return a;
-		return new Xor(a, b);
+		return form(a,b,Xor::new);
 	}
 
 	public static Expression not(Expression a) {
-		if (a == null)
-			return null;
-		return new Not(a);
+		return a == null ? null : new Not(a);
 	}
 
 	public static Expression variable(String name) {

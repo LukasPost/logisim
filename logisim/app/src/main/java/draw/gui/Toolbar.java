@@ -76,9 +76,8 @@ class Toolbar extends JComponent {
 			int x0 = toolX;
 			int y0 = toolY;
 
-			boolean was = inTool;
 			boolean now = toolPressed != null && mx >= x0 && mx < x0 + ICON_WIDTH && my >= y0 && my < y0 + ICON_HEIGHT;
-			if (was != now) {
+			if (inTool != now) {
 				inTool = now;
 				repaint();
 			}
@@ -102,10 +101,10 @@ class Toolbar extends JComponent {
 		tools = new AbstractTool[2][];
 		tools[0] = new AbstractTool[(toolBase.length + 1) / 2];
 		tools[1] = new AbstractTool[toolBase.length / 2];
-		for (int i = 0; i < toolBase.length; i++) tools[i % 2][i / 2] = toolBase[i];
+		for (int i = 0; i < toolBase.length; i++)
+			tools[i % 2][i / 2] = toolBase[i];
 
-		setPreferredSize(
-				new Dimension(3 * ICON_SEP + 2 * ICON_WIDTH, ICON_SEP + tools[0].length * (ICON_HEIGHT + ICON_SEP)));
+		setPreferredSize(new Dimension(3 * ICON_SEP + 2 * ICON_WIDTH, ICON_SEP + tools[0].length * (ICON_HEIGHT + ICON_SEP)));
 		addMouseListener(listener);
 		addMouseMotionListener(listener);
 	}

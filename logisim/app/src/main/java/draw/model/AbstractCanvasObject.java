@@ -48,7 +48,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
 
 	public abstract boolean contains(Location loc, boolean assumeFilled);
 
-	public abstract void translate(int dx, int dy);
+	public abstract void translate(Location distance);
 
 	public abstract List<Handle> getHandles(HandleGesture gesture);
 
@@ -89,25 +89,27 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
 		Bounds b = other.getBounds();
 		Bounds c = a.intersect(b);
 		Random rand = new Random();
-		if (c.getWidth() == 0 || c.getHeight() == 0) return false;
-		else if (other instanceof AbstractCanvasObject that) {
+		if (c.getWidth() == 0 || c.getHeight() == 0)
+			return false;
+		if (other instanceof AbstractCanvasObject that)
 			for (int i = 0; i < OVERLAP_TRIES; i++)
 				if (i % 2 == 0) {
 					Location loc = getRandomPoint(c, rand);
-					if (loc != null && that.contains(loc, false)) return true;
+					if (loc != null && that.contains(loc, false))
+						return true;
 				}
 				else {
 					Location loc = that.getRandomPoint(c, rand);
-					if (loc != null && contains(loc, false)) return true;
+					if (loc != null && contains(loc, false))
+						return true;
 				}
-			return false;
-		} else {
+		else
 			for (int i = 0; i < OVERLAP_TRIES; i++) {
 				Location loc = getRandomPoint(c, rand);
-				if (loc != null && other.contains(loc, false)) return true;
+				if (loc != null && other.contains(loc, false))
+					return true;
 			}
-			return false;
-		}
+		return false;
 	}
 
 	protected Location getRandomPoint(Bounds bds, Random rand) {
@@ -117,7 +119,8 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
 		int h = bds.getHeight();
 		for (int i = 0; i < GENERATE_RANDOM_TRIES; i++) {
 			Location loc = new Location(x + rand.nextInt(w), y + rand.nextInt(h));
-			if (contains(loc, false)) return loc;
+			if (contains(loc, false))
+				return loc;
 		}
 		return null;
 	}
@@ -152,8 +155,9 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
 	}
 
 	public Attribute<?> getAttribute(String name) {
-		for (Attribute<?> attr : getAttributes()) if (attr.getName().equals(name)) return attr;
-		return null;
+		return getAttributes().stream()
+				.filter(attr -> attr.getName().equals(name)).findFirst()
+				.orElse(null);
 	}
 
 	public boolean isReadOnly(Attribute<?> attr) {
@@ -169,52 +173,47 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
 	}
 
 	public final <V> void setValue(Attribute<V> attr, V value) {
-		Object old = getValue(attr);
-		boolean same = Objects.equals(old, value);
-		if (!same) {
-			updateValue(attr, value);
-			AttributeEvent e = new AttributeEvent(this, attr, value);
-			for (AttributeListener listener : listeners) listener.attributeValueChanged(e);
-		}
+		if (Objects.equals(getValue(attr), value))
+			return;
+		updateValue(attr, value);
+		AttributeEvent e = new AttributeEvent(this, attr, value);
+		listeners.forEach(listener -> listener.attributeValueChanged(e));
 	}
 
 	protected void fireAttributeListChanged() {
 		AttributeEvent e = new AttributeEvent(this);
-		for (AttributeListener listener : listeners) listener.attributeListChanged(e);
+		listeners.forEach(listener -> listener.attributeListChanged(e));
 	}
 
 	protected boolean setForStroke(Graphics g) {
-		List<Attribute<?>> attrs = getAttributes();
-		if (attrs.contains(DrawAttr.PAINT_TYPE)) {
-			Object value = getValue(DrawAttr.PAINT_TYPE);
-			if (value == DrawAttr.PAINT_FILL) return false;
-		}
+		if (getAttributes().contains(DrawAttr.PAINT_TYPE) && getValue(DrawAttr.PAINT_TYPE) == DrawAttr.PAINT_FILL)
+			return false;
 
 		Integer width = getValue(DrawAttr.STROKE_WIDTH);
-		if (width != null && width > 0) {
-			Color color = getValue(DrawAttr.STROKE_COLOR);
-			if (color != null && color.getAlpha() == 0) return false;
-			else {
-				GraphicsUtil.switchToWidth(g, width);
-				if (color != null) g.setColor(color);
-				return true;
-			}
-		} else return false;
+		if (width == null || width <= 0)
+			return false;
+
+		Color color = getValue(DrawAttr.STROKE_COLOR);
+		if (color != null && color.getAlpha() == 0)
+			return false;
+
+		GraphicsUtil.switchToWidth(g, width);
+		if (color != null)
+			g.setColor(color);
+		return true;
 	}
 
 	protected boolean setForFill(Graphics g) {
-		List<Attribute<?>> attrs = getAttributes();
-		if (attrs.contains(DrawAttr.PAINT_TYPE)) {
-			Object value = getValue(DrawAttr.PAINT_TYPE);
-			if (value == DrawAttr.PAINT_STROKE) return false;
-		}
+		if (getAttributes().contains(DrawAttr.PAINT_TYPE) && getValue(DrawAttr.PAINT_TYPE) == DrawAttr.PAINT_STROKE)
+			return false;
 
 		Color color = getValue(DrawAttr.FILL_COLOR);
-		if (color != null && color.getAlpha() == 0) return false;
-		else {
-			if (color != null) g.setColor(color);
-			return true;
-		}
+		if (color != null && color.getAlpha() == 0)
+			return false;
+
+		if (color != null)
+			g.setColor(color);
+		return true;
 	}
 
 }

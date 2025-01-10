@@ -18,6 +18,7 @@ import java.util.Arrays;
 import javax.swing.JTextField;
 
 import logisim.data.Bounds;
+import logisim.data.Location;
 
 public class EditableLabel implements Cloneable {
 	public static final int LEFT = JTextField.LEFT;
@@ -29,8 +30,7 @@ public class EditableLabel implements Cloneable {
 	public static final int BASELINE = 10;
 	public static final int BOTTOM = 11;
 
-	private int x;
-	private int y;
+	private Location loc;
 	private String text;
 	private Font font;
 	private Color color;
@@ -43,9 +43,8 @@ public class EditableLabel implements Cloneable {
 	private int[] charX;
 	private int[] charY;
 
-	public EditableLabel(int x, int y, String text, Font font) {
-		this.x = x;
-		this.y = y;
+	public EditableLabel(Location loc, String text, Font font) {
+		this.loc = loc;
 		this.text = text;
 		this.font = font;
 		color = Color.BLACK;
@@ -60,20 +59,24 @@ public class EditableLabel implements Cloneable {
 			return (EditableLabel) super.clone();
 		}
 		catch (CloneNotSupportedException e) {
-			return new EditableLabel(x, y, text, font);
+			return new EditableLabel(loc, text, font);
 		}
 	}
 
 	@Override
 	public boolean equals(Object other) {
-		return other instanceof EditableLabel that && x == that.x && y == that.y && text.equals(that.text) && font.equals(that.font)
-				&& color.equals(that.color) && horzAlign == that.horzAlign
+		return other instanceof EditableLabel that
+				&& loc.equals(that.loc)
+				&& text.equals(that.text)
+				&& font.equals(that.font)
+				&& color.equals(that.color)
+				&& horzAlign == that.horzAlign
 				&& vertAlign == that.vertAlign;
 	}
 
 	@Override
 	public int hashCode() {
-		int ret = x * 31 + y;
+		int ret = loc.x() * 31 + loc.y();
 		ret = ret * 31 + text.hashCode();
 		ret = ret * 31 + font.hashCode();
 		ret = ret * 31 + color.hashCode();
@@ -85,18 +88,9 @@ public class EditableLabel implements Cloneable {
 	//
 	// accessor methods
 	//
-	public int getX() {
-		return x;
-	}
 
-	public int getY() {
-		return y;
-	}
-
-	public void setLocation(int x, int y) {
-		this.x = x;
-		this.y = y;
-	}
+	public Location getLocation() { return loc; }
+	public void setLocation(Location loc) { this.loc = loc; }
 
 	public String getText() {
 		return text;
@@ -157,42 +151,40 @@ public class EditableLabel implements Cloneable {
 		return Bounds.create(x0, y0, w, h);
 	}
 
-	public boolean contains(int qx, int qy) {
+	public boolean contains(Location query) {
 		int x0 = getLeftX();
 		int y0 = getBaseY();
-		if (qx >= x0 && qx < x0 + width && qy >= y0 - ascent && qy < y0 + descent) {
-			int[] xs = charX;
-			int[] ys = charY;
-			if (xs == null || ys == null) return true;
-			else {
-				int i = Arrays.binarySearch(xs, qx - x0);
-				if (i < 0)
-					i = -(i + 1);
-				if (i >= xs.length) return false;
-				else {
-					int asc = (ys[i] >> 16) & 0xFFFF;
-					int desc = ys[i] & 0xFFFF;
-					int dy = y0 - qy;
-					return dy >= -desc && dy <= asc;
-				}
-			}
-		} else return false;
+		if (query.x() < x0 || query.x() >= x0 + width || query.y() < y0 - ascent || query.y() >= y0 + descent)
+			return false;
+
+		if (charX == null || charY == null)
+			return true;
+		int index = Arrays.binarySearch(charX, query.x() - x0);
+		if (index < 0)
+			index = -(index + 1);
+		if (index >= charX.length)
+			return false;
+		int asc = (charY[index] >> 16) & 0xFFFF;
+		int desc = charY[index] & 0xFFFF;
+		int dy = y0 - query.y();
+		return dy >= -desc && dy <= asc;
+
 	}
 
 	private int getLeftX() {
 		return switch (horzAlign) {
-			case CENTER -> x - width / 2;
-			case RIGHT -> x - width;
-			default -> x;
+			case CENTER -> loc.x() - width / 2;
+			case RIGHT -> loc.x() - width;
+			default -> loc.x();
 		};
 	}
 
 	private int getBaseY() {
 		return switch (vertAlign) {
-			case TOP -> y + ascent;
-			case MIDDLE -> y + (ascent - descent) / 2;
-			case BOTTOM -> y - descent;
-			default -> y;
+			case TOP -> loc.y() + ascent;
+			case MIDDLE -> loc.y() + (ascent - descent) / 2;
+			case BOTTOM -> loc.y() - descent;
+			default -> loc.y();
 		};
 	}
 
@@ -202,13 +194,15 @@ public class EditableLabel implements Cloneable {
 
 	public void configureTextField(EditableLabelField field, double zoom) {
 		Font f = font;
-		if (zoom != 1.0) f = f.deriveFont(AffineTransform.getScaleInstance(zoom, zoom));
+		if (zoom != 1.0)
+			f = f.deriveFont(AffineTransform.getScaleInstance(zoom, zoom));
 		field.setFont(f);
 
 		Dimension dim = field.getPreferredSize();
 		int w;
 		int border = EditableLabelField.FIELD_BORDER;
-		if (dimsKnown) w = width + 1 + 2 * border;
+		if (dimsKnown)
+			w = width + 1 + 2 * border;
 		else {
 			FontMetrics fm = field.getFontMetrics(font);
 			ascent = fm.getAscent();
@@ -216,7 +210,7 @@ public class EditableLabel implements Cloneable {
 			w = 0;
 		}
 
-		int x0 = x;
+		int x0 = loc.x();
 		int y0 = getBaseY() - ascent;
 		if (zoom != 1.0) {
 			x0 = (int) Math.round(x0 * zoom);
@@ -240,7 +234,8 @@ public class EditableLabel implements Cloneable {
 
 	public void paint(Graphics g) {
 		g.setFont(font);
-		if (!dimsKnown) computeDimensions(g, font, g.getFontMetrics());
+		if (!dimsKnown)
+			computeDimensions(g, font, g.getFontMetrics());
 		int x0 = getLeftX();
 		int y0 = getBaseY();
 		g.setColor(color);

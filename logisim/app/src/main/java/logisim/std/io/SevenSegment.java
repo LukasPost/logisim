@@ -8,7 +8,8 @@ import java.awt.Graphics;
 
 import logisim.data.Attribute;
 import logisim.data.Bounds;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.InstanceDataSingleton;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -34,8 +35,8 @@ public class SevenSegment extends InstanceFactory {
 	public void propagate(InstanceState state) {
 		int summary = 0;
 		for (int i = 0; i < 8; i++) {
-			Value val = state.getPort(i);
-			if (val == Value.TRUE)
+			WireValue val = state.getPort(i);
+			if (val == WireValues.TRUE)
 				summary |= 1 << i;
 		}
 		Object value = summary;

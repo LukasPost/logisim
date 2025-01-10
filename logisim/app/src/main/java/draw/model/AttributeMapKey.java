@@ -33,7 +33,6 @@ public class AttributeMapKey {
 
 	@Override
 	public boolean equals(Object other) {
-		return other instanceof AttributeMapKey o && (Objects.equals(attr, o.attr))
-				&& (Objects.equals(object, o.object));
+		return other instanceof AttributeMapKey o && Objects.equals(attr, o.attr) && Objects.equals(object, o.object);
 	}
 }

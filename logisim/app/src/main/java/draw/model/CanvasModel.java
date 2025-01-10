@@ -30,13 +30,13 @@ public interface CanvasModel {
 	Collection<CanvasObject> getObjectsOverlapping(CanvasObject shape);
 
 	// methods that alter the model
-	void addObjects(int index, Collection<? extends CanvasObject> shapes);
+	<V extends CanvasObject> void addObjects(int index, Collection<V> shapes);
 
-	void addObjects(Map<? extends CanvasObject, Integer> shapes);
+	<V extends CanvasObject> void addObjects(Map<V, Integer> shapes);
 
-	void removeObjects(Collection<? extends CanvasObject> shapes);
+	<V extends CanvasObject> void removeObjects(Collection<V> shapes);
 
-	void translateObjects(Collection<? extends CanvasObject> shapes, int dx, int dy);
+	<V extends CanvasObject> void translateObjects(Collection<V> shapes, int dx, int dy);
 
 	void reorderObjects(List<ReorderRequest> requests);
 

@@ -43,9 +43,12 @@ public class SvgReader {
 		if (attrs.contains(DrawAttr.PAINT_TYPE)) {
 			String stroke = elt.getAttribute("stroke");
 			String fill = elt.getAttribute("fill");
-			if (stroke.isEmpty() || "none".equals(stroke)) ret.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
-			else if ("none".equals(fill)) ret.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_STROKE);
-			else ret.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_STROKE_FILL);
+			if (stroke.isEmpty() || "none".equals(stroke))
+				ret.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
+			else if ("none".equals(fill))
+				ret.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_STROKE);
+			else
+				ret.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_STROKE_FILL);
 		}
 		attrs = ret.getAttributes(); // since changing paintType could change it
 		if (attrs.contains(DrawAttr.STROKE_WIDTH) && elt.hasAttribute("stroke-width")) {
@@ -55,14 +58,16 @@ public class SvgReader {
 		if (attrs.contains(DrawAttr.STROKE_COLOR)) {
 			String color = elt.getAttribute("stroke");
 			String opacity = elt.getAttribute("stroke-opacity");
-			if (!"none".equals(color)) ret.setValue(DrawAttr.STROKE_COLOR, getColor(color, opacity));
+			if (!"none".equals(color))
+				ret.setValue(DrawAttr.STROKE_COLOR, getColor(color, opacity));
 		}
 		if (attrs.contains(DrawAttr.FILL_COLOR)) {
 			String color = elt.getAttribute("fill");
 			if (color.isEmpty())
 				color = "#000000";
 			String opacity = elt.getAttribute("fill-opacity");
-			if (!"none".equals(color)) ret.setValue(DrawAttr.FILL_COLOR, getColor(color, opacity));
+			if (!"none".equals(color))
+				ret.setValue(DrawAttr.FILL_COLOR, getColor(color, opacity));
 		}
 		return ret;
 	}
@@ -72,12 +77,12 @@ public class SvgReader {
 		int y = Integer.parseInt(elt.getAttribute("y"));
 		int w = Integer.parseInt(elt.getAttribute("width"));
 		int h = Integer.parseInt(elt.getAttribute("height"));
-		if (elt.hasAttribute("rx")) {
-			AbstractCanvasObject ret = new RoundRectangle(x, y, w, h);
-			int rx = Integer.parseInt(elt.getAttribute("rx"));
-			ret.setValue(DrawAttr.CORNER_RADIUS, rx);
-			return ret;
-		} else return new Rectangle(x, y, w, h);
+		if (!elt.hasAttribute("rx"))
+			return new Rectangle(x, y, w, h);
+		AbstractCanvasObject ret = new RoundRectangle(x, y, w, h);
+		int rx = Integer.parseInt(elt.getAttribute("rx"));
+		ret.setValue(DrawAttr.CORNER_RADIUS, rx);
+		return ret;
 	}
 
 	private static AbstractCanvasObject createOval(Element elt) {
@@ -97,7 +102,7 @@ public class SvgReader {
 		int y0 = Integer.parseInt(elt.getAttribute("y1"));
 		int x1 = Integer.parseInt(elt.getAttribute("x2"));
 		int y1 = Integer.parseInt(elt.getAttribute("y2"));
-		return new Line(x0, y0, x1, y1);
+		return new Line(new Location(x0, y0), new Location(x1, y1));
 	}
 
 	private static AbstractCanvasObject createPolygon(Element elt) {
@@ -112,7 +117,7 @@ public class SvgReader {
 		int x = Integer.parseInt(elt.getAttribute("x"));
 		int y = Integer.parseInt(elt.getAttribute("y"));
 		String text = elt.getTextContent();
-		Text ret = new Text(x, y, text);
+		Text ret = new Text(new Location(x, y), text);
 
 		String fontFamily = elt.getAttribute("font-family");
 		String fontStyle = elt.getAttribute("font-style");
@@ -128,80 +133,69 @@ public class SvgReader {
 
 		String alignStr = elt.getAttribute("text-anchor");
 		AttributeOption halign;
-		if ("start".equals(alignStr)) halign = DrawAttr.ALIGN_LEFT;
-		else if ("end".equals(alignStr)) halign = DrawAttr.ALIGN_RIGHT;
-		else halign = DrawAttr.ALIGN_CENTER;
+		if ("start".equals(alignStr))
+			halign = DrawAttr.ALIGN_LEFT;
+		else if ("end".equals(alignStr))
+			halign = DrawAttr.ALIGN_RIGHT;
+		else
+			halign = DrawAttr.ALIGN_CENTER;
 		ret.setValue(DrawAttr.ALIGNMENT, halign);
-
 		// fill color is handled after we return
 		return ret;
 	}
 
 	private static List<Location> parsePoints(String points) {
-		Pattern patt = Pattern.compile("[ ,\n\r\t]+");
-		String[] toks = patt.split(points);
-		Location[] ret = new Location[toks.length / 2];
+		Pattern patten = Pattern.compile("[ ,\n\r\t]+");
+		String[] tokens = patten.split(points);
+		Location[] ret = new Location[tokens.length / 2];
 		for (int i = 0; i < ret.length; i++) {
-			int x = Integer.parseInt(toks[2 * i]);
-			int y = Integer.parseInt(toks[2 * i + 1]);
+			int x = Integer.parseInt(tokens[2 * i]);
+			int y = Integer.parseInt(tokens[2 * i + 1]);
 			ret[i] = new Location(x, y);
 		}
 		return UnmodifiableList.create(ret);
 	}
 
 	private static AbstractCanvasObject createPath(Element elt) {
-		Matcher patt = PATH_REGEX.matcher(elt.getAttribute("d"));
+		Matcher pattern = PATH_REGEX.matcher(elt.getAttribute("d"));
 		List<String> tokens = new ArrayList<>();
 		int type = -1; // -1 error, 0 start, 1 curve, 2 polyline
-		while (patt.find()) {
-			String token = patt.group();
+		while (pattern.find()) {
+			String token = pattern.group();
 			tokens.add(token);
 			if (Character.isLetter(token.charAt(0))) {
-				switch (token.charAt(0)) {
-				case 'M':
-					if (type == -1)
-						type = 0;
-					else
-						type = -1;
-					break;
-				case 'Q':
-				case 'q':
-					if (type == 0)
-						type = 1;
-					else
-						type = -1;
-					break;
-				/*
-				 * not supported case 'L': case 'l': case 'H': case 'h': case 'V': case 'v': if (type == 0 || type == 2)
-				 * type = 2; else type = -1; break;
-				 */
-				default:
-					type = -1;
-				}
-				if (type == -1) throw new NumberFormatException("Unrecognized path command '" + token.charAt(0) + "'");
+				type = switch (token.charAt(0)) {
+					case 'M' -> type == -1 ? 0 : -1;
+					case 'Q', 'q' -> type == 0 ? 1 : -1;
+					/*
+					 * not supported case 'L': case 'l': case 'H': case 'h': case 'V': case 'v': if (type == 0 || type == 2)
+					 * type = 2; else type = -1; break;
+					 */
+					default -> -1;
+				};
+				if (type == -1)
+					throw new NumberFormatException("Unrecognized path command '" + token.charAt(0) + "'");
 			}
 		}
 
-		if (type == 1) if (tokens.size() == 8 && "M".equals(tokens.get(0)) && "Q".equalsIgnoreCase(tokens.get(3))) {
-			int x0 = Integer.parseInt(tokens.get(1));
-			int y0 = Integer.parseInt(tokens.get(2));
-			int x1 = Integer.parseInt(tokens.get(4));
-			int y1 = Integer.parseInt(tokens.get(5));
-			int x2 = Integer.parseInt(tokens.get(6));
-			int y2 = Integer.parseInt(tokens.get(7));
-			if ("q".equals(tokens.get(3))) {
-				x1 += x0;
-				y1 += y0;
-				x2 += x0;
-				y2 += y0;
-			}
-			Location e0 = new Location(x0, y0);
-			Location e1 = new Location(x2, y2);
-			Location ct = new Location(x1, y1);
-			return new Curve(e0, e1, ct);
+		if (type != 1)
+			throw new NumberFormatException("Unrecognized path");
+		if (tokens.size() != 8 || !"M".equals(tokens.get(0)) || !"Q".equalsIgnoreCase(tokens.get(3)))
+			throw new NumberFormatException("Unexpected format for curve");
+
+		int x0 = Integer.parseInt(tokens.get(1));
+		int y0 = Integer.parseInt(tokens.get(2));
+		int x1 = Integer.parseInt(tokens.get(4));
+		int y1 = Integer.parseInt(tokens.get(5));
+		int x2 = Integer.parseInt(tokens.get(6));
+		int y2 = Integer.parseInt(tokens.get(7));
+		if ("q".equals(tokens.get(3))) {
+			x1 += x0;
+			y1 += y0;
+			x2 += x0;
+			y2 += y0;
 		}
-		else throw new NumberFormatException("Unexpected format for curve");
-		else throw new NumberFormatException("Unrecognized path");
+		return new Curve(new Location(x0, y0), new Location(x2, y2), new Location(x1, y1));
 	}
 
 	private static Color getColor(String hue, String opacity) {
@@ -217,9 +211,7 @@ public class SvgReader {
 			g = Integer.parseInt(hue.substring(3, 5), 16);
 			b = Integer.parseInt(hue.substring(5, 7), 16);
 		}
-		int a;
-		if (opacity == null || opacity.isEmpty()) a = 255;
-		else a = (int) Math.round(Double.parseDouble(opacity) * 255);
+		int a = opacity == null || opacity.isEmpty() ? 255 : (int) Math.round(Double.parseDouble(opacity) * 255);
 		return new Color(r, g, b, a);
 	}
 }

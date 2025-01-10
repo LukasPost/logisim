@@ -12,7 +12,7 @@ import logisim.data.Attributes;
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 import logisim.instance.InstanceData;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -59,8 +59,8 @@ public class Joystick extends InstanceFactory {
 			if (dy >= steps / 2)
 				dy++;
 		}
-		state.setPort(0, Value.createKnown(bits, dx), 1);
-		state.setPort(1, Value.createKnown(bits, dy), 1);
+		state.setPort(0, WireValue.Companion.createKnown(bits, dx), 1);
+		state.setPort(1, WireValue.Companion.createKnown(bits, dy), 1);
 	}
 
 	@Override

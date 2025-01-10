@@ -3,11 +3,12 @@
 
 package logisim.gui.log;
 
+import logisim.data.WireValue.WireValue;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import logisim.data.Value;
 
 class LogThread extends Thread implements ModelListener {
 	// file will be flushed with at least this frequency
@@ -66,7 +67,7 @@ class LogThread extends Thread implements ModelListener {
 		headerDirty = true;
 	}
 
-	public void entryAdded(ModelEvent event, Value[] values) {
+	public void entryAdded(ModelEvent event, WireValue[] values) {
 		synchronized (lock) {
 			if (isFileEnabled())
 				addEntry(values);
@@ -78,7 +79,7 @@ class LogThread extends Thread implements ModelListener {
 			if (isFileEnabled()) {
 				if (writer == null) {
 					Selection sel = model.getSelection();
-					Value[] values = new Value[sel.size()];
+					WireValue[] values = new WireValue[sel.size()];
 					boolean found = false;
 					for (int i = 0; i < values.length; i++) {
 						values[i] = model.getValueLog(sel.get(i)).getLast();
@@ -101,7 +102,7 @@ class LogThread extends Thread implements ModelListener {
 
 	// Should hold lock and have verified that isFileEnabled() before
 	// entering this method.
-	private void addEntry(Value[] values) {
+	private void addEntry(WireValue[] values) {
 		if (writer == null) try {
 			writer = new PrintWriter(new FileWriter(model.getFile(), true));
 		} catch (IOException e) {

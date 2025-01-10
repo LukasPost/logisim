@@ -18,9 +18,15 @@ public class LineUtil {
 		double dy = y1 - y0;
 		return dx * dx + dy * dy;
 	}
-
+	public static double distance(Location l0, Location l1) {
+		return Math.sqrt(distanceSquared(l0.x(), l0.y(), l1.x(), l1.y()));
+	}
 	public static double distance(double x0, double y0, double x1, double y1) {
 		return Math.sqrt(distanceSquared(x0, y0, x1, y1));
+	}
+
+	public static double ptDistSqSegment(Location from, Location to, Location step) {
+		return  ptDistSqSegment(from.x(), from.y(), to.x(), to.y(), step.x(), step.y());
 	}
 
 	public static double ptDistSqSegment(double x0, double y0, double x1, double y1, double xq, double yq) {
@@ -65,6 +71,8 @@ public class LineUtil {
 		else u = num / len2;
 		return new double[] { x0 + u * dx, y0 + u * dy };
 	}
+
+	public static Location snapTo8Cardinals(Location from, Location to){ return snapTo8Cardinals(from, to.x(), to.y());}
 
 	public static Location snapTo8Cardinals(Location from, int mx, int my) {
 		int px = from.x();

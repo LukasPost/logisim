@@ -208,12 +208,12 @@ class SelectionBase {
 			if (!(comp instanceof Wire)) {
 				for (EndData endData : comp.getEnds())
 					if (endData != null && endData.isExclusive()) {
-						Location endLoc = endData.getLocation().translate(dx, dy);
+						Location endLoc = endData.getLocation().add(dx, dy);
 						Component conflict = circuit.getExclusive(endLoc);
 						if (conflict != null) if (selfConflicts || !components.contains(conflict))
 							return true;
 					}
-				Location newLoc = comp.getLocation().translate(dx, dy);
+				Location newLoc = comp.getLocation().add(dx, dy);
 				Bounds newBounds = comp.getBounds().translate(dx, dy);
 				for (Component comp2 : circuit.getAllContaining(newLoc)) {
 					Bounds bds = comp2.getBounds();

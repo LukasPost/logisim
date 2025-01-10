@@ -3,7 +3,9 @@
 
 package logisim.std.memory;
 
-import logisim.data.Value;
+
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 
 public class TFlipFlop extends AbstractFlipFlop {
 	public TFlipFlop() {
@@ -16,10 +18,10 @@ public class TFlipFlop extends AbstractFlipFlop {
 	}
 
 	@Override
-	protected Value computeValue(Value[] inputs, Value curValue) {
-		if (curValue == Value.UNKNOWN)
-			curValue = Value.FALSE;
-		if (inputs[0] == Value.TRUE) return curValue.not();
+	protected WireValue computeValue(WireValue[] inputs, WireValue curValue) {
+		if (curValue == WireValues.UNKNOWN)
+			curValue = WireValues.FALSE;
+		if (inputs[0] == WireValues.TRUE) return curValue.not();
 		else return curValue;
 	}
 }

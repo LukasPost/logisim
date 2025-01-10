@@ -23,34 +23,33 @@ import logisim.util.UnmodifiableList;
 public class Line extends AbstractCanvasObject {
 	static final int ON_LINE_THRESH = 2;
 
-	private int x0;
-	private int y0;
-	private int x1;
-	private int y1;
+	private Location from;
+	private Location to;
 	private Bounds bounds;
 	private int strokeWidth;
 	private Color strokeColor;
 
-	public Line(int x0, int y0, int x1, int y1) {
-		this.x0 = x0;
-		this.y0 = y0;
-		this.x1 = x1;
-		this.y1 = y1;
-		bounds = Bounds.create(x0, y0, 0, 0).add(x1, y1);
+	public Line(Location from, Location to) {
+		this.from = from;
+		this.to = to;
+		bounds = Bounds.create(from, 0, 0).add(to);
 		strokeWidth = 1;
 		strokeColor = Color.BLACK;
 	}
 
 	@Override
 	public boolean matches(CanvasObject other) {
-		return other instanceof Line that && x0 == that.x0 && y0 == that.x1 && x1 == that.y0 && y1 == that.y1
-				&& strokeWidth == that.strokeWidth && strokeColor.equals(that.strokeColor);
+		return other instanceof Line that
+				&& from.equals(that.from)
+				&& to.equals(that.to)
+				&& strokeWidth == that.strokeWidth
+				&& strokeColor.equals(that.strokeColor);
 	}
 
 	@Override
 	public int matchesHashCode() {
-		int ret = x0 * 31 + y0;
-		ret = ret * 31 * 31 + x1 * 31 + y1;
+		int ret = from.x() * 31 + from.y();
+		ret = ret * 31 * 31 + to.x() * 31 + to.y();
 		ret = ret * 31 + strokeWidth;
 		ret = ret * 31 + strokeColor.hashCode();
 		return ret;
@@ -62,11 +61,11 @@ public class Line extends AbstractCanvasObject {
 	}
 
 	public Location getEnd0() {
-		return new Location(x0, y0);
+		return from;
 	}
 
 	public Location getEnd1() {
-		return new Location(x1, y1);
+		return to;
 	}
 
 	@Override
@@ -82,15 +81,20 @@ public class Line extends AbstractCanvasObject {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <V> V getValue(Attribute<V> attr) {
-		if (attr == DrawAttr.STROKE_COLOR) return (V) strokeColor;
-		else if (attr == DrawAttr.STROKE_WIDTH) return (V) Integer.valueOf(strokeWidth);
-		else return null;
+		if (attr == DrawAttr.STROKE_COLOR)
+			return (V) strokeColor;
+		else if (attr == DrawAttr.STROKE_WIDTH)
+			return (V) Integer.valueOf(strokeWidth);
+		else
+			return null;
 	}
 
 	@Override
 	public void updateValue(Attribute<?> attr, Object value) {
-		if (attr == DrawAttr.STROKE_COLOR) strokeColor = (Color) value;
-		else if (attr == DrawAttr.STROKE_WIDTH) strokeWidth = (Integer) value;
+		if (attr == DrawAttr.STROKE_COLOR)
+			strokeColor = (Color) value;
+		else if (attr == DrawAttr.STROKE_WIDTH)
+			strokeWidth = (Integer) value;
 	}
 
 	@Override
@@ -101,31 +105,25 @@ public class Line extends AbstractCanvasObject {
 	@Override
 	public Location getRandomPoint(Bounds bds, Random rand) {
 		double u = rand.nextDouble();
-		int x = (int) Math.round(x0 + u * (x1 - x0));
-		int y = (int) Math.round(y0 + u * (y1 - y0));
-		int w = strokeWidth;
-		if (w > 1) {
-			x += (rand.nextInt(w) - w / 2);
-			y += (rand.nextInt(w) - w / 2);
+		int x = (int) Math.round(from.x() + u * (to.x() - from.x()));
+		int y = (int) Math.round(from.y() + u * (to.y() - from.y()));
+		if (strokeWidth > 1) {
+			x += (rand.nextInt(strokeWidth) - strokeWidth / 2);
+			y += (rand.nextInt(strokeWidth) - strokeWidth / 2);
 		}
 		return new Location(x, y);
 	}
 
 	@Override
 	public boolean contains(Location loc, boolean assumeFilled) {
-		int xq = loc.x();
-		int yq = loc.y();
-		double d = LineUtil.ptDistSqSegment(x0, y0, x1, y1, xq, yq);
 		int thresh = Math.max(ON_LINE_THRESH, strokeWidth / 2);
-		return d < thresh * thresh;
+		return LineUtil.ptDistSqSegment(from, to, loc) < thresh * thresh;
 	}
 
 	@Override
-	public void translate(int dx, int dy) {
-		x0 += dx;
-		y0 += dy;
-		x1 += dx;
-		y1 += dy;
+	public void translate(Location distance) {
+		from = from.add(distance);
+		to = to.add(distance);
 	}
 
 	public List<Handle> getHandles() {
@@ -135,16 +133,15 @@ public class Line extends AbstractCanvasObject {
 	@Override
 	public List<Handle> getHandles(HandleGesture gesture) {
 		if (gesture == null)
-			return UnmodifiableList.create(new Handle[]{new Handle(this, x0, y0), new Handle(this, x1, y1)});
-		else {
-			Handle h = gesture.getHandle();
-			int dx = gesture.getDeltaX();
-			int dy = gesture.getDeltaY();
-			Handle[] ret = new Handle[2];
-			ret[0] = new Handle(this, h.isAt(x0, y0) ? new Location(x0 + dx, y0 + dy) : new Location(x0, y0));
-			ret[1] = new Handle(this, h.isAt(x1, y1) ? new Location(x1 + dx, y1 + dy) : new Location(x1, y1));
-			return UnmodifiableList.create(ret);
-		}
+			return UnmodifiableList.create(new Handle[]{new Handle(this, from), new Handle(this, to)});
+
+		Handle h = gesture.getHandle();
+		Location delta = gesture.getDelta();
+
+		Handle[] ret = new Handle[2];
+		ret[0] = new Handle(this, h.isAt(from) ? from.add(delta) : from);
+		ret[1] = new Handle(this, h.isAt(to) ? to.add(delta) : to);
+		return UnmodifiableList.create(ret);
 	}
 
 	@Override
@@ -155,40 +152,34 @@ public class Line extends AbstractCanvasObject {
 	@Override
 	public Handle moveHandle(HandleGesture gesture) {
 		Handle h = gesture.getHandle();
+		Location delta = gesture.getDelta();
 		int dx = gesture.getDeltaX();
 		int dy = gesture.getDeltaY();
 		Handle ret = null;
-		if (h.isAt(x0, y0)) {
-			x0 += dx;
-			y0 += dy;
-			ret = new Handle(this, x0, y0);
+		if (h.isAt(from)) {
+			from = from.add(delta);
+			ret = new Handle(this, from);
 		}
-		if (h.isAt(x1, y1)) {
-			x1 += dx;
-			y1 += dy;
-			ret = new Handle(this, x1, y1);
+		if (h.isAt(to)) {
+			to = to.add(delta);
+			ret = new Handle(this, to);
 		}
-		bounds = Bounds.create(x0, y0, 0, 0).add(x1, y1);
+		bounds = Bounds.create(from, 0, 0).add(to);
 		return ret;
 	}
 
 	@Override
 	public void paint(Graphics g, HandleGesture gesture) {
 		if (setForStroke(g)) {
-			int x0 = this.x0;
-			int y0 = this.y0;
-			int x1 = this.x1;
-			int y1 = this.y1;
+			Location delta = gesture.getDelta();
+			Location from = this.from;
+			Location to = this.to;
 			Handle h = gesture.getHandle();
-			if (h.isAt(x0, y0)) {
-				x0 += gesture.getDeltaX();
-				y0 += gesture.getDeltaY();
-			}
-			if (h.isAt(x1, y1)) {
-				x1 += gesture.getDeltaX();
-				y1 += gesture.getDeltaY();
-			}
-			g.drawLine(x0, y0, x1, y1);
+			if (h.isAt(from))
+				from = from.add(delta);
+			if (h.isAt(to))
+				to = to.add(delta);
+			g.drawLine(from.x(), from.y(), to.x(), to.y());
 		}
 	}
 

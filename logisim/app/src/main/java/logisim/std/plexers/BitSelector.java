@@ -13,7 +13,8 @@ import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -32,7 +33,7 @@ public class BitSelector extends InstanceFactory {
 		super("BitSelector", Strings.getter("bitSelectorComponent"));
 		setAttributes(new Attribute[] { StdAttr.FACING, StdAttr.WIDTH, GROUP_ATTR },
 				new Object[] { Direction.East, BitWidth.create(8), BitWidth.ONE });
-		setKeyConfigurator(JoinedConfigurator.create(new BitWidthConfigurator(GROUP_ATTR, 1, Value.MAX_WIDTH, 0),
+		setKeyConfigurator(JoinedConfigurator.create(new BitWidthConfigurator(GROUP_ATTR, 1, WireValue.MAX_WIDTH, 0),
 				new BitWidthConfigurator(StdAttr.WIDTH)));
 
 		setIconName("bitSelector.gif");
@@ -100,21 +101,21 @@ public class BitSelector extends InstanceFactory {
 
 	@Override
 	public void propagate(InstanceState state) {
-		Value data = state.getPort(1);
-		Value select = state.getPort(2);
+		WireValue data = state.getPort(1);
+		WireValue select = state.getPort(2);
 		BitWidth groupBits = state.getAttributeValue(GROUP_ATTR);
-		Value group;
-		if (!select.isFullyDefined()) group = Value.createUnknown(groupBits);
+		WireValue group;
+		if (!select.isFullyDefined()) group = WireValue.Companion.createUnknown(groupBits);
 		else {
 			int shift = select.toIntValue() * groupBits.getWidth();
-			if (shift >= data.getWidth()) group = Value.createKnown(groupBits, 0);
+			if (shift >= data.getWidth()) group = WireValue.Companion.createKnown(groupBits, 0);
 			else if (groupBits.getWidth() == 1) group = data.get(shift);
 			else {
-				Value[] bits = new Value[groupBits.getWidth()];
+				WireValue[] bits = new WireValue[groupBits.getWidth()];
 				for (int i = 0; i < bits.length; i++)
-					if (shift + i >= data.getWidth()) bits[i] = Value.FALSE;
+					if (shift + i >= data.getWidth()) bits[i] = WireValues.FALSE;
 					else bits[i] = data.get(shift + i);
-				group = Value.create(bits);
+				group = WireValue.Companion.create(bits);
 			}
 		}
 		state.setPort(0, group, Plexers.DELAY);

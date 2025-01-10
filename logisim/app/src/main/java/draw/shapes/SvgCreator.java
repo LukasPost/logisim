@@ -70,16 +70,13 @@ class SvgCreator {
 		Location e0 = curve.getEnd0();
 		Location e1 = curve.getEnd1();
 		Location ct = curve.getControl();
-		elt.setAttribute("d", "M" + e0.x() + "," + e0.y() + " Q" + ct.x() + "," + ct.y() + " " + e1.x()
-				+ "," + e1.y());
+		elt.setAttribute("d", "M" + e0.x() + "," + e0.y() + " Q" + ct.x() + "," + ct.y() + " " + e1.x() + "," + e1.y());
 		populateFill(elt, curve);
 		return elt;
 	}
 
 	public static Element createPoly(Document doc, Poly poly) {
-		Element elt;
-		if (poly.isClosed()) elt = doc.createElement("polygon");
-		else elt = doc.createElement("polyline");
+		Element elt = poly.isClosed() ? doc.createElement("polygon") : doc.createElement("polyline");
 
 		StringBuilder points = new StringBuilder();
 		boolean first = true;
@@ -103,39 +100,54 @@ class SvgCreator {
 		Object halign = text.getValue(DrawAttr.ALIGNMENT);
 		elt.setAttribute("x", "" + loc.x());
 		elt.setAttribute("y", "" + loc.y());
-		if (!colorMatches(fill, Color.BLACK)) elt.setAttribute("fill", getColorString(fill));
-		if (showOpacity(fill)) elt.setAttribute("fill-opacity", getOpacityString(fill));
+		if (!colorMatches(fill, Color.BLACK))
+			elt.setAttribute("fill", getColorString(fill));
+		if (showOpacity(fill))
+			elt.setAttribute("fill-opacity", getOpacityString(fill));
 		elt.setAttribute("font-family", font.getFamily());
 		elt.setAttribute("font-size", "" + font.getSize());
 		int style = font.getStyle();
-		if ((style & Font.ITALIC) != 0) elt.setAttribute("font-style", "italic");
-		if ((style & Font.BOLD) != 0) elt.setAttribute("font-weight", "bold");
-		if (halign == DrawAttr.ALIGN_LEFT) elt.setAttribute("text-anchor", "start");
-		else if (halign == DrawAttr.ALIGN_RIGHT) elt.setAttribute("text-anchor", "end");
-		else elt.setAttribute("text-anchor", "middle");
+		if ((style & Font.ITALIC) != 0)
+			elt.setAttribute("font-style", "italic");
+		if ((style & Font.BOLD) != 0)
+			elt.setAttribute("font-weight", "bold");
+		if (halign == DrawAttr.ALIGN_LEFT)
+			elt.setAttribute("text-anchor", "start");
+		else if (halign == DrawAttr.ALIGN_RIGHT)
+			elt.setAttribute("text-anchor", "end");
+		else
+			elt.setAttribute("text-anchor", "middle");
 		elt.appendChild(doc.createTextNode(text.getText()));
 		return elt;
 	}
 
 	private static void populateFill(Element elt, AbstractCanvasObject shape) {
 		Object type = shape.getValue(DrawAttr.PAINT_TYPE);
-		if (type == DrawAttr.PAINT_FILL) elt.setAttribute("stroke", "none");
-		else populateStroke(elt, shape);
-		if (type == DrawAttr.PAINT_STROKE) elt.setAttribute("fill", "none");
+		if (type == DrawAttr.PAINT_FILL)
+			elt.setAttribute("stroke", "none");
+		else
+			populateStroke(elt, shape);
+		if (type == DrawAttr.PAINT_STROKE)
+			elt.setAttribute("fill", "none");
 		else {
 			Color fill = shape.getValue(DrawAttr.FILL_COLOR);
-			if (colorMatches(fill, Color.BLACK)) elt.removeAttribute("fill");
-			else elt.setAttribute("fill", getColorString(fill));
-			if (showOpacity(fill)) elt.setAttribute("fill-opacity", getOpacityString(fill));
+			if (colorMatches(fill, Color.BLACK))
+				elt.removeAttribute("fill");
+			else
+				elt.setAttribute("fill", getColorString(fill));
+			if (showOpacity(fill))
+				elt.setAttribute("fill-opacity", getOpacityString(fill));
 		}
 	}
 
 	private static void populateStroke(Element elt, AbstractCanvasObject shape) {
 		Integer width = shape.getValue(DrawAttr.STROKE_WIDTH);
-		if (width != null && width != 1) elt.setAttribute("stroke-width", width.toString());
+		if (width != null && width != 1)
+			elt.setAttribute("stroke-width", width.toString());
 		Color stroke = shape.getValue(DrawAttr.STROKE_COLOR);
 		elt.setAttribute("stroke", getColorString(stroke));
-		if (showOpacity(stroke)) elt.setAttribute("stroke-opacity", getOpacityString(stroke));
+		if (showOpacity(stroke))
+			elt.setAttribute("stroke-opacity", getOpacityString(stroke));
 		elt.setAttribute("fill", "none");
 	}
 
@@ -144,8 +156,7 @@ class SvgCreator {
 	}
 
 	private static String getColorString(Color color) {
-		return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(),
-				color.getBlue());
+		return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
 	}
 
 	private static boolean showOpacity(Color color) {

@@ -75,14 +75,15 @@ public class AppearanceAnchor extends AppearanceElement {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <V> V getValue(Attribute<V> attr) {
-		if (attr == FACING) return (V) facing;
-		else return super.getValue(attr);
+		return attr == FACING ? (V) facing : super.getValue(attr);
 	}
 
 	@Override
 	protected void updateValue(Attribute<?> attr, Object value) {
-		if (attr == FACING) facing = (Direction) value;
-		else super.updateValue(attr, value);
+		if (attr == FACING)
+			facing = (Direction) value;
+		else
+			super.updateValue(attr, value);
 	}
 
 	@Override
@@ -107,15 +108,14 @@ public class AppearanceAnchor extends AppearanceElement {
 
 	@Override
 	public boolean contains(Location loc, boolean assumeFilled) {
-		if (isInCircle(loc, RADIUS)) return true;
-		else {
-			Location center = getLocation();
-			Location end = center.translate(facing, RADIUS + INDICATOR_LENGTH);
-			if (facing == Direction.East || facing == Direction.West) return Math.abs(loc.y() - center.y()) < 2
-					&& (loc.x() < center.x()) != (loc.x() < end.x());
-			else return Math.abs(loc.x() - center.x()) < 2
-					&& (loc.y() < center.y()) != (loc.y() < end.y());
-		}
+		if (isInCircle(loc, RADIUS))
+			return true;
+		Location center = getLocation();
+		Location end = center.translate(facing, RADIUS + INDICATOR_LENGTH);
+		if (facing == Direction.East || facing == Direction.West)
+			return Math.abs(loc.y() - center.y()) < 2 && (loc.x() < center.x()) != (loc.x() < end.x());
+		else
+			return Math.abs(loc.x() - center.x()) < 2 && (loc.y() < center.y()) != (loc.y() < end.y());
 	}
 
 	@Override

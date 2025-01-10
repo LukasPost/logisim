@@ -69,11 +69,10 @@ class Measures {
 	}
 
 	public long getBaseAddress(HexModel model) {
-		if (model == null) return 0;
-		else {
-			long addr0 = model.getFirstOffset();
-			return addr0 - addr0 % cols;
-		}
+		if (model == null)
+			return 0;
+		long addr0 = model.getFirstOffset();
+		return addr0 - addr0 % cols;
 	}
 
 	public int toY(long addr) {
@@ -166,8 +165,7 @@ class Measures {
 			charWidth = 8;
 			spaceWidth = 6;
 			Font font = hex.getFont();
-			if (font == null) lineHeight = 16;
-			else lineHeight = font.getSize();
+			lineHeight = font == null ? 16 : font.getSize();
 		} else {
 			guessed = false;
 			charWidth = 0;
@@ -189,7 +187,8 @@ class Measures {
 		// compute preferred size
 		int width = headerWidth + cols * cellWidth + (cols / 4) * spacerWidth;
 		long height;
-		if (model == null) height = 16L * cellHeight;
+		if (model == null)
+			height = 16L * cellHeight;
 		else {
 			long addr0 = getBaseAddress(model);
 			long addr1 = model.getLastOffset();

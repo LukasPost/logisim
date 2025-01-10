@@ -5,11 +5,12 @@ package logisim.std.io;
 
 import java.awt.FontMetrics;
 
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.InstanceData;
 
 class KeyboardData implements InstanceData, Cloneable {
-	private Value lastClock;
+	private WireValue lastClock;
 	private char[] buffer;
 	private String str;
 	private int bufferLength;
@@ -19,7 +20,7 @@ class KeyboardData implements InstanceData, Cloneable {
 	private int dispEnd;
 
 	public KeyboardData(int capacity) {
-		lastClock = Value.UNKNOWN;
+		lastClock = WireValues.UNKNOWN;
 		buffer = new char[capacity];
 		clear();
 	}
@@ -36,8 +37,8 @@ class KeyboardData implements InstanceData, Cloneable {
 		}
 	}
 
-	public Value setLastClock(Value newClock) {
-		Value ret = lastClock;
+	public WireValue setLastClock(WireValue newClock) {
+		WireValue ret = lastClock;
 		lastClock = newClock;
 		return ret;
 	}

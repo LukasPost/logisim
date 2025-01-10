@@ -16,7 +16,8 @@ import logisim.data.AttributeListener;
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.StdAttr;
 import logisim.std.wiring.PullResistor;
@@ -46,7 +47,7 @@ class CircuitWires {
 
 	static class State {
 		BundleMap bundleMap;
-		HashMap<WireThread, Value> thr_values = new HashMap<>();
+		HashMap<WireThread, WireValue> thr_values = new HashMap<>();
 
 		State(BundleMap bundleMap) {
 			this.bundleMap = bundleMap;
@@ -331,8 +332,8 @@ class CircuitWires {
 				if (!pb.isValid() || th == null) {
 					// immediately propagate NILs across invalid bundles
 					SmallSet<Location> pbPoints = pb.points;
-					if (pbPoints == null) circState.setValueByWire(p, Value.NIL);
-					else for (Location loc2 : pbPoints) circState.setValueByWire(loc2, Value.NIL);
+					if (pbPoints == null) circState.setValueByWire(p, WireValues.NIL);
+					else for (Location loc2 : pbPoints) circState.setValueByWire(loc2, WireValues.NIL);
 				} else dirtyThreads.addAll(Arrays.asList(th));
 			}
 		}
@@ -343,7 +344,7 @@ class CircuitWires {
 		// determine values of affected threads
 		HashSet<ThreadBundle> bundles = new HashSet<>();
 		for (WireThread t : dirtyThreads) {
-			Value v = getThreadValue(circState, t);
+			WireValue v = getThreadValue(circState, t);
 			s.thr_values.put(t, v);
 			bundles.addAll(t.getBundles());
 		}
@@ -352,14 +353,14 @@ class CircuitWires {
 		for (ThreadBundle tb : bundles) {
 			WireBundle b = tb.b;
 
-			Value bv = null;
+			WireValue bv = null;
 			if (!b.isValid() || b.threads == null) ; // do nothing
 			else if (b.threads.length == 1) bv = s.thr_values.get(b.threads[0]);
 			else {
-				Value[] tvs = new Value[b.threads.length];
+				WireValue[] tvs = new WireValue[b.threads.length];
 				boolean tvs_valid = true;
 				for (int i = 0; i < tvs.length; i++) {
-					Value tv = s.thr_values.get(b.threads[i]);
+					WireValue tv = s.thr_values.get(b.threads[i]);
 					if (tv == null) {
 						tvs_valid = false;
 						break;
@@ -367,7 +368,7 @@ class CircuitWires {
 					tvs[i] = tv;
 				}
 				if (tvs_valid)
-					bv = Value.create(tvs);
+					bv = WireValue.Companion.create(tvs);
 			}
 
 			if (bv != null) for (Location p : b.points) circState.setValueByWire(p, bv);
@@ -410,9 +411,9 @@ class CircuitWires {
 	private void drawWireBundle(boolean showState, CircuitState state, Graphics g, WireSet highlighted, BundleMap bmap, boolean isValid, Location loc) {
 		WireBundle wb = bmap.getBundleAt(loc);
 		if (wb != null) {
-			if (!wb.isValid()) g.setColor(Value.WIDTH_ERROR_COLOR);
+			if (!wb.isValid()) g.setColor(WireValue.Companion.getWIDTH_ERROR_COLOR());
 			else if (showState) if (!isValid)
-				g.setColor(Value.NIL_COLOR);
+				g.setColor(WireValues.Companion.getNIL_COLOR());
 			else
 				g.setColor(state.getValue(loc).getColor());
 			else g.setColor(Color.BLACK);
@@ -425,9 +426,9 @@ class CircuitWires {
 		Location s = w.e0;
 		Location t = w.e1;
 		WireBundle wb = bmap.getBundleAt(s);
-		if (!wb.isValid()) g.setColor(Value.WIDTH_ERROR_COLOR);
+		if (!wb.isValid()) g.setColor(WireValue.Companion.getWIDTH_ERROR_COLOR());
 		else if (showState) if (!isValid)
-			g.setColor(Value.NIL_COLOR);
+			g.setColor(WireValues.Companion.getNIL_COLOR());
 		else
 			g.setColor(state.getValue(s).getColor());
 		else g.setColor(Color.BLACK);
@@ -654,34 +655,34 @@ class CircuitWires {
 		}
 	}
 
-	private Value getThreadValue(CircuitState state, WireThread t) {
-		Value ret = Value.UNKNOWN;
-		Value pull = Value.UNKNOWN;
+	private WireValue getThreadValue(CircuitState state, WireThread t) {
+		WireValue ret = WireValues.UNKNOWN;
+		WireValue pull = WireValues.UNKNOWN;
 		for (ThreadBundle tb : t.getBundles()) {
 			for (Location p : tb.b.points) {
-				Value val = state.getComponentOutputAt(p);
-				if (val != null && val != Value.NIL) ret = ret.combine(val.get(tb.loc));
+				WireValue val = state.getComponentOutputAt(p);
+				if (val != null && val != WireValues.NIL) ret = ret.combine(val.get(tb.loc));
 			}
-			Value pullHere = tb.b.getPullValue();
-			if (pullHere != Value.UNKNOWN)
+			WireValue pullHere = tb.b.getPullValue();
+			if (pullHere != WireValues.UNKNOWN)
 				pull = pull.combine(pullHere);
 		}
-		if (pull != Value.UNKNOWN) return pullValue(ret, pull);
+		if (pull != WireValues.UNKNOWN) return pullValue(ret, pull);
 		return ret;
 	}
 
-	private static Value pullValue(Value base, Value pullTo) {
+	private static WireValue pullValue(WireValue base, WireValue pullTo) {
 		if (base.isFullyDefined()) return base;
-		else if (base.getWidth() == 1) if (base == Value.UNKNOWN)
+		else if (base.getWidth() == 1) if (base == WireValues.UNKNOWN)
 			return pullTo;
 		else
 			return base;
 		else {
-			Value[] ret = base.getAll();
+			WireValue[] ret = base.getAll();
 			for (int i = 0; i < ret.length; i++)
-				if (ret[i] == Value.UNKNOWN)
+				if (ret[i] == WireValues.UNKNOWN)
 					ret[i] = pullTo;
-			return Value.create(ret);
+			return WireValue.Companion.create(ret);
 		}
 	}
 

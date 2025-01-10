@@ -3,19 +3,19 @@
 
 package draw.model;
 
+import logisim.data.Location;
+
 import java.awt.event.InputEvent;
 
 public class HandleGesture {
 	private Handle handle;
-	private int dx;
-	private int dy;
+	private Location dlocation;
 	private int modifiersEx;
 	private Handle resultingHandle;
 
-	public HandleGesture(Handle handle, int dx, int dy, int modifiersEx) {
+	public HandleGesture(Handle handle, Location dLocation, int modifiersEx) {
 		this.handle = handle;
-		this.dx = dx;
-		this.dy = dy;
+		this.dlocation = dLocation;
 		this.modifiersEx = modifiersEx;
 	}
 
@@ -24,12 +24,14 @@ public class HandleGesture {
 	}
 
 	public int getDeltaX() {
-		return dx;
+		return dlocation.x();
 	}
 
 	public int getDeltaY() {
-		return dy;
+		return dlocation.y();
 	}
+
+	public Location getDelta(){ return dlocation; }
 
 	public int getModifiersEx() {
 		return modifiersEx;

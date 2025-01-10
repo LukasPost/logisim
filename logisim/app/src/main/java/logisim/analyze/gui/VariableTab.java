@@ -42,7 +42,7 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 		}
 
 		private void updateCopy() {
-			listCopy = list.toArray(new String[list.size()]);
+			listCopy = list.toArray(String[]::new);
 		}
 
 		public int getSize() {
@@ -92,7 +92,8 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 				String name = field.getText().trim();
 				if (!name.isEmpty()) {
 					data.add(name);
-					if (data.contains(name)) list.setSelectedValue(name, true);
+					if (data.contains(name))
+						list.setSelectedValue(name, true);
 					field.setText("");
 					field.grabFocus();
 				}
@@ -240,8 +241,7 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 
 	private void computeEnabled() {
 		int index = list.getSelectedIndex();
-		int max = list.getModel().getSize();
-		boolean selected = index >= 0 && index < max;
+		boolean selected = index >= 0 && index < list.getModel().getSize();
 		remove.setEnabled(selected);
 		moveUp.setEnabled(selected && index > 0);
 		moveDown.setEnabled(selected);
@@ -268,16 +268,12 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 				ok = false;
 			}
 		}
-		if (ok) for (int i = 0, n = data.size(); i < n && ok; i++) {
-			String other = data.get(i);
-			if (text.equals(other)) {
-				error.setText(Strings.get("variableDuplicateError"));
-				ok = false;
-			}
+		if (ok && data.stream().anyMatch(text::equals)) {
+			error.setText(Strings.get("variableDuplicateError"));
+			ok = false;
 		}
-		if (ok || !errorShown) if (data.size() >= data.getMaximumSize())
-			error.setText(StringUtil.format(Strings.get("variableMaximumError"), "" + data.getMaximumSize()));
-		else error.setText(" ");
+		if (ok || !errorShown)
+			error.setText(data.size() >= data.getMaximumSize() ? StringUtil.format(Strings.get("variableMaximumError"), "" + data.getMaximumSize()) : " ");
 		return ok;
 	}
 

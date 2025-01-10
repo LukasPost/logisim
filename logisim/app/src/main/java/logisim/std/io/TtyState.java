@@ -5,12 +5,13 @@ package logisim.std.io;
 
 import java.util.Arrays;
 
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.gui.start.TtyInterface;
 import logisim.instance.InstanceData;
 
 class TtyState implements InstanceData, Cloneable {
-	private Value lastClock;
+	private WireValue lastClock;
 	private String[] rowData;
 	private int colCount;
 	private StringBuffer lastRow;
@@ -18,7 +19,7 @@ class TtyState implements InstanceData, Cloneable {
 	private boolean sendStdout;
 
 	public TtyState(int rows, int cols) {
-		lastClock = Value.UNKNOWN;
+		lastClock = WireValues.UNKNOWN;
 		rowData = new String[rows - 1];
 		colCount = cols;
 		lastRow = new StringBuffer(cols);
@@ -38,8 +39,8 @@ class TtyState implements InstanceData, Cloneable {
 		}
 	}
 
-	public Value setLastClock(Value newClock) {
-		Value ret = lastClock;
+	public WireValue setLastClock(WireValue newClock) {
+		WireValue ret = lastClock;
 		lastClock = newClock;
 		return ret;
 	}

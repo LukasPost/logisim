@@ -34,8 +34,7 @@ public class AnalyzerManager extends WindowMenuItemManager implements LocaleList
 
 	@Override
 	public JFrame getJFrame(boolean create) {
-		if (create) return getAnalyzer();
-		else return analysisWindow;
+		return create ? getAnalyzer() : analysisWindow;
 	}
 
 	public void localeChanged() {

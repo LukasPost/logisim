@@ -15,7 +15,7 @@ import javax.swing.JScrollBar;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 import logisim.util.GraphicsUtil;
 
 class TablePanel extends LogPanel {
@@ -29,7 +29,7 @@ class TablePanel extends LogPanel {
 			computeRowCount();
 		}
 
-		public void entryAdded(ModelEvent event, Value[] values) {
+		public void entryAdded(ModelEvent event, WireValue[] values) {
 			int oldCount = rowCount;
 			computeRowCount();
 			if (oldCount == rowCount) {
@@ -194,7 +194,7 @@ class TablePanel extends LogPanel {
 			int offs = rowCount - log.size();
 			y = y0 + Math.max(offs, firstRow) * cellHeight;
 			for (int row = Math.max(offs, firstRow); row < lastRow; row++) {
-				Value val = log.get(row - offs);
+				WireValue val = log.get(row - offs);
 				String label = val.toDisplayString(radix);
 				int width = bodyMetric.stringWidth(label);
 				g.drawString(label, x + (cellWidth - width) / 2, y + bodyMetric.getAscent());

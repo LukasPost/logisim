@@ -9,7 +9,8 @@ import logisim.data.Attributes;
 import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
@@ -60,43 +61,43 @@ public class Comparator extends InstanceFactory {
 		BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
 
 		// compute outputs
-		Value gt = Value.FALSE;
-		Value eq = Value.TRUE;
-		Value lt = Value.FALSE;
+		WireValue gt = WireValues.FALSE;
+		WireValue eq = WireValues.TRUE;
+		WireValue lt = WireValues.FALSE;
 
-		Value a = state.getPort(IN0);
-		Value b = state.getPort(IN1);
-		Value[] ax = a.getAll();
-		Value[] bx = b.getAll();
+		WireValue a = state.getPort(IN0);
+		WireValue b = state.getPort(IN1);
+		WireValue[] ax = a.getAll();
+		WireValue[] bx = b.getAll();
 		int maxlen = Math.max(ax.length, bx.length);
 		for (int pos = maxlen - 1; pos >= 0; pos--) {
-			Value ab = pos < ax.length ? ax[pos] : Value.ERROR;
-			Value bb = pos < bx.length ? bx[pos] : Value.ERROR;
+			WireValue ab = pos < ax.length ? ax[pos] : WireValues.ERROR;
+			WireValue bb = pos < bx.length ? bx[pos] : WireValues.ERROR;
 			if (pos == ax.length - 1 && ab != bb) {
 				Object mode = state.getAttributeValue(MODE_ATTRIBUTE);
 				if (mode != UNSIGNED_OPTION) {
-					Value t = ab;
+					WireValue t = ab;
 					ab = bb;
 					bb = t;
 				}
 			}
 
-			if (ab == Value.ERROR || bb == Value.ERROR) {
-				gt = Value.ERROR;
-				eq = Value.ERROR;
-				lt = Value.ERROR;
+			if (ab == WireValues.ERROR || bb == WireValues.ERROR) {
+				gt = WireValues.ERROR;
+				eq = WireValues.ERROR;
+				lt = WireValues.ERROR;
 				break;
-			} else if (ab == Value.UNKNOWN || bb == Value.UNKNOWN) {
-				gt = Value.UNKNOWN;
-				eq = Value.UNKNOWN;
-				lt = Value.UNKNOWN;
+			} else if (ab == WireValues.UNKNOWN || bb == WireValues.UNKNOWN) {
+				gt = WireValues.UNKNOWN;
+				eq = WireValues.UNKNOWN;
+				lt = WireValues.UNKNOWN;
 				break;
 			} else if (ab != bb) {
-				eq = Value.FALSE;
-				if (ab == Value.TRUE)
-					gt = Value.TRUE;
+				eq = WireValues.FALSE;
+				if (ab == WireValues.TRUE)
+					gt = WireValues.TRUE;
 				else
-					lt = Value.TRUE;
+					lt = WireValues.TRUE;
 				break;
 			}
 		}

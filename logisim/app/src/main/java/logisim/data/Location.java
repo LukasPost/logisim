@@ -19,12 +19,6 @@ public record Location(int x, int y) implements Comparable<Location> {
 		return Math.abs(x - this.x) + Math.abs(y - this.y);
 	}
 
-	public Location translate(int dx, int dy) {
-		if (dx == 0 && dy == 0)
-			return this;
-		return new Location(x + dx, y + dy);
-	}
-
 	public Location translate(Direction dir, int dist) {
 		return translate(dir, dist, 0);
 	}
@@ -32,15 +26,13 @@ public record Location(int x, int y) implements Comparable<Location> {
 	public Location translate(Direction dir, int dist, int right) {
 		if (dist == 0 && right == 0)
 			return this;
-		if (dir == Direction.East)
-			return new Location(x + dist, y + right);
-		if (dir == Direction.West)
-			return new Location(x - dist, y - right);
-		if (dir == Direction.South)
-			return new Location(x - right, y + dist);
-		if (dir == Direction.North)
-			return new Location(x + right, y - dist);
-		return new Location(x + dist, y + right);
+		return switch (dir) {
+			case East -> new Location(x + dist, y + right);
+			case West -> new Location(x - dist, y - right);
+			case South -> new Location(x - right, y + dist);
+			case North -> new Location(x + right, y - dist);
+			case null, default -> new Location(x + dist, y + right);
+		};
 	}
 
 	// rotates this around (xc,yc) assuming that this is facing in the
@@ -96,4 +88,41 @@ public record Location(int x, int y) implements Comparable<Location> {
 		int y = Integer.parseInt(value.substring(comma + 1).trim());
 		return new Location(x, y);
 	}
+
+	public Location add(Location loc) {
+		return new Location(x + loc.x, y + loc.y);
+	}
+	public Location add(int x, int y) {
+		return new Location(this.x + x, this.y + y);
+	}
+
+	public Location sub(Location loc) {
+		return new Location(x - loc.x, y - loc.y);
+	}
+	public Location sub(int x, int y) {
+		return new Location(this.x + x, this.y + y);
+	}
+	public Location mul(double zoom) {
+		return new Location((int) Math.round(zoom * x), (int) Math.round(zoom * y));
+	}
+	public Location abs() {
+		return new Location(Math.abs(x), Math.abs(y));
+	}
+	public Location negate() {
+		return new Location(-x, -y);
+	}
+
+
+	public int sum() {
+		return x+y;
+	}
+	public boolean isZero(){
+		return x == 0 && y == 0;
+	}
+
+	public static double[] toArray(Location loc) {
+		return new double[] { loc.x(), loc.y() };
+	}
+
+
 }

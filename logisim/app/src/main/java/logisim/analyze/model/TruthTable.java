@@ -14,47 +14,50 @@ public class TruthTable {
 
 	private class MyListener implements VariableListListener {
 		public void listChanged(VariableListEvent event) {
-			if (event.getSource() == model.getInputs()) inputsChanged(event);
-			else outputsChanged(event);
+			if (event.getSource() == model.getInputs())
+				inputsChanged(event);
+			else
+				outputsChanged(event);
 			fireStructureChanged(event);
 		}
 
 		private void inputsChanged(VariableListEvent event) {
 			int action = event.getType();
-			if (action == VariableListEvent.ADD) for (Map.Entry<String, Entry[]> curEntry : outputColumns.entrySet()) {
-				String output = curEntry.getKey();
-				Entry[] column = curEntry.getValue();
-				Entry[] newColumn = new Entry[2 * column.length];
-				for (int i = 0; i < column.length; i++) {
-					newColumn[2 * i] = column[i];
-					newColumn[2 * i + 1] = column[i];
+			if (action == VariableListEvent.ADD) {
+				for (Map.Entry<String, Entry[]> curEntry : outputColumns.entrySet()) {
+					Entry[] column = curEntry.getValue();
+					Entry[] newColumn = new Entry[2 * column.length];
+					for (int i = 0; i < column.length; i++) {
+						newColumn[2 * i] = column[i];
+						newColumn[2 * i + 1] = column[i];
+					}
+					outputColumns.put(curEntry.getKey(), newColumn);
 				}
-				outputColumns.put(output, newColumn);
 			}
 			else if (action == VariableListEvent.REMOVE) {
 				int index = (Integer) event.getData();
 				for (Map.Entry<String, Entry[]> curEntry : outputColumns.entrySet()) {
-					String output = curEntry.getKey();
 					Entry[] column = curEntry.getValue();
 					Entry[] newColumn = removeInput(column, index);
-					outputColumns.put(output, newColumn);
+					outputColumns.put(curEntry.getKey(), newColumn);
 				}
 			} else if (action == VariableListEvent.MOVE) {
 				int delta = (Integer) event.getData();
 				int newIndex = model.getInputs().indexOf(event.getVariable());
 				for (Map.Entry<String, Entry[]> curEntry : outputColumns.entrySet()) {
-					String output = curEntry.getKey();
 					Entry[] column = curEntry.getValue();
 					Entry[] newColumn = moveInput(column, newIndex - delta, newIndex);
-					outputColumns.put(output, newColumn);
+					outputColumns.put(curEntry.getKey(), newColumn);
 				}
 			}
 		}
 
 		private void outputsChanged(VariableListEvent event) {
 			int action = event.getType();
-			if (action == VariableListEvent.ALL_REPLACED) outputColumns.clear();
-			else if (action == VariableListEvent.REMOVE) outputColumns.remove(event.getVariable());
+			if (action == VariableListEvent.ALL_REPLACED)
+				outputColumns.clear();
+			else if (action == VariableListEvent.REMOVE)
+				outputColumns.remove(event.getVariable());
 			else if (action == VariableListEvent.REPLACE) {
 				Entry[] column = outputColumns.remove(event.getVariable());
 				if (column != null) {
@@ -92,9 +95,13 @@ public class TruthTable {
 			boolean moveLeft = newIndex > oldIndex;
 			int blockMask = (old.length - 1) ^ sameMask ^ moveMask; // bits that move by one
 			for (int i = 0; i < old.length; i++) {
-				int j; // new index
-				if (moveLeft) j = (i & sameMask) | ((i & moveMask) << moveDist) | ((i & blockMask) >> 1);
-				else j = (i & sameMask) | ((i & moveMask) >> moveDist) | ((i & blockMask) << 1);
+				int j = i & sameMask; // new index
+				int move = i & moveMask;
+				int block = i & blockMask;
+				if (moveLeft)
+					j |= move << moveDist | block >> 1;
+				else
+					j |= move >> moveDist | block << 1;
 				ret[j] = old[i];
 			}
 			return ret;
@@ -122,17 +129,16 @@ public class TruthTable {
 
 	private void fireCellsChanged(int column) {
 		TruthTableEvent event = new TruthTableEvent(this, column);
-		for (TruthTableListener l : listeners) l.cellsChanged(event);
+		listeners.forEach(l -> l.cellsChanged(event));
 	}
 
 	private void fireStructureChanged(VariableListEvent cause) {
 		TruthTableEvent event = new TruthTableEvent(this, cause);
-		for (TruthTableListener l : listeners) l.structureChanged(event);
+		listeners.forEach(l -> l.structureChanged(event));
 	}
 
 	public int getRowCount() {
-		int sz = model.getInputs().size();
-		return 1 << sz;
+		return 1 << model.getInputs().size();
 	}
 
 	public int getInputColumnCount() {
@@ -162,7 +168,8 @@ public class TruthTable {
 	public Entry getInputEntry(int row, int column) {
 		int rows = getRowCount();
 		int inputs = model.getInputs().size();
-		if (row < 0 || row >= rows) throw new IllegalArgumentException("row index: " + row + " size: " + rows);
+		if (row < 0 || row >= rows)
+			throw new IllegalArgumentException("row index: " + row + " size: " + rows);
 		if (column < 0 || column >= inputs)
 			throw new IllegalArgumentException("column index: " + column + " size: " + inputs);
 
@@ -171,22 +178,23 @@ public class TruthTable {
 
 	public Entry getOutputEntry(int row, int column) {
 		int outputs = model.getOutputs().size();
-		if (row < 0 || row >= getRowCount() || column < 0 || column >= outputs) return Entry.DONT_CARE;
-		else {
-			String outputName = model.getOutputs().get(column);
-			Entry[] columnData = outputColumns.get(outputName);
-			if (columnData == null)
-				return DEFAULT_ENTRY;
-			if (row >= columnData.length)
-				return Entry.DONT_CARE;
-			return columnData[row];
-		}
+		if (row < 0 || row >= getRowCount() || column < 0 || column >= outputs)
+			return Entry.DONT_CARE;
+		String outputName = model.getOutputs().get(column);
+		Entry[] columnData = outputColumns.get(outputName);
+		if (columnData == null)
+			return DEFAULT_ENTRY;
+		if (row >= columnData.length)
+			return Entry.DONT_CARE;
+		return columnData[row];
+
 	}
 
 	public void setOutputEntry(int row, int column, Entry value) {
 		int rows = getRowCount();
 		int outputs = model.getOutputs().size();
-		if (row < 0 || row >= rows) throw new IllegalArgumentException("row index: " + row + " size: " + rows);
+		if (row < 0 || row >= rows)
+			throw new IllegalArgumentException("row index: " + row + " size: " + rows);
 		if (column < 0 || column >= outputs)
 			throw new IllegalArgumentException("column index: " + column + " size: " + outputs);
 
@@ -215,11 +223,11 @@ public class TruthTable {
 
 		String outputName = model.getOutputs().get(column);
 		Entry[] columnData = outputColumns.get(outputName);
-		if (columnData == null) {
-			columnData = new Entry[getRowCount()];
-			Arrays.fill(columnData, DEFAULT_ENTRY);
-			outputColumns.put(outputName, columnData);
-		}
+		if (columnData != null)
+			return columnData;
+		columnData = new Entry[getRowCount()];
+		Arrays.fill(columnData, DEFAULT_ENTRY);
+		outputColumns.put(outputName, columnData);
 		return columnData;
 	}
 
@@ -235,7 +243,7 @@ public class TruthTable {
 		Entry[] oldValues = outputColumns.get(outputName);
 		if (oldValues == values)
 			return;
-		else if (values == null)
+		if (values == null)
 			outputColumns.remove(outputName);
 		else
 			outputColumns.put(outputName, values);

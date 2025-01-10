@@ -12,7 +12,8 @@ import logisim.data.AttributeOption;
 import logisim.data.AttributeSet;
 import logisim.data.Attributes;
 import logisim.data.Bounds;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.Instance;
 import logisim.instance.InstanceData;
 import logisim.instance.InstanceFactory;
@@ -35,9 +36,9 @@ public class DotMatrix extends InstanceFactory {
 	static final Attribute<AttributeOption> ATTR_INPUT_TYPE = Attributes.forOption("inputtype",
 			Strings.getter("ioMatrixInput"), new AttributeOption[] { INPUT_COLUMN, INPUT_ROW, INPUT_SELECT });
 	static final Attribute<Integer> ATTR_MATRIX_COLS = Attributes.forIntegerRange("matrixcols",
-			Strings.getter("ioMatrixCols"), 1, Value.MAX_WIDTH);
+			Strings.getter("ioMatrixCols"), 1, WireValue.MAX_WIDTH);
 	static final Attribute<Integer> ATTR_MATRIX_ROWS = Attributes.forIntegerRange("matrixrows",
-			Strings.getter("ioMatrixRows"), 1, Value.MAX_WIDTH);
+			Strings.getter("ioMatrixRows"), 1, WireValue.MAX_WIDTH);
 	static final Attribute<AttributeOption> ATTR_DOT_SHAPE = Attributes.forOption("dotshape",
 			Strings.getter("ioMatrixShape"), new AttributeOption[] { SHAPE_CIRCLE, SHAPE_SQUARE });
 	static final Attribute<Integer> ATTR_PERSIST = new DurationAttribute("persist",
@@ -142,14 +143,14 @@ public class DotMatrix extends InstanceFactory {
 				int x = bds.getX() + 10 * i;
 				int y = bds.getY() + 10 * j;
 				if (showState) {
-					Value val = data.get(j, i, ticks);
+					WireValue val = data.get(j, i, ticks);
 					Color c;
-					if (val == Value.TRUE)
+					if (val == WireValues.TRUE)
 						c = onColor;
-					else if (val == Value.FALSE)
+					else if (val == WireValues.FALSE)
 						c = offColor;
 					else
-						c = Value.ERROR_COLOR;
+						c = WireValues.Companion.getERROR_COLOR();
 					g.setColor(c);
 
 					if (drawSquare)
@@ -172,7 +173,7 @@ public class DotMatrix extends InstanceFactory {
 	private static class State implements InstanceData, Cloneable {
 		private int rows;
 		private int cols;
-		private Value[] grid;
+		private WireValue[] grid;
 		private long[] persistTo;
 
 		public State(int rows, int cols, long curClock) {
@@ -199,61 +200,61 @@ public class DotMatrix extends InstanceFactory {
 				this.rows = rows;
 				this.cols = cols;
 				int length = rows * cols;
-				grid = new Value[length];
+				grid = new WireValue[length];
 				persistTo = new long[length];
-				Arrays.fill(grid, Value.UNKNOWN);
+				Arrays.fill(grid, WireValues.UNKNOWN);
 				Arrays.fill(persistTo, curClock - 1);
 			}
 		}
 
-		private Value get(int row, int col, long curTick) {
+		private WireValue get(int row, int col, long curTick) {
 			int index = row * cols + col;
-			Value ret = grid[index];
-			if (ret == Value.FALSE && persistTo[index] - curTick >= 0) return Value.TRUE;
+			WireValue ret = grid[index];
+			if (ret == WireValues.FALSE && persistTo[index] - curTick >= 0) return WireValues.TRUE;
 			return ret;
 		}
 
-		private void setRow(int index, Value rowVector, long persist) {
+		private void setRow(int index, WireValue rowVector, long persist) {
 			int gridloc = (index + 1) * cols - 1;
 			int stride = -1;
-			Value[] vals = rowVector.getAll();
+			WireValue[] vals = rowVector.getAll();
 			for (int i = 0; i < vals.length; i++, gridloc += stride) {
-				Value val = vals[i];
-				if (grid[gridloc] == Value.TRUE) persistTo[gridloc] = persist - 1;
+				WireValue val = vals[i];
+				if (grid[gridloc] == WireValues.TRUE) persistTo[gridloc] = persist - 1;
 				grid[gridloc] = vals[i];
-				if (val == Value.TRUE) persistTo[gridloc] = persist;
+				if (val == WireValues.TRUE) persistTo[gridloc] = persist;
 			}
 		}
 
-		private void setColumn(int index, Value colVector, long persist) {
+		private void setColumn(int index, WireValue colVector, long persist) {
 			int gridloc = (rows - 1) * cols + index;
 			int stride = -cols;
-			Value[] vals = colVector.getAll();
+			WireValue[] vals = colVector.getAll();
 			for (int i = 0; i < vals.length; i++, gridloc += stride) {
-				Value val = vals[i];
-				if (grid[gridloc] == Value.TRUE) persistTo[gridloc] = persist - 1;
+				WireValue val = vals[i];
+				if (grid[gridloc] == WireValues.TRUE) persistTo[gridloc] = persist - 1;
 				grid[gridloc] = val;
-				if (val == Value.TRUE) persistTo[gridloc] = persist;
+				if (val == WireValues.TRUE) persistTo[gridloc] = persist;
 			}
 		}
 
-		private void setSelect(Value rowVector, Value colVector, long persist) {
-			Value[] rowVals = rowVector.getAll();
-			Value[] colVals = colVector.getAll();
+		private void setSelect(WireValue rowVector, WireValue colVector, long persist) {
+			WireValue[] rowVals = rowVector.getAll();
+			WireValue[] colVals = colVector.getAll();
 			int gridloc = 0;
 			for (int i = rowVals.length - 1; i >= 0; i--) {
-				Value wholeRow = rowVals[i];
-				if (wholeRow == Value.TRUE) for (int j = colVals.length - 1; j >= 0; j--, gridloc++) {
-					Value val = colVals[colVals.length - 1 - j];
-					if (grid[gridloc] == Value.TRUE) persistTo[gridloc] = persist - 1;
+				WireValue wholeRow = rowVals[i];
+				if (wholeRow == WireValues.TRUE) for (int j = colVals.length - 1; j >= 0; j--, gridloc++) {
+					WireValue val = colVals[colVals.length - 1 - j];
+					if (grid[gridloc] == WireValues.TRUE) persistTo[gridloc] = persist - 1;
 					grid[gridloc] = val;
-					if (val == Value.TRUE) persistTo[gridloc] = persist;
+					if (val == WireValues.TRUE) persistTo[gridloc] = persist;
 				}
 				else {
-					if (wholeRow != Value.FALSE)
-						wholeRow = Value.ERROR;
+					if (wholeRow != WireValues.FALSE)
+						wholeRow = WireValues.ERROR;
 					for (int j = colVals.length - 1; j >= 0; j--, gridloc++) {
-						if (grid[gridloc] == Value.TRUE) persistTo[gridloc] = persist - 1;
+						if (grid[gridloc] == WireValues.TRUE) persistTo[gridloc] = persist - 1;
 						grid[gridloc] = wholeRow;
 					}
 				}

@@ -37,8 +37,7 @@ public class Implicant implements Comparable<Implicant> {
 			int ret = currentMask | source.values;
 			int diffs = currentMask ^ source.unknowns;
 			int diff = diffs ^ ((diffs - 1) & diffs);
-			if (diff == 0) currentMask = -1;
-			else currentMask = (currentMask & -diff) | diff;
+			currentMask = diff == 0 ? -1 : (currentMask & -diff) | diff;
 			return new Implicant(0, ret);
 		}
 
@@ -60,11 +59,8 @@ public class Implicant implements Comparable<Implicant> {
 	}
 
 	public int compareTo(Implicant o) {
-		if (values < o.values)
-			return -1;
-		if (values > o.values)
-			return 1;
-		return Integer.compare(unknowns, o.unknowns);
+		int ret = Integer.compare(values, o.values);
+		return ret != 0 ? ret : Integer.compare(unknowns, o.unknowns);
 	}
 
 	@Override
@@ -87,9 +83,7 @@ public class Implicant implements Comparable<Implicant> {
 	}
 
 	public int getRow() {
-		if (unknowns != 0)
-			return -1;
-		return values;
+		return unknowns != 0 ? -1 : values;
 	}
 
 	private Expression toProduct(TruthTable source) {
@@ -124,11 +118,13 @@ public class Implicant implements Comparable<Implicant> {
 		TruthTable table = model.getTruthTable();
 		if (format == AnalyzerModel.FORMAT_PRODUCT_OF_SUMS) {
 			Expression product = null;
-			for (Implicant imp : implicants) product = Expressions.and(product, imp.toSum(table));
+			for (Implicant imp : implicants)
+				product = Expressions.and(product, imp.toSum(table));
 			return product == null ? Expressions.constant(1) : product;
 		} else {
 			Expression sum = null;
-			for (Implicant imp : implicants) sum = Expressions.or(sum, imp.toProduct(table));
+			for (Implicant imp : implicants)
+				sum = Expressions.or(sum, imp.toProduct(table));
 			return sum == null ? Expressions.constant(0) : sum;
 		}
 	}
@@ -149,16 +145,15 @@ public class Implicant implements Comparable<Implicant> {
 		boolean knownFound = false;
 		for (int i = 0; i < table.getRowCount(); i++) {
 			Entry entry = table.getOutputEntry(i, column);
-			if (entry == undesired) knownFound = true;
+			if (entry == undesired)
+				knownFound = true;
 			else if (entry == desired) {
 				knownFound = true;
 				Implicant imp = new Implicant(0, i);
 				base.put(imp, entry);
 				toCover.add(imp);
-			} else {
-				Implicant imp = new Implicant(0, i);
-				base.put(imp, entry);
-			}
+			} else
+				base.put(new Implicant(0, i), entry);
 		}
 		if (!knownFound)
 			return null;
@@ -181,9 +176,7 @@ public class Implicant implements Comparable<Implicant> {
 							toRemove.add(imp);
 							toRemove.add(opp);
 							Implicant i = new Implicant(opp.unknowns | j, opp.values);
-							Entry e;
-							if (oppEntry == Entry.DONT_CARE && detEntry == Entry.DONT_CARE) e = Entry.DONT_CARE;
-							else e = desired;
+							Entry e = oppEntry == Entry.DONT_CARE && detEntry == Entry.DONT_CARE ? Entry.DONT_CARE : desired;
 							next.put(i, e);
 						}
 					}
@@ -191,7 +184,8 @@ public class Implicant implements Comparable<Implicant> {
 
 			for (Map.Entry<Implicant, Entry> curEntry : current.entrySet()) {
 				Implicant det = curEntry.getKey();
-				if (!toRemove.contains(det) && curEntry.getValue() == desired) primes.add(det);
+				if (!toRemove.contains(det) && curEntry.getValue() == desired)
+					primes.add(det);
 			}
 
 			current = next;
@@ -201,7 +195,8 @@ public class Implicant implements Comparable<Implicant> {
 		// is probably prime.
 		for (Map.Entry<Implicant, Entry> curEntry : current.entrySet()) {
 			Implicant imp = curEntry.getKey();
-			if (current.get(imp) == desired) primes.add(imp);
+			if (current.get(imp) == desired)
+				primes.add(imp);
 		}
 
 		// determine the essential prime implicants
@@ -211,18 +206,17 @@ public class Implicant implements Comparable<Implicant> {
 			if (covered.contains(required))
 				continue;
 			int row = required.getRow();
-			Implicant essential = null;
-			for (Implicant imp : primes)
-				if ((row & ~imp.unknowns) == imp.values) if (essential == null)
-					essential = imp;
-				else {
-					essential = null;
-					break;
-				}
-			if (essential != null) {
+			List<Implicant> candidate = primes.stream()
+					.filter(imp -> (row & ~imp.unknowns) == imp.values)
+					.limit(2)
+					.toList();
+
+			if(candidate.size() == 1) {
+				Implicant essential = candidate.getFirst();
 				retSet.add(essential);
 				primes.remove(essential);
-				for (Implicant imp : essential.getTerms()) covered.add(imp);
+				for (Implicant imp : essential.getTerms())
+					covered.add(imp);
 			}
 		}
 		toCover.removeAll(covered);

@@ -35,7 +35,8 @@ class PortManager {
 
 	void updatePorts(Set<Instance> adds, Set<Instance> removes, Map<Instance, Instance> replaces,
 			Collection<Instance> allPins) {
-		if (appearance.isDefaultAppearance()) appearance.recomputePorts();
+		if (appearance.isDefaultAppearance())
+			appearance.recomputePorts();
 		else // "doingUpdate" ensures infinite recursion doesn't happen
 			if (!doingUpdate) try {
 				doingUpdate = true;
@@ -52,14 +53,18 @@ class PortManager {
 		Map<Instance, AppearancePort> oldObjects = new HashMap<>();
 		AppearanceAnchor anchor = null;
 		for (CanvasObject o : appearance.getObjectsFromBottom())
-			if (o instanceof AppearancePort port) oldObjects.put(port.getPin(), port);
-			else if (o instanceof AppearanceAnchor) anchor = (AppearanceAnchor) o;
+			if (o instanceof AppearancePort port)
+				oldObjects.put(port.getPin(), port);
+			else if (o instanceof AppearanceAnchor)
+				anchor = (AppearanceAnchor) o;
 
 		// ensure we have the anchor in the circuit
 		if (anchor == null) {
 			for (CanvasObject o : DefaultAppearance.build(allPins))
-				if (o instanceof AppearanceAnchor) anchor = (AppearanceAnchor) o;
-			if (anchor == null) anchor = new AppearanceAnchor(new Location(100, 100));
+				if (o instanceof AppearanceAnchor)
+					anchor = (AppearanceAnchor) o;
+			if (anchor == null)
+				anchor = new AppearanceAnchor(new Location(100, 100));
 			int dest = appearance.getObjectsFromBottom().size();
 			appearance.addObjects(dest, Collections.singleton(anchor));
 		}
@@ -71,7 +76,8 @@ class PortManager {
 		// handle removals
 		for (Instance pin : removes) {
 			AppearancePort port = oldObjects.remove(pin);
-			if (port != null) portRemoves.add(port);
+			if (port != null)
+				portRemoves.add(port);
 		}
 		// handle replacements
 		ArrayList<Instance> addsCopy = new ArrayList<>(adds);
@@ -81,7 +87,8 @@ class PortManager {
 			if (port != null) {
 				port.setPin(entry.getValue());
 				oldObjects.put(entry.getValue(), port);
-			} else addsCopy.add(entry.getValue());
+			} else
+				addsCopy.add(entry.getValue());
 		}
 		// handle additions
 		DefaultAppearance.sortPinList(addsCopy, Direction.East);
@@ -110,7 +117,8 @@ class PortManager {
 			Instance pin2 = entry.getKey();
 			Location loc = entry.getValue().getLocation();
 			usedLocs.add(loc);
-			if (pin2.getAttributeValue(StdAttr.FACING) == facing) sameWay.add(pin2);
+			if (pin2.getAttributeValue(StdAttr.FACING) == facing)
+				sameWay.add(pin2);
 		}
 
 		// if at least one faces the same way, place pin relative to that
@@ -119,23 +127,23 @@ class PortManager {
 			DefaultAppearance.sortPinList(sameWay, facing);
 			Instance neighbor = null; // (preferably previous in map)
 			for (Instance p : sameWay)
-				if (p == pin) break;
-				else neighbor = p;
+				if (p == pin)
+					break;
+				else
+					neighbor = p;
 			// pin must have been first in list
-			if (neighbor == null) neighbor = sameWay.get(1);
-			int dx;
-			int dy;
-			if (facing == Direction.East || facing == Direction.West) {
-				dx = 0;
-				dy = 10;
-			} else {
-				dx = 10;
-				dy = 0;
-			}
+			if (neighbor == null)
+				neighbor = sameWay.get(1);
+			Location translate = facing.isHorizontal()?new Location(0,10):new Location(10,0);
 			Location loc = others.get(neighbor).getLocation();
-			do loc = loc.translate(dx, dy); while (usedLocs.contains(loc));
-			if (loc.x() >= 0 && loc.y() >= 0) return loc;
-			do loc = loc.translate(-dx, -dy); while (usedLocs.contains(loc));
+			do
+				loc = loc.add(translate);
+			while (usedLocs.contains(loc));
+			if (loc.x() >= 0 && loc.y() >= 0)
+				return loc;
+			do
+				loc = loc.sub(translate);
+			while (usedLocs.contains(loc));
 			return loc;
 		}
 
@@ -165,7 +173,8 @@ class PortManager {
 		x = (x + 9) / 10 * 10; // round coordinates up to ensure they're on grid
 		y = (y + 9) / 10 * 10;
 		Location loc = new Location(x, y);
-		while (usedLocs.contains(loc)) loc = loc.translate(dx, dy);
+		while (usedLocs.contains(loc))
+			loc = loc.add(dx, dy);
 		return loc;
 	}
 }

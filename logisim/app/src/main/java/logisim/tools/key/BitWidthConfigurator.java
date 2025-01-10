@@ -7,7 +7,7 @@ import java.awt.event.InputEvent;
 
 import logisim.data.Attribute;
 import logisim.data.BitWidth;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
 
 public class BitWidthConfigurator extends NumericConfigurator<BitWidth> {
 	public BitWidthConfigurator(Attribute<BitWidth> attr, int min, int max, int modifiersEx) {
@@ -19,7 +19,7 @@ public class BitWidthConfigurator extends NumericConfigurator<BitWidth> {
 	}
 
 	public BitWidthConfigurator(Attribute<BitWidth> attr) {
-		super(attr, 1, Value.MAX_WIDTH, InputEvent.ALT_DOWN_MASK);
+		super(attr, 1, WireValue.MAX_WIDTH, InputEvent.ALT_DOWN_MASK);
 	}
 
 	@Override

@@ -11,7 +11,8 @@ import logisim.data.BitWidth;
 import logisim.data.Bounds;
 import logisim.data.Direction;
 import logisim.data.Location;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.InstanceFactory;
 import logisim.instance.InstancePainter;
 import logisim.instance.InstanceState;
@@ -56,10 +57,10 @@ public class Multiplier extends InstanceFactory {
 		BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
 
 		// compute outputs
-		Value a = state.getPort(IN0);
-		Value b = state.getPort(IN1);
-		Value c_in = state.getPort(C_IN);
-		Value[] outs = Multiplier.computeProduct(dataWidth, a, b, c_in);
+		WireValue a = state.getPort(IN0);
+		WireValue b = state.getPort(IN1);
+		WireValue c_in = state.getPort(C_IN);
+		WireValue[] outs = Multiplier.computeProduct(dataWidth, a, b, c_in);
 
 		// propagate them
 		int delay = dataWidth.getWidth() * (dataWidth.getWidth() + 2) * PER_DELAY;
@@ -89,23 +90,23 @@ public class Multiplier extends InstanceFactory {
 		GraphicsUtil.switchToWidth(g, 1);
 	}
 
-	static Value[] computeProduct(BitWidth width, Value a, Value b, Value c_in) {
+	static WireValue[] computeProduct(BitWidth width, WireValue a, WireValue b, WireValue c_in) {
 		int w = width.getWidth();
-		if (c_in == Value.NIL || c_in.isUnknown())
-			c_in = Value.createKnown(width, 0);
+		if (c_in == WireValues.NIL || c_in.isUnknown())
+			c_in = WireValue.Companion.createKnown(width, 0);
 		if (a.isFullyDefined() && b.isFullyDefined() && c_in.isFullyDefined()) {
 			long sum = (long) a.toIntValue() * (long) b.toIntValue() + (long) c_in.toIntValue();
-			return new Value[] { Value.createKnown(width, (int) sum), Value.createKnown(width, (int) (sum >> w)) };
+			return new WireValue[] { WireValue.Companion.createKnown(width, (int) sum), WireValue.Companion.createKnown(width, (int) (sum >> w)) };
 		} else {
-			Value[] avals = a.getAll();
+			WireValue[] avals = a.getAll();
 			int aOk = findUnknown(avals);
 			int aErr = findError(avals);
 			int ax = getKnown(avals);
-			Value[] bvals = b.getAll();
+			WireValue[] bvals = b.getAll();
 			int bOk = findUnknown(bvals);
 			int bErr = findError(bvals);
 			int bx = getKnown(bvals);
-			Value[] cvals = c_in.getAll();
+			WireValue[] cvals = c_in.getAll();
 			int cOk = findUnknown(cvals);
 			int cErr = findError(cvals);
 			int cx = getKnown(cvals);
@@ -114,31 +115,31 @@ public class Multiplier extends InstanceFactory {
 			int error = Math.min(Math.min(aErr, bErr), cErr);
 			int ret = ax * bx + cx;
 
-			Value[] bits = new Value[w];
+			WireValue[] bits = new WireValue[w];
 			for (int i = 0; i < w; i++)
-				if (i < known) bits[i] = ((ret & (1 << i)) != 0 ? Value.TRUE : Value.FALSE);
-				else if (i < error) bits[i] = Value.UNKNOWN;
-				else bits[i] = Value.ERROR;
-			return new Value[] { Value.create(bits),
-					error < w ? Value.createError(width) : Value.createUnknown(width) };
+				if (i < known) bits[i] = ((ret & (1 << i)) != 0 ? WireValues.TRUE : WireValues.FALSE);
+				else if (i < error) bits[i] = WireValues.UNKNOWN;
+				else bits[i] = WireValues.ERROR;
+			return new WireValue[] { WireValue.Companion.create(bits),
+					error < w ? WireValue.Companion.createError(width) : WireValue.Companion.createUnknown(width) };
 		}
 	}
 
-	private static int findUnknown(Value[] vals) {
+	private static int findUnknown(WireValue[] vals) {
 		for (int i = 0; i < vals.length; i++)
 			if (!vals[i].isFullyDefined())
 				return i;
 		return vals.length;
 	}
 
-	private static int findError(Value[] vals) {
+	private static int findError(WireValue[] vals) {
 		for (int i = 0; i < vals.length; i++)
 			if (vals[i].isErrorValue())
 				return i;
 		return vals.length;
 	}
 
-	private static int getKnown(Value[] vals) {
+	private static int getKnown(WireValue[] vals) {
 		int ret = 0;
 		for (int i = 0; i < vals.length; i++) {
 			int val = vals[i].toIntValue();

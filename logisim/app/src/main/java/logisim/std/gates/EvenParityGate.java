@@ -5,7 +5,8 @@ package logisim.std.gates;
 
 import logisim.analyze.model.Expression;
 import logisim.analyze.model.Expressions;
-import logisim.data.Value;
+import logisim.data.WireValue.WireValue;
+import logisim.data.WireValue.WireValues;
 import logisim.instance.InstancePainter;
 import logisim.instance.InstanceState;
 
@@ -34,7 +35,7 @@ class EvenParityGate extends AbstractGate {
 	}
 
 	@Override
-	protected Value computeOutput(Value[] inputs, int numInputs, InstanceState state) {
+	protected WireValue computeOutput(WireValue[] inputs, int numInputs, InstanceState state) {
 		return GateFunctions.computeOddParity(inputs, numInputs).not();
 	}
 
@@ -46,7 +47,7 @@ class EvenParityGate extends AbstractGate {
 	}
 
 	@Override
-	protected Value getIdentity() {
-		return Value.FALSE;
+	protected WireValue getIdentity() {
+		return WireValues.FALSE;
 	}
 }
