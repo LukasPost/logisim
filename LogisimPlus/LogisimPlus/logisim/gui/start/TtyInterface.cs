@@ -90,10 +90,10 @@ namespace logisim.gui.start
 
 			Project proj = new Project(file);
 			Circuit circuit = file.MainCircuit;
-			Dictionary<Instance, string> pinNames = Analyze.getPinLabels(circuit);
+			SortedDictionary<Instance, string> pinNames = Analyze.getPinLabels(circuit);
 			List<Instance> outputPins = new List<Instance>();
 			Instance haltPin = null;
-			foreach (KeyValuePair<Instance, string> entry in pinNames.SetOfKeyValuePairs())
+			foreach (KeyValuePair<Instance, string> entry in pinNames)
 			{
 				Instance pin = entry.Key;
 				string pinName = entry.Value;
@@ -397,7 +397,7 @@ namespace logisim.gui.start
 		// It's possible to avoid using the separate thread using System.in.available(),
 		// but this doesn't quite work because on some systems, the keyboard input
 		// is not interactively echoed until System.in.read() is invoked.
-		private class StdinThread : Thread
+		private class StdinThread
 		{
 			internal Queue<char[]> queue; // of char[]
 
@@ -424,29 +424,31 @@ namespace logisim.gui.start
 				}
 			}
 
-			public override void run()
+			public void run()
 			{
-				StreamReader stdin = new StreamReader(System.in);
-				char[] buffer = new char[32];
-				while (true)
-				{
-					try
+				Task.Run(() => {
+					TextReader stdin = Console.In;
+					char[] buffer = new char[32];
+					while (true)
 					{
-						int nbytes = stdin.Read(buffer, 0, buffer.Length);
-						if (nbytes > 0)
+						try
 						{
-							char[] add = new char[nbytes];
-							Array.Copy(buffer, 0, add, 0, nbytes);
-							lock (queue)
+							int nbytes = stdin.Read(buffer, 0, buffer.Length);
+							if (nbytes > 0)
 							{
-								queue.Enqueue(add);
+								char[] add = new char[nbytes];
+								Array.Copy(buffer, 0, add, 0, nbytes);
+								lock (queue)
+								{
+									queue.Enqueue(add);
+								}
 							}
 						}
+						catch (IOException)
+						{
+						}
 					}
-					catch (IOException)
-					{
-					}
-				}
+				});
 			}
 		}
 	}

@@ -642,7 +642,7 @@ namespace logisim.tools
 					MoveResult result = gesture.findResult(dx, dy);
 					if (result != null)
 					{
-						HashSet<Component> ret = new HashSet<Component>(sel.Concat((result.ReplacementMap.Removals);
+						HashSet<Component> ret = new HashSet<Component>(sel.Concat(result.ReplacementMap.Removals));
 						return ret;
 					}
 				}

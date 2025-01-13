@@ -50,7 +50,7 @@ namespace logisim.circuit
 			SortedDictionary<Instance, string> ret = new SortedDictionary<Instance, string>(locOrder);
 
 			// Put the pins into the TreeMap, with null labels
-			foreach (Instance pin in circuit.Appearance.getPortOffsets(Direction.East).values())
+			foreach (Instance pin in circuit.Appearance.getPortOffsets(Direction.East).Values)
 			{
 				ret[pin] = null;
 			}
@@ -60,7 +60,7 @@ namespace logisim.circuit
 			HashSet<string> labelsTaken = new HashSet<string>();
 			foreach (Instance pin in pinList)
 			{
-				string label = pin.AttributeSet.getValue(StdAttr.LABEL);
+				string label = (string)pin.AttributeSet.getValue(StdAttr.LABEL);
 				label = toValidLabel(label);
 				if (!string.ReferenceEquals(label, null))
 				{
@@ -171,41 +171,31 @@ namespace logisim.circuit
 			for (int i = 0; i < label.Length; i++)
 			{
 				char c = label[i];
-				if (Character.isJavaIdentifierStart(c))
+				if (afterWhitespace)
 				{
-					if (afterWhitespace)
-					{
-						// capitalize words after the first one
-						c = Character.toTitleCase(c);
-						afterWhitespace = false;
-					}
-					ret.Append(c);
-				}
-				else if (Character.isJavaIdentifierPart(c))
-				{
-					// If we can't place it at the start, we'll dump it
-					// onto the end.
-					if (ret.Length > 0)
-					{
-						ret.Append(c);
-					}
-					else
-					{
-						if (end == null)
-						{
-							end = new StringBuilder();
-						}
-						end.Append(c);
-					}
+					// capitalize words after the first one
+					c = char.ToUpper(c);
 					afterWhitespace = false;
 				}
-				else if (char.IsWhiteSpace(c))
+				ret.Append(c);
+				// If we can't place it at the start, we'll dump it
+				// onto the end.
+				if (ret.Length > 0)
 				{
-					afterWhitespace = true;
+					ret.Append(c);
 				}
 				else
 				{
-					; // just ignore any other characters
+					if (end == null)
+					{
+						end = new StringBuilder();
+					}
+					end.Append(c);
+				}
+				afterWhitespace = false;
+				if (char.IsWhiteSpace(c))
+				{
+					afterWhitespace = true;
 				}
 			}
 			if (end != null && ret.Length > 0)
